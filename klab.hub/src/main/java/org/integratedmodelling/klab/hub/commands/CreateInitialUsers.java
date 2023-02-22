@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.commands;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -94,10 +95,10 @@ public class CreateInitialUsers {
     
     private List<User> getInitialUsers() {
 		GroupEntry im = new GroupEntry(new GetMongoGroupByName("IM", groupRepository).execute());
-		GroupEntry aries = new GroupEntry(new GetMongoGroupByName("ARIES", groupRepository).execute(), DateTime.now().minusDays(20));
+		GroupEntry aries = new GroupEntry(new GetMongoGroupByName("ARIES", groupRepository).execute(), LocalDate.now().minusDays(20));
 		GroupEntry alice = new GroupEntry(new GetMongoGroupByName("ALICE", groupRepository).execute());
-		GroupEntry seea = new GroupEntry(new GetMongoGroupByName("SEEA", groupRepository).execute(), DateTime.now().plusDays(10));
-		GroupEntry leticia = new GroupEntry(new GetMongoGroupByName("LETICIA", groupRepository).execute(), DateTime.now().plusDays(10));
+		GroupEntry seea = new GroupEntry(new GetMongoGroupByName("SEEA", groupRepository).execute(), LocalDate.now().plusDays(10));
+		GroupEntry leticia = new GroupEntry(new GetMongoGroupByName("LETICIA", groupRepository).execute(), LocalDate.now().plusDays(10));
 		Set<GroupEntry> entries = new HashSet<GroupEntry>();
 		entries.add(im);
 		entries.add(aries);

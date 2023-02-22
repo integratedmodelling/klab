@@ -23,5 +23,10 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authentication</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 	</dependencies>
 </project>

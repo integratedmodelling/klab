@@ -9,6 +9,7 @@ import java.util.Set;
 public class Group {
 
 	private String id;
+	private String name;
 	private String description;
 	private String iconUrl;
 	private String sshKey;
@@ -30,11 +31,18 @@ public class Group {
 	}
 
 	public String getId() {
-		return id;
+	    return id;
 	}
 	
 	public void setId(String id) {
-		this.id = id;
+	    this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
@@ -180,12 +188,12 @@ public class Group {
 	 * List of group IDs that are need
 	 * @return
 	 */
-	public List<String> getDependesOn() {
+	public List<String> getDependsOn() {
 		return dependsOn;
 	}
 
-	public void setDependesOn(List<String> dependesOn) {
-		this.dependsOn = dependesOn;
+	public void setDependsOn(List<String> dependsOn) {
+		this.dependsOn = dependsOn;
 	}
 
 	@Override

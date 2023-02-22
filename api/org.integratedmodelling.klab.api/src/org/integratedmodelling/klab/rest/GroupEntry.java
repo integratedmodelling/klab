@@ -3,6 +3,7 @@
  */
 package org.integratedmodelling.klab.rest;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 /**
@@ -13,8 +14,8 @@ import java.util.Objects;
 public class GroupEntry {
 
 	private Group group;
-	private long start;
-	private long expiration;
+	private LocalDate start;
+	private LocalDate expiration;
 	
 	public GroupEntry() {}
 
@@ -30,11 +31,11 @@ public class GroupEntry {
 	 * Date of assignment
 	 * @return
 	 */
-	public long getStart() {
+	public LocalDate getStart() {
 		return start;
 	}
 
-	public void setStart(long start) {
+	public void setStart(LocalDate start) {
 		this.start = start;
 	}
 
@@ -42,36 +43,30 @@ public class GroupEntry {
 	 * Date of expiration
 	 * @return
 	 */
-	public long getExpiration() {
+	public LocalDate getExpiration() {
 		return expiration;
 	}
 
-	public void setExpiration(long expiration) {
+	public void setExpiration(LocalDate expiration) {
 		this.expiration = expiration;
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(expiration, group, start);
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(expiration, group, start);
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GroupEntry other = (GroupEntry) obj;
-		return expiration == other.expiration && Objects.equals(group, other.group) && start == other.start;
-	}
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GroupEntry other = (GroupEntry) obj;
+        return Objects.equals(expiration, other.expiration) && Objects.equals(group, other.group)
+                && Objects.equals(start, other.start);
+    }
 
-	@Override
-	public String toString() {
-		return "GroupEntry [group=" + group + ", start=" + start + ", expiration=" + expiration + "]";
-	};
-	
-	
-	
 }

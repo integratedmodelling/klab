@@ -1,30 +1,30 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
-import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class GroupEntry {
 	
 	@DBRef
 	private MongoGroup group;
-	private DateTime expiration;
-	private DateTime inception;
+	private LocalDate experation;
+	private LocalDate inception;
 	
-	public GroupEntry(MongoGroup group, DateTime experation) {
+	public GroupEntry(MongoGroup group, LocalDate experation) {
 		this.group = group;
 		if(experation != null) {
-			this.expiration = experation;
+			this.experation = experation;
 		} else {
-			this.expiration = DateTime.now().plusDays(365);
+			this.experation = LocalDate.now().plusDays(365);
 		}
 		setInception();
 	}
 	
 	public GroupEntry(MongoGroup group) {
 		this.group = group;
-		this.expiration = DateTime.now().plusDays(365);
+		this.experation = LocalDate.now().plusDays(365);
 		setInception();
 	}
 	
@@ -33,32 +33,32 @@ public class GroupEntry {
 	
 	
 	public void setInception() {
-		this.inception = DateTime.now();
+		this.inception = LocalDate.now();
 	}
 
 	public String getGroupName() {
 		return group.getName();
 	}
 
-	public DateTime getExperation() {
-		if(expiration == null) {
-			return DateTime.now().plusMonths(6);
+	public LocalDate getExperation() {
+		if(experation == null) {
+			return LocalDate.now().plusMonths(6);
 		} else {
-			return expiration;
+			return experation;
 		}
 	}
 
-	public void setRenewal(DateTime experation) {
-		this.expiration = experation;
+	public void setRenewal(LocalDate experation) {
+		this.experation = experation;
 	}
 
-	public DateTime getInception() {
+	public LocalDate getInception() {
 		return inception;
 	}
 	
 	public boolean isExpired() {
-		DateTime expires = getExperation();
-		expires.isAfterNow();
+	    LocalDate expires = getExperation();
+		expires.isAfter(LocalDate.now());
 		return true;
 	}
 

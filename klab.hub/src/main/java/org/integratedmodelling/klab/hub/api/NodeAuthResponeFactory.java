@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.integratedmodelling.klab.hub.api.adapters.MongoGroupAdapter;
 import org.integratedmodelling.klab.hub.commands.GetINodeIdentity;
 import org.integratedmodelling.klab.hub.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.commands.GetNodesGroups;
@@ -26,19 +25,22 @@ import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
+import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
-import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.joda.time.DateTime;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NodeAuthResponeFactory {
     
     private NodeService nodeService;
     private MongoGroupRepository groupRepository;
     private LicenseConfigService configService;
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     public NodeAuthResponeFactory(NodeService nodeService,
             MongoGroupRepository groupRepository,
@@ -120,7 +122,7 @@ public class NodeAuthResponeFactory {
 		Set<Group> groups = new HashSet<>();
 		
 		mongoGroups.forEach(
-				mongoGroup -> groups.add(new MongoGroupAdapter(mongoGroup).convertGroup()));
+				mongoGroup -> groups.add(objectMapper.convertValue(mongoGroup, Group.class)));
 		
 		INodeIdentity node = authenticateLocal(request.getName());
 

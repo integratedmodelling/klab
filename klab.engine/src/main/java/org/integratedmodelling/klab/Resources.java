@@ -314,7 +314,7 @@ public enum Resources implements IResourceService {
                             if (groups == null) {
                                 groups = Collections.synchronizedSet(new HashSet<>());
                             }
-                            groups.add(group.getId());
+                            groups.add(group.getName());
                             deployedComponents.put(projectUrl, groups);
                         }
                     }

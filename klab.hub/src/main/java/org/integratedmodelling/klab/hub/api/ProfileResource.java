@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -190,7 +191,7 @@ public class ProfileResource implements OAuth2User{
 	public List<String> getGroupsIds() {
 	    List<String> groupsIds = new ArrayList<>();
 	    for (GroupEntry grp : this.getGroups()) {
-            if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+            if(grp != null && grp.getExperation().isAfter(LocalDate.now())) {
                 groupsIds.add(grp.getGroup().getName());
             }
         }
@@ -200,10 +201,10 @@ public class ProfileResource implements OAuth2User{
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
 		for (GroupEntry grp : this.getGroups()) {
-			if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+			if(grp != null && grp.getExperation().isAfter(LocalDate.now())) {
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
-				group.setId(mGroup.getName());
+				group.setName(mGroup.getName());
 				group.setDescription(mGroup.getDescription());
 				group.setIconUrl(mGroup.getIconUrl());
 				group.setMaxUpload(mGroup.getMaxUpload());
@@ -267,7 +268,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<GroupEntry> expiredGroupEntries() {
         ArrayList<GroupEntry> expired = new ArrayList<GroupEntry>();
         for (GroupEntry e : getGroups()) {
-            if(e.getExperation().isBeforeNow()) {
+            if(e.getExperation().isBefore(LocalDate.now())) {
                 expired.add(e);
             }
         }
@@ -277,7 +278,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<GroupEntry> expiringGroupEntries() {
         ArrayList<GroupEntry> expiring = new ArrayList<GroupEntry>();
         for (GroupEntry e : getGroups()) {
-            if(!e.getExperation().isBeforeNow() && !e.getExperation().isAfter(DateTime.now().plusDays(30))) {
+            if(!e.getExperation().isBefore(LocalDate.now()) && !e.getExperation().isAfter(LocalDate.now().plusDays(30))) {
                 expiring.add(e);
             }
         }
