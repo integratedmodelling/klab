@@ -190,7 +190,7 @@ public class ProfileResource implements OAuth2User{
 	public List<String> getGroupsIds() {
 	    List<String> groupsIds = new ArrayList<>();
 	    for (GroupEntry grp : this.getGroups()) {
-            if(grp != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
+            if(grp != null && grp.getExpiration() != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
                 groupsIds.add(grp.getGroup().getName());
             }
         }
@@ -200,7 +200,7 @@ public class ProfileResource implements OAuth2User{
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
 		for (GroupEntry grp : this.getGroups()) {
-			if(grp != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
+			if(grp != null && grp.getExpiration() != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
 				group.setName(mGroup.getName());
@@ -267,7 +267,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<GroupEntry> expiredGroupEntries() {
         ArrayList<GroupEntry> expired = new ArrayList<GroupEntry>();
         for (GroupEntry e : getGroups()) {
-            if(e.getExpiration().isBefore(LocalDateTime.now())) {
+            if(e.getExpiration() != null && e.getExpiration().isBefore(LocalDateTime.now())) {
                 expired.add(e);
             }
         }
@@ -277,7 +277,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<GroupEntry> expiringGroupEntries() {
         ArrayList<GroupEntry> expiring = new ArrayList<GroupEntry>();
         for (GroupEntry e : getGroups()) {
-            if(!e.getExpiration().isBefore(LocalDateTime.now()) && !e.getExpiration().isAfter(LocalDateTime.now().plusDays(30))) {
+            if(e.getExpiration() != null && !e.getExpiration().isBefore(LocalDateTime.now()) && !e.getExpiration().isAfter(LocalDateTime.now().plusDays(30))) {
                 expiring.add(e);
             }
         }

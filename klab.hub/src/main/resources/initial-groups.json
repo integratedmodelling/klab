@@ -25,7 +25,7 @@
 			"https://bitbucket.org/integratedmodelling/alice.sandbox.git"
 		],
         "sshKey": null,
-		"defaultExpirationTime": 0,
+		"defaultExpirationTime": 86400000,
 		"worldview": false,
 		"complimentary": false,
 		"optIn": false,
@@ -42,7 +42,7 @@
 			"https://bitbucket.org/integratedmodelling/un.seea.aries.git#master"
 		],
         "sshKey": null,
-		"defaultExpirationTime": 0,
+		"defaultExpirationTime": 86400000,
 		"worldview": false,
 		"complimentary": true,
 		"optIn": false,

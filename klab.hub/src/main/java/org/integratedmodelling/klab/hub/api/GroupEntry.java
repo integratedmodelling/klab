@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -15,18 +17,12 @@ public class GroupEntry {
     
     public GroupEntry(MongoGroup group, LocalDateTime expiration) {
         this.group = group;
-        if(expiration != null) {
-            this.expiration = expiration;
-        } else {
-            this.expiration = LocalDateTime.now().plusDays(365);
-        }
         setStart();
+        setExpiration(expiration);
     }
     
     public GroupEntry(MongoGroup group) {
-        this.group = group;
-        this.expiration = LocalDateTime.now().plusDays(365);
-        setStart();
+        this(group, null);
     }
     /*
     private static LocalDateTime getDefaultExpirationPeriod(MongoGroup group) {
@@ -55,7 +51,15 @@ public class GroupEntry {
     }
 
     public void setExpiration(LocalDateTime expiration) {
-        this.expiration = expiration;
+        if(expiration != null) {
+            this.expiration = expiration;
+        } else if (this.group != null && this.group.getDefaultExpirationTime() != 0) {
+            if (this.start != null) {
+                this.expiration = this.start.plus(group.getDefaultExpirationTime(), ChronoUnit.MILLIS);
+            } else {
+                this.expiration = LocalDateTime.now().plus(group.getDefaultExpirationTime(), ChronoUnit.MILLIS);
+            }
+        }
     }
 
     public LocalDateTime getInception() {

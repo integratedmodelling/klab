@@ -54,7 +54,7 @@ public class GroupRequestTask extends ModifyGroupsTask{
 					if(userGrpEntry.getExpiration() !=null && !userGrpEntry.getExpiration().isAfter(newGrpEntry.getExpiration())) {
 						currentGroupEntries.remove(userGrpEntry);
 						currentGroupEntries.add(newGrpEntry);
-						task.addToLog("Group "+newGrpEntry.getGroupName()+" experation updated to "+newGrpEntry.getExpiration());
+						task.addToLog("Group "+newGrpEntry.getGroupName()+" expiration updated to "+newGrpEntry.getExpiration());
 						added = true;
 					}
 					
@@ -64,7 +64,7 @@ public class GroupRequestTask extends ModifyGroupsTask{
 							.findFirst()
 							.get();
 					currentGroupEntries.add(newGrpEntry);
-					task.addToLog("Group "+newGrpEntry.getGroupName()+" added with experation "+newGrpEntry.getExpiration());
+					task.addToLog("Group "+newGrpEntry.getGroupName()+" added with expiration "+newGrpEntry.getExpiration());
 					added = true;
 				}
 			}
