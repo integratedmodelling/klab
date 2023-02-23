@@ -93,8 +93,8 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	}
 	
 	@Override
-	public void addPrelimenaryUserGroups(User user, LocalDateTime experiation) {
-		Set<GroupEntry> groupEntries = createPrelimGroupEntries(experiation);
+	public void addComplimentaryUserGroups(User user, LocalDateTime experiation) {
+		Set<GroupEntry> groupEntries = createComplimentaryGroupEntries(experiation);
 		user.addGroupEntries(groupEntries);
 		new UpdateUser(user, userRepository).execute();
 		
@@ -113,10 +113,10 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		return groupEntries;
 	}
 	
-	private Set<GroupEntry> createPrelimGroupEntries(LocalDateTime expiration) {
+	private Set<GroupEntry> createComplimentaryGroupEntries(LocalDateTime expiration) {
 		Set<GroupEntry> groupEntries = new HashSet<>();
 		groupRepository
-			.findPrelimGroups()
+			.findComplimentaryGroups()
 			.forEach(grp ->
 				groupEntries.add(
 					new GroupEntry(grp, expiration)

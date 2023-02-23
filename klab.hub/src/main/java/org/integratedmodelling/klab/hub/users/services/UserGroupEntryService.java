@@ -17,7 +17,7 @@ public interface UserGroupEntryService {
 
 	void removeUsersGroupsByNames(UpdateUsersGroups updateUserGroups);
 
-	void addPrelimenaryUserGroups(User user, LocalDateTime experiation);
+	void addComplimentaryUserGroups(User user, LocalDateTime experiation);
 	
 	void deleteGroupFromUsers(String groupName);
 

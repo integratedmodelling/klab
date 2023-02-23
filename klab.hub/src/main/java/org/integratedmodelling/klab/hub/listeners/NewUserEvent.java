@@ -21,6 +21,6 @@ public class NewUserEvent {
 	public void addGroupEntries(NewUserAdded event) {
 		User user = event.getUser();
 		LocalDateTime expires = LocalDateTime.now().plusDays(31);
-		service.addPrelimenaryUserGroups(user, expires);
+		service.addComplimentaryUserGroups(user, expires);
 	}
 }
