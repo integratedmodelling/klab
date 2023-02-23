@@ -3,7 +3,7 @@
  */
 package org.integratedmodelling.klab.rest;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -14,8 +14,8 @@ import java.util.Objects;
 public class GroupEntry {
 
 	private Group group;
-	private LocalDate start;
-	private LocalDate expiration;
+	private LocalDateTime start;
+	private LocalDateTime expiration;
 	
 	public GroupEntry() {}
 
@@ -31,11 +31,11 @@ public class GroupEntry {
 	 * Date of assignment
 	 * @return
 	 */
-	public LocalDate getStart() {
+	public LocalDateTime getStart() {
 		return start;
 	}
 
-	public void setStart(LocalDate start) {
+	public void setStart(LocalDateTime start) {
 		this.start = start;
 	}
 
@@ -43,11 +43,11 @@ public class GroupEntry {
 	 * Date of expiration
 	 * @return
 	 */
-	public LocalDate getExpiration() {
+	public LocalDateTime getExpiration() {
 		return expiration;
 	}
 
-	public void setExpiration(LocalDate expiration) {
+	public void setExpiration(LocalDateTime expiration) {
 		this.expiration = expiration;
 	}
 

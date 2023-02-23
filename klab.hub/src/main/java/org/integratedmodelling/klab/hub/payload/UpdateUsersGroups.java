@@ -1,20 +1,18 @@
 package org.integratedmodelling.klab.hub.payload;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
-
-import org.joda.time.DateTime;
 
 public class UpdateUsersGroups {
 	public Set<String> usernames;
 	
 	public Set<String> groupnames;
 	
-	public LocalDate expiration;
+	public LocalDateTime expiration;
 	
 	public UpdateUsersGroups() {};
 	
-	public UpdateUsersGroups(Set<String> usernames,Set<String> groupnames, LocalDate expiration) {
+	public UpdateUsersGroups(Set<String> usernames,Set<String> groupnames, LocalDateTime expiration) {
 		this.usernames = usernames;
 		this.groupnames = groupnames;
 		this.expiration = expiration;
@@ -28,7 +26,7 @@ public class UpdateUsersGroups {
 		return groupnames;
 	}
 
-	public LocalDate getExpiration() {
+	public LocalDateTime getExpiration() {
 		return expiration;
 	}
 	

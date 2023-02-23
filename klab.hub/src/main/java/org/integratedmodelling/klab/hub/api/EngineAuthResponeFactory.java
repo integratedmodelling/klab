@@ -2,8 +2,11 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.io.IOException;
 import java.security.NoSuchProviderException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Properties;
+
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -13,21 +16,19 @@ import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
-import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
+import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
+import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
+import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
-import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.integratedmodelling.klab.utils.Pair;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
 
 public class EngineAuthResponeFactory {
     
@@ -78,7 +79,7 @@ public class EngineAuthResponeFactory {
 				EngineAuthenticationResponse response = remoteEngine(profile, request.getCertificate(), config);
 				TokenAuthentication token = tokenService.createToken(profile.getUsername(), TokenType.auth);
 				response.setAuthentication(token.getTokenString());
-	    		profile.setLastConnection(DateTime.now());
+	    		profile.setLastConnection(LocalDateTime.now());
 	    		profileService.updateUserByProfile(profile);
 	    		return response;
 			}
@@ -95,10 +96,10 @@ public class EngineAuthResponeFactory {
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
 		
-		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
-                DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
+		LocalDateTime expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
 		
-		if(!expires.isAfter(DateTime.now().plusDays(30))) {
+		if(!expires.isAfter(LocalDateTime.now().plusDays(30))) {
 		    
 		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
 		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), (Pair<ExtendedInfo, Object>[])(new Pair[] {
@@ -112,7 +113,7 @@ public class EngineAuthResponeFactory {
 		    messages.add(msg);
 		}
 		
-		if (expires.isAfterNow()) {
+		if (expires.isAfter(LocalDateTime.now())) {
 			engineProperties.remove(KlabCertificate.KEY_EXPIRATION);
 	        cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
 	        engineProperties.remove(KlabCertificate.KEY_PARTNER_HUB);
@@ -120,9 +121,9 @@ public class EngineAuthResponeFactory {
 	        if(engineProperties.equals(cipherProperties)) {
 	        	EngineUser engine = remoteEngineUser(profile);
 	    		IdentityReference userIdentity = new IdentityReference(engine.getUsername(), engine.getEmailAddress(),
-	    				DateTime.now().toString());
+	    				LocalDateTime.now().toString());
 	    		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
-	    				DateTime.now().plusDays(90).toString(), engine.getId());
+	    				LocalDateTime.now().plusDays(90).toString(), engine.getId());
 	    		
 	    		ArrayList<GroupEntry> expired = profile.expiredGroupEntries();
 	    		ArrayList<GroupEntry> expiring = profile.expiringGroupEntries();
@@ -131,7 +132,7 @@ public class EngineAuthResponeFactory {
 	    		    expired.forEach(grp -> {
 	    		        messages.add(
 	    		                HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
-	    		                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+	    		                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExpiration()),
 	    		                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
 	                            })));
 	    		    });
@@ -141,7 +142,7 @@ public class EngineAuthResponeFactory {
 	                expiring.forEach(grp -> {
 	                    messages.add(
 	                            HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
-                                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+                                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExpiration()),
                                         new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
                                 })));
 	                 });
@@ -168,8 +169,8 @@ public class EngineAuthResponeFactory {
 
 	@SuppressWarnings("unchecked")
     private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request) {
-		DateTime now = DateTime.now();
-		DateTime tomorrow = now.plusDays(90);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime tomorrow = now.plusDays(90);
 		
 		ProfileResource profile = null;
 		try {
@@ -186,7 +187,7 @@ public class EngineAuthResponeFactory {
             expired.forEach(grp -> {
                 messages.add(
                         HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
-                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExpiration()),
                                 new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
                         })));
             });
@@ -196,7 +197,7 @@ public class EngineAuthResponeFactory {
             expiring.forEach(grp -> {
                 messages.add(
                         HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
-                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExpiration()),
                                 new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
                         })));
              });

@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.listeners;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.users.services.UserGroupEntryService;
@@ -20,7 +20,7 @@ public class NewUserEvent {
 	@EventListener
 	public void addGroupEntries(NewUserAdded event) {
 		User user = event.getUser();
-		LocalDate expires = LocalDate.now().plusDays(31);
+		LocalDateTime expires = LocalDateTime.now().plusDays(31);
 		service.addPrelimenaryUserGroups(user, expires);
 	}
 }

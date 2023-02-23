@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
 import java.util.Properties;
 
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.joda.time.DateTime;
 
 public class NodeProperties implements IProperties {
 	public static final int CERT_FILE_TTL_DAYS = 365/2;
@@ -18,7 +18,7 @@ public class NodeProperties implements IProperties {
 	}
 	
 	private void BouncyNodeProperties(MongoNode node, BouncyConfiguration config) {
-		DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS);
+		LocalDateTime expires = LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS);
 		this.properties = new Properties();
 		this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		this.properties.setProperty(KlabCertificate.KEY_NODENAME, node.getName());
@@ -34,7 +34,7 @@ public class NodeProperties implements IProperties {
 	}
 	
 	private void LegacyNodeProperties(MongoNode node, LegacyConfiguration config) {
-		DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS);
+	    LocalDateTime expires = LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS);
 		this.properties = new Properties();
 		this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		this.properties.setProperty(KlabCertificate.KEY_NODENAME, node.getName());

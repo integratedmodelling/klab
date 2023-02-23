@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.api;
 import java.io.IOException;
 import java.net.SocketException;
 import java.security.NoSuchProviderException;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -31,7 +32,6 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
-import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -114,8 +114,8 @@ public class NodeAuthResponeFactory {
 	}
 	
 	private NodeAuthenticationResponse local(NodeAuthenticationRequest request) {
-		DateTime now = DateTime.now();
-		DateTime tomorrow = now.plusDays(90);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime tomorrow = now.plusDays(90);
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
 		
 		List<MongoGroup> mongoGroups = groupRepository.findAll();

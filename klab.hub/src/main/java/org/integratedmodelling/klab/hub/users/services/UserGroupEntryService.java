@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.integratedmodelling.klab.hub.api.MongoGroup;
@@ -17,7 +17,7 @@ public interface UserGroupEntryService {
 
 	void removeUsersGroupsByNames(UpdateUsersGroups updateUserGroups);
 
-	void addPrelimenaryUserGroups(User user, LocalDate experiation);
+	void addPrelimenaryUserGroups(User user, LocalDateTime experiation);
 	
 	void deleteGroupFromUsers(String groupName);
 
