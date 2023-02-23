@@ -12,7 +12,7 @@ pipeline {
     parameters {
         string(name: 'BRANCH',
             defaultValue: '',
-            description :'Which branch should be used for the build?\n' + 
+            description :'Which branch should be used for the build?\n' +
             'Empty is the default value and will generate build on the latest commit'
         )
 
@@ -21,7 +21,7 @@ pipeline {
             description: 'Variable used for tagging the container images or generating ' +
             'a build based on a tagged commit.  Default is empty and the tag is determined ' +
             'by the most recent commit.'
-        )   
+        )
 
         string(name: 'MINIO_HOST',
             defaultValue: 'http://192.168.250.224:9000',
@@ -32,12 +32,12 @@ pipeline {
             defaultValue: 'bc42afcf-7037-4d23-a7cb-6c66b8a0aa45',
             description: 'Minio credentials used to be used by job'
         )
-            
+
         string(name: 'REGISTRY_CREDENTIALS',
             defaultValue: '83f9fb8b-e503-4566-9784-e80f2f2d7c64',
             description: 'Docker registry credentials used to be used by job'
-        ) 
-            
+        )
+
         string(
             name: 'GIT_CREDENTIALS',
             defaultValue: '2f30d924-29e5-4235-b61f-a0dbe2bb7783',
@@ -55,7 +55,7 @@ pipeline {
         ENGINE_CONTAINER = "engine-server-16"
         HUB_CONTAINER = "hub-server-16"
         NODE_CONTAINER = "node-server-16"
-        BASE_CONTAINER = "klab-base-16"
+        BASE_CONTAINER = "klab-base-16:bc344fa9a66e93edaa3a2b528a65e7efa2e55a6f"
         MAIN = "master"
         DEVELOP = "develop"
         PRODUCTS_GEN = "yes"
@@ -79,7 +79,7 @@ pipeline {
                     ]){ sh 'mc alias set minio $MINIO_HOST $ACCESSKEY $SECRETKEY' }
 
                 script {
-                    
+
 					if  (TAG.isEmpty() == false) {
 					    echo "Tag parameterize"
 					    sh "git checkout tags/${TAG} -b latest"
@@ -108,11 +108,11 @@ pipeline {
 					    } else {
 					        PRODUCTS_GEN = "no"
 					        echo "Other: ${BRANCH}"
-					    }    
+					    }
 					}
-					
+
               		env.SNAPSHOT = sh(
-                        returnStdout: true, 
+                        returnStdout: true,
                         script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate ' +
                                 '-Dexpression=project.version -q -DforceStdout ' +
                                 '--batch-mode -U -e -Dsurefire.useFile=false'
@@ -135,7 +135,7 @@ pipeline {
                         env.TAG = env.LATEST_TAG
                         PRODUCTS_GEN = "yes"
                     }
-                  	
+
                     env.BRANCH = BRANCH
                     currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
                     echo "${BRANCH} build with container tag: ${env.TAG} and products generations is ${PRODUCTS_GEN}"
@@ -143,7 +143,7 @@ pipeline {
 
             }
         }
-        
+
 
         stage ('Update Version.java') {
             steps {
@@ -232,5 +232,3 @@ def prepareKmodelersUpload(list, destination) {
         }
     }
 }
-
-
