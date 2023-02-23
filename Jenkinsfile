@@ -55,7 +55,7 @@ pipeline {
         ENGINE_CONTAINER = "engine-server-16"
         HUB_CONTAINER = "hub-server-16"
         NODE_CONTAINER = "node-server-16"
-        BASE_CONTAINER = "klab-base-16"
+        BASE_CONTAINER = "klab-base-16:bc344fa9a66e93edaa3a2b528a65e7efa2e55a6f"
         MAIN = "master"
         DEVELOP = "develop"
         PRODUCTS_GEN = "yes"
