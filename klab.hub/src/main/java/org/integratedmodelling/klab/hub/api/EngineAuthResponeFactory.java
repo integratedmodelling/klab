@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
+import org.integratedmodelling.klab.rest.HubNotificationMessage.Parameters;
 import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
@@ -101,9 +102,9 @@ public class EngineAuthResponeFactory {
 		if(!expires.isAfter(DateTime.now().plusDays(30))) {
 		    
 		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
-		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), (Pair<ExtendedInfo, Object>[])(new Pair[] {
+		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 		                    new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, expires)
-		                  }));
+		                  })));
 		    
 		            //EXPIRING_CERTIFICATE.get( "License set to expire on: " + expires.toString());
 //		    HubNotificationMessage msg = new HubNotificationMessage.
@@ -130,20 +131,20 @@ public class EngineAuthResponeFactory {
 	    		if(!expired.isEmpty()) {
 	    		    expired.forEach(grp -> {
 	    		        messages.add(
-	    		                HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
+	    		                HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 	    		                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
 	    		                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
-	                            })));
+	                            }))));
 	    		    });
 	    		}
 	    		
 	            if(!expiring.isEmpty()) {
 	                expiring.forEach(grp -> {
 	                    messages.add(
-	                            HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
+	                            HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
                                         new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
                                         new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
-                                })));
+                                }))));
 	                 });
 	            }
 	    		
@@ -184,21 +185,21 @@ public class EngineAuthResponeFactory {
         
         if(!expired.isEmpty()) {
             expired.forEach(grp -> {
-                messages.add(
-                        HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
-                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
-                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
-                        })));
+                HubNotificationMessage notification = HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
+                })));
+                messages.add(null);
             });
         }
         
         if(!expiring.isEmpty()) {
             expiring.forEach(grp -> {
                 messages.add(
-                        HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
+                        HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
                                 new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
                                 new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
-                        })));
+                        }))));
              });
         }
 		
