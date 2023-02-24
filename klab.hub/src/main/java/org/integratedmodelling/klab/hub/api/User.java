@@ -80,7 +80,7 @@ public class User extends IdentityModel implements UserDetails{
         deleted,
         expired,
         pendingActivation,
-        verified,
+        verified
     };
 
     // @Transient prevents the password from being stored in Mongo.
@@ -145,6 +145,10 @@ public class User extends IdentityModel implements UserDetails{
         return isRole(Role.ROLE_ADMINISTRATOR);
     }
 
+    public boolean isManager() {
+        return isRole(Role.ROLE_MANAGER);
+    }
+
     public boolean isRole(Role role) {
         return roles.contains(role);
     }
@@ -204,6 +208,10 @@ public class User extends IdentityModel implements UserDetails{
     
     public Set<Role> getRoles() {
     	return this.roles;
+    }
+    
+    public void removeRoles(Collection<Role> rolesToRemove) {
+    	this.roles.removeAll(rolesToRemove);
     }
     
     public void addGroupEntries(GroupEntry... groups) {
