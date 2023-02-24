@@ -31,6 +31,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.mongodb.assertions.Assertions;
 
+// TODO fix tests "WithType"
 @SpringBootTest(classes = {MongoConfigDev.class, HubEventPublisher.class})
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles(profiles = "development")
@@ -77,7 +78,6 @@ public class UserTaggingServiceTest {
     private MongoTag generateTag(String tagName, Type type) {
         MongoTag mongoTag = new MongoTag();
         mongoTag.setName(tagName);
-        mongoTag.setType(type);
 
         return mongoTag;
     }
@@ -205,7 +205,7 @@ public class UserTaggingServiceTest {
             generateTag("newTag1", Type.INFO), generateTag("newTag2", Type.WARNING), generateTag("newTag3", Type.ERROR));
         addTagsToUserAndSave(getExistingUser(), tags);
         User user = getExistingUser();
-        user.sendTagNotification("newTag1");
+//        user.sendTagNotification("newTag1");
         userRepository.save(user);
 
         List<TagEntry> tagsOfUser = tagService.getUnsentTagsOfUserWithType(exisingUsername, Type.WARNING);

@@ -4,14 +4,10 @@ import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
 
-import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 
 @Document(collection = "Tags")
 @TypeAlias("MongoTag")
@@ -22,14 +18,7 @@ public class MongoTag {
     @Indexed(unique = true)
     private String name;
 
-    @Enumerated(EnumType.STRING) // TODO remove -> will be at TagNotification
-    private HubNotificationMessage.Type type = HubNotificationMessage.Type.INFO;
-
     public MongoTag() {
-    }
-
-    public void setType(HubNotificationMessage.Type type) {
-        this.type = type;
     }
 
     private boolean isValidName(String name) {
@@ -49,10 +38,6 @@ public class MongoTag {
 
     public String getName() {
         return this.name;
-    }
-
-    public HubNotificationMessage.Type getType() {
-        return type;
     }
 
 }

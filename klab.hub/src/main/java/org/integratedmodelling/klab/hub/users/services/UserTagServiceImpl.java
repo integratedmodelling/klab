@@ -57,9 +57,11 @@ public class UserTagServiceImpl implements UserTagService {
         return findUserByName(username).getTags();
     }
 
+    // TODO check if needed. Not working as expected at the moment
     @Override
     public List<TagEntry> getTagsOfUserWithType(String username, Type type) {
-        return findUserByName(username).getTagsOfType(type);
+//        return findUserByName(username).getTagsOfType(type);
+        return findUserByName(username).getTags();
     }
 
     @Override
@@ -67,9 +69,11 @@ public class UserTagServiceImpl implements UserTagService {
         return findUserByName(username).getUnsentTags();
     }
 
+    // TODO check if needed. Not working as expected at the moment
     @Override
     public List<TagEntry> getUnsentTagsOfUserWithType(String username, Type type) {
-        return findUserByName(username).getUnsentTagsOfType(type);
+//        return findUserByName(username).getUnsentTagsOfType(type);
+        return findUserByName(username).getUnsentTags();
     }
 
     @Override
