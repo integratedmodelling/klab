@@ -68,7 +68,7 @@
 							<artifactId>groovy-eclipse-compiler</artifactId>
 							<version>3.7.0</version>
 						</dependency>
-						<!-- for 2.8.0-01 and later you must have an explicit dependency on 
+						<!-- for 2.8.0-01 and later you must have an explicit dependency on
 							groovy-eclipse-batch -->
 						<dependency>
 							<groupId>org.codehaus.groovy</groupId>
@@ -85,7 +85,7 @@
 		</pluginManagement>
 	</build>
 	<dependencies>
-		<!-- testing a possible GraphQL interface for the runtime system 
+		<!-- testing a possible GraphQL interface for the runtime system
 		<dependency>
 			<groupId>io.leangen.graphql</groupId>
 			<artifactId>spqr</artifactId>
@@ -112,7 +112,7 @@
 			<version>3.6.5</version>
 		</dependency>
 
-		<!-- Unirest, while redundant with Spring templates, removes a lot of pain 
+		<!-- Unirest, while redundant with Spring templates, removes a lot of pain
 			when doing quick REST interactions -->
 		<dependency>
 			<groupId>com.konghq</groupId>
@@ -164,7 +164,7 @@
 			</exclusions>
 		</dependency>
 
-		<!-- MapDB for various persistent caches. Simple, used it a lot, never 
+		<!-- MapDB for various persistent caches. Simple, used it a lot, never
 			a problem. -->
 		<dependency>
 			<groupId>org.mapdb</groupId>
@@ -413,7 +413,7 @@
 			<version>7.4.0</version>
 		</dependency>
 
-		<!-- JUNG for network analysis, generation and I/O. Visualization only 
+		<!-- JUNG for network analysis, generation and I/O. Visualization only
 			included in test scope. -->
 		<dependency>
 			<groupId>net.sf.jung</groupId>
@@ -463,9 +463,9 @@
 			<version>${spring.version}</version>
 		</dependency>
 
-		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
-			<artifactId>kotlin-stdlib</artifactId> <version>${kotlin.version}</version> 
-			</dependency> <dependency> <groupId>com.fasterxml.jackson.module</groupId> 
+		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId>
+			<artifactId>kotlin-stdlib</artifactId> <version>${kotlin.version}</version>
+			</dependency> <dependency> <groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-kotlin</artifactId> <version>2.9.5</version> </dependency> -->
 
 		<!-- JSON schema extraction -->
@@ -534,8 +534,8 @@
 			<artifactId>org.eclipse.xtext.util</artifactId>
 			<version>${xtextVersion}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing 
-			Used in compile scope to provide simple, reentrant parser injector for repeated 
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing
+			Used in compile scope to provide simple, reentrant parser injector for repeated
 			calls to declaration parser. -->
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
@@ -544,8 +544,8 @@
 		</dependency>
 
 
-		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
-			but Spring shouldn't be needed in the embedded engine and the API is better 
+		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver,
+			but Spring shouldn't be needed in the embedded engine and the API is better
 			here. -->
 		<!-- <dependency> -->
 		<!-- <groupId>org.reflections</groupId> -->
@@ -622,7 +622,7 @@
 		</dependency>
 
 		<!-- GEOTOOLS mess starts -->
-		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId> 
+		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-metadata</artifactId>
 			<version>${geotools.version}</version> </dependency> -->
 		<dependency>
 			<groupId>org.geotools</groupId>
@@ -686,11 +686,11 @@
 			<version>${geotools.version}</version>
 		</dependency>
 
-		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-netcdf</artifactId> 
+		<!-- <dependency> <groupId>org.geotools</groupId> <artifactId>gt-netcdf</artifactId>
 			<version>${geotools.version}</version> </dependency> -->
 		<!-- GEOTOOLS mess ends -->
 
-		<!-- Actor system (for the default runtime provider). Use 2_12 or the Json 
+		<!-- Actor system (for the default runtime provider). Use 2_12 or the Json
 			schema generator won't find scala.Serializable. -->
 		<dependency>
 			<groupId>com.typesafe.akka</groupId>
@@ -791,7 +791,7 @@
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>3.2</version>
+			<version>3.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-codec </groupId>
