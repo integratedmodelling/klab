@@ -22,7 +22,7 @@ public class MongoTag {
     @Indexed(unique = true)
     private String name;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // TODO remove -> will be at TagNotification
     private HubNotificationMessage.Type type = HubNotificationMessage.Type.INFO;
 
     public MongoTag() {
