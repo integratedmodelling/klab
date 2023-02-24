@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.Period;
 import java.util.regex.Pattern;
 
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,8 @@ public class MongoTag {
     @NotNull(message = "Name field cannot be null or blank")
     @Indexed(unique = true)
     private String name;
+
+    private Period timeToExpiration;
 
     public MongoTag() {
     }
@@ -38,6 +41,10 @@ public class MongoTag {
 
     public String getName() {
         return this.name;
+    }
+
+    public Period getTimeToExpiration() {
+        return timeToExpiration;
     }
 
 }

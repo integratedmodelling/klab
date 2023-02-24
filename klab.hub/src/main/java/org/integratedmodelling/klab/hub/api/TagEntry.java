@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
+
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 /**
@@ -11,19 +12,19 @@ public class TagEntry {
 
     @DBRef
     private MongoTag tag;
-    private DateTime creationTime;
-    private DateTime sentTime;
+    private LocalDateTime creationTime;
+    private LocalDateTime sentTime;
 
     public TagEntry(MongoTag tag) {
         this.tag = tag;
-        this.creationTime = DateTime.now();
+        this.creationTime = LocalDateTime.now();
     }
 
     public MongoTag getTag() {
         return tag;
     }
 
-    public void setSentTime(DateTime sentTime) {
+    public void setSentTime(LocalDateTime sentTime) {
         this.sentTime = sentTime;
     }
 
@@ -35,4 +36,22 @@ public class TagEntry {
         return this.sentTime != null;
     }
 
+    /**
+     * Checks if the tag has expired.
+     * @return true if the tag has not expired or there is no expiration time.
+     */
+    public boolean isExpired() {
+        if(tag.getTimeToExpiration() == null) {
+            return false;
+        }
+        return LocalDateTime.now().isBefore(getExpirationDate());
+    }
+
+    /**
+     * Gets the expiration time of the tag.
+     * @return expiration time
+     */
+    public LocalDateTime getExpirationDate() {
+        return creationTime.plus(tag.getTimeToExpiration());
+    }
 }
