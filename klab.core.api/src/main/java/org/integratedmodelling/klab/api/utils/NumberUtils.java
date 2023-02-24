@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.api.collections.impl.Pair;
-import org.integratedmodelling.klab.api.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.api.exceptions.KIllegalArgumentException;
 
 public class NumberUtils {
 
@@ -231,7 +231,7 @@ public class NumberUtils {
 			return bret;
 		}
 		
-		throw new KlabIllegalArgumentException("cannot turn array into PODs: type not handled");
+		throw new KIllegalArgumentException("cannot turn array into PODs: type not handled");
 	}
 
 	public static double[] doubleArrayFromString(String array, String splitRegex) {

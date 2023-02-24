@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.KConcept;
 
 /**
  * Map using inference to map its keys. Heavily cached for speed and capable of
@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
  *
  * @param <T>
  */
-public class ReasoningMap<T> implements Map<IConcept, T> {
+public class ReasoningMap<T> implements Map<KConcept, T> {
 
 	@Override
 	public int size() {
@@ -47,7 +47,7 @@ public class ReasoningMap<T> implements Map<IConcept, T> {
 	}
 
 	@Override
-	public T put(IConcept key, T value) {
+	public T put(KConcept key, T value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -59,7 +59,7 @@ public class ReasoningMap<T> implements Map<IConcept, T> {
 	}
 
 	@Override
-	public void putAll(Map<? extends IConcept, ? extends T> m) {
+	public void putAll(Map<? extends KConcept, ? extends T> m) {
 		// TODO Auto-generated method stub
 
 	}
@@ -71,7 +71,7 @@ public class ReasoningMap<T> implements Map<IConcept, T> {
 	}
 
 	@Override
-	public Set<IConcept> keySet() {
+	public Set<KConcept> keySet() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -83,7 +83,7 @@ public class ReasoningMap<T> implements Map<IConcept, T> {
 	}
 
 	@Override
-	public Set<Entry<IConcept, T>> entrySet() {
+	public Set<Entry<KConcept, T>> entrySet() {
 		// TODO Auto-generated method stub
 		return null;
 	}

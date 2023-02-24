@@ -1,25 +1,27 @@
 //package org.integratedmodelling.klab.services.reasoner.internal;
 //
 //import java.io.File;
+//import java.sql.Time;
 //import java.util.Collections;
 //import java.util.HashMap;
 //import java.util.Map;
 //import java.util.Set;
 //
 //import org.codehaus.groovy.transform.trait.Traits;
-//import org.integratedmodelling.kim.api.IKimConcept.Type;
 //import org.integratedmodelling.kim.api.IKimLoader;
 //import org.integratedmodelling.klab.Concepts;
 //import org.integratedmodelling.klab.Klab;
 //import org.integratedmodelling.klab.Logging;
-//import org.integratedmodelling.klab.api.knowledge.IConcept;
-//import org.integratedmodelling.klab.api.knowledge.IProject;
-//import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
-//import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+//import org.integratedmodelling.klab.api.exceptions.KException;
+//import org.integratedmodelling.klab.api.exceptions.KIllegalStateException;
+//import org.integratedmodelling.klab.api.knowledge.KConcept;
+//import org.integratedmodelling.klab.api.knowledge.SemanticType;
+//import org.integratedmodelling.klab.api.knowledge.observation.scale.ExtentDimension;
+//import org.integratedmodelling.klab.api.knowledge.observation.scale.time.KTime;
+//import org.integratedmodelling.klab.api.knowledge.organization.KProject;
 //import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-//import org.integratedmodelling.klab.exceptions.KlabException;
+//import org.integratedmodelling.klab.api.services.runtime.IChannel;
 //import org.integratedmodelling.klab.exceptions.KlabIOException;
-//import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 //import org.integratedmodelling.klab.owl.OWL;
 //
 ///**
@@ -32,64 +34,64 @@
 //public class CoreOntology extends AbstractWorkspace {
 //
 //	private boolean synced = false;
-//	private Map<Type, IConcept> worldviewCoreConcepts = Collections.synchronizedMap(new HashMap<>());
-//	private static Map<Type, String> coreConceptIds = Collections.synchronizedMap(new HashMap<>());
+//	private Map<SemanticType, KConcept> worldviewCoreConcepts = Collections.synchronizedMap(new HashMap<>());
+//	private static Map<SemanticType, String> coreConceptIds = Collections.synchronizedMap(new HashMap<>());
 //
-//	public static final String CORE_ONTOLOGY_NAME = "observation";
+//	public static final String CORE_ONTOLOGY_NAME = "odo-im";
 //
 //	static {
-//		coreConceptIds.put(Type.PROCESS, NS.CORE_PROCESS);
-//		coreConceptIds.put(Type.SUBJECT, NS.CORE_SUBJECT);
-//		coreConceptIds.put(Type.EVENT, NS.CORE_EVENT);
-//		coreConceptIds.put(Type.FUNCTIONAL, NS.CORE_FUNCTIONAL_RELATIONSHIP);
-//		coreConceptIds.put(Type.STRUCTURAL, NS.CORE_STRUCTURAL_RELATIONSHIP);
-//		coreConceptIds.put(Type.RELATIONSHIP, NS.CORE_RELATIONSHIP);
-//		coreConceptIds.put(Type.EXTENSIVE_PROPERTY, NS.CORE_EXTENSIVE_PHYSICAL_PROPERTY);
-//		coreConceptIds.put(Type.INTENSIVE_PROPERTY, NS.CORE_INTENSIVE_PHYSICAL_PROPERTY);
-//		coreConceptIds.put(Type.IDENTITY, NS.CORE_IDENTITY);
-//		coreConceptIds.put(Type.ATTRIBUTE, NS.CORE_ATTRIBUTE);
-//		coreConceptIds.put(Type.REALM, NS.CORE_REALM);
-//		coreConceptIds.put(Type.ORDERING, NS.CORE_ORDERING);
-//		coreConceptIds.put(Type.ROLE, NS.CORE_ROLE);
-//		coreConceptIds.put(Type.CONFIGURATION, NS.CORE_CONFIGURATION);
-//		coreConceptIds.put(Type.CLASS, NS.CORE_TYPE);
-//		coreConceptIds.put(Type.QUANTITY, NS.CORE_QUANTITY);
-//		coreConceptIds.put(Type.DOMAIN, NS.CORE_DOMAIN);
-//		coreConceptIds.put(Type.ENERGY, NS.CORE_ENERGY);
-//		coreConceptIds.put(Type.ENTROPY, NS.CORE_ENTROPY);
-//		coreConceptIds.put(Type.LENGTH, NS.CORE_LENGTH);
-//		coreConceptIds.put(Type.MASS, NS.CORE_MASS);
-//		coreConceptIds.put(Type.VOLUME, NS.CORE_VOLUME);
-//		coreConceptIds.put(Type.WEIGHT, NS.CORE_WEIGHT);
-//		coreConceptIds.put(Type.MONEY, NS.CORE_MONETARY_VALUE);
-//		coreConceptIds.put(Type.DURATION, NS.CORE_DURATION);
-//		coreConceptIds.put(Type.AREA, NS.CORE_AREA);
-//		coreConceptIds.put(Type.ACCELERATION, NS.CORE_ACCELERATION);
-//		coreConceptIds.put(Type.PRIORITY, NS.CORE_PRIORITY);
-//		coreConceptIds.put(Type.ELECTRIC_POTENTIAL, NS.CORE_ELECTRIC_POTENTIAL);
-//		coreConceptIds.put(Type.CHARGE, NS.CORE_CHARGE);
-//		coreConceptIds.put(Type.RESISTANCE, NS.CORE_RESISTANCE);
-//		coreConceptIds.put(Type.RESISTIVITY, NS.CORE_RESISTIVITY);
-//		coreConceptIds.put(Type.PRESSURE, NS.CORE_PRESSURE);
-//		coreConceptIds.put(Type.ANGLE, NS.CORE_ANGLE);
-//		coreConceptIds.put(Type.VELOCITY, NS.CORE_SPEED);
-//		coreConceptIds.put(Type.TEMPERATURE, NS.CORE_TEMPERATURE);
-//		coreConceptIds.put(Type.VISCOSITY, NS.CORE_VISCOSITY);
-//		coreConceptIds.put(Type.AGENT, NS.CORE_AGENT);
-//		coreConceptIds.put(Type.DELIBERATIVE, NS.CORE_DELIBERATIVE_AGENT);
-//		coreConceptIds.put(Type.INTERACTIVE, NS.CORE_INTERACTIVE_AGENT);
-//		coreConceptIds.put(Type.REACTIVE, NS.CORE_REACTIVE_AGENT);
-//		coreConceptIds.put(Type.UNCERTAINTY, NS.CORE_UNCERTAINTY);
-//		coreConceptIds.put(Type.PROBABILITY, NS.CORE_PROBABILITY);
-//		coreConceptIds.put(Type.PROPORTION, NS.CORE_PROPORTION);
-//		coreConceptIds.put(Type.NUMEROSITY, NS.CORE_COUNT);
-//		coreConceptIds.put(Type.DISTANCE, NS.CORE_DISTANCE);
-//		coreConceptIds.put(Type.RATIO, NS.CORE_RATIO);
-//		coreConceptIds.put(Type.VALUE, NS.CORE_VALUE);
-//		coreConceptIds.put(Type.CHANGE, NS.CORE_CHANGE);
-//		coreConceptIds.put(Type.OCCURRENCE, NS.CORE_OCCURRENCE);
-//		coreConceptIds.put(Type.PRESENCE, NS.CORE_PRESENCE);
-//		coreConceptIds.put(Type.EXTENT, NS.CORE_EXTENT);
+//		coreConceptIds.put(SemanticType.PROCESS, NS.CORE_PROCESS);
+//		coreConceptIds.put(SemanticType.SUBJECT, NS.CORE_SUBJECT);
+//		coreConceptIds.put(SemanticType.EVENT, NS.CORE_EVENT);
+//		coreConceptIds.put(SemanticType.FUNCTIONAL, NS.CORE_FUNCTIONAL_RELATIONSHIP);
+//		coreConceptIds.put(SemanticType.STRUCTURAL, NS.CORE_STRUCTURAL_RELATIONSHIP);
+//		coreConceptIds.put(SemanticType.RELATIONSHIP, NS.CORE_RELATIONSHIP);
+//		coreConceptIds.put(SemanticType.EXTENSIVE_PROPERTY, NS.CORE_EXTENSIVE_PHYSICAL_PROPERTY);
+//		coreConceptIds.put(SemanticType.INTENSIVE_PROPERTY, NS.CORE_INTENSIVE_PHYSICAL_PROPERTY);
+//		coreConceptIds.put(SemanticType.IDENTITY, NS.CORE_IDENTITY);
+//		coreConceptIds.put(SemanticType.ATTRIBUTE, NS.CORE_ATTRIBUTE);
+//		coreConceptIds.put(SemanticType.REALM, NS.CORE_REALM);
+//		coreConceptIds.put(SemanticType.ORDERING, NS.CORE_ORDERING);
+//		coreConceptIds.put(SemanticType.ROLE, NS.CORE_ROLE);
+//		coreConceptIds.put(SemanticType.CONFIGURATION, NS.CORE_CONFIGURATION);
+//		coreConceptIds.put(SemanticType.CLASS, NS.CORE_SemanticType);
+//		coreConceptIds.put(SemanticType.QUANTITY, NS.CORE_QUANTITY);
+//		coreConceptIds.put(SemanticType.DOMAIN, NS.CORE_DOMAIN);
+//		coreConceptIds.put(SemanticType.ENERGY, NS.CORE_ENERGY);
+//		coreConceptIds.put(SemanticType.ENTROPY, NS.CORE_ENTROPY);
+//		coreConceptIds.put(SemanticType.LENGTH, NS.CORE_LENGTH);
+//		coreConceptIds.put(SemanticType.MASS, NS.CORE_MASS);
+//		coreConceptIds.put(SemanticType.VOLUME, NS.CORE_VOLUME);
+//		coreConceptIds.put(SemanticType.WEIGHT, NS.CORE_WEIGHT);
+//		coreConceptIds.put(SemanticType.MONEY, NS.CORE_MONETARY_VALUE);
+//		coreConceptIds.put(SemanticType.DURATION, NS.CORE_DURATION);
+//		coreConceptIds.put(SemanticType.AREA, NS.CORE_AREA);
+//		coreConceptIds.put(SemanticType.ACCELERATION, NS.CORE_ACCELERATION);
+//		coreConceptIds.put(SemanticType.PRIORITY, NS.CORE_PRIORITY);
+//		coreConceptIds.put(SemanticType.ELECTRIC_POTENTIAL, NS.CORE_ELECTRIC_POTENTIAL);
+//		coreConceptIds.put(SemanticType.CHARGE, NS.CORE_CHARGE);
+//		coreConceptIds.put(SemanticType.RESISTANCE, NS.CORE_RESISTANCE);
+//		coreConceptIds.put(SemanticType.RESISTIVITY, NS.CORE_RESISTIVITY);
+//		coreConceptIds.put(SemanticType.PRESSURE, NS.CORE_PRESSURE);
+//		coreConceptIds.put(SemanticType.ANGLE, NS.CORE_ANGLE);
+//		coreConceptIds.put(SemanticType.VELOCITY, NS.CORE_SPEED);
+//		coreConceptIds.put(SemanticType.TEMPERATURE, NS.CORE_TEMPERATURE);
+//		coreConceptIds.put(SemanticType.VISCOSITY, NS.CORE_VISCOSITY);
+//		coreConceptIds.put(SemanticType.AGENT, NS.CORE_AGENT);
+//		coreConceptIds.put(SemanticType.DELIBERATIVE, NS.CORE_DELIBERATIVE_AGENT);
+//		coreConceptIds.put(SemanticType.INTERACTIVE, NS.CORE_INTERACTIVE_AGENT);
+//		coreConceptIds.put(SemanticType.REACTIVE, NS.CORE_REACTIVE_AGENT);
+//		coreConceptIds.put(SemanticType.UNCERTAINTY, NS.CORE_UNCERTAINTY);
+//		coreConceptIds.put(SemanticType.PROBABILITY, NS.CORE_PROBABILITY);
+//		coreConceptIds.put(SemanticType.PROPORTION, NS.CORE_PROPORTION);
+//		coreConceptIds.put(SemanticType.NUMEROSITY, NS.CORE_COUNT);
+//		coreConceptIds.put(SemanticType.DISTANCE, NS.CORE_DISTANCE);
+//		coreConceptIds.put(SemanticType.RATIO, NS.CORE_RATIO);
+//		coreConceptIds.put(SemanticType.VALUE, NS.CORE_VALUE);
+//		coreConceptIds.put(SemanticType.CHANGE, NS.CORE_CHANGE);
+//		coreConceptIds.put(SemanticType.OCCURRENCE, NS.CORE_OCCURRENCE);
+//		coreConceptIds.put(SemanticType.PRESENCE, NS.CORE_PRESENCE);
+//		coreConceptIds.put(SemanticType.EXTENT, NS.CORE_EXTENT);
 //	}
 //
 //	public static interface NS {
@@ -347,7 +349,7 @@
 //		super("core", directory);
 //	}
 //
-//	public void registerCoreConcept(String coreConcept, IConcept worldviewPeer) {
+//	public void registerCoreConcept(String coreConcept, KConcept worldviewPeer) {
 //		/*
 //		 * TODO must handle the specialized concepts so that they inherit from the
 //		 * redefined ones, too. E.g. when the AGENT handler is received, it should
@@ -378,7 +380,7 @@
 //		 * DO NOT REMOVE this test. Removing it will cause seemingly completely
 //		 * unrelated bugs that will take a very long time to figure out.
 //		 */
-//		IConcept dummy = Concepts.INSTANCE.getConcept(NS.OBSERVATION);
+//		KConcept dummy = Concepts.INSTANCE.getConcept(NS.OBSERVATION);
 //		if (dummy == null) {
 //			throw new KlabIOException("core knowledge: can't find known concepts, ontologies are probably corrupted");
 //		}
@@ -409,112 +411,112 @@
 //		return ret;
 //	}
 //
-//	public Type getRepresentativeCoreType(Set<Type> type) {
+//	public SemanticType getRepresentativeCoreSemanticType(Set<SemanticType> SemanticType) {
 //
-//		Type ret = null;
+//		SemanticType ret = null;
 //
 //		/*
 //		 * FIXME can be made faster using a mask and a switch, although the specialized
 //		 * concepts still require a bit of extra logic.
 //		 */
 //
-//		if (type.contains(Type.PROCESS)) {
-//			ret = Type.PROCESS;
-//		} else if (type.contains(Type.SUBJECT)) {
-//			ret = Type.SUBJECT;
-//		} else if (type.contains(Type.EVENT)) {
-//			ret = Type.EVENT;
-//		} else if (type.contains(Type.RELATIONSHIP)) {
-//			ret = Type.RELATIONSHIP;
-//		} else /* if (type.contains(Type.TRAIT)) { */
-//		if (type.contains(Type.IDENTITY)) {
-//			ret = Type.IDENTITY;
-//		} else if (type.contains(Type.ATTRIBUTE)) {
-//			ret = Type.ATTRIBUTE;
-//		} else if (type.contains(Type.REALM)) {
-//			ret = Type.REALM;
-//		} else if (type.contains(Type.ORDERING)) {
-//			ret = Type.ORDERING;
-//		} else if (type.contains(Type.ROLE)) {
-//			ret = Type.ROLE;
-//		} else if (type.contains(Type.CONFIGURATION)) {
-//			ret = Type.CONFIGURATION;
-//		} else if (type.contains(Type.CLASS)) {
-//			ret = Type.CLASS;
-//		} else if (type.contains(Type.QUANTITY)) {
-//			ret = Type.QUANTITY;
-//		} else if (type.contains(Type.DOMAIN)) {
-//			ret = Type.DOMAIN;
-//		} else if (type.contains(Type.ENERGY)) {
-//			ret = Type.ENERGY;
-//		} else if (type.contains(Type.ENTROPY)) {
-//			ret = Type.ENTROPY;
-//		} else if (type.contains(Type.LENGTH)) {
-//			ret = Type.LENGTH;
-//		} else if (type.contains(Type.MASS)) {
-//			ret = Type.LENGTH;
-//		} else if (type.contains(Type.VOLUME)) {
-//			ret = Type.VOLUME;
-//		} else if (type.contains(Type.WEIGHT)) {
-//			ret = Type.WEIGHT;
-//		} else if (type.contains(Type.MONEY)) {
-//			ret = Type.MONEY;
-//		} else if (type.contains(Type.DURATION)) {
-//			ret = Type.DURATION;
-//		} else if (type.contains(Type.AREA)) {
-//			ret = Type.AREA;
-//		} else if (type.contains(Type.ACCELERATION)) {
-//			ret = Type.ACCELERATION;
-//		} else if (type.contains(Type.PRIORITY)) {
-//			ret = Type.PRIORITY;
-//		} else if (type.contains(Type.ELECTRIC_POTENTIAL)) {
-//			ret = Type.ELECTRIC_POTENTIAL;
-//		} else if (type.contains(Type.CHARGE)) {
-//			ret = Type.CHARGE;
-//		} else if (type.contains(Type.RESISTANCE)) {
-//			ret = Type.RESISTANCE;
-//		} else if (type.contains(Type.RESISTIVITY)) {
-//			ret = Type.RESISTIVITY;
-//		} else if (type.contains(Type.PRESSURE)) {
-//			ret = Type.PRESSURE;
-//		} else if (type.contains(Type.ANGLE)) {
-//			ret = Type.ANGLE;
-//		} else if (type.contains(Type.VELOCITY)) {
-//			ret = Type.VELOCITY;
-//		} else if (type.contains(Type.TEMPERATURE)) {
-//			ret = Type.TEMPERATURE;
-//		} else if (type.contains(Type.VISCOSITY)) {
-//			ret = Type.VISCOSITY;
-//		} else if (type.contains(Type.AGENT)) {
-//			ret = Type.AGENT;
-//		} else if (type.contains(Type.UNCERTAINTY)) {
-//			ret = Type.UNCERTAINTY;
-//		} else if (type.contains(Type.PROBABILITY)) {
-//			ret = Type.PROBABILITY;
-//		} else if (type.contains(Type.PROPORTION)) {
-//			ret = Type.PROPORTION;
-//		} else if (type.contains(Type.NUMEROSITY)) {
-//			ret = Type.NUMEROSITY;
-//		} else if (type.contains(Type.DISTANCE)) {
-//			ret = Type.DISTANCE;
-//		} else if (type.contains(Type.RATIO)) {
-//			ret = Type.RATIO;
-//		} else if (type.contains(Type.VALUE)) {
-//			ret = Type.VALUE;
-//		} else if (type.contains(Type.MONETARY_VALUE)) {
-//            ret = Type.MONETARY_VALUE;
-//        } else if (type.contains(Type.OCCURRENCE)) {
-//			ret = Type.OCCURRENCE;
-//		} else if (type.contains(Type.PRESENCE)) {
-//			ret = Type.PRESENCE;
-//		} else if (type.contains(Type.EXTENT)) {
-//			ret = Type.EXTENT;
+//		if (SemanticType.contains(SemanticType.PROCESS)) {
+//			ret = SemanticType.PROCESS;
+//		} else if (SemanticType.contains(SemanticType.SUBJECT)) {
+//			ret = SemanticType.SUBJECT;
+//		} else if (SemanticType.contains(SemanticType.EVENT)) {
+//			ret = SemanticType.EVENT;
+//		} else if (SemanticType.contains(SemanticType.RELATIONSHIP)) {
+//			ret = SemanticType.RELATIONSHIP;
+//		} else /* if (SemanticType.contains(SemanticType.TRAIT)) { */
+//		if (SemanticType.contains(SemanticType.IDENTITY)) {
+//			ret = SemanticType.IDENTITY;
+//		} else if (SemanticType.contains(SemanticType.ATTRIBUTE)) {
+//			ret = SemanticType.ATTRIBUTE;
+//		} else if (SemanticType.contains(SemanticType.REALM)) {
+//			ret = SemanticType.REALM;
+//		} else if (SemanticType.contains(SemanticType.ORDERING)) {
+//			ret = SemanticType.ORDERING;
+//		} else if (SemanticType.contains(SemanticType.ROLE)) {
+//			ret = SemanticType.ROLE;
+//		} else if (SemanticType.contains(SemanticType.CONFIGURATION)) {
+//			ret = SemanticType.CONFIGURATION;
+//		} else if (SemanticType.contains(SemanticType.CLASS)) {
+//			ret = SemanticType.CLASS;
+//		} else if (SemanticType.contains(SemanticType.QUANTITY)) {
+//			ret = SemanticType.QUANTITY;
+//		} else if (SemanticType.contains(SemanticType.DOMAIN)) {
+//			ret = SemanticType.DOMAIN;
+//		} else if (SemanticType.contains(SemanticType.ENERGY)) {
+//			ret = SemanticType.ENERGY;
+//		} else if (SemanticType.contains(SemanticType.ENTROPY)) {
+//			ret = SemanticType.ENTROPY;
+//		} else if (SemanticType.contains(SemanticType.LENGTH)) {
+//			ret = SemanticType.LENGTH;
+//		} else if (SemanticType.contains(SemanticType.MASS)) {
+//			ret = SemanticType.LENGTH;
+//		} else if (SemanticType.contains(SemanticType.VOLUME)) {
+//			ret = SemanticType.VOLUME;
+//		} else if (SemanticType.contains(SemanticType.WEIGHT)) {
+//			ret = SemanticType.WEIGHT;
+//		} else if (SemanticType.contains(SemanticType.MONEY)) {
+//			ret = SemanticType.MONEY;
+//		} else if (SemanticType.contains(SemanticType.DURATION)) {
+//			ret = SemanticType.DURATION;
+//		} else if (SemanticType.contains(SemanticType.AREA)) {
+//			ret = SemanticType.AREA;
+//		} else if (SemanticType.contains(SemanticType.ACCELERATION)) {
+//			ret = SemanticType.ACCELERATION;
+//		} else if (SemanticType.contains(SemanticType.PRIORITY)) {
+//			ret = SemanticType.PRIORITY;
+//		} else if (SemanticType.contains(SemanticType.ELECTRIC_POTENTIAL)) {
+//			ret = SemanticType.ELECTRIC_POTENTIAL;
+//		} else if (SemanticType.contains(SemanticType.CHARGE)) {
+//			ret = SemanticType.CHARGE;
+//		} else if (SemanticType.contains(SemanticType.RESISTANCE)) {
+//			ret = SemanticType.RESISTANCE;
+//		} else if (SemanticType.contains(SemanticType.RESISTIVITY)) {
+//			ret = SemanticType.RESISTIVITY;
+//		} else if (SemanticType.contains(SemanticType.PRESSURE)) {
+//			ret = SemanticType.PRESSURE;
+//		} else if (SemanticType.contains(SemanticType.ANGLE)) {
+//			ret = SemanticType.ANGLE;
+//		} else if (SemanticType.contains(SemanticType.VELOCITY)) {
+//			ret = SemanticType.VELOCITY;
+//		} else if (SemanticType.contains(SemanticType.TEMPERATURE)) {
+//			ret = SemanticType.TEMPERATURE;
+//		} else if (SemanticType.contains(SemanticType.VISCOSITY)) {
+//			ret = SemanticType.VISCOSITY;
+//		} else if (SemanticType.contains(SemanticType.AGENT)) {
+//			ret = SemanticType.AGENT;
+//		} else if (SemanticType.contains(SemanticType.UNCERTAINTY)) {
+//			ret = SemanticType.UNCERTAINTY;
+//		} else if (SemanticType.contains(SemanticType.PROBABILITY)) {
+//			ret = SemanticType.PROBABILITY;
+//		} else if (SemanticType.contains(SemanticType.PROPORTION)) {
+//			ret = SemanticType.PROPORTION;
+//		} else if (SemanticType.contains(SemanticType.NUMEROSITY)) {
+//			ret = SemanticType.NUMEROSITY;
+//		} else if (SemanticType.contains(SemanticType.DISTANCE)) {
+//			ret = SemanticType.DISTANCE;
+//		} else if (SemanticType.contains(SemanticType.RATIO)) {
+//			ret = SemanticType.RATIO;
+//		} else if (SemanticType.contains(SemanticType.VALUE)) {
+//			ret = SemanticType.VALUE;
+//		} else if (SemanticType.contains(SemanticType.MONETARY_VALUE)) {
+//            ret = SemanticType.MONETARY_VALUE;
+//        } else if (SemanticType.contains(SemanticType.OCCURRENCE)) {
+//			ret = SemanticType.OCCURRENCE;
+//		} else if (SemanticType.contains(SemanticType.PRESENCE)) {
+//			ret = SemanticType.PRESENCE;
+//		} else if (SemanticType.contains(SemanticType.EXTENT)) {
+//			ret = SemanticType.EXTENT;
 //		}
 //		// THESE COME AFTER ALL THE POSSIBLE SUBCLASSES
-//		else if (type.contains(Type.EXTENSIVE_PROPERTY)) {
-//			ret = Type.EXTENSIVE_PROPERTY;
-//		} else if (type.contains(Type.INTENSIVE_PROPERTY)) {
-//			ret = Type.INTENSIVE_PROPERTY;
+//		else if (SemanticType.contains(SemanticType.EXTENSIVE_PROPERTY)) {
+//			ret = SemanticType.EXTENSIVE_PROPERTY;
+//		} else if (SemanticType.contains(SemanticType.INTENSIVE_PROPERTY)) {
+//			ret = SemanticType.INTENSIVE_PROPERTY;
 //		} /*
 //			 * else if (type.contains(Type.ASSESSMENT)) { ret = Type.ASSESSMENT; }
 //			 */
@@ -525,21 +527,21 @@
 //	public String importOntology(String url, String prefix) {
 //		try {
 //			return OWL.INSTANCE.importExternal(url, prefix, Klab.INSTANCE.getRootMonitor());
-//		} catch (KlabException e) {
+//		} catch (KException e) {
 //			return null;
 //		}
 //	}
 //
 //	@Override
-//	public IProject createProject(String projectId, IMonitor monitor) {
+//	public KProject createProject(String projectId, IChannel monitor) {
 //		throw new IllegalStateException("The core ontology space is read-only");
 //	}
 //
-//	public void setAsCoreType(Concept concept) {
+//	public void setAsCoreType(IConcept concept) {
 //		worldviewCoreConcepts.put(getRepresentativeCoreType(concept.getTypeSet()), concept);
 //	}
 //
-//	public IConcept alignCoreInheritance(IConcept concept) {
+//	public KConcept alignCoreInheritance(KConcept concept) {
 //		// if (concept.is(IKimConcept.Type.RELATIONSHIP)) {
 //		// // parent of core relationship depends on functional/structural nature
 //		// if (concept.is(IKimConcept.Type.FUNCTIONAL) ||
@@ -564,8 +566,8 @@
 //	 * @param concept
 //	 * @return
 //	 */
-//	public ExtentDimension getSpatialNature(IConcept concept) {
-//		for (IConcept identity : Traits.INSTANCE.getIdentities(concept)) {
+//	public ExtentDimension getSpatialNature(KConcept concept) {
+//		for (KConcept identity : Traits.INSTANCE.getIdentities(concept)) {
 //			if (identity.is(Concepts.c(NS.SPATIAL_IDENTITY))) {
 //				if (identity.is(Concepts.c(NS.AREAL_IDENTITY))) {
 //					return ExtentDimension.AREAL;
@@ -593,19 +595,19 @@
 //	 * @param concept
 //	 * @return
 //	 */
-//	public ITime.Resolution getTemporalNature(IConcept concept) {
-//		for (IConcept identity : Traits.INSTANCE.getIdentities(concept)) {
+//	public KTime.Resolution getTemporalNature(KConcept concept) {
+//		for (KConcept identity : Traits.INSTANCE.getIdentities(concept)) {
 //			if (identity.is(Concepts.c(NS.TEMPORAL_IDENTITY))) {
 //				if (identity.is(Concepts.c(NS.YEARLY_IDENTITY))) {
-//					return Time.resolution(1, ITime.Resolution.Type.YEAR);
+//					return Time.resolution(1, KTime.Resolution.Type.YEAR);
 //				} else if (identity.is(Concepts.c(NS.HOURLY_IDENTITY))) {
-//					return Time.resolution(1, ITime.Resolution.Type.HOUR);
+//					return Time.resolution(1, KTime.Resolution.Type.HOUR);
 //				} else if (identity.is(Concepts.c(NS.WEEKLY_IDENTITY))) {
-//					return Time.resolution(1, ITime.Resolution.Type.WEEK);
+//					return Time.resolution(1, KTime.Resolution.Type.WEEK);
 //				} else if (identity.is(Concepts.c(NS.MONTHLY_IDENTITY))) {
-//					return Time.resolution(1, ITime.Resolution.Type.MONTH);
+//					return Time.resolution(1, KTime.Resolution.Type.MONTH);
 //				} else if (identity.is(Concepts.c(NS.DAILY_IDENTITY))) {
-//					return Time.resolution(1, ITime.Resolution.Type.DAY);
+//					return Time.resolution(1, KTime.Resolution.Type.DAY);
 //				}
 //			}
 //		}
@@ -613,8 +615,8 @@
 //	}
 //
 //    @Override
-//    public IProject loadProject(String projectId, IMonitor monitor) {
-//        throw new KlabIllegalStateException("the worldview cannot load projects on demand");
+//    public KProject loadProject(String projectId, IMonitor monitor) {
+//        throw new KIllegalStateException("the worldview cannot load projects on demand");
 //    }
 //
 //}

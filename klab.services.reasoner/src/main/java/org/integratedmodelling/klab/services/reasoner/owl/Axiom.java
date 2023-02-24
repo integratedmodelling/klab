@@ -29,8 +29,9 @@ package org.integratedmodelling.klab.services.reasoner.owl;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.api.knowledge.IAxiom;
+
+import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.services.reasoner.api.IAxiom;
 
 /**
  * Just a holder for axiom information. Because axioms are basically just syntax, we provide an implementation
@@ -43,7 +44,7 @@ public class Axiom implements IAxiom {
 
     private String   _type;
     private Object[] _args;
-    Set<Type> conceptType;
+    Set<SemanticType> conceptType;
     
     /**
      * Create a class assertion. The option integer can be used to store additional flags for the
@@ -54,7 +55,7 @@ public class Axiom implements IAxiom {
      * @param type 
      * @return class assertion
      */
-    static public IAxiom ClassAssertion(String conceptId, Set<Type> type) {
+    static public IAxiom ClassAssertion(String conceptId, Set<SemanticType> type) {
         Axiom ret = new Axiom(CLASS_ASSERTION, conceptId);
         ret.conceptType = type;
         return ret;

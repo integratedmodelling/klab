@@ -17,25 +17,24 @@ package org.integratedmodelling.klab.data;
 
 import java.util.Map;
 
-import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.api.collections.KParameters;
+import org.integratedmodelling.klab.api.collections.impl.Parameters;
+import org.integratedmodelling.klab.api.data.KMetadata;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class Metadata.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class Metadata extends Parameters<String> implements IMetadata {
+public class Metadata extends Parameters<String> implements KMetadata {
 
   /**
    * Instantiates a new metadata.
    *
    * @param metadata the metadata
    */
-  public Metadata(IParameters<String> metadata) {
+  public Metadata(KParameters<String> metadata) {
     putAll(metadata);
   }
   

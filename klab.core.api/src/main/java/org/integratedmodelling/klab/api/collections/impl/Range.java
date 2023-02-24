@@ -3,13 +3,13 @@ package org.integratedmodelling.klab.api.collections.impl;
 import java.util.Date;
 import java.util.List;
 
-import org.integratedmodelling.klab.api.data.mediation.IValueMediator;
-import org.integratedmodelling.klab.api.geometry.IGeometry;
-import org.integratedmodelling.klab.api.geometry.ILocator;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.observation.scale.time.ITimeInstant;
+import org.integratedmodelling.klab.api.data.mediation.KValueMediator;
+import org.integratedmodelling.klab.api.geometry.KGeometry;
+import org.integratedmodelling.klab.api.geometry.KLocator;
+import org.integratedmodelling.klab.api.knowledge.KObservable;
+import org.integratedmodelling.klab.api.knowledge.observation.scale.time.KTimeInstant;
 
-public class Range implements IValueMediator {
+public class Range implements KValueMediator {
 
 	double lowerBound = Double.NEGATIVE_INFINITY;
 	double upperBound = Double.POSITIVE_INFINITY;
@@ -336,12 +336,12 @@ public class Range implements IValueMediator {
 	}
 
 	@Override
-	public boolean isCompatible(IValueMediator other) {
+	public boolean isCompatible(KValueMediator other) {
 		return other instanceof Range && isBounded() && ((Range) other).isBounded();
 	}
 
 	@Override
-	public Number convert(Number d, IValueMediator other) {
+	public Number convert(Number d, KValueMediator other) {
 
 		if (!isBounded()) {
 			throw new IllegalArgumentException(
@@ -414,8 +414,8 @@ public class Range implements IValueMediator {
 		if (!leftInfinite) {
 			if (from instanceof Number) {
 				a = ((Number) from).doubleValue();
-			} else if (from instanceof ITimeInstant) {
-				a = ((ITimeInstant) from).getMilliseconds();
+			} else if (from instanceof KTimeInstant) {
+				a = ((KTimeInstant) from).getMilliseconds();
 			} else if (from instanceof Date) {
 				a = ((Date) from).getTime();
 			} else {
@@ -425,8 +425,8 @@ public class Range implements IValueMediator {
 		if (!rightInfinite) {
 			if (to instanceof Number) {
 				b = ((Number) to).doubleValue();
-			} else if (to instanceof ITimeInstant) {
-				b = ((ITimeInstant) to).getMilliseconds();
+			} else if (to instanceof KTimeInstant) {
+				b = ((KTimeInstant) to).getMilliseconds();
 			} else if (to instanceof Date) {
 				b = ((Date) to).getTime();
 			} else {
@@ -689,7 +689,7 @@ public class Range implements IValueMediator {
 	}
 
 	@Override
-	public IValueMediator contextualize(IObservable observable, IGeometry scale) {
+	public KValueMediator contextualize(KObservable observable, KGeometry scale) {
 		return this;
 	}
 
@@ -701,7 +701,7 @@ public class Range implements IValueMediator {
 	}
 
     @Override
-    public Number convert(Number value, ILocator locator) {
+    public Number convert(Number value, KLocator locator) {
         // TODO Auto-generated method stub
         return null;
     }

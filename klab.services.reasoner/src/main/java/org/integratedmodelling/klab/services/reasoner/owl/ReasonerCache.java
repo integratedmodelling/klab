@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.services.reasoner.owl;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.KConcept;
 
 /**
  * Simple cache for is() operations to minimize the use of the reasoner.
@@ -19,8 +19,8 @@ public class ReasonerCache {
 		cache.set(new HashMap<>());
 	}
 	
-	public boolean is(IConcept a, IConcept b) {
-		String desc = a.getDefinition() + "|" + b.getDefinition();
+	public boolean is(KConcept a, KConcept b) {
+		String desc = a.getUrn() + "|" + b.getUrn();
 		Boolean ret = cache.get().get(desc);
 		if (ret == null) {
 			ret = a.is(b);

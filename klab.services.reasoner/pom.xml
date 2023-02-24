@@ -24,15 +24,5 @@
 			<artifactId>klab.services.core</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.kim</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.klab.api</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
   </dependencies>
 </project>

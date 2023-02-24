@@ -22,7 +22,7 @@ package org.integratedmodelling.klab.api.exceptions;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class KlabValidationException extends KlabException {
+public class KlabValidationException extends KException {
 
     private static final long serialVersionUID = 461213337593957416L;
 

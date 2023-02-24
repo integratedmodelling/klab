@@ -11,7 +11,7 @@ import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.integratedmodelling.klab.api.collections.IParameters;
+import org.integratedmodelling.klab.api.collections.KParameters;
 //import org.integratedmodelling.klab.api.data.TemplateValue;
 import org.integratedmodelling.klab.api.utils.Utils;
 
@@ -23,11 +23,11 @@ import org.integratedmodelling.klab.api.utils.Utils;
  * @author ferdinando.villa
  *
  */
-public class Parameters<T> implements IParameters<T> {
+public class Parameters<T> implements KParameters<T> {
 
     private Map<T, Object> delegate;
     private List<T> unnamedKeys = new ArrayList<>();
-    private IParameters<String> templateVariables = null;
+    private KParameters<String> templateVariables = null;
 
     public Parameters(Map<T, Object> delegate) {
         this.delegate = delegate == null ? new LinkedHashMap<>() : delegate;
@@ -389,17 +389,17 @@ public class Parameters<T> implements IParameters<T> {
         return ret;
     }
 
-    public IParameters<T> with(IParameters<String> state) {
+    public KParameters<T> with(KParameters<String> state) {
         if (state != null && !state.isEmpty()) {
             Parameters<T> ret = new Parameters(this.delegate, this.unnamedKeys);
             ret.templateVariables = state;
             return ret;
         }
-        return (IParameters<T>) this;
+        return (KParameters<T>) this;
     }
 
     @Override
-    public IParameters<String> getTemplateVariables() {
+    public KParameters<String> getTemplateVariables() {
         return this.templateVariables;
     }
 

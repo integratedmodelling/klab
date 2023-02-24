@@ -22,7 +22,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.URL;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
+
+import org.integratedmodelling.klab.api.exceptions.KIOException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -146,7 +147,7 @@ public class NetUtilities {
             ret = sb.toString();
 
         } catch (Exception e) {
-            throw new KlabIOException(e);
+            throw new KIOException(e);
         }
 
         return ret;

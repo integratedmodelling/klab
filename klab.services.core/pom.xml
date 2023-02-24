@@ -1,15 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.integratedmodelling</groupId>
-    <artifactId>klab</artifactId>
-    <version>0.11.0-SNAPSHOT</version>
-  </parent>
-  <artifactId>klab.services.core</artifactId>
-  <name>k.LAB services core</name>
-  <description>Core functionalities needed by all engine services</description>
-  <dependencies>
-  		<dependency>
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.integratedmodelling</groupId>
+		<artifactId>klab</artifactId>
+		<version>0.11.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>klab.services.core</artifactId>
+	<name>k.LAB services core</name>
+	<description>Core functionalities needed by all engine services</description>
+	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
+		<dependency>
+			<groupId>com.google.protobuf</groupId>
+			<artifactId>protobuf-java</artifactId>
+			<version>3.20.0</version>
+		</dependency>
+		<dependency>
 			<groupId>org.codehaus.groovy</groupId>
 			<artifactId>groovy</artifactId>
 			<!-- <version>2.5.0-beta-2</version> -->
@@ -18,19 +24,9 @@
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.authentication</artifactId>
+			<artifactId>klab.core.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.kim</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>org.integratedmodelling.klab.api</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-  </dependencies>
-  
+	</dependencies>
+
 </project>

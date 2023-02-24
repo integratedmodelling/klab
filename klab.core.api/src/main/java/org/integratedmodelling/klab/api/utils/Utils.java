@@ -14,10 +14,10 @@ import java.util.Map;
 import java.util.Properties;
 
 //import org.integratedmodelling.klab.Services;
-import org.integratedmodelling.klab.api.exceptions.KlabIllegalArgumentException;
-import org.integratedmodelling.klab.api.knowledge.IArtifact;
-import org.integratedmodelling.klab.api.knowledge.IArtifact.Type;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.exceptions.KIllegalArgumentException;
+import org.integratedmodelling.klab.api.knowledge.KArtifact;
+import org.integratedmodelling.klab.api.knowledge.KArtifact.Type;
+import org.integratedmodelling.klab.api.knowledge.KConcept;
 //import org.integratedmodelling.klab.api.services.IConceptService;
 
 public class Utils {
@@ -178,8 +178,8 @@ public class Utils {
 		if (value instanceof Boolean) {
 			return Boolean.class;
 		}
-		if (value instanceof IConcept) {
-			return IConcept.class;
+		if (value instanceof KConcept) {
+			return KConcept.class;
 		}
 		return String.class;
 	}
@@ -213,11 +213,11 @@ public class Utils {
 		return value;
 	}
 
-	public static boolean validateAs(Object pod, IArtifact.Type type) {
+	public static boolean validateAs(Object pod, KArtifact.Type type) {
 		if (pod == null) {
 			return false;
 		}
-		IArtifact.Type tp = getArtifactType(pod.getClass());
+		KArtifact.Type tp = getArtifactType(pod.getClass());
 		if (type == tp) {
 			return true;
 		}
@@ -376,7 +376,7 @@ public class Utils {
 			if (cls.equals(Boolean.class)) {
 				return (T) new Boolean(Boolean.parseBoolean((String) ret));
 			}
-			if (cls.equals(IConcept.class)) {
+			if (cls.equals(KConcept.class)) {
 //				IConceptService service = Services.INSTANCE.getService(IConceptService.class);
 //				if (service != null) {
 //					return (T)service.declare(service.declare(ret.toString()));
@@ -384,7 +384,7 @@ public class Utils {
 			}
 		}
 
-			throw new KlabIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
+			throw new KIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
 	}
 
 	public static <T> T parseAsType(String ret, Class<?> cls) {
@@ -427,7 +427,7 @@ public class Utils {
 			}
 		}
 
-		throw new KlabIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
+		throw new KIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
 	}
 
 	/**
@@ -486,13 +486,13 @@ public class Utils {
 			ret = Type.NUMBER;
 		} else if (Boolean.class.isAssignableFrom(cls)) {
 			ret = Type.BOOLEAN;
-		} else if (IConcept.class.isAssignableFrom(cls)) {
+		} else if (KConcept.class.isAssignableFrom(cls)) {
 			ret = Type.CONCEPT;
 		}
 		return ret;
 	}
 
-	public static Class<?> getClassForType(IArtifact.Type type) {
+	public static Class<?> getClassForType(KArtifact.Type type) {
 		switch (type) {
 		case BOOLEAN:
 			return Boolean.class;
@@ -501,11 +501,11 @@ public class Utils {
 		case TEXT:
 			return String.class;
 		case CONCEPT:
-			return IConcept.class;
+			return KConcept.class;
 		default:
 			break;
 		}
-		throw new KlabIllegalArgumentException("type " + type + " has no Java class equivalent");
+		throw new KIllegalArgumentException("type " + type + " has no Java class equivalent");
 	}
 
 	/**
@@ -517,7 +517,7 @@ public class Utils {
 	public static int log2int(int x) {
 		int y, v;
 		if (x <= 0) {
-			throw new KlabIllegalArgumentException("" + x + " <= 0");
+			throw new KIllegalArgumentException("" + x + " <= 0");
 		}
 		v = x;
 		y = -1;
@@ -675,7 +675,7 @@ public class Utils {
 		}
 
 		if (type == Type.CONCEPT) {
-			if (value instanceof IConcept) {
+			if (value instanceof KConcept) {
 				return value;
 			} else {
 //				value = Services.INSTANCE.getService(IConceptService.class).getConcept(value.toString());
