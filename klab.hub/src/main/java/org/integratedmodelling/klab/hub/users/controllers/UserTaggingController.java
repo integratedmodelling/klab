@@ -50,13 +50,10 @@ public class UserTaggingController {
 
     @GetMapping(value = API.HUB.TAG_BASE, produces = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > getAllTags(
-            @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
+    public ResponseEntity< ? > getAllTags() {
         List<MongoTag> tags;
         try {
-            tags = type.isEmpty()
-                    ? userTagService.getAllTags()
-                    : userTagService.getAllTagsWithType(type.get());
+            tags = userTagService.getAllTags();
         } catch (BadRequestException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -117,9 +114,7 @@ public class UserTaggingController {
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
         List<TagEntry> tags;
         try {
-            tags = type.isEmpty()
-                    ? userTagService.getTagsOfUser(username)
-                    : userTagService.getTagsOfUserWithType(username, type.get());
+            tags = userTagService.getTagsOfUser(username);
         } catch (BadRequestException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -138,9 +133,7 @@ public class UserTaggingController {
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
         List<TagEntry> tags;
         try {
-            tags = type.isEmpty()
-                    ? userTagService.getUnsentTagsOfUser(username)
-                    : userTagService.getUnsentTagsOfUserWithType(username, type.get());
+            tags = userTagService.getUnsentTagsOfUser(username);
         } catch (BadRequestException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

@@ -18,7 +18,6 @@ import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.services.UserTagService;
 import org.integratedmodelling.klab.hub.users.services.UserTagServiceImpl;
-import org.integratedmodelling.klab.rest.HubNotificationMessage.Type;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -31,7 +30,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.mongodb.assertions.Assertions;
 
-// TODO fix tests "WithType"
 @SpringBootTest(classes = {MongoConfigDev.class, HubEventPublisher.class})
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles(profiles = "development")
@@ -74,18 +72,11 @@ public class UserTaggingServiceTest {
 
         return mongoTag;
     }
-    
-    private MongoTag generateTag(String tagName, Type type) {
-        MongoTag mongoTag = new MongoTag();
-        mongoTag.setName(tagName);
-
-        return mongoTag;
-    }
 
     private User getExistingUser() {
         return userRepository.findByName(exisingUsername).get();
     }
-    
+
     private void addTagsToUserAndSave(User user, Collection<MongoTag> tags) {
         tagRepository.saveAll(tags);
         user.addTags(tags);
@@ -146,42 +137,17 @@ public class UserTaggingServiceTest {
         tagService = new UserTagServiceImpl(tagRepository, userRepository);
 
         List<TagEntry> tagsOfUser = tagService.getTagsOfUser(exisingUsername);
-        
+
         Assertions.assertTrue(tagsOfUser.isEmpty());
     }
 
     @Test
     public void getTagsOfUser_withMultipleTags() {
         tagService = new UserTagServiceImpl(tagRepository, userRepository);
-        Set<MongoTag> tags = Set.of(
-            generateTag("newTag1"), generateTag("newTag2"), generateTag("newTag3"));
+        Set<MongoTag> tags = Set.of(generateTag("newTag1"), generateTag("newTag2"), generateTag("newTag3"));
         addTagsToUserAndSave(getExistingUser(), tags);
 
         List<TagEntry> tagsOfUser = tagService.getTagsOfUser(exisingUsername);
-        
-        Assertions.assertFalse(tagsOfUser.isEmpty());
-    }
-
-    @Test
-    public void  getTagsOfUserWithType_noTagsOfThatType() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
-        Set<MongoTag> tags = Set.of(
-            generateTag("newTag1", Type.ERROR), generateTag("newTag2", Type.ERROR), generateTag("newTag3", Type.ERROR));
-        addTagsToUserAndSave(getExistingUser(), tags);
-
-        List<TagEntry> tagsOfUser = tagService.getTagsOfUserWithType(exisingUsername, Type.INFO);
-
-        Assertions.assertTrue(tagsOfUser.isEmpty());
-    }
-    
-    @Test
-    public void getTagsOfUserWithType_someTagsOfThatType() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
-        Set<MongoTag> tags = Set.of(
-            generateTag("newTag1", Type.INFO), generateTag("newTag2", Type.WARNING), generateTag("newTag3", Type.ERROR));
-        addTagsToUserAndSave(getExistingUser(), tags);
-
-        List<TagEntry> tagsOfUser = tagService.getTagsOfUserWithType(exisingUsername, Type.INFO);
 
         Assertions.assertFalse(tagsOfUser.isEmpty());
     }
@@ -189,26 +155,11 @@ public class UserTaggingServiceTest {
     @Test
     public void test_getUnsentTagsOfUser() {
         tagService = new UserTagServiceImpl(tagRepository, userRepository);
-        final Set<MongoTag> tags = Set.of(
-            generateTag("newTag1", Type.INFO), generateTag("newTag2", Type.WARNING), generateTag("newTag3", Type.ERROR));
+        final Set<MongoTag> tags = Set.of(generateTag("newTag1"), generateTag("newTag2"),
+                generateTag("newTag3"));
         addTagsToUserAndSave(getExistingUser(), tags);
 
         List<TagEntry> tagsOfUser = tagService.getUnsentTagsOfUser(exisingUsername);
-
-        Assertions.assertFalse(tagsOfUser.isEmpty());
-    }
-    
-    @Test
-    public void test_getUnsentTagsOfUserWithType() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
-        final Set<MongoTag> tags = Set.of(
-            generateTag("newTag1", Type.INFO), generateTag("newTag2", Type.WARNING), generateTag("newTag3", Type.ERROR));
-        addTagsToUserAndSave(getExistingUser(), tags);
-        User user = getExistingUser();
-//        user.sendTagNotification("newTag1");
-        userRepository.save(user);
-
-        List<TagEntry> tagsOfUser = tagService.getUnsentTagsOfUserWithType(exisingUsername, Type.WARNING);
 
         Assertions.assertFalse(tagsOfUser.isEmpty());
     }
@@ -216,28 +167,15 @@ public class UserTaggingServiceTest {
     @Test
     public void test_getAllTags() {
         tagService = new UserTagServiceImpl(tagRepository, userRepository);
-        final Set<MongoTag> tags = Set.of(
-            generateTag("newTag1", Type.INFO), generateTag("newTag2", Type.WARNING), generateTag("newTag3", Type.ERROR));
+        final Set<MongoTag> tags = Set.of(generateTag("newTag1"), generateTag("newTag2"),
+                generateTag("newTag3"));
         addTagsToUserAndSave(getExistingUser(), tags);
 
         List<MongoTag> alltags = tagService.getAllTags();
-        
-        Assertions.assertFalse(alltags.isEmpty());
-    }
-    
-    @Test
-    public void test_getAllTagsWithType() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
-        final Set<MongoTag> tags = Set.of(
-            generateTag("newTag1", Type.INFO), generateTag("newTag2", Type.WARNING), generateTag("newTag3", Type.ERROR));
-        addTagsToUserAndSave(getExistingUser(), tags);
 
-        List<MongoTag> alltags = tagService.getAllTagsWithType(Type.INFO);
-        
         Assertions.assertFalse(alltags.isEmpty());
     }
 
-    
     @Test
     public void test_insertTag_duplicateTagThrowsException() {
         tagService = new UserTagServiceImpl(tagRepository, userRepository);
@@ -250,7 +188,7 @@ public class UserTaggingServiceTest {
 
         Assertions.assertTrue(thrown instanceof DuplicateKeyException);
     }
-    
+
     @Test
     public void test_insertTag_normalBehavior() {
         tagService = new UserTagServiceImpl(tagRepository, userRepository);

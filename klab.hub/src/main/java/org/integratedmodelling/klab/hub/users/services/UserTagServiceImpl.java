@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.rest.HubNotificationMessage.Type;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -57,33 +56,14 @@ public class UserTagServiceImpl implements UserTagService {
         return findUserByName(username).getTags();
     }
 
-    // TODO check if needed. Not working as expected at the moment
-    @Override
-    public List<TagEntry> getTagsOfUserWithType(String username, Type type) {
-//        return findUserByName(username).getTagsOfType(type);
-        return findUserByName(username).getTags();
-    }
-
     @Override
     public List<TagEntry> getUnsentTagsOfUser(String username) {
-        return findUserByName(username).getUnsentTags();
-    }
-
-    // TODO check if needed. Not working as expected at the moment
-    @Override
-    public List<TagEntry> getUnsentTagsOfUserWithType(String username, Type type) {
-//        return findUserByName(username).getUnsentTagsOfType(type);
         return findUserByName(username).getUnsentTags();
     }
 
     @Override
     public List<MongoTag> getAllTags() {
         return tagRepository.findAll();
-    }
-
-    @Override
-    public List<MongoTag> getAllTagsWithType(Type type) {
-        return tagRepository.getMongoTagsByType(type);
     }
 
     @Override

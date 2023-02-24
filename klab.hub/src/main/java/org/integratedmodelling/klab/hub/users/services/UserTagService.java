@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.integratedmodelling.klab.hub.api.MongoTag;
 import org.integratedmodelling.klab.hub.api.TagEntry;
-import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.springframework.stereotype.Service;
 
 /**
@@ -31,14 +30,6 @@ public interface UserTagService {
     public List<TagEntry> getTagsOfUser(String username);
 
     /**
-     * Gets EntryTags of a User that have the type passed as a parameter.
-     * @param username of the User.
-     * @param type of the tags.
-     * @return A list of EntryTags that have the type passed as a parameter.
-     */
-    public List<TagEntry> getTagsOfUserWithType(String username, HubNotificationMessage.Type type);
-
-    /**
      * Gets EntryTags of a User that have not been sent.
      * @param username of the User.
      * @return A list of EntryTags that have not been sent to the User.
@@ -46,25 +37,10 @@ public interface UserTagService {
     public List<TagEntry> getUnsentTagsOfUser(String username);
 
     /**
-     * Gets EntryTags of a User that have not been sent and are of the type passed as a parameter.
-     * @param username of the User.
-     * @param type of the tags.
-     * @return A list of EntryTags that have not been sent to the User and have the type passed as a parameter.
-     */
-    public List<TagEntry> getUnsentTagsOfUserWithType(String username, HubNotificationMessage.Type type);
-
-    /**
      * Gets all the MongoTags.
      * @return A list of all the MongoTags.
      */
     public List<MongoTag> getAllTags();
-
-    /**
-     * Gets all the MongoTags with the requested type.
-     * @param type of the tags.
-     * @return A list of all the MongoTags with the requested type.
-     */
-    public List<MongoTag> getAllTagsWithType(HubNotificationMessage.Type type);
 
     /**
      * Inserts a new MongoTag.
