@@ -59,20 +59,20 @@
         	<artifactId>spring-cloud-starter-kubernetes-all</artifactId>
         	<version>0.2.1.RELEASE</version>
     	</dependency>
-    	
+
     	<dependency>
     		<groupId>io.dekorate</groupId>
     		<artifactId>kubernetes-annotations</artifactId>
     		<version>1.0.1</version>
     	</dependency>
- -->    	
+ -->
 		<!-- for SafeUrl to help sanitize imported resource names -->
 		<dependency>
 			<groupId>com.google.common.html.types</groupId>
 			<artifactId>types</artifactId>
 			<version>1.0.8</version>
 		</dependency>
-		
+
 		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
