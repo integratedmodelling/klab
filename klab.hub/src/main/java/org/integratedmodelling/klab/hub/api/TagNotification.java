@@ -23,6 +23,10 @@ public class TagNotification {
     
     private String message;
 
+    public void setTag(MongoTag tag) {
+        this.tag = tag;
+    }
+
     public MongoTag getTag() {
         return tag;
     }

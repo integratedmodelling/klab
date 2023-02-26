@@ -5,8 +5,10 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.api.MongoTag;
 import org.integratedmodelling.klab.hub.api.TagEntry;
+import org.integratedmodelling.klab.hub.api.TagNotification;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.repository.TagNotificationRepository;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ public class UserTagServiceImpl implements UserTagService {
 
     MongoTagRepository tagRepository;
     UserRepository userRepository;
+    TagNotificationRepository notificationRepository;
 
     private User findUserByName(String username) {
         return userRepository.findByName(username)
@@ -31,10 +34,11 @@ public class UserTagServiceImpl implements UserTagService {
         return false;
     }
 
-    public UserTagServiceImpl(MongoTagRepository tagRepository, UserRepository userRepository) {
+    public UserTagServiceImpl(MongoTagRepository tagRepository, UserRepository userRepository, TagNotificationRepository notificationRepository) {
         super();
         this.tagRepository = tagRepository;
         this.userRepository = userRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     @Override
@@ -74,6 +78,16 @@ public class UserTagServiceImpl implements UserTagService {
     @Override
     public void insertOrUpdateTag(MongoTag tag) {
         tagRepository.save(tag);
+    }
+
+    @Override
+    public Optional<MongoTag> getTagByName(String name) {
+        return tagRepository.findByName(name);
+    }
+
+    @Override
+    public void saveTagNotification(TagNotification tagNotification) {
+        notificationRepository.save(tagNotification);
     }
 
 }

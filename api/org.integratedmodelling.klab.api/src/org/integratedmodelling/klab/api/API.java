@@ -353,6 +353,10 @@ public interface API {
          */
         public static final String TAG_BASE = API_BASE + "/tags";
         /**
+         * Base URL path for identifying tags by name.
+         */
+        public static final String TAG_ID = TAG_BASE + "/{name}";
+        /**
          * Base URL path for all tags referencing a user.
          */
         public static final String TAG_OF_USER = TAG_BASE + "/{username}";

@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.api.MongoTag;
 import org.integratedmodelling.klab.hub.api.TagEntry;
+import org.integratedmodelling.klab.hub.api.TagNotification;
 import org.springframework.stereotype.Service;
 
 /**
@@ -54,5 +56,9 @@ public interface UserTagService {
      * @param tag to insert or update.
      */
     public void insertOrUpdateTag(MongoTag tag);
+    
+    public Optional<MongoTag> getTagByName(String name);
+    
+    public void saveTagNotification(TagNotification tagNotification);
 
 }

@@ -7,6 +7,7 @@ import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.MongoTag;
 import org.integratedmodelling.klab.hub.api.TagEntry;
+import org.integratedmodelling.klab.hub.api.TagNotification;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.users.services.UserTagService;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
@@ -143,6 +144,42 @@ public class UserTaggingController {
         return ResponseEntity
                 .status(HttpStatus.OK)
                 .body(tags);
+    }
+    
+    @GetMapping(value = API.HUB.TAG_ID)
+    @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
+    public ResponseEntity< ? > getTagByName(
+            @PathVariable String name) {
+        Optional<MongoTag> tag = userTagService.getTagByName(name);
+        if(tag.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Tag is not present.");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(tag);
+    }
+
+    @PostMapping(value = API.HUB.TAG_ID)
+    @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
+    public ResponseEntity< ? > bindANotificationToATag(
+            @PathVariable String name,
+            @RequestBody TagNotification tagNotification) {
+        Optional<MongoTag> tag = userTagService.getTagByName(name);
+        if(tag.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Tag is not present.");
+        }
+
+        tagNotification.setTag(tag.get());
+        userTagService.saveTagNotification(tagNotification);
+
+        return ResponseEntity
+                .status(HttpStatus.ACCEPTED)
+                .body(tag);
     }
 
 }
