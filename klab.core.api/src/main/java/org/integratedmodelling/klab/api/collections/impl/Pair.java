@@ -28,16 +28,13 @@ import org.integratedmodelling.klab.api.collections.KPair;
  * @param <T2> the generic type
  */
 public class Pair<T1, T2> implements KPair<T1, T2> {
+ 
+    private static final long serialVersionUID = 3802069378668072734L;
 
-//	static boolean cmpObj(Object o1, Object o2) {
-//		return (o1 == null && o2 == null) || (o1 != null && o2 != null && o1.equals(o2));
-//	}
-
-	public static <A, B> Pair<A, B> create(A a, B b) {
+    public static <A, B> Pair<A, B> create(A a, B b) {
 		return new Pair<A, B>(a, b);
 	}
 
-	private static final long serialVersionUID = 1L;
 	protected T1 first = null;
 	protected T2 second = null;
 

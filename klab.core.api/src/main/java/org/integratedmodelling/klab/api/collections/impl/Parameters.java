@@ -25,6 +25,8 @@ import org.integratedmodelling.klab.api.utils.Utils;
  */
 public class Parameters<T> implements KParameters<T> {
 
+    private static final long serialVersionUID = 99901513041971570L;
+
     private Map<T, Object> delegate;
     private List<T> unnamedKeys = new ArrayList<>();
     private KParameters<String> templateVariables = null;
@@ -142,7 +144,7 @@ public class Parameters<T> implements KParameters<T> {
         if (ret == null) {
             return defaultValue;
         }
-        return defaultValue == null ? (K) ret : Utils.asType(ret, defaultValue.getClass());
+        return defaultValue == null ? (K) ret : Utils.Data.asType(ret, defaultValue.getClass());
     }
 
     @Override
@@ -151,16 +153,16 @@ public class Parameters<T> implements KParameters<T> {
         if (ret == null) {
             return null;
         }
-        return Utils.asType(ret, cls);
+        return Utils.Data.asType(ret, cls);
     }
 
     @Override
     public <K> K getNotNull(T name, Class<? extends K> cls) {
         Object ret = get(name);
         if (ret == null) {
-            return Utils.notNull(cls);
+            return Utils.Data.notNull(cls);
         }
-        return Utils.asType(ret, cls);
+        return Utils.Data.asType(ret, cls);
     }
 
     public Parameters() {

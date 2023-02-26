@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.collections;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import java.util.Map;
  * @author ferdinando.villa
  *
  */
-public interface KParameters<T> extends Map<T, Object> {
+public interface KParameters<T> extends Map<T, Object>, Serializable {
 
     /**
      * Get the value as the passed type, if necessary converting between numeric types or casting to

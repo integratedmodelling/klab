@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
+import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
 import org.integratedmodelling.klab.api.services.KReasoner;
 
@@ -16,6 +17,7 @@ public class Concept implements Serializable, KConcept {
     private String urn;
     private KMetadata metadata;
     private Set<SemanticType> type;
+    private String namespace;
     
     transient private KReasoner reasonerService;
 
@@ -30,7 +32,7 @@ public class Concept implements Serializable, KConcept {
     }
 
     @Override
-    public boolean is(KConcept other) {
+    public boolean is(KSemantics other) {
         // TODO Auto-generated method stub
         return false;
     }
@@ -64,6 +66,74 @@ public class Concept implements Serializable, KConcept {
 
     public void setType(Set<SemanticType> type) {
         this.type = type;
+    }
+
+    @Override
+    public KSemantics semantics() {
+        return this;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Collection<KConcept> operands() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> children() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> parents() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> allChildren() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> allParents() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> closure() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public KSemantics domain() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public KConcept parent() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
     }
 
 }
