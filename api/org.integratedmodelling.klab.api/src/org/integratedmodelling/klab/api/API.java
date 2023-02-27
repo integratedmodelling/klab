@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ContextRequest;
-import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.TicketRequest;
@@ -349,6 +348,10 @@ public interface API {
          */
         public static final String CURRENT_PROFILE = USER_BASE + "/me";
         /**
+         * Base URL path for locked users.
+         */
+        public static final String LOCKED_USERS = USER_BASE + "/locked-users";
+        /**
          * Base URL path for tag resources on the hub.
          */
         public static final String TAG_BASE = API_BASE + "/tags";
@@ -385,7 +388,7 @@ public interface API {
             /**
              * URL PARAMETER for user activation tokens.
              */
-            public static final String USER_ACTIVATION = "activate";
+			public static final String USER_ACTIVATION = "activate";
 
             /**
              * URL PARAMETER for user requesting a lost password email.
@@ -447,6 +450,22 @@ public interface API {
              * URL PARAMETER for user group entry service, find users with a particular group
              */
             public static final String HAS_GROUP = "has-group";
+            /**
+             * URL PARAMETER for changing the account status of a user
+             */
+            public static final String USER_SET_ACCOUNT_STATUS = "account-status";
+            /**
+             * URL PARAMETER for user role entry service, sets a role for a given user
+             */
+            public static final String SET_ROLES = "set-roles";
+            /**
+             * URL PARAMETER for user role entry service, removes a role for a given user
+             */
+            public static final String REMOVE_ROLES = "remove-roles";
+            /**
+             * URL PARAMETER for user role entry service, lists all the users with a particular role
+             */
+            public static final String HAS_ROLES = "has-roles";
             /**
              * Base PARAMETER for the type of a tag
              */
