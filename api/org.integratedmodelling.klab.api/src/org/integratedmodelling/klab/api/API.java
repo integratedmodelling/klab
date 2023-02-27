@@ -368,6 +368,18 @@ public interface API {
          * Base URL path for all unsent tags referencing a user.
          */
         public static final String TAG_UNSENT_OF_USER = TAG_UNSENT + "/{username}";
+        /**
+         * Base URL path for tag notifications on the hub.
+         */
+        public static final String TAG_NOTIFICATIONS = API_BASE + "/tag-notifications";
+        /**
+         * Base URL path for tag notifications by tag.
+         */
+        public static final String TAG_NOTIFICATION_OF_TAG = TAG_NOTIFICATIONS + "/{name}";
+        /**
+         * Base URL path for tag notifications by user.
+         */
+        public static final String TAG_NOTIFICATION_OF_USER = USER_BASE + "/tag-notifications/{name}";
 
         public static interface PARAMETERS {
             /**

@@ -182,4 +182,48 @@ public class UserTaggingController {
                 .body(tag);
     }
 
+    @GetMapping(value = API.HUB.TAG_NOTIFICATIONS)
+    @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
+    public ResponseEntity< ? > getAllTagNotifications() {
+        List<TagNotification> tagNotifications = userTagService.getAllTagNotifications();
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(tagNotifications);
+    }
+
+    @GetMapping(value = API.HUB.TAG_NOTIFICATION_OF_TAG)
+    @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
+    public ResponseEntity< ? > getTagNotificationByTagName(
+            @PathVariable String name) {
+        Optional<MongoTag> tag = userTagService.getTagByName(name);
+        if(tag.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body("Tag is not present.");
+        }
+
+        Optional<TagNotification> tagNotification = userTagService.getTagNotificationsByTag(tag.get());
+        if(tagNotification.isEmpty()) {
+            return ResponseEntity
+                    .status(HttpStatus.NO_CONTENT)
+                    .body("No notification for the requested tag.");
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(tagNotification);
+    }
+
+    @GetMapping(value = API.HUB.TAG_NOTIFICATION_OF_USER)
+    @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
+    public ResponseEntity< ? > getTagNotificationByUserName(
+            @PathVariable String name) {
+        List<TagNotification> tagNotifications = userTagService.getTagNotificationsByUser(name);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(tagNotifications);
+    }
+
 }

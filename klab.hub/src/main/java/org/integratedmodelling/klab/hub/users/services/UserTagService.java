@@ -61,4 +61,10 @@ public interface UserTagService {
     
     public void saveTagNotification(TagNotification tagNotification);
 
+    public List<TagNotification> getAllTagNotifications();
+
+    public Optional<TagNotification> getTagNotificationsByTag(MongoTag tag);
+
+    public List<TagNotification> getTagNotificationsByUser(String username);
+
 }

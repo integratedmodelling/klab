@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.hub.config.dev.MongoConfigDev;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
+import org.integratedmodelling.klab.hub.repository.TagNotificationRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.services.UserTagService;
 import org.integratedmodelling.klab.hub.users.services.UserTagServiceImpl;
@@ -41,6 +42,9 @@ public class UserTaggingServiceTest {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    TagNotificationRepository notificationRepository;
+
     private UserTagService tagService;
 
     private final String exisingUsername = "achilles";
@@ -63,7 +67,7 @@ public class UserTaggingServiceTest {
     @Order(0)
     public void test_constructor_works() {
 
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
     }
 
     private MongoTag generateTag(String tagName) {
@@ -85,7 +89,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_assignTagToUser_UserExistsAndTagIsNew() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         final String tagName = "test";
         MongoTag tag = generateTag(tagName);
 
@@ -97,7 +101,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_assignTagToUser_UserDoesNotExist() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         final String tagName = "test";
         MongoTag tag = generateTag(tagName);
 
@@ -110,7 +114,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_assignTagToUser_assignExistingTag() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         MongoTag tag = generateTag(exisingTagName);
 
         tagService.assignTagToUser(exisingUsername, tag);
@@ -121,7 +125,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_assignTagToUser_tagAlreadyInUser() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         MongoTag tag = generateTag(exisingTagName);
         tagService.assignTagToUser(exisingUsername, tag);
         final int sizeBefore = userRepository.findByName(exisingUsername).get().getTags().size();
@@ -134,7 +138,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void getTagsOfUser_withoutTags() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
 
         List<TagEntry> tagsOfUser = tagService.getTagsOfUser(exisingUsername);
 
@@ -143,7 +147,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void getTagsOfUser_withMultipleTags() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         Set<MongoTag> tags = Set.of(generateTag("newTag1"), generateTag("newTag2"), generateTag("newTag3"));
         addTagsToUserAndSave(getExistingUser(), tags);
 
@@ -154,7 +158,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_getUnsentTagsOfUser() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         final Set<MongoTag> tags = Set.of(generateTag("newTag1"), generateTag("newTag2"),
                 generateTag("newTag3"));
         addTagsToUserAndSave(getExistingUser(), tags);
@@ -166,7 +170,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_getAllTags() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         final Set<MongoTag> tags = Set.of(generateTag("newTag1"), generateTag("newTag2"),
                 generateTag("newTag3"));
         addTagsToUserAndSave(getExistingUser(), tags);
@@ -178,7 +182,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_insertTag_duplicateTagThrowsException() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         MongoTag tag = new MongoTag();
         tag.setName(exisingTagName);
 
@@ -191,7 +195,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_insertTag_normalBehavior() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         MongoTag tag = new MongoTag();
         tag.setName("newTag");
 
@@ -202,7 +206,7 @@ public class UserTaggingServiceTest {
 
     @Test
     public void test_insertOrUpdateTag_doesNotCareAboutDuplicatedKeys() {
-        tagService = new UserTagServiceImpl(tagRepository, userRepository);
+        tagService = new UserTagServiceImpl(tagRepository, userRepository, notificationRepository);
         MongoTag tag = new MongoTag();
         tag.setName(exisingTagName);
 

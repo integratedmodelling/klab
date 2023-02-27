@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.hub.api.MongoTag;
 import org.integratedmodelling.klab.hub.api.TagEntry;
@@ -88,6 +89,27 @@ public class UserTagServiceImpl implements UserTagService {
     @Override
     public void saveTagNotification(TagNotification tagNotification) {
         notificationRepository.save(tagNotification);
+    }
+
+    @Override
+    public List<TagNotification> getAllTagNotifications() {
+        return notificationRepository.findAll();
+    }
+
+    @Override
+    public Optional<TagNotification> getTagNotificationsByTag(MongoTag tag) {
+        return notificationRepository.findByTag(tag);
+    }
+    
+    @Override
+    public List<TagNotification> getTagNotificationsByUser(String username) {
+        List<TagEntry> unsentTags = findUserByName(username).getUnsentTags();
+        List<TagNotification> tagNotifications = unsentTags.stream().map(t -> notificationRepository.findByTag(t.getTag()))
+                .filter(n -> n.isPresent())
+                .map(n -> n.get())
+                .collect(Collectors.toList());
+
+        return tagNotifications;
     }
 
 }
