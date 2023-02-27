@@ -36,8 +36,148 @@ import org.integratedmodelling.klab.api.exceptions.KIllegalArgumentException;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
 import org.integratedmodelling.klab.api.knowledge.KArtifact.Type;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
+import org.integratedmodelling.klab.api.lang.kim.KKimScope;
+import org.integratedmodelling.klab.api.services.runtime.KNotification;
 
 public class Utils {
+
+    public static class Paths {
+
+        /**
+         * Gets the last.
+         *
+         * @param path the path
+         * @param separator the separator
+         * @return the last
+         */
+        static public String getLast(String path, char separator) {
+            int n = path.lastIndexOf(separator);
+            String ret = path;
+            if (n >= 0) {
+                ret = path.substring(n + 1);
+            }
+            return ret;
+        }
+
+        /**
+         * Gets the last.
+         *
+         * @param path the path
+         * @return the last
+         */
+        static public String getLast(String path) {
+            return getLast(path, '/');
+        }
+
+        /**
+         * Gets the leading.
+         *
+         * @param path the path
+         * @param separator the separator
+         * @return the leading
+         */
+        public static String getLeading(String path, char separator) {
+            int n = path.lastIndexOf(separator);
+            if (n > 0) {
+                return path.substring(0, n);
+            }
+            return null;
+        }
+
+        /**
+         * Join.
+         *
+         * @param pth the pth
+         * @param start the start
+         * @param separator the separator
+         * @return the string
+         */
+        public static String join(String[] pth, int start, char separator) {
+            String ret = "";
+            for (int i = start; i < pth.length; i++)
+                ret += (ret.isEmpty() ? "" : ".") + pth[i];
+            return ret;
+        }
+
+        /**
+         * Gets the first.
+         *
+         * @param path the path
+         * @param separator the separator
+         * @return the first
+         */
+        public static String getFirst(String path, String separator) {
+            int n = path.indexOf(separator);
+            String ret = path;
+            if (n >= 0) {
+                ret = path.substring(0, n);
+            }
+            return ret;
+        }
+
+        /**
+         * Get reminder after first
+         * 
+         * @param path
+         * @param separator
+         * @return
+         */
+        public static String getRemainder(String path, String separator) {
+            int n = path.indexOf(separator);
+            String ret = path;
+            if (n >= 0) {
+                ret = path.substring(n + 1);
+            }
+            return ret;
+        }
+
+        public static String getFrom(String path, int n, char separatpr) {
+            String s = path;
+            for (int i = 0; i < n; i++) {
+                int idx = s.indexOf(separatpr);
+                if (idx >= 0) {
+                    s = s.substring(idx);
+                } else {
+                    return null;
+                }
+            }
+            return s;
+        }
+
+    }
+
+    public static class Notifications {
+
+        /**
+         * Organizes a set of inputs into a message and a severity level.
+         *
+         * @param objects the objects
+         * @return the message
+         */
+        public static Pair<String, KNotification.Type> getMessage(Object... objects) {
+
+            StringBuffer ret = new StringBuffer(256);
+            KNotification.Type ntype = null;
+
+            for (Object o : objects) {
+                if (o instanceof String) {
+                    ret.append((ret.length() == 0 ? "" : " ") + o);
+                } else if (o instanceof Throwable) {
+                    ret.append((ret.length() == 0 ? "" : " ") + ((Throwable) o).getLocalizedMessage());
+                } else if (o instanceof KKimScope) {
+                    ret.insert(0, ((KKimScope) o).getLocationDescriptor() + ": ");
+                } else if (o instanceof KNotification.Type) {
+                    ntype = (KNotification.Type) o;
+                } else if (o instanceof KNotification) {
+                    ntype = ((KNotification) o).getType();
+                    ret.append(((KNotification) o).getMessage());
+                }
+                // TODO continue
+            }
+
+            return new Pair<>(ret.toString(), ntype);
+        }
+    }
 
     public static class Escape {
 

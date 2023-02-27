@@ -1,32 +1,38 @@
-package org.integratedmodelling.klab.services.engine;
+package org.integratedmodelling.klab.runtime;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-import org.integratedmodelling.kim.validation.KimNotification;
-import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.monitoring.IMessageBus;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.runtime.rest.INotification;
-import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.utils.NotificationUtils;
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.api.collections.impl.Pair;
+import org.integratedmodelling.klab.api.identities.KIdentity;
+import org.integratedmodelling.klab.api.services.runtime.KChannel;
+import org.integratedmodelling.klab.api.services.runtime.KMessage;
+import org.integratedmodelling.klab.api.services.runtime.KMessageBus;
+import org.integratedmodelling.klab.api.services.runtime.KNotification;
+import org.integratedmodelling.klab.api.services.runtime.KNotification.Type;
+import org.integratedmodelling.klab.api.services.runtime.impl.Message;
+import org.integratedmodelling.klab.logging.Logging;
+import org.integratedmodelling.klab.utils.Utils;
 
-public class Monitor implements IMonitor {
+public class Monitor implements KChannel {
 
     private int errorCount = 0;
     private AtomicBoolean isInterrupted = new AtomicBoolean(false);
     private int waitTime;
-    private IIdentity identity;
+    private KIdentity identity;
+    
+    transient KMessageBus messageBus;
 
-    public Monitor(IIdentity identity) {
+    public Monitor(KIdentity identity) {
         this.identity = identity;
+    }
+
+    public Monitor(KIdentity identity, KMessageBus messageBus) {
+        this.identity = identity;
+        this.messageBus = messageBus;
     }
 
     protected Monitor(Monitor monitor) {
@@ -40,75 +46,73 @@ public class Monitor implements IMonitor {
 
     @Override
     public void info(Object... info) {
-        Pair<String, INotification.Type> message = NotificationUtils.getMessage(info);
+        Pair<String, Type> message = Utils.Notifications.getMessage(info);
         Consumer<String> infoWriter = Logging.INSTANCE.getInfoWriter();
         if (infoWriter != null) {
             infoWriter.accept(message.getFirst());
         }
-        send(new KimNotification(message, Level.INFO));
+        send(new Notification(message, Level.INFO));
     }
 
     @Override
     public void warn(Object... o) {
-        Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+        Pair<String, Type> message = Utils.Notifications.getMessage(o);
         Consumer<String> warningWriter = Logging.INSTANCE.getWarningWriter();
         if (warningWriter != null) {
             warningWriter.accept(message.getFirst());
         }
-        send(new KimNotification(message, Level.WARNING));
+        send(new Notification(message, Level.WARNING));
     }
 
     @Override
     public void error(Object... o) {
-        Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+        Pair<String, Type> message = Utils.Notifications.getMessage(o);
         Consumer<String> errorWriter = Logging.INSTANCE.getErrorWriter();
         if (errorWriter != null) {
             errorWriter.accept(message.getFirst());
         }
-        send(new KimNotification(message, Level.SEVERE));
+        send(new Notification(message, Level.SEVERE));
         errorCount++;
     }
 
     @Override
     public void debug(Object... o) {
-        Pair<String, INotification.Type> message = NotificationUtils.getMessage(o);
+        Pair<String, Type> message = Utils.Notifications.getMessage(o);
         Consumer<String> debugWriter = Logging.INSTANCE.getDebugWriter();
         if (debugWriter != null) {
             debugWriter.accept(message.getFirst());
         }
-        send(new KimNotification(message, Level.FINE));
+        send(new Notification(message, Level.FINE));
     }
 
     @Override
     public void send(Object... o) {
 
-        IMessage message = null;
+        KMessage message = null;
 
         if (o != null && o.length > 0) {
-            IMessageBus bus = Klab.INSTANCE.getMessageBus();
-            if (bus != null) {
-                if (o.length == 1 && o[0] instanceof IMessage) {
-                    bus.post(message = (IMessage) o[0]);
-                } else if (o.length == 1 && o[0] instanceof INotification) {
-                    bus.post(message = Message.create((INotification) o[0], this.identity.getId()));
+            if (messageBus != null) {
+                if (o.length == 1 && o[0] instanceof KMessage) {
+                    messageBus.post(message = (KMessage) o[0]);
+                } else if (o.length == 1 && o[0] instanceof KNotification) {
+                    messageBus.post(message = Message.create((KNotification) o[0], this.identity.getId()));
                 } else {
-                    bus.post(message = Message.create(this.identity.getId(), o));
+                    messageBus.post(message = Message.create(this.identity.getId(), o));
                 }
             }
         }
     }
 
-    @Override
-    public Future<IMessage> ask(Object... o) {
+//    @Override
+    public Future<KMessage> ask(Object... o) {
         if (o != null && o.length > 0) {
-            IMessageBus bus = Klab.INSTANCE.getMessageBus();
-            if (bus != null) {
-                if (o.length == 1 && o[0] instanceof IMessage) {
-                    return bus.ask((IMessage) o[0]);
-                } else if (o.length == 1 && o[0] instanceof INotification) {
-                    return bus.ask(Message.create((INotification) o[0], this.identity.getId()));
+            if (messageBus != null) {
+                if (o.length == 1 && o[0] instanceof KMessage) {
+                    return messageBus.ask((KMessage) o[0]);
+                } else if (o.length == 1 && o[0] instanceof KNotification) {
+                    return messageBus.ask(Message.create((KNotification) o[0], this.identity.getId()));
                 } else {
-                    return bus.ask(Message.create(this.identity.getId(), o));
+                    return messageBus.ask(Message.create(this.identity.getId(), o));
                 }
             }
         }
@@ -116,23 +120,22 @@ public class Monitor implements IMonitor {
     }
 
     @Override
-    public void post(Consumer<IMessage> handler, Object... o) {
+    public void post(Consumer<KMessage> handler, Object... o) {
         if (o != null && o.length > 0) {
-            IMessageBus bus = Klab.INSTANCE.getMessageBus();
-            if (bus != null) {
-                if (o.length == 1 && o[0] instanceof IMessage) {
-                    bus.post((IMessage) o[0], handler);
-                } else if (o.length == 1 && o[0] instanceof INotification) {
-                    bus.post(Message.create((INotification) o[0], this.identity.getId()), handler);
+            if (messageBus != null) {
+                if (o.length == 1 && o[0] instanceof KMessage) {
+                    messageBus.post((KMessage) o[0], handler);
+                } else if (o.length == 1 && o[0] instanceof KNotification) {
+                    messageBus.post(Message.create((KNotification) o[0], this.identity.getId()), handler);
                 } else {
-                    bus.post(Message.create(this.identity.getId(), o), handler);
+                    messageBus.post(Message.create(this.identity.getId(), o), handler);
                 }
             }
         }
     }
 
     @Override
-    public IIdentity getIdentity() {
+    public KIdentity getIdentity() {
         return identity;
     }
 
@@ -141,7 +144,7 @@ public class Monitor implements IMonitor {
         return errorCount > 0;
     }
 
-    public Monitor get(IIdentity identity) {
+    public Monitor get(KIdentity identity) {
         Monitor ret = new Monitor(identity);
         return ret;
     }

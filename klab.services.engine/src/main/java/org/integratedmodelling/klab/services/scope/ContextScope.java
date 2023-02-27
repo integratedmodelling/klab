@@ -5,24 +5,25 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.integratedmodelling.klab.api.auth.IActorIdentity;
-import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.documentation.IReport;
-import org.integratedmodelling.klab.api.engine.IContextScope;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IRelationship;
-import org.integratedmodelling.klab.api.provenance.IProvenance;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
+import org.integratedmodelling.klab.api.geometry.KGeometry;
+import org.integratedmodelling.klab.api.identities.KIdentity;
+import org.integratedmodelling.klab.api.knowledge.observation.KDirectObservation;
+import org.integratedmodelling.klab.api.knowledge.observation.KObservation;
+import org.integratedmodelling.klab.api.knowledge.observation.KRelationship;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KContextScope;
+import org.integratedmodelling.klab.api.provenance.KProvenance;
+import org.integratedmodelling.klab.api.services.runtime.KDataflow;
+import org.integratedmodelling.klab.api.services.runtime.KReport;
 
-public class ContextScope extends SessionScope implements IContextScope {
+public class ContextScope extends SessionScope implements KContextScope {
 
-    IIdentity observer;
-    IDirectObservation context;
+    private static final long serialVersionUID = -3241953358893122142L;
+
+    KIdentity observer;
+    KDirectObservation context;
     Set<String> scenarios;
     ContextScope parent;
-    IGeometry geometry;
+    KGeometry geometry;
     String token;
 
     ContextScope(SessionScope parent) {
@@ -38,17 +39,17 @@ public class ContextScope extends SessionScope implements IContextScope {
     }
 
     @Override
-    public IDirectObservation getContextObservation() {
+    public KDirectObservation getContextObservation() {
         return this.context;
     }
 
     @Override
-    public IIdentity getObserver() {
+    public KIdentity getObserver() {
         return this.observer;
     }
 
     @Override
-    public IGeometry getGeometry() {
+    public KGeometry getGeometry() {
         return geometry;
     }
 
@@ -66,63 +67,63 @@ public class ContextScope extends SessionScope implements IContextScope {
     }
 
     @Override
-    public ContextScope withObserver(IActorIdentity<?> observer) {
+    public ContextScope withObserver(KIdentity observer) {
         ContextScope ret = new ContextScope(this);
         ret.observer = observer;
         return ret;
     }
 
     @Override
-    public ContextScope within(IDirectObservation context) {
+    public ContextScope within(KDirectObservation context) {
         ContextScope ret = new ContextScope(this);
         ret.context = context;
         return ret;
     }
 
     @Override
-    public Future<IObservation> observe(Object... observables) {
+    public Future<KObservation> observe(Object... observables) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IProvenance getProvenance() {
+    public KProvenance getProvenance() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IReport getReport() {
+    public KReport getReport() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IDataflow<?> getDataflow() {
+    public KDataflow<?> getDataflow() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IDirectObservation getParentOf(IObservation observation) {
+    public KDirectObservation getParentOf(KObservation observation) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Collection<IObservation> getChildrenOf(IObservation observation) {
+    public Collection<KObservation> getChildrenOf(KObservation observation) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Collection<IRelationship> getOutgoingRelationships(IDirectObservation observation) {
+    public Collection<KRelationship> getOutgoingRelationships(KDirectObservation observation) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public Collection<IRelationship> getIncomingRelationships(IDirectObservation observation) {
+    public Collection<KRelationship> getIncomingRelationships(KDirectObservation observation) {
         // TODO Auto-generated method stub
         return null;
     }

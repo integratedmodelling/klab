@@ -402,7 +402,7 @@ public interface KMessage {
      * 
      * @return
      */
-    String getId();
+    long getId();
 
     /**
      * The message exposes the identity that created it through a token, which may or may not be

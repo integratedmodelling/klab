@@ -17,6 +17,9 @@ import java.util.function.Consumer;
 
 import javax.sound.midi.Receiver;
 
+import org.integratedmodelling.klab.api.identities.KIdentity;
+import org.integratedmodelling.klab.api.services.runtime.KMessage.MessageClass;
+
 /**
  * A monitor represents the context of computation and is used to establish the current identity as
  * well as to send messages to any subscribers. Monitors may be root-level, engine-level,
@@ -35,6 +38,8 @@ import javax.sound.midi.Receiver;
  */
 public interface KChannel {
 
+    KIdentity getIdentity();
+    
     /**
      * For info to be seen by users: pass a string. Will also take an exception, but usually
      * exceptions shouldn't turn into warnings. These will be reported to the user unless the

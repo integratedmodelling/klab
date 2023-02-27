@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Ref;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.engine.IScope;
-import org.integratedmodelling.klab.components.runtime.actors.vm.KActorsVM;
 import org.integratedmodelling.klab.services.actors.messages.kactor.RunBehavior;
 
 import io.reacted.core.config.reactors.ReActorConfig;
@@ -37,7 +36,7 @@ public class KAgent implements ReActor {
 
     private String name;
     private Map<String, Object> globalState = new HashMap<>();
-    private KActorsVM vm;
+//    private KActorsVM vm;
     private Ref self;
 
     public KAgent(String name) {
@@ -159,11 +158,11 @@ public class KAgent implements ReActor {
     }
 
     protected void run(IBehavior behavior, IScope scope) {
-        if (vm != null) {
-            // ? ehm
-        }
-        this.vm = new KActorsVM(self, scope, globalState);
-        this.vm.runBehavior(behavior, null, scope);
+//        if (vm != null) {
+//            // ? ehm
+//        }
+//        this.vm = new KActorsVM(self, scope, globalState);
+//        this.vm.runBehavior(behavior, null, scope);
     }
 
     /*

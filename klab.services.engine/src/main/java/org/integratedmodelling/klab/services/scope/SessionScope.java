@@ -1,10 +1,12 @@
 package org.integratedmodelling.klab.services.scope;
 
-import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.engine.IContextScope;
-import org.integratedmodelling.klab.api.engine.ISessionScope;
+import org.integratedmodelling.klab.api.geometry.KGeometry;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KContextScope;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KSessionScope;
 
-public class SessionScope extends Scope implements ISessionScope {
+public class SessionScope extends Scope implements KSessionScope {
+
+    private static final long serialVersionUID = -5840277560139759406L;
 
     private Status status = Status.STARTED;
     private String name;
@@ -18,13 +20,13 @@ public class SessionScope extends Scope implements ISessionScope {
     }
 
     @Override
-    public IGeometry getGeometry() {
+    public KGeometry getGeometry() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public IContextScope createContext(String id) {
+    public KContextScope createContext(String id) {
 
         final ContextScope ret = new ContextScope(this);
         ret.setName(id);

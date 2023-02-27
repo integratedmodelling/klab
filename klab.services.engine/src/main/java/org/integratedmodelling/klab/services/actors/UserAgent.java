@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.services.actors;
 
-import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.lang.kactors.KKActorsBehavior;
 import org.integratedmodelling.klab.services.actors.messages.user.CreateApplication;
 import org.integratedmodelling.klab.services.actors.messages.user.CreateSession;
+import org.integratedmodelling.klab.services.engine.EngineService;
 
 import io.reacted.core.reactors.ReActions.Builder;
 import io.reacted.core.reactorsystem.ReActorContext;
@@ -25,11 +26,12 @@ public class UserAgent extends KAgent {
     }
 
     private void createApplication(ReActorContext rctx, CreateApplication message) {
-        IBehavior behavior = message.getScope().getResources().resolveBehavior(message.getApplicationId(), message.getScope());
+        KKActorsBehavior behavior = EngineService.INSTANCE.getResourceService().resolveBehavior(message.getApplicationId(), message.getScope());
         if (behavior == null) {
             message.getScope().error("cannot find behavior " + message.getApplicationId());
             rctx.reply(ReActorRef.NO_REACTOR_REF);
         } else {
+            
             rctx.spawnChild(new SessionAgent(behavior)).ifSuccess((ref) -> rctx.reply(ref));
         }
     }

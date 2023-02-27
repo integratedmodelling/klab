@@ -6,29 +6,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.xtext.testing.IInjectorProvider;
-import org.integratedmodelling.kactors.model.KActors;
-import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.Kim;
-import org.integratedmodelling.klab.Actors;
-import org.integratedmodelling.klab.api.auth.IEngineIdentity;
-import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.engine.IEngineService;
-import org.integratedmodelling.klab.api.engine.IScope;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.api.runtime.rest.IClient;
+import org.integratedmodelling.klab.api.collections.KParameters;
+import org.integratedmodelling.klab.api.identities.KEngineIdentity;
+import org.integratedmodelling.klab.api.identities.KIdentity;
+import org.integratedmodelling.klab.api.identities.KUserIdentity;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KScope;
+import org.integratedmodelling.klab.api.services.KEngine;
+import org.integratedmodelling.klab.api.services.KReasoner;
+import org.integratedmodelling.klab.api.services.KResolver;
+import org.integratedmodelling.klab.api.services.KResources;
+import org.integratedmodelling.klab.api.services.KRuntime;
+import org.integratedmodelling.klab.api.services.runtime.KChannel;
+import org.integratedmodelling.klab.runtime.Monitor;
 import org.integratedmodelling.klab.services.actors.KAgent.KAgentRef;
 import org.integratedmodelling.klab.services.actors.UserAgent;
-import org.integratedmodelling.klab.services.engine.reasoner.ReasonerDefaultService;
-import org.integratedmodelling.klab.services.engine.resolver.ResolverDefaultService;
-import org.integratedmodelling.klab.services.engine.resources.ResourceDefaultService;
-import org.integratedmodelling.klab.services.engine.runtime.RuntimeDefaultService;
 import org.integratedmodelling.klab.services.scope.Scope;
-import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
-import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
-
-import com.google.inject.Injector;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import io.reacted.core.config.reactorsystem.ReActorSystemConfig;
 import io.reacted.core.reactorsystem.ReActorSystem;
@@ -40,34 +34,43 @@ import io.reacted.core.reactorsystem.ReActorSystem;
  * @author Ferd
  *
  */
-public enum EngineService implements IEngineService, IEngineIdentity {
+@Service
+public enum EngineService implements KEngine, KEngineIdentity {
 
     INSTANCE;
 
-    private Reasoner reasonerService;
-    private ResourceManager resourceService;
-    private Resolver resolverService;
-    private Runtime runtimeService;
+    @Autowired
+    private KReasoner reasonerService;
+
+    @Autowired
+    private KResources resourceService;
+    
+    @Autowired
+    private KResolver resolverService;
+    
+    @Autowired
+    private KRuntime runtimeService;
+    
     private Map<String, Scope> userScopes = Collections.synchronizedMap(new HashMap<>());
     private Monitor monitor = new Monitor(this);
     private String name = "modular-klab-engine";
     private ReActorSystem actorSystem;
 
-    protected Reasoner createReasonerService() {
-        return new ReasonerDefaultService();
-    }
+//    protected Reasoner createReasonerService() {
+//        return new ReasonerDefaultService();
+//    }
+//
+//    protected ResourceManager createResourceService() {
+//        return new ResourceDefaultService();
+//    }
 
-    protected ResourceManager createResourceService() {
-        return new ResourceDefaultService();
-    }
-
-    protected Resolver createResolverService() {
-        return new ResolverDefaultService();
-    }
-
-    protected Runtime createRuntimeService() {
-        return new RuntimeDefaultService();
-    }
+//    protected KResolver createResolverService() {
+//        return new ResolverDefaultService();
+//    }
+//
+//    protected Runtime createRuntimeService() {
+//        return new RuntimeDefaultService();
+//    }
 
     public void boot() {
 
@@ -76,20 +79,20 @@ public enum EngineService implements IEngineService, IEngineIdentity {
         /*
          * boot the actor system
          */
-        Actors.INSTANCE.setup();
+//        Actors.INSTANCE.setup();
         
         this.actorSystem = new ReActorSystem(ReActorSystemConfig.newBuilder().setReactorSystemName("klab").build())
                 .initReActorSystem();
 
-        this.reasonerService = createReasonerService();
-        this.resourceService = createResourceService();
-        this.resolverService = createResolverService();
-        this.runtimeService = createRuntimeService();
+//        this.reasonerService = createReasonerService();
+//        this.resourceService = createResourceService();
+//        this.resolverService = createResolverService();
+//        this.runtimeService = createRuntimeService();
 
     }
 
     @Override
-    public IScope login(IUserIdentity user) {
+    public KScope login(KUserIdentity user) {
 
         Scope ret = userScopes.get(user.getUsername());
         if (ret == null) {
@@ -115,9 +118,115 @@ public enum EngineService implements IEngineService, IEngineIdentity {
         return INSTANCE;
     }
 
+//    @Override
+//    public String getName() {
+//        return name;
+//    }
+//
+//    @Override
+//    public Date getBootTime() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    @Override
+//    public Collection<String> getUrls() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    @Override
+//    public boolean isOnline() {
+//        // TODO Auto-generated method stub
+//        return false;
+//    }
+
+    public ReActorSystem getActors() {
+        return this.actorSystem;
+    }
+
+//    @Override
+//    public IClient getClient() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    @Override
+//    public boolean stop() {
+//        // TODO Auto-generated method stub
+//        return false;
+//    }
+//
+//    @Override
+//    public IMonitor getMonitor() {
+//        return monitor;
+//    }
+//
+//    @Override
+//    public IParameters<String> getState() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    @Override
+//    public Type getIdentityType() {
+//        return Type.ENGINE;
+//    }
+//
+//    @Override
+//    public String getId() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    @Override
+//    public IIdentity getParentIdentity() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+//
+//    @Override
+//    public boolean is(Type type) {
+//        return getIdentityType() == type;
+//    }
+//
+//    @Override
+//    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
+
+    public Object getSystemRef() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private void initializeLanguageServices() {
+
+//        /*
+//         * set up access to the k.IM grammar
+//         */
+//        IInjectorProvider injectorProvider = new KimInjectorProvider();
+//        Injector injector = injectorProvider.getInjector();
+//        if (injector != null) {
+//            Kim.INSTANCE.setup(injector);
+//        }
+//
+//        /*
+//         * ...and k.Actors
+//         */
+//        IInjectorProvider kActorsInjectorProvider = new KactorsInjectorProvider();
+//        Injector kActorsInjector = kActorsInjectorProvider.getInjector();
+//        if (kActorsInjector != null) {
+//            KActors.INSTANCE.setup(kActorsInjector);
+//        }
+
+    }
+
     @Override
     public String getName() {
-        return name;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -138,16 +247,6 @@ public enum EngineService implements IEngineService, IEngineIdentity {
         return false;
     }
 
-    public ReActorSystem getActors() {
-        return this.actorSystem;
-    }
-
-    @Override
-    public IClient getClient() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
     @Override
     public boolean stop() {
         // TODO Auto-generated method stub
@@ -155,19 +254,20 @@ public enum EngineService implements IEngineService, IEngineIdentity {
     }
 
     @Override
-    public IMonitor getMonitor() {
+    public KChannel getMonitor() {
         return monitor;
     }
 
     @Override
-    public IParameters<String> getState() {
+    public KParameters<String> getState() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public Type getIdentityType() {
-        return Type.ENGINE;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
@@ -177,47 +277,25 @@ public enum EngineService implements IEngineService, IEngineIdentity {
     }
 
     @Override
-    public IIdentity getParentIdentity() {
+    public KIdentity getParentIdentity() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
     public boolean is(Type type) {
-        return getIdentityType() == type;
+        // TODO Auto-generated method stub
+        return false;
     }
 
     @Override
-    public <T extends IIdentity> T getParentIdentity(Class<T> type) {
+    public <T extends KIdentity> T getParentIdentity(Class<T> type) {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public Object getSystemRef() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    private void initializeLanguageServices() {
-
-        /*
-         * set up access to the k.IM grammar
-         */
-        IInjectorProvider injectorProvider = new KimInjectorProvider();
-        Injector injector = injectorProvider.getInjector();
-        if (injector != null) {
-            Kim.INSTANCE.setup(injector);
-        }
-
-        /*
-         * ...and k.Actors
-         */
-        IInjectorProvider kActorsInjectorProvider = new KactorsInjectorProvider();
-        Injector kActorsInjector = kActorsInjectorProvider.getInjector();
-        if (kActorsInjector != null) {
-            KActors.INSTANCE.setup(kActorsInjector);
-        }
-
+    public KResources getResourceService() {
+        return this.resourceService;
     }
 
 }

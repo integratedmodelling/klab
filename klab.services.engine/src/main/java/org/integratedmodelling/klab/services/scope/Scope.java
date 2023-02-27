@@ -1,40 +1,38 @@
 package org.integratedmodelling.klab.services.scope;
 
-import java.time.Duration;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Ref;
-import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
-import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
-import org.integratedmodelling.klab.api.engine.IEngineService.Resolver;
-import org.integratedmodelling.klab.api.engine.IEngineService.ResourceManager;
-import org.integratedmodelling.klab.api.engine.IEngineService.Runtime;
-import org.integratedmodelling.klab.api.engine.IScope;
-import org.integratedmodelling.klab.api.engine.ISessionScope;
-import org.integratedmodelling.klab.api.engine.ISessionScope.Status;
-import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.collections.KParameters;
+import org.integratedmodelling.klab.api.collections.impl.Parameters;
+import org.integratedmodelling.klab.api.identities.KIdentity;
+import org.integratedmodelling.klab.api.identities.KUserIdentity;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KScope;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KSessionScope;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KSessionScope.Status;
+import org.integratedmodelling.klab.api.services.KReasoner;
+import org.integratedmodelling.klab.api.services.KResolver;
+import org.integratedmodelling.klab.api.services.KResources;
+import org.integratedmodelling.klab.api.services.KRuntime;
+import org.integratedmodelling.klab.api.services.runtime.KMessage;
 import org.integratedmodelling.klab.services.actors.messages.user.CreateApplication;
 import org.integratedmodelling.klab.services.actors.messages.user.CreateSession;
 import org.integratedmodelling.klab.services.engine.EngineService;
-import org.integratedmodelling.klab.utils.Parameters;
 
-import io.reacted.core.reactorsystem.ReActorRef;
-
-public class Scope implements IScope {
+public class Scope implements KScope {
 
     private static final long serialVersionUID = 605310381727313326L;
 
-    private Parameters<String> data = Parameters.create();
-    private IUserIdentity user;
-    private Reasoner reasonerService;
-    private ResourceManager resourceService;
-    private Resolver resolverService;
-    private Runtime runtimeService;
+    private KParameters<String> data = Parameters.create();
+    private KUserIdentity user;
+    private KReasoner reasonerService;
+    private KResources resourceService;
+    private KResolver resolverService;
+    private KRuntime runtimeService;
     private Ref agent;
 
-    public Scope(IUserIdentity user, Reasoner reasonerService, ResourceManager resourceService, Resolver resolverService,
-            Runtime runtimeService) {
+    public Scope(KUserIdentity user, KReasoner reasonerService, KResources resourceService, KResolver resolverService,
+            KRuntime runtimeService) {
         this.user = user;
         this.reasonerService = reasonerService;
         this.resourceService = resourceService;
@@ -50,33 +48,9 @@ public class Scope implements IScope {
         this.resolverService = parent.resolverService;
         this.runtimeService = parent.runtimeService;
     }
-
+    
     @Override
-    public Reasoner getReasoner() {
-        // TODO Auto-generated method stub
-        return this.reasonerService;
-    }
-
-    @Override
-    public Resolver getResolver() {
-        // TODO Auto-generated method stub
-        return this.resolverService;
-    }
-
-    @Override
-    public Runtime getRuntime() {
-        // TODO Auto-generated method stub
-        return this.runtimeService;
-    }
-
-    @Override
-    public ResourceManager getResources() {
-        // TODO Auto-generated method stub
-        return this.resourceService;
-    }
-
-    @Override
-    public ISessionScope runSession(String sessionName) {
+    public KSessionScope runSession(String sessionName) {
 
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
@@ -91,7 +65,7 @@ public class Scope implements IScope {
     }
 
     @Override
-    public ISessionScope runApplication(String behaviorName) {
+    public KSessionScope runApplication(String behaviorName) {
 
         final SessionScope ret = new SessionScope(this);
         ret.setStatus(Status.WAITING);
@@ -106,12 +80,12 @@ public class Scope implements IScope {
     }
 
     @Override
-    public IUserIdentity getUser() {
+    public KUserIdentity getUser() {
         return this.user;
     }
 
     @Override
-    public IParameters<String> getData() {
+    public KParameters<String> getData() {
         return this.data;
     }
 
@@ -158,12 +132,6 @@ public class Scope implements IScope {
     }
 
     @Override
-    public void post(Consumer<IMessage> handler, Object... message) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void addWait(int seconds) {
         // TODO Auto-generated method stub
 
@@ -186,5 +154,17 @@ public class Scope implements IScope {
         // TODO Auto-generated method stub
         return false;
     }
+
+    @Override
+    public KIdentity getIdentity() {
+        return getUser();
+    }
+
+    @Override
+    public void post(Consumer<KMessage> handler, Object... message) {
+        // TODO Auto-generated method stub
+        
+    }
+
 
 }
