@@ -175,7 +175,7 @@ public class UserTaggingController {
         }
 
         tagNotification.setTag(tag.get());
-        userTagService.saveTagNotification(tagNotification);
+        userTagService.insertOrUpdateTagNotification(tagNotification);
 
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)

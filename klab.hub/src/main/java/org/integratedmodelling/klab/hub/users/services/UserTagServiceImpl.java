@@ -87,7 +87,7 @@ public class UserTagServiceImpl implements UserTagService {
     }
 
     @Override
-    public void saveTagNotification(TagNotification tagNotification) {
+    public void insertOrUpdateTagNotification(TagNotification tagNotification) {
         notificationRepository.save(tagNotification);
     }
 

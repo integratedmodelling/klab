@@ -56,15 +56,38 @@ public interface UserTagService {
      * @param tag to insert or update.
      */
     public void insertOrUpdateTag(MongoTag tag);
-    
-    public Optional<MongoTag> getTagByName(String name);
-    
-    public void saveTagNotification(TagNotification tagNotification);
 
+    /**
+     * Gets a tag by the tag name.
+     * @param name of the tag.
+     * @return The requested MongoTag as Optional.
+     */
+    public Optional<MongoTag> getTagByName(String name);
+
+    /**
+     * Inserts or updates a TagNotification.
+     * @param tagNotification to insert or update.
+     */
+    public void insertOrUpdateTagNotification(TagNotification tagNotification);
+
+    /**
+     * Gets all the TagNotifications.
+     * @return A list of all the TagNotifications
+     */
     public List<TagNotification> getAllTagNotifications();
 
+    /**
+     * Gets notification associated to a tag.
+     * @param tag MongoTag of which we request the notification.
+     * @return The requested TagNotification as Optional.
+     */
     public Optional<TagNotification> getTagNotificationsByTag(MongoTag tag);
 
+    /**
+     * Gets a list of the TagNotifications associated to a user.
+     * @param username of the User.
+     * @return A list with the TagNotifications associated to a user.
+     */
     public List<TagNotification> getTagNotificationsByUser(String username);
 
 }
