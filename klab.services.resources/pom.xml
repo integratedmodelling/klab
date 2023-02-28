@@ -10,6 +10,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.services.authentication</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.services.core</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
@@ -17,7 +22,7 @@
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.kim</artifactId>
 			<version>${klab.version}</version>
-		</dependency>		
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.kactors</artifactId>
@@ -33,5 +38,27 @@
 			<artifactId>klab.core.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext</artifactId>
+			<version>${xtextVersion}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.util -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.util</artifactId>
+			<version>${xtextVersion}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext.testing
+			Used in compile scope to provide simple, reentrant parser injector for repeated
+			calls to declaration parser. -->
+		<dependency>
+			<groupId>org.eclipse.xtext</groupId>
+			<artifactId>org.eclipse.xtext.testing</artifactId>
+			<version>${xtextVersion}</version>
+		</dependency>
+		
 	</dependencies>
 </project>

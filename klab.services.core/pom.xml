@@ -9,6 +9,26 @@
 	<name>k.LAB services core</name>
 	<description>Core functionalities needed by all engine services</description>
 	<dependencies>
+
+		<dependency>
+		    <groupId>com.fasterxml.jackson.dataformat</groupId>
+    		<artifactId>jackson-dataformat-yaml</artifactId>
+    		<version>${jackson-version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.eclipse.jgit/org.eclipse.jgit -->
+		<dependency>
+			<groupId>org.eclipse.jgit</groupId>
+			<artifactId>org.eclipse.jgit</artifactId>
+			<version>6.4.0.202211300538-r</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
 		<dependency>
 			<groupId>com.google.protobuf</groupId>
@@ -68,12 +88,12 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		
+
 		<dependency>
-		    <groupId>org.junit.jupiter</groupId>
-   		 	<artifactId>junit-jupiter-engine</artifactId>
-    		<version>5.9.2</version>
-    		<scope>test</scope>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.9.2</version>
+			<scope>test</scope>
 		</dependency>
 
 	</dependencies>

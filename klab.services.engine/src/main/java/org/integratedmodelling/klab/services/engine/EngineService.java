@@ -74,8 +74,6 @@ public enum EngineService implements KEngine, KEngineIdentity {
 
     public void boot() {
 
-        initializeLanguageServices();
-
         /*
          * boot the actor system
          */
@@ -201,27 +199,6 @@ public enum EngineService implements KEngine, KEngineIdentity {
         return null;
     }
 
-    private void initializeLanguageServices() {
-
-//        /*
-//         * set up access to the k.IM grammar
-//         */
-//        IInjectorProvider injectorProvider = new KimInjectorProvider();
-//        Injector injector = injectorProvider.getInjector();
-//        if (injector != null) {
-//            Kim.INSTANCE.setup(injector);
-//        }
-//
-//        /*
-//         * ...and k.Actors
-//         */
-//        IInjectorProvider kActorsInjectorProvider = new KactorsInjectorProvider();
-//        Injector kActorsInjector = kActorsInjectorProvider.getInjector();
-//        if (kActorsInjector != null) {
-//            KActors.INSTANCE.setup(kActorsInjector);
-//        }
-
-    }
 
     @Override
     public String getName() {

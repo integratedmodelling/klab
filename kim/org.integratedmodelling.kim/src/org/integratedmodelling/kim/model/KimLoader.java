@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
@@ -48,6 +49,45 @@ public class KimLoader implements IKimLoader {
 
     private Injector injector;
 
+    /**
+     * Sent to project consumers that want to parse directly from the ECore beans, which are
+     * guaranteed serializable.
+     * 
+     * @author Ferd
+     *
+     */
+    public interface NamespaceDescriptor {
+
+        enum Role {
+            NAMESPACE, TESTCASE, SCRIPT
+        }
+
+        /**
+         * 
+         * @return
+         */
+        Model getNamespaceModel();
+
+        /**
+         * 
+         * @return
+         */
+        String getProjectName();
+
+        /**
+         * 
+         * @return
+         */
+        Role getNamespaceRole();
+
+        /**
+         * 
+         * @return
+         */
+        List<ICompileNotification> getIssues();
+
+    }
+
     class NsInfo {
 
         IKimNamespace namespace;
@@ -79,8 +119,19 @@ public class KimLoader implements IKimLoader {
     private Graph<File, DefaultEdge> dependencyGraph;
     private Graph<File, DefaultEdge> behaviorGraph;
     private Set<File> projectLocations = new HashSet<>();
+    private Consumer<List<NamespaceDescriptor>> reactor = null;
 
     public KimLoader() {
+    }
+
+    /**
+     * Add a reactor to receive the list of namespace descriptors after each
+     * {@link #loadProjectFiles(Collection)}.
+     * 
+     * @param reactor
+     */
+    public KimLoader(Consumer<List<NamespaceDescriptor>> reactor) {
+        this.reactor = reactor;
     }
 
     private Injector getInjector() {
@@ -500,6 +551,7 @@ public class KimLoader implements IKimLoader {
 
         List<IKimNamespace> ret = new ArrayList<>();
         IResourceValidator validator = getValidator();
+        List<NamespaceDescriptor> namespaces = new ArrayList<>();
 
         for (Resource resource : sortedResources) {
 
@@ -515,7 +567,7 @@ public class KimLoader implements IKimLoader {
                 List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
                 String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
 
-                NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
+                final NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
                 info.name = name;
                 info.namespace = Kim.INSTANCE.getNamespace(name);
                 info.issues.clear();
@@ -541,6 +593,30 @@ public class KimLoader implements IKimLoader {
                 }
 
                 ret.add(info.namespace);
+                namespaces.add(new NamespaceDescriptor() {
+
+                    @Override
+                    public Model getNamespaceModel() {
+                        return (Model)((KimNamespace)info.namespace).getEObject();
+                    }
+
+                    @Override
+                    public String getProjectName() {
+                        return info.project.getName();
+                    }
+
+                    @Override
+                    public Role getNamespaceRole() {
+                        // TODO Auto-generated method stub
+                        return null;
+                    }
+
+                    @Override
+                    public List<ICompileNotification> getIssues() {
+                        return info.issues;
+                    }
+                    
+                });
 
             } catch (Throwable e) {
                 System.out.println("Unrecoverable parse errors in resource: " + resource);
@@ -548,19 +624,24 @@ public class KimLoader implements IKimLoader {
             }
         }
 
-        for (IKimNamespace namespace : ret) {
-            // call notifiers for k.LAB model generation
-            for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
-                notifier.synchronizeNamespaceWithRuntime(namespace);
+        if (!Kim.INSTANCE.getNotifiers().isEmpty()) {
+            for (IKimNamespace namespace : ret) {
+                // call notifiers for k.LAB model generation
+                for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
+                    notifier.synchronizeNamespaceWithRuntime(namespace);
+                }
             }
         }
 
         /*
-         * TODO if we have a semantic consumer installed, build the dependency graph among the info
-         * files and send out notifications and beans in order of dependency, along with project ID.
-         * All info sent through the consumer should be serializable. The k.Actors and k.DL loaders
+         * if we have a semantic consumer installed, build the dependency graph among the info files
+         * and send out notifications and beans in order of dependency, along with project ID. All
+         * info sent through the consumer should be serializable. The k.Actors and k.DL loaders
          * should do the same. We will eventually keep the IKim* beans only for validation.
          */
+        if (reactor != null) {
+            reactor.accept(namespaces);
+        }
 
         computeDependencies();
 
