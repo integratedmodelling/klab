@@ -246,18 +246,6 @@ public class Node implements INodeIdentity {
 	}
 
 	@Override
-	public String load(IBehavior behavior, IContextualizationScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean stop(String behaviorId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean stop() {
 		// TODO Auto-generated method stub
 		return false;

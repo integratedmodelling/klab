@@ -206,18 +206,6 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	}
 
 	@Override
-	public String load(IBehavior behavior, IContextualizationScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean stop(String behaviorId) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public boolean stop() {
 		return false;
 	}

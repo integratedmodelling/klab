@@ -17,6 +17,7 @@ import java.io.Closeable;
 import java.net.URL;
 import java.util.concurrent.Future;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -155,4 +156,15 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
      */
     IObserver<?> getObserver();
 
+//    /**
+//     * Load a specified behavior in a specified runtime scope. Returns a string
+//     * identifying the running behavior, which can be passed to
+//     * {@link #stop(String)}.
+//     * 
+//     * @param behavior
+//     * @param scope
+//     */
+//    String load(IBehavior behavior, IContextualizationScope scope);
+//
+//    boolean stop(String behaviorId);
 }
