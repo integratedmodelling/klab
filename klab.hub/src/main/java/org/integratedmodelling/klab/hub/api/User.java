@@ -3,9 +3,12 @@ package org.integratedmodelling.klab.hub.api;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.rest.CustomProperty;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
@@ -73,6 +76,8 @@ public class User extends IdentityModel implements UserDetails{
     private Set<String> applications = new HashSet<>();
 
     AccountStatus accountStatus = AccountStatus.pendingActivation;
+
+    Set<CustomProperty> customProperties = new HashSet<>();
 
     public enum AccountStatus {
         active,
@@ -385,5 +390,26 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
+    public Set<CustomProperty> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Set<CustomProperty> customProperties) { 
+        this.customProperties = customProperties; 
+    } 
+
+    public void putCustomProperty(CustomProperty customProperty) {
+        this.customProperties.add(customProperty);
+    }
+
+    public void putCustomProperties(Collection<CustomProperty> customProperties) {
+        this.customProperties.addAll(customProperties);
+    }
+
+    public Optional<CustomProperty> findCustomProperty(String key) {
+        return customProperties.stream()
+                .filter(cp -> cp.getKey().equals(key)).findFirst();
+    }
 
 }
