@@ -8,98 +8,122 @@ import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement;
 
 public interface KReasoner {
-    
-    /**
-     * 
-     * @param definition
-     * @return
-     */
-    KConcept resolveConcept(String definition);
 
-    /**
-     * 
-     * @param definition
-     * @return
-     */
-    KObservable resolveObservable(String definition);
-    
-    Collection<KConcept> operands(KSemantics target);
-    
-    Collection<KConcept> children(KSemantics target);
-    
-    Collection<KConcept> parents(KSemantics target);
-    
-    Collection<KConcept> allChildren(KSemantics target);
-    
-    Collection<KConcept> allParents(KSemantics target);
-    
-    Collection<KConcept> closure(KSemantics target);
+	/**
+	 * All services publish capabilities and have a call to obtain them.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Capabilities {
 
-    int semanticDistance(KSemantics target);
+	}
 
-    int semanticDistance(KSemantics target, KSemantics context);
+	Capabilities getCapabilities();
+	
 
-    KConcept coreObservable(KConcept first);
+	
+	/**
+	 * 
+	 * @param definition
+	 * @return
+	 */
+	KConcept resolveConcept(String definition);
 
-    Pair<KConcept, List<SemanticType>> splitOperators(KConcept concept);
+	/**
+	 * 
+	 * @param definition
+	 * @return
+	 */
+	KObservable resolveObservable(String definition);
 
-    Collection<KConcept> traits(KConcept concept);
+	Collection<KConcept> operands(KSemantics target);
 
-    int assertedDistance(KConcept kConcept, KConcept t);
+	Collection<KConcept> children(KSemantics target);
 
-    boolean hasTrait(KConcept concept, KConcept t);
+	Collection<KConcept> parents(KSemantics target);
 
-    Collection<KConcept> roles(KConcept concept);
+	Collection<KConcept> allChildren(KSemantics target);
 
-    boolean hasRole(KConcept concept, KConcept t);
+	Collection<KConcept> allParents(KSemantics target);
 
-    KConcept directContext(KConcept concept);
+	Collection<KConcept> closure(KSemantics target);
 
-    KConcept context(KConcept concept);
+	int semanticDistance(KSemantics target);
 
-    KConcept directInherent(KConcept concept);
+	int semanticDistance(KSemantics target, KSemantics context);
 
-    KConcept inherent(KConcept concept);
+	KConcept coreObservable(KConcept first);
 
-    KConcept directGoal(KConcept concept);
+	Pair<KConcept, List<SemanticType>> splitOperators(KConcept concept);
 
-    KConcept goal(KConcept concept);
+	Collection<KConcept> traits(KConcept concept);
 
-    KConcept directCooccurrent(KConcept concept);
+	int assertedDistance(KConcept kConcept, KConcept t);
 
-    KConcept directCausant(KConcept concept);
+	boolean hasTrait(KConcept concept, KConcept t);
 
-    KConcept directCaused(KConcept concept);
+	Collection<KConcept> roles(KConcept concept);
 
-    KConcept directAdjacent(KConcept concept);
+	boolean hasRole(KConcept concept, KConcept t);
 
-    KConcept directCompresent(KConcept concept);
+	KConcept directContext(KConcept concept);
 
-    KConcept directRelativeTo(KConcept concept);
-    
-    KConcept cooccurrent(KConcept concept);
+	KConcept context(KConcept concept);
 
-    KConcept causant(KConcept concept);
+	KConcept directInherent(KConcept concept);
 
-    KConcept caused(KConcept concept);
+	KConcept inherent(KConcept concept);
 
-    KConcept adjacent(KConcept concept);
+	KConcept directGoal(KConcept concept);
 
-    KConcept compresent(KConcept concept);
+	KConcept goal(KConcept concept);
 
-    KConcept relativeTo(KConcept concept);
+	KConcept directCooccurrent(KConcept concept);
 
-    Object displayLabel(KSemantics concept);
+	KConcept directCausant(KConcept concept);
 
-    Object codeName(KSemantics concept);
+	KConcept directCaused(KConcept concept);
 
-    String style(KConcept concept);
+	KConcept directAdjacent(KConcept concept);
 
-    interface Admin {
-        
-        
-    }
-    
+	KConcept directCompresent(KConcept concept);
+
+	KConcept directRelativeTo(KConcept concept);
+
+	KConcept cooccurrent(KConcept concept);
+
+	KConcept causant(KConcept concept);
+
+	KConcept caused(KConcept concept);
+
+	KConcept adjacent(KConcept concept);
+
+	KConcept compresent(KConcept concept);
+
+	KConcept relativeTo(KConcept concept);
+
+	Object displayLabel(KSemantics concept);
+
+	Object codeName(KSemantics concept);
+
+	String style(KConcept concept);
+
+	interface Admin {
+
+		/**
+		 * The port to ingest a wordview, available only as admin. Makes it possible for
+		 * the resolver to use local concepts but they must own the semantic service.
+		 * Must contain only known concepts, so order of ingestion is critical.
+		 * 
+		 * @param statement
+		 * @return
+		 */
+		KConcept addConcept(KKimConceptStatement statement);
+
+	}
+
 }

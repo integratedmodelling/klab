@@ -14,113 +14,127 @@ import org.integratedmodelling.klab.api.lang.kim.KKimNamespace;
 
 public interface KResources {
 
-    /**
-     * 
-     * @param urn
-     * @param scope
-     * @return
-     */
-    KProject resolveProject(String urn, KScope scope);
+	/**
+	 * All services publish capabilities and have a call to obtain them.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Capabilities {
 
-    /**
-     * 
-     * @param urn
-     * @param scope
-     * @return
-     */
-    KKActorsBehavior resolveBehavior(String urn, KScope scope);
+	}
 
-    /**
-     * 
-     * @param urn
-     * @param scope
-     * @return
-     */
-    KResource resolveResource(String urn, KScope scope);
+	Capabilities getCapabilities();
+	
+	/**
+	 * 
+	 * @param urn
+	 * @param scope
+	 * @return
+	 */
+	KProject resolveProject(String urn, KScope scope);
 
-    /**
-     * 
-     * @param originalResource
-     * @param scope
-     * @return
-     */
-    KResource contextualizeResource(KResource originalResource, KContextScope scope);
+	/**
+	 * 
+	 * @param urn
+	 * @param scope
+	 * @return
+	 */
+	KKActorsBehavior resolveBehavior(String urn, KScope scope);
 
-    /**
-     * 
-     * @param contextualizedResource
-     * @param scope
-     * @return
-     */
-    KKlabData contextualize(KResource contextualizedResource, KScope scope);
+	/**
+	 * 
+	 * @param urn
+	 * @param scope
+	 * @return
+	 */
+	KResource resolveResource(String urn, KScope scope);
 
-    /**
-     * 
-     * @param urn
-     * @param scope
-     * @return
-     */
-    KKdlDataflow resolveDataflow(String urn, KScope scope);
+	/**
+	 * 
+	 * @param originalResource
+	 * @param scope
+	 * @return
+	 */
+	KResource contextualizeResource(KResource originalResource, KContextScope scope);
 
-    /**
-     * Return all the namespaces that depend on the passed namespace.
-     * 
-     * @param namespaceId
-     * @return
-     */
-    List<KKimNamespace> dependents(String namespaceId);
+	/**
+	 * 
+	 * @param contextualizedResource
+	 * @param scope
+	 * @return
+	 */
+	KKlabData contextualize(KResource contextualizedResource, KScope scope);
 
-    /**
-     * Return all the namespaces that the passed namespace depends on. These must be available to
-     * the resolver prior to loading any namespace. The closure of the namespace must be complete,
-     * no matter if they come from this service or others: a service cannot serve a namespace unless
-     * it's prepared to serve its entire closure under the same scope.
-     * 
-     * @param namespaceId
-     * @return
-     */
-    List<KKimNamespace> precursors(String namespaceId);
+	/**
+	 * 
+	 * @param urn
+	 * @param scope
+	 * @return
+	 */
+	KKdlDataflow resolveDataflow(String urn, KScope scope);
 
-    /**
-     * Admin interface to submit/remove projects and configure the service.
-     * 
-     * @author Ferd
-     *
-     */
-    interface Admin {
+	/**
+	 * Return all the namespaces that depend on the passed namespace.
+	 * 
+	 * @param namespaceId
+	 * @return
+	 */
+	List<KKimNamespace> dependents(String namespaceId);
 
-        /**
-         * Add or update a project from an external source to the local repository.
-         * 
-         * @param workspaceName
-         * @param projectUrl can be a file (zip or existing folder), a git URL (with a potential
-         *        branch name after a # sign) or a http URL from another resource manager.
-         * @return true if operation succeeded
-         */
-        boolean addProjectToLocalWorkspace(String workspaceName, String projectUrl);
+	/**
+	 * Return all the namespaces that the passed namespace depends on. These must be
+	 * available to the resolver prior to loading any namespace. The closure of the
+	 * namespace must be complete, no matter if they come from this service or
+	 * others: a service cannot serve a namespace unless it's prepared to serve its
+	 * entire closure under the same scope.
+	 * 
+	 * @param namespaceId
+	 * @return
+	 */
+	List<KKimNamespace> precursors(String namespaceId);
 
-        /**
-         * 
-         * @param workspaceName
-         * @param projectName
-         * @return true if operation was carried out
-         */
-        void removeProjectFromLocalWorkspace(String workspaceName, String projectName);
+	/**
+	 * Admin interface to submit/remove projects and configure the service.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Admin {
 
-        /**
-         * Remove an entire workspace and all the projects and resources in it.
-         * 
-         * @param workspaceName
-         */
-        void removeWorkspace(String workspaceName);
+		/**
+		 * Add or update a project from an external source to the local repository.
+		 * 
+		 * @param workspaceName
+		 * @param projectUrl    can be a file (zip or existing folder), a git URL (with
+		 *                      a potential branch name after a # sign) or a http URL
+		 *                      from another resource manager.
+		 * @return true if operation succeeded
+		 */
+		boolean addProjectToLocalWorkspace(String workspaceName, String projectUrl);
 
-        /**
-         * Return a list of all the workspaces available with their contents.
-         * 
-         * @return
-         */
-        List<KWorkspace> getWorkspaces();
+		/**
+		 * 
+		 * @param workspaceName
+		 * @param projectName
+		 * @return true if operation was carried out
+		 */
+		void removeProjectFromLocalWorkspace(String workspaceName, String projectName);
 
-    }
+		/**
+		 * Remove an entire workspace and all the projects and resources in it.
+		 * 
+		 * @param workspaceName
+		 */
+		void removeWorkspace(String workspaceName);
+
+		/**
+		 * Return a list of all the workspaces available with their contents.
+		 * 
+		 * @return
+		 */
+		List<KWorkspace> getWorkspaces();
+
+	}
 
 }

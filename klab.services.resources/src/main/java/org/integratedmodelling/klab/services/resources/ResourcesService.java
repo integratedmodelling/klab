@@ -271,4 +271,10 @@ public class ResourcesService implements KResources, KResources.Admin {
             Logging.INSTANCE.error("Error during thread termination", e);
         }
     }
+
+	@Override
+	public Capabilities getCapabilities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

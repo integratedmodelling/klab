@@ -238,4 +238,10 @@ public class ReasonerService implements KReasoner {
         // TODO Auto-generated method stub
         return null;
     }
+
+	@Override
+	public Capabilities getCapabilities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
