@@ -45,10 +45,6 @@ ldap:
   userDnPattern: (uid={0})
   
 logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
   file: hub.log
   
 site:

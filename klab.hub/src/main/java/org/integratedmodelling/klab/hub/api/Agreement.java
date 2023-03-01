@@ -37,6 +37,8 @@ public class Agreement {
     
     private Date revokedDate;   
     
+    private String ownAgreement;
+    
 
     @Reference
     private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
@@ -155,6 +157,18 @@ public class Agreement {
 
         return false;
     }
+
+
+    public String getOwnAgreement() {
+        return ownAgreement;
+    }
+
+
+    public void setOwnAgreement(String ownAgreement) {
+        this.ownAgreement = ownAgreement;
+    }
+    
+    
         
 
 }
