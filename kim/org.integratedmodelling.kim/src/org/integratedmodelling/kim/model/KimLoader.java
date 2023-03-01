@@ -63,6 +63,14 @@ public class KimLoader implements IKimLoader {
         }
 
         /**
+         * The parsed bean. This isn't necessarily serializable so should be adapted before
+         * transferring.
+         * 
+         * @return
+         */
+        IKimNamespace getNamespace();
+
+        /**
          * 
          * @return
          */
@@ -175,6 +183,33 @@ public class KimLoader implements IKimLoader {
             injector.injectMembers(this);
         }
         loadProjectFiles(projectRoots);
+    }
+
+    // @Override
+    public IKimProject loadProject(File root) {
+
+        IKimProject project = Kim.INSTANCE.getProject(MiscUtilities.getFileName(root));
+        if (project != null && !project.getRoot().equals(root)) {
+            // TODO override in same workspace
+            KimWorkspace workspace = Kim.INSTANCE.getWorkspaceForProject(project.getName());
+            project = workspace.overrideProject(project.getName(), root);
+        }
+
+        // if (!projectLocations.contains(root)) {
+        project = Kim.INSTANCE.getProjectIn(root);
+        if (project == null) {
+            Kim.INSTANCE.userWorkspace.addProjectPath(root);
+            Kim.INSTANCE.userWorkspace.readProjects();
+            Kim.INSTANCE.registerWorkspace(Kim.INSTANCE.userWorkspace);
+            project = Kim.INSTANCE.getProjectIn(root);
+        }
+        if (project == null) {
+            System.err.println("internal: project path " + root + " caused a null project");
+        } else {
+            load(Collections.singleton(project));
+        }
+
+        return project;
     }
 
     @Override
@@ -593,11 +628,11 @@ public class KimLoader implements IKimLoader {
                 }
 
                 ret.add(info.namespace);
-                namespaces.add(new NamespaceDescriptor() {
+                namespaces.add(new NamespaceDescriptor(){
 
                     @Override
                     public Model getNamespaceModel() {
-                        return (Model)((KimNamespace)info.namespace).getEObject();
+                        return (Model) ((KimNamespace) info.namespace).getEObject();
                     }
 
                     @Override
@@ -615,7 +650,12 @@ public class KimLoader implements IKimLoader {
                     public List<ICompileNotification> getIssues() {
                         return info.issues;
                     }
-                    
+
+                    @Override
+                    public IKimNamespace getNamespace() {
+                        return info.namespace;
+                    }
+
                 });
 
             } catch (Throwable e) {

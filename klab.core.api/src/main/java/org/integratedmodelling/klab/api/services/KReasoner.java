@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
 
 public interface KReasoner {
+    
     /**
      * 
      * @param definition
@@ -96,4 +97,9 @@ public interface KReasoner {
 
     String style(KConcept concept);
 
+    interface Admin {
+        
+        
+    }
+    
 }

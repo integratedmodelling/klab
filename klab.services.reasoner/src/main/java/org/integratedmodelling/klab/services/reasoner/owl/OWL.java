@@ -137,7 +137,7 @@ public enum OWL {
             }
             for (String b : os) {
                 KKimNamespace ns = getNamespace(b);
-                if (!b.equals(a) && ns.getImportedIds().contains(a)) {
+                if (!b.equals(a) && ns.getImports().containsKey(a)) {
                     namespace = b;
                 }
             }
@@ -150,7 +150,7 @@ public enum OWL {
         boolean transitive = true;
         KKimNamespace ns = getNamespace(namespace);
         for (String s : graph) {
-            if (!s.equals(ns.getName()) && !ns.getImportedIds().contains(s)) {
+            if (!s.equals(ns.getName()) && !ns.getImports().containsKey(s)) {
                 transitive = false;
                 break;
             }

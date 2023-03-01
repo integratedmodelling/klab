@@ -68,7 +68,7 @@ public interface KResources {
      * @param namespaceId
      * @return
      */
-    List<KKimNamespace> getDependents(String namespaceId);
+    List<KKimNamespace> dependents(String namespaceId);
 
     /**
      * Return all the namespaces that the passed namespace depends on. These must be available to
@@ -79,7 +79,7 @@ public interface KResources {
      * @param namespaceId
      * @return
      */
-    List<KKimNamespace> getPrecursors(String namespaceId);
+    List<KKimNamespace> precursors(String namespaceId);
 
     /**
      * Admin interface to submit/remove projects and configure the service.

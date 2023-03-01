@@ -1,8 +1,12 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.lang.KServiceCall;
@@ -19,114 +23,155 @@ import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
 public class KimNamespace extends KimStatement implements KKimNamespace {
 
     private static final long serialVersionUID = 6198296119075476515L;
+    private String name;
+    private Set<String> disjointNamespaces = new HashSet<>();
+    private long timestamp;
+    private List<Pair<String, String>> owlImports = new ArrayList<>();
+    private List<Pair<String, List<String>>> vocabularyImports = new ArrayList<>();
+    private boolean inactive;
+    private boolean scenario;
+    private KKimConcept domain;
+    private String scriptId;
+    private String testCaseId;
+    private boolean worldviewBound;
+    private List<KServiceCall> extents = new ArrayList<>();
+    private Map<String, Object> defines = new HashMap<>();
+    private List<KKimStatement> statements = new ArrayList<>();
+    private Map<String, List<String>> imports = new HashMap<>();
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public List<String> getImportedNamespaceIds() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.name;
     }
 
     @Override
     public Collection<String> getDisjointNamespaces() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public <T extends KKimStatement> T getStatement(String name, Class<T> cls) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.disjointNamespaces;
     }
 
     @Override
     public long getTimestamp() {
-        // TODO Auto-generated method stub
-        return 0;
+        return this.timestamp;
     }
 
     @Override
     public List<Pair<String, String>> getOwlImports() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.owlImports;
     }
 
     @Override
     public List<Pair<String, List<String>>> getVocabularyImports() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Map<String, Object> getSymbolTable() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.vocabularyImports;
     }
 
     @Override
     public boolean isInactive() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.inactive;
     }
 
     @Override
     public boolean isScenario() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.scenario;
     }
 
     @Override
     public KKimConcept getDomain() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.domain;
     }
 
     @Override
     public String getScriptId() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.scriptId;
     }
 
     @Override
     public String getTestCaseId() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.testCaseId;
     }
 
     @Override
     public boolean isWorldviewBound() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public List<KKimStatement> getAllStatements() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Collection<String> getImportedNamespaceIds(boolean scanUsages) {
-        // TODO Auto-generated method stub
-        return null;
+        return this.worldviewBound;
     }
 
     @Override
     public List<KServiceCall> getExtents() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.extents;
     }
 
     @Override
-    public Collection<String> getImportedIds() {
-        // TODO Auto-generated method stub
-        return null;
+    public Map<String, Object> getDefines() {
+        return this.defines;
     }
 
+    @Override
+    public List<KKimStatement> getStatements() {
+        return this.statements;
+    }
+
+    @Override
+    public Map<String, List<String>> getImports() {
+        return this.imports;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setDisjointNamespaces(Set<String> disjointNamespaces) {
+        this.disjointNamespaces = disjointNamespaces;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public void setOwlImports(List<Pair<String, String>> owlImports) {
+        this.owlImports = owlImports;
+    }
+
+    public void setVocabularyImports(List<Pair<String, List<String>>> vocabularyImports) {
+        this.vocabularyImports = vocabularyImports;
+    }
+
+    public void setInactive(boolean inactive) {
+        this.inactive = inactive;
+    }
+
+    public void setScenario(boolean scenario) {
+        this.scenario = scenario;
+    }
+
+    public void setDomain(KKimConcept domain) {
+        this.domain = domain;
+    }
+
+    public void setScriptId(String scriptId) {
+        this.scriptId = scriptId;
+    }
+
+    public void setTestCaseId(String testCaseId) {
+        this.testCaseId = testCaseId;
+    }
+
+    public void setWorldviewBound(boolean worldviewBound) {
+        this.worldviewBound = worldviewBound;
+    }
+
+    public void setExtents(List<KServiceCall> extents) {
+        this.extents = extents;
+    }
+
+    public void setDefines(Map<String, Object> defines) {
+        this.defines = defines;
+    }
+
+    public void setStatements(List<KKimStatement> statements) {
+        this.statements = statements;
+    }
+
+    public void setImports(Map<String, List<String>> imports) {
+        this.imports = imports;
+    }
 
 }

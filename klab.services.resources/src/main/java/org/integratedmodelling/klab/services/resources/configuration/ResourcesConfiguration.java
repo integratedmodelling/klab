@@ -1,10 +1,11 @@
 package org.integratedmodelling.klab.services.resources.configuration;
 
+import java.io.File;
 import java.io.Serializable;
-import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.authentication.ResourcePrivileges;
 
@@ -23,17 +24,20 @@ public class ResourcesConfiguration implements Serializable {
 
         private static final long serialVersionUID = -8989429880321748157L;
 
-        private URL sourceUrl;
+        private String sourceUrl;
         private String referenceWorldview;
+        private boolean served;
         private boolean worldview;
         private ResourcePrivileges privileges;
         private boolean locallyManaged;
         private boolean authoritative;
+        private long syncIntervalMs;
+        private File localPath;
 
-        public URL getSourceUrl() {
+        public String getSourceUrl() {
             return sourceUrl;
         }
-        public void setSourceUrl(URL sourceUrl) {
+        public void setSourceUrl(String sourceUrl) {
             this.sourceUrl = sourceUrl;
         }
         public String getReferenceWorldview() {
@@ -66,6 +70,30 @@ public class ResourcesConfiguration implements Serializable {
         public void setAuthoritative(boolean authoritative) {
             this.authoritative = authoritative;
         }
+        public long getSyncIntervalMs() {
+            return syncIntervalMs;
+        }
+        public void setSyncIntervalMs(long syncIntervalMs) {
+            this.syncIntervalMs = syncIntervalMs;
+        }
+
+        /**
+         * Projects that aren't served are there only to make other projects understood.
+         * 
+         * @return
+         */
+        public boolean isServed() {
+            return served;
+        }
+        public void setServed(boolean served) {
+            this.served = served;
+        }
+        public File getLocalPath() {
+            return localPath;
+        }
+        public void setLocalPath(File localPath) {
+            this.localPath = localPath;
+        }
 
     }
 
@@ -78,9 +106,9 @@ public class ResourcesConfiguration implements Serializable {
 
     /**
      * Each workspace name is a subdirectory with a number of projects in them. All are relative to
-     * the resource path.
+     * the resource path. The order of declaration in config is the order of loading.
      */
-    private Map<String, List<String>> workspaces = new HashMap<>();
+    private Map<String, Set<String>> workspaces = new LinkedHashMap<>();
 
     /**
      * Each project managed by this
@@ -95,11 +123,11 @@ public class ResourcesConfiguration implements Serializable {
         this.servicePath = servicePath;
     }
 
-    public Map<String, List<String>> getWorkspaces() {
+    public Map<String, Set<String>> getWorkspaces() {
         return workspaces;
     }
 
-    public void setWorkspaces(Map<String, List<String>> workspaces) {
+    public void setWorkspaces(Map<String, Set<String>> workspaces) {
         this.workspaces = workspaces;
     }
 
