@@ -32,7 +32,7 @@ public class UserBehavior {
 		
 		@Override
 		public String toString() {
-			return "[UNKNOWN MESSAGE " + call.message + "]";
+			return "[UNKNOWN MESSAGE " + call.getMessage() + "]";
 		}
 	}
 

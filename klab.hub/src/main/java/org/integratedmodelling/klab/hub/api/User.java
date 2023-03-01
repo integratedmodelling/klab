@@ -3,9 +3,12 @@ package org.integratedmodelling.klab.hub.api;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.rest.CustomProperty;
 import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
@@ -67,9 +70,6 @@ public class User extends IdentityModel implements UserDetails{
 
     private Set<Role> roles = new HashSet<>();;
 
-    //@Reference
-    //private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
-    
     @Reference
     private Set<Agreement> agreements = new HashSet<>();
 
@@ -77,13 +77,15 @@ public class User extends IdentityModel implements UserDetails{
 
     AccountStatus accountStatus = AccountStatus.pendingActivation;
 
+    Set<CustomProperty> customProperties = new HashSet<>();
+
     public enum AccountStatus {
         active,
         locked,
         deleted,
         expired,
         pendingActivation,
-        verified,
+        verified
     };
 
     // @Transient prevents the password from being stored in Mongo.
@@ -148,6 +150,10 @@ public class User extends IdentityModel implements UserDetails{
         return isRole(Role.ROLE_ADMINISTRATOR);
     }
 
+    public boolean isManager() {
+        return isRole(Role.ROLE_MANAGER);
+    }
+
     public boolean isRole(Role role) {
         return roles.contains(role);
     }
@@ -209,40 +215,9 @@ public class User extends IdentityModel implements UserDetails{
     	return this.roles;
     }
     
-    /*public void addGroupEntries(GroupEntry... groups) {
-        this.groupEntries.addAll(Arrays.asList(groups));
+    public void removeRoles(Collection<Role> rolesToRemove) {
+    	this.roles.removeAll(rolesToRemove);
     }
-
-    public void addGroupEntries(Set<GroupEntry> groups) {
-        this.groupEntries.addAll(groups);
-    }
-
-    public void setGroupEntries(Set<GroupEntry> groups) {
-        this.groupEntries = groups;
-    }
-    
-	public void removeGroupEntries(Set<GroupEntry> groupEntries) {
-    	
-		Set<String> names = new HashSet<>();
-    	groupEntries
-    	  .forEach(e -> {
-    		  String name = e.getGroupName();
-    		  names.add(name);
-    	  });
-    	
-    	if(groupEntries.isEmpty()) {
-    		return;
-    	}
-    	
-    	Set<GroupEntry> entries = getGroupEntries();
-		entries.removeIf(e -> names.contains(e.getGroupName()));		
-		setGroupEntries(entries);
-		
-	}
-
-    public Set<GroupEntry> getGroupEntries() {
-        return groupEntries;
-    }*/
 
     public Set<String> getApplications() {
         return applications;
@@ -398,5 +373,25 @@ public class User extends IdentityModel implements UserDetails{
     }
 	
 	
+    public Set<CustomProperty> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Set<CustomProperty> customProperties) {
+        this.customProperties = customProperties;
+    }
+
+    public void putCustomProperty(CustomProperty customProperty) {
+        this.customProperties.add(customProperty);
+    }
+
+    public void putCustomProperties(Collection<CustomProperty> customProperties) {
+        this.customProperties.addAll(customProperties);
+    }
+
+    public Optional<CustomProperty> findCustomProperty(String key) {
+        return customProperties.stream()
+                .filter(cp -> cp.getKey().equals(key)).findFirst();
+    }
 
 }

@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert.Assertion;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Fail;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Time;
@@ -39,14 +40,14 @@ import org.integratedmodelling.klab.utils.TemplateUtil;
  * @author Ferd
  *
  */
-public class TestScope {
+public class TestScope implements IKActorsBehavior.TestScope {
 
     // created in the root scope and passed on to the children as is
     private List<TestStatistics> statistics;
 
     // test-scoped scopes make one of these and add it to statistics
-    TestStatistics testStatistics;
-    
+    private TestStatistics testStatistics;
+
     // action-scoped scopes make one of these through the test statistics
     private ActionStatistics actionStatistics;
     private LogFile log;
@@ -110,6 +111,86 @@ public class TestScope {
         return this.testScopeId;
     }
 
+    public List<TestStatistics> getStatistics() {
+        return statistics;
+    }
+
+    public void setStatistics(List<TestStatistics> statistics) {
+        this.statistics = statistics;
+    }
+
+    public TestStatistics getTestStatistics() {
+        return testStatistics;
+    }
+
+    public void setTestStatistics(TestStatistics testStatistics) {
+        this.testStatistics = testStatistics;
+    }
+
+    public ActionStatistics getActionStatistics() {
+        return actionStatistics;
+    }
+
+    public void setActionStatistics(ActionStatistics actionStatistics) {
+        this.actionStatistics = actionStatistics;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public IBehavior getParentBehavior() {
+        return parentBehavior;
+    }
+
+    public void setParentBehavior(IBehavior parentBehavior) {
+        this.parentBehavior = parentBehavior;
+    }
+
+    public List<Throwable> getExceptions() {
+        return exceptions;
+    }
+
+    public void setExceptions(List<Throwable> exceptions) {
+        this.exceptions = exceptions;
+    }
+
+    public Action getAction() {
+        return action;
+    }
+
+    public void setAction(Action action) {
+        this.action = action;
+    }
+
+    public TestScope getParent() {
+        return parent;
+    }
+
+    public void setParent(TestScope parent) {
+        this.parent = parent;
+    }
+
+    public String getTestScopeId() {
+        return testScopeId;
+    }
+
+    public void setTestScopeId(String testScopeId) {
+        this.testScopeId = testScopeId;
+    }
+
+    public String getFailureMessage() {
+        return failureMessage;
+    }
+
+    public void setFailureMessage(String failureMessage) {
+        this.failureMessage = failureMessage;
+    }
+
     /**
      * Called at end of each @test action
      * 
@@ -127,8 +208,8 @@ public class TestScope {
             }
         }
 
-        this.session.getMonitor().send(
-                Message.create(this.session.getId(), IMessage.MessageClass.UnitTests, IMessage.Type.TestFinished, this.actionStatistics));
+        this.session.getMonitor().send(Message.create(this.session.getId(), IMessage.MessageClass.UnitTests,
+                IMessage.Type.TestFinished, this.actionStatistics));
 
     }
 
@@ -151,8 +232,8 @@ public class TestScope {
         ret.setSourceCode(action.getStatement().getSourceCode());
         ret.setStart(System.currentTimeMillis());
 
-        this.session.getMonitor().send(
-                Message.create(this.session.getId(), IMessage.MessageClass.UnitTests, IMessage.Type.TestStarted, ret));
+        this.session.getMonitor()
+                .send(Message.create(this.session.getId(), IMessage.MessageClass.UnitTests, IMessage.Type.TestStarted, ret));
 
         test.getActions().add(ret);
         return ret;
@@ -169,8 +250,8 @@ public class TestScope {
         docBuilder.writeToFile(new File(System.getProperty("user.home") + File.separator + "testoutput.adoc").toPath(),
                 Charset.forName("UTF-8"));
 
-        this.session.getMonitor().send(
-                Message.create(this.session.getId(), IMessage.MessageClass.UnitTests, IMessage.Type.TestCaseFinished, this.testStatistics));
+        this.session.getMonitor().send(Message.create(this.session.getId(), IMessage.MessageClass.UnitTests,
+                IMessage.Type.TestCaseFinished, this.testStatistics));
 
     }
 

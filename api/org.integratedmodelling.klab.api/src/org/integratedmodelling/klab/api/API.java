@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ContextRequest;
-import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.TicketRequest;
@@ -101,7 +100,8 @@ public interface API {
     public static final String PING = "/ping";
 
     /**
-     * STOMP endpoint for client/server notifications. Handled through Websockets protocol.
+     * STOMP endpoint for client/server notifications to session receivers. Handled through
+     * Websockets protocol.
      * 
      * <br/>
      * <b>Response type:</b> {@link Message}
@@ -348,12 +348,17 @@ public interface API {
          * URL path for current user profile, based on Authentication Token parsing.
          */
         public static final String CURRENT_PROFILE = USER_BASE + "/me";
+        /**
+         * Base URL path for locked users.
+         */
+        public static final String LOCKED_USERS = USER_BASE + "/locked-users";
+
 
         public static interface PARAMETERS {
             /**
              * URL PARAMETER for user activation tokens.
              */
-            public static final String USER_ACTIVATION = "activate";
+			public static final String USER_ACTIVATION = "activate";
 
             /**
              * URL PARAMETER for user requesting a lost password email.
@@ -415,6 +420,22 @@ public interface API {
              * URL PARAMETER for user group entry service, find users with a particular group
              */
             public static final String HAS_GROUP = "has-group";
+            /**
+             * URL PARAMETER for changing the account status of a user
+             */
+            public static final String USER_SET_ACCOUNT_STATUS = "account-status";
+            /**
+             * URL PARAMETER for user role entry service, sets a role for a given user
+             */
+            public static final String SET_ROLES = "set-roles";
+            /**
+             * URL PARAMETER for user role entry service, removes a role for a given user
+             */
+            public static final String REMOVE_ROLES = "remove-roles";
+            /**
+             * URL PARAMETER for user role entry service, lists all the users with a particular role
+             */
+            public static final String HAS_ROLES = "has-roles";
         }
 
     }
@@ -452,16 +473,12 @@ public interface API {
             /**
              * 
              */
-            public static final String SET_COMPONENT_PROPERTY = "/component/properties/set/" + P_COMPONENT
-                    + "/"
-                    + P_PROPERTY;
+            public static final String SET_COMPONENT_PROPERTY = "/component/properties/set/" + P_COMPONENT + "/" + P_PROPERTY;
 
             /**
              * 
              */
-            public static final String GET_COMPONENT_PROPERTY = "/component/properties/get/" + P_COMPONENT
-                    + "/"
-                    + P_PROPERTY;
+            public static final String GET_COMPONENT_PROPERTY = "/component/properties/get/" + P_COMPONENT + "/" + P_PROPERTY;
 
             /**
              * 
@@ -986,15 +1003,13 @@ public interface API {
              * Get a project resource as is (image, file or otherwise) by passing the path as the
              * trailing end of the URL. Also accepts : as path separator.
              */
-            public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT
-                    + "/**";
+            public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/**";
 
             /**
              * For visualization, create an image of the spatial coverage of the resource and return
              * it.
              */
-            public static final String GET_RESOURCE_SPATIAL_IMAGE = "/engine/project/resource/spaceimg/"
-                    + P_URN;
+            public static final String GET_RESOURCE_SPATIAL_IMAGE = "/engine/project/resource/spaceimg/" + P_URN;
 
             /**
              * Update or submit a codelist exposed by a resource. This is used on a local engine
@@ -1019,8 +1034,7 @@ public interface API {
              * 
              * GET
              */
-            public static final String CREATE_CODELIST = "/resource/createcodelist/" + P_URN + "/"
-                    + P_CODELIST;
+            public static final String CREATE_CODELIST = "/resource/createcodelist/" + P_URN + "/" + P_CODELIST;
 
         }
 
@@ -1046,9 +1060,7 @@ public interface API {
             /**
              * Observe URN in pre-authorized context. Return task ID.
              */
-            public static final String OBSERVE_CONTEXT_URN = "/engine/session/observation/observe/"
-                    + P_CONTEXT + "/"
-                    + P_URN;
+            public static final String OBSERVE_CONTEXT_URN = "/engine/session/observation/observe/" + P_CONTEXT + "/" + P_URN;
 
             /**
              * Run temporal transitions in pre-authorized context. Return task descriptor.
@@ -1070,8 +1082,8 @@ public interface API {
              * Return structured documentation view (with view being one of report, figures, tables,
              * resources, models or provenance)
              */
-            public static final String DOCUMENTATION_VIEW_CONTEXT = "/engine/session/observation/documentation/"
-                    + P_VIEW + "/" + P_CONTEXT;
+            public static final String DOCUMENTATION_VIEW_CONTEXT = "/engine/session/observation/documentation/" + P_VIEW + "/"
+                    + P_CONTEXT;
 
             /**
              * Endpoints to access tasks.
@@ -1102,27 +1114,23 @@ public interface API {
                 /**
                  * Get the observation structure and description
                  */
-                public static final String DESCRIBE_OBSERVATION = "/engine/session/view/describe/"
-                        + P_OBSERVATION;
+                public static final String DESCRIBE_OBSERVATION = "/engine/session/view/describe/" + P_OBSERVATION;
 
                 /**
                  * Get a summary of the observation state, either globally or at location (through a
                  * parameter)
                  */
-                public static final String SUMMARIZE_OBSERVATION = "/engine/session/view/summary/"
-                        + P_OBSERVATION;
+                public static final String SUMMARIZE_OBSERVATION = "/engine/session/view/summary/" + P_OBSERVATION;
 
                 /**
                  * Get one or more siblings of an artifact, potentially with offsets and number
                  */
-                public static final String GET_CHILDREN_OBSERVATION = "/engine/session/view/children/"
-                        + P_OBSERVATION;
+                public static final String GET_CHILDREN_OBSERVATION = "/engine/session/view/children/" + P_OBSERVATION;
 
                 /**
                  * Get the data for a state in directly useable form, as values or images
                  */
-                public static final String GET_DATA_OBSERVATION = "/engine/session/view/data/"
-                        + P_OBSERVATION;
+                public static final String GET_DATA_OBSERVATION = "/engine/session/view/data/" + P_OBSERVATION;
 
             }
 
@@ -1148,7 +1156,7 @@ public interface API {
          * public anonymous endpoints for web sites or quick monitoring
          */
         public static final String GEOJSON_EVENTS = "/public/stats/geojson/events";
-        
+
         public interface PARAMETERS {
             public static final String TYPE = "type";
 

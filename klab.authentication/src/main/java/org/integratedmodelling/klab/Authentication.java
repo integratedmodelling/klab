@@ -260,6 +260,15 @@ public enum Authentication implements IAuthenticationService {
             return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
         }
 
+        if (!certificate.isValid()) {
+            /*
+             * expired or invalid certificate: throw away the identity, continue as anonymous.
+             */
+            Logging.INSTANCE.info("Certificate is invalid or expired: continuing in anonymous offline mode");
+
+            return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
+        }
+
         if (certificate.getType() == Type.NODE && getAuthenticatedIdentity(INodeIdentity.class) != null) {
             ret = new KlabUser(certificate.getProperty(ICertificate.KEY_NODENAME), getAuthenticatedIdentity(INodeIdentity.class));
             registerIdentity(ret);

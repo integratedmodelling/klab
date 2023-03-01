@@ -10,11 +10,10 @@ import org.integratedmodelling.klab.api.auth.IEngineIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.api.engine.IObservationScope;
+import org.integratedmodelling.klab.api.engine.IContextScope;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IActorsService;
-import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -25,7 +24,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
     private IActorIdentity.Reference actor;
     private IParameters<String> globalState = Parameters.createSynchronized();
     private IActorIdentity.View view;
-    private IObservationScope scope;
+    private IContextScope scope;
 
     public EngineUser(String username, IEngineIdentity parent) {
         super(username);
@@ -134,16 +133,6 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
         return this.actor;
     }
 
-    // TODO pass new SimpleRuntimeScope(Klab.INSTANCE.getRootMonitor())
-    @Override
-    public String load(IBehavior behavior, IContextualizationScope scope) {
-        // // TODO this gets a sucky runtime scope that is used to run main messages.
-        // getActor().tell(new SystemBehavior.Load(this, behavior.getId(), getId(), (IRuntimeScope)
-        // scope));
-        // return getId();
-        throw new KlabUnsupportedFeatureException("load in engine user WAS called after all. Please implement");
-    }
-
     @Override
     public void instrument(Reference actor) {
         this.actor = actor;
@@ -157,12 +146,6 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
     @Override
     public void setView(View layout) {
         this.view = layout;
-    }
-
-    @Override
-    public boolean stop(String behaviorId) {
-        // TODO Auto-generated method stub
-        return false;
     }
 
     @Override
@@ -183,7 +166,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
     }
 
     @Override
-    public IObservationScope getScope() {
+    public IContextScope getScope() {
         return this.scope;
     }
 
@@ -192,8 +175,20 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
      * 
      * @param scope
      */
-    public void setObservationScope(IObservationScope scope) {
+    public void setObservationScope(IContextScope scope) {
         this.scope = scope;
+    }
+
+    @Override
+    public String load(IBehavior behavior, IContextualizationScope scope) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean stop(String behaviorId) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

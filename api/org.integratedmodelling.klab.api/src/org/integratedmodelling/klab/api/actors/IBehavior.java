@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IKimObject;
 
@@ -38,6 +39,24 @@ public interface IBehavior extends IKimObject {
          */
         boolean isFunction();
 
+    }
+    
+    /**
+     * Match data for action listeners.
+     * 
+     * @author Ferd
+     *
+     */
+    public interface ActionMatch {
+
+        boolean isIdentifier(Scope ret);
+
+        String getIdentifier();
+
+        boolean isImplicit();
+
+        String getMatchName();
+        
     }
 
     @Override
