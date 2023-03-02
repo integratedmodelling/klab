@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.api.utils.Utils;
 /**
  * An order-preserving map with improved get() methods to enable simpler and more flexible use
  * idioms. Also enables accounting of unnamed inputs (mapped to _p<n> keys, from k.IM/k.Actors code)
- * and metadata keys.
+ * and k.Actors metadata keys.
  * 
  * @author ferdinando.villa
  *

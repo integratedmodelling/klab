@@ -15,7 +15,8 @@ import org.integratedmodelling.klab.api.lang.kim.KKimNamespace;
 import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
 
 /**
- * The syntactic peer of a k.LAB namespace.
+ * The syntactic peer of a k.LAB namespace. To be renamed when we rename the interfaces and the
+ * original beans.
  * 
  * @author ferdinando.villa
  *
@@ -38,6 +39,7 @@ public class KimNamespace extends KimStatement implements KKimNamespace {
     private Map<String, Object> defines = new HashMap<>();
     private List<KKimStatement> statements = new ArrayList<>();
     private Map<String, List<String>> imports = new HashMap<>();
+    private String projectName;
 
     @Override
     public String getName() {
@@ -172,6 +174,15 @@ public class KimNamespace extends KimStatement implements KKimNamespace {
 
     public void setImports(Map<String, List<String>> imports) {
         this.imports = imports;
+    }
+
+    @Override
+    public String getProjectName() {
+        return this.projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
 }

@@ -23,7 +23,7 @@ public interface KKimScope extends Serializable {
 
 		void visitNamespace(KKimNamespace kimNamespace);
 
-		void visitModel(KKimModel kimNamespace);
+		void visitModel(KKimModelStatement kimNamespace);
 
 		void visitObserver(KKimAcknowledgement kimNamespace);
 

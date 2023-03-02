@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.api.provenance.KProvenance;
 /**
  * An Artifact can be any of the first-class products of a k.LAB task: a non-semantic
  * {@link KDataArtifact} or {@link KObjectArtifact}, an observed (semantic) {@link KObservation} (as
- * produced by most activities in k.LAB) or a {@link KKimModel k.IM model description} when the
+ * produced by most activities in k.LAB) or a {@link KKimModelStatement k.IM model description} when the
  * model has been produced by an observation activity, such as a learning model.
  * <p>
  * By implementing {@link java.lang.Iterable}, we also allow Artifacts to represent groups of

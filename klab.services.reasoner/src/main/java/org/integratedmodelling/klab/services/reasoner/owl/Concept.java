@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.api.services.KReasoner;
 import org.integratedmodelling.klab.api.services.runtime.KChannel;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology.NS;
-import org.integratedmodelling.klab.services.reasoner.owl.OntologyUtilities.RestrictionVisitor;
+import org.integratedmodelling.klab.services.reasoner.owl.Ontologies.RestrictionVisitor;
 import org.semanticweb.owlapi.model.OWLAnnotation;
 import org.semanticweb.owlapi.model.OWLClass;
 import org.semanticweb.owlapi.model.OWLClassExpression;
@@ -78,7 +78,7 @@ public class Concept extends Knowledge implements KConcept {
     private String _id;
 	private String _cs;
 	private Metadata metadata;
-    private Set<SemanticType> type = Collections.synchronizedSet(EnumSet.noneOf(SemanticType.class));
+    private Set<SemanticType> type = EnumSet.noneOf(SemanticType.class);
 
     transient OWLClass _owl;
     transient static KReasoner reasoner;

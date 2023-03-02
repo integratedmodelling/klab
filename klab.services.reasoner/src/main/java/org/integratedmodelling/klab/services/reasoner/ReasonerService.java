@@ -8,10 +8,18 @@ import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement;
 import org.integratedmodelling.klab.api.services.KReasoner;
+import org.integratedmodelling.klab.api.services.KResources;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public class ReasonerService implements KReasoner {
+@Service
+public class ReasonerService implements KReasoner, KReasoner.Admin {
 
+    @Autowired
+    KResources resourceService;
+    
     @Override
     public KConcept resolveConcept(String definition) {
         return null;
@@ -244,4 +252,10 @@ public class ReasonerService implements KReasoner {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public KConcept addConcept(KKimConceptStatement statement) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

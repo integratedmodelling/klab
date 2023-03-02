@@ -137,5 +137,11 @@ public interface KKimNamespace extends KKimStatement {
      * @return
      */
     Map<String, List<String>> getImports();
+    
+    /**
+     * 
+     * @return
+     */
+    String getProjectName();
 
 }

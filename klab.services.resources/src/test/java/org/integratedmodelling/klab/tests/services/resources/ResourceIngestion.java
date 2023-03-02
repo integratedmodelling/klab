@@ -16,7 +16,7 @@ class ResourceIngestion {
 
     @AfterAll
     static void tearDown() throws Exception {
-        service.shutdown();
+        service.shutdown(10000);
     }
 
     @Test

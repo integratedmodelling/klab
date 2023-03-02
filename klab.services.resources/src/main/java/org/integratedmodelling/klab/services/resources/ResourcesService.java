@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.knowledge.organization.KWorkspace;
 import org.integratedmodelling.klab.api.lang.kactors.KKActorsBehavior;
 import org.integratedmodelling.klab.api.lang.kdl.KKdlDataflow;
 import org.integratedmodelling.klab.api.lang.kim.KKimNamespace;
+import org.integratedmodelling.klab.api.lang.kim.impl.KimNamespace;
 import org.integratedmodelling.klab.api.services.KResources;
 import org.integratedmodelling.klab.configuration.Configuration;
 import org.integratedmodelling.klab.logging.Logging;
@@ -34,7 +35,7 @@ import org.integratedmodelling.klab.services.resources.configuration.ResourcesCo
 import org.integratedmodelling.klab.services.resources.lang.KactorsInjectorProvider;
 import org.integratedmodelling.klab.services.resources.lang.KdlInjectorProvider;
 import org.integratedmodelling.klab.services.resources.lang.KimInjectorProvider;
-import org.integratedmodelling.klab.services.resources.lang.kim.KimParser;
+import org.integratedmodelling.klab.services.resources.lang.kim.KimNamespaceAdapter;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.Utils.Git;
 import org.springframework.stereotype.Service;
@@ -137,7 +138,8 @@ public class ResourcesService implements KResources, KResources.Admin {
     private void loadNamespaces(List<NamespaceDescriptor> namespaces) {
         for (NamespaceDescriptor ns : namespaces) {
             projectLoader.execute(() -> {
-                KKimNamespace namespace = KimParser.parse(ns.getNamespace());
+                KimNamespace namespace = new KimNamespaceAdapter(ns);
+                this.localNamespaces.put(namespace.getName(), namespace);
             });
         }
 
@@ -272,6 +274,16 @@ public class ResourcesService implements KResources, KResources.Admin {
         }
     }
 
+    public void shutdown(int secondsToWait) {
+        // TODO Auto-generated method stub
+        try {
+            projectLoader.awaitTermination(secondsToWait, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            Logging.INSTANCE.error("Error during thread termination", e);
+        }
+    }
+
+    
 	@Override
 	public Capabilities getCapabilities() {
 		// TODO Auto-generated method stub

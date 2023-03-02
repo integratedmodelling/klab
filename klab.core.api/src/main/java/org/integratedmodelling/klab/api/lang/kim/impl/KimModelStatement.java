@@ -3,12 +3,13 @@ package org.integratedmodelling.klab.api.lang.kim.impl;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.api.knowledge.KArtifact;
 import org.integratedmodelling.klab.api.lang.KContextualizable;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
-import org.integratedmodelling.klab.api.lang.kim.KKimModel;
+import org.integratedmodelling.klab.api.lang.kim.KKimModelStatement;
 import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 
-public class KimModel extends KimActiveStatement implements KKimModel {
+public class KimModelStatement extends KimActiveStatement implements KKimModelStatement {
 
     private static final long serialVersionUID = -6068429551009652469L;
 
@@ -31,7 +32,7 @@ public class KimModel extends KimActiveStatement implements KKimModel {
     }
 
     @Override
-    public Type getType() {
+    public KArtifact.Type getType() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -50,18 +51,6 @@ public class KimModel extends KimActiveStatement implements KKimModel {
 
     @Override
     public boolean isInterpreter() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean isAbstract() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean isInactive() {
         // TODO Auto-generated method stub
         return false;
     }

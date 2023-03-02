@@ -78,7 +78,7 @@ import org.semanticweb.owlapi.reasoner.ReasonerInterruptedException;
 import org.semanticweb.owlapi.reasoner.TimeOutException;
 import org.semanticweb.owlapi.util.OWLClassExpressionVisitorAdapter;
 
-public class OntologyUtilities {
+public class Ontologies {
 
     private File file = new File("C:/MechanicalEngineering/MechanicalEngineeringOntology.owl");
 
@@ -89,7 +89,7 @@ public class OntologyUtilities {
     OWLReasoner                reasoner;
     private OWLDataFactory     factory;
 
-    public OntologyUtilities() {
+    public Ontologies() {
 
     }
 

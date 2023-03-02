@@ -15,16 +15,22 @@ import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
+import org.integratedmodelling.klab.api.collections.KParameters;
 import org.integratedmodelling.klab.api.exceptions.KIOException;
+import org.integratedmodelling.klab.data.encoding.JacksonConfiguration;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.logging.Logging;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -119,9 +125,12 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
         static ObjectMapper defaultMapper;
 
         static {
-            defaultMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+            defaultMapper = new ObjectMapper()
+                    .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                    .enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
             defaultMapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
+            JacksonConfiguration.configureObjectMapper(defaultMapper);
         }
 
         static class NullKeySerializer extends StdSerializer<Object> {
