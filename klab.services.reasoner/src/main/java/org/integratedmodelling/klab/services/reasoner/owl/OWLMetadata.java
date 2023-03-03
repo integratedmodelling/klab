@@ -23,8 +23,8 @@ package org.integratedmodelling.klab.services.reasoner.owl;
 
 import java.util.HashMap;
 
+import org.integratedmodelling.klab.api.collections.Metadata;
 import org.integratedmodelling.klab.api.data.KMetadata;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology.NS;
 import org.semanticweb.owlapi.model.IRI;

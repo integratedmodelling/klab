@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
+import org.integratedmodelling.klab.api.knowledge.KArtifact.Type;
 import org.integratedmodelling.klab.api.lang.KContextualizable;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimModelStatement;
@@ -12,83 +14,135 @@ import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 public class KimModelStatement extends KimActiveStatement implements KKimModelStatement {
 
     private static final long serialVersionUID = -6068429551009652469L;
+    private KKimConcept reinterpretingRole;
+    private List<KKimObservable> dependencies = new ArrayList<>();
+    private List<KKimObservable> observables = new ArrayList<>();
+    private Type type;
+    private List<String> resourceUrns = new ArrayList();
+    private boolean learningModel;
+    private boolean interpreter;
+    private boolean instantiator;
+    private String name;
+    private KLiteral inlineValue;
+    private List<KContextualizable> contextualization = new ArrayList<>();
+    private String docstring;
+    private boolean semantic;
 
     @Override
-    public Optional<KKimConcept> getReinterpretingRole() {
-        // TODO Auto-generated method stub
-        return null;
+    public KKimConcept getReinterpretingRole() {
+        return this.reinterpretingRole;
     }
 
     @Override
     public List<KKimObservable> getDependencies() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.dependencies;
     }
 
     @Override
     public List<KKimObservable> getObservables() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.observables;
     }
 
     @Override
     public KArtifact.Type getType() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.type;
     }
 
     @Override
     public List<String> getResourceUrns() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.resourceUrns;
     }
 
     @Override
     public boolean isLearningModel() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.learningModel;
     }
 
     @Override
     public boolean isInterpreter() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.interpreter;
     }
 
     @Override
     public boolean isInstantiator() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.instantiator;
     }
 
     @Override
     public String getName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.name;
     }
 
     @Override
-    public Optional<Object> getInlineValue() {
-        // TODO Auto-generated method stub
-        return null;
+    public KLiteral getInlineValue() {
+        return this.inlineValue;
     }
 
     @Override
     public List<KContextualizable> getContextualization() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.contextualization;
     }
 
     @Override
     public String getDocstring() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.docstring;
     }
 
     @Override
     public boolean isSemantic() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.semantic;
+    }
+
+    public void setReinterpretingRole(KKimConcept reinterpretingRole) {
+        this.reinterpretingRole = reinterpretingRole;
+    }
+
+    public void setDependencies(List<KKimObservable> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    public void setObservables(List<KKimObservable> observables) {
+        this.observables = observables;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setResourceUrns(List<String> resourceUrns) {
+        this.resourceUrns = resourceUrns;
+    }
+
+    public void setLearningModel(boolean learningModel) {
+        this.learningModel = learningModel;
+    }
+
+    public void setInterpreter(boolean interpreter) {
+        this.interpreter = interpreter;
+    }
+
+    public void setInstantiator(boolean instantiator) {
+        this.instantiator = instantiator;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setInlineValue(KLiteral inlineValue) {
+        this.inlineValue = inlineValue;
+    }
+
+    public void setContextualization(List<KContextualizable> contextualization) {
+        this.contextualization = contextualization;
+    }
+
+    public void setDocstring(String docstring) {
+        this.docstring = docstring;
+    }
+
+    public void setSemantic(boolean semantic) {
+        this.semantic = semantic;
     }
 
 }

@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.collections.KParameters;
+import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.lang.KAnnotation;
-import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
 
 /**
@@ -13,23 +13,20 @@ import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
  * @author Ferd
  *
  */
-public class KimStatement implements KKimStatement {
+public class KimStatement extends KimScope implements KKimStatement {
 
     private static final long serialVersionUID = -7273214821906819558L;
     private int firstLine;
     private int lastLine;
     private int firstCharOffset;
     private int lastCharOffset;
-    private List<KAnnotation> annotations;
+    private List<KAnnotation> annotations = new ArrayList<>();
     private String deprecation;
     private boolean deprecated;
     private String sourceCode;
     private boolean errors;
     private boolean warnings;
-    private KParameters<String> metadata;
-    private List<KKimScope> children = new ArrayList<>();
-    private String locationDescriptor;
-    private String uri;
+    private KMetadata metadata;
     private KParameters<String> documentationMetadata;
     private String namespace;
     private Scope scope;
@@ -85,23 +82,8 @@ public class KimStatement implements KKimStatement {
     }
 
     @Override
-    public KParameters<String> getMetadata() {
+    public KMetadata getMetadata() {
         return this.metadata;
-    }
-
-    @Override
-    public List<KKimScope> getChildren() {
-        return this.children;
-    }
-
-    @Override
-    public String getLocationDescriptor() {
-        return this.locationDescriptor;
-    }
-
-    @Override
-    public String getURI() {
-        return this.uri;
     }
 
     @Override
@@ -123,14 +105,6 @@ public class KimStatement implements KKimStatement {
     @Override
     public Scope getScope() {
         return this.scope;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     public void setFirstLine(int firstLine) {
@@ -173,16 +147,8 @@ public class KimStatement implements KKimStatement {
         this.warnings = warnings;
     }
 
-    public void setMetadata(KParameters<String> metadata) {
+    public void setMetadata(KMetadata metadata) {
         this.metadata = metadata;
-    }
-
-    public void setChildren(List<KKimScope> children) {
-        this.children = children;
-    }
-
-    public void setLocationDescriptor(String locationDescriptor) {
-        this.locationDescriptor = locationDescriptor;
     }
 
     public void setDocumentationMetadata(KParameters<String> documentationMetadata) {

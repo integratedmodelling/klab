@@ -32,13 +32,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.integratedmodelling.klab.api.collections.Metadata;
 import org.integratedmodelling.klab.api.exceptions.KIOException;
 import org.integratedmodelling.klab.api.exceptions.KInternalErrorException;
 import org.integratedmodelling.klab.api.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
 import org.integratedmodelling.klab.api.lang.kim.KKimNamespace;
 import org.integratedmodelling.klab.api.utils.Utils;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.services.reasoner.api.IAxiom;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology.NS;
 import org.semanticweb.HermiT.model.Individual;

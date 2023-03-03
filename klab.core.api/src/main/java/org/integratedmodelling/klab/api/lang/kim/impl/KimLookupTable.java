@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.knowledge.KArtifact.Type;
@@ -11,46 +12,75 @@ public class KimLookupTable extends KimStatement implements KKimLookupTable {
 
     private static final long serialVersionUID = 1081054386576296191L;
 
+    private Type lookupType;
+    private List<Argument> arguments = new ArrayList<>();
+    private KKimTable table;
+    private boolean twoWay;
+    private List<KKimClassifier> rowClassifiers = new ArrayList<>();
+    private List<KKimClassifier> columnClassifiers = new ArrayList<>();
+    private int lookupColumnIndex;
+
     @Override
     public Type getLookupType() {
-        // TODO Auto-generated method stub
-        return null;
+        return lookupType;
     }
 
     @Override
     public List<Argument> getArguments() {
-        // TODO Auto-generated method stub
-        return null;
+        return arguments;
     }
 
     @Override
     public KKimTable getTable() {
-        // TODO Auto-generated method stub
-        return null;
+        return table;
     }
 
     @Override
     public boolean isTwoWay() {
-        // TODO Auto-generated method stub
-        return false;
+        return twoWay;
     }
 
     @Override
     public List<KKimClassifier> getRowClassifiers() {
-        // TODO Auto-generated method stub
-        return null;
+        return rowClassifiers;
     }
 
     @Override
     public List<KKimClassifier> getColumnClassifiers() {
-        // TODO Auto-generated method stub
-        return null;
+        return columnClassifiers;
     }
 
     @Override
     public int getLookupColumnIndex() {
-        // TODO Auto-generated method stub
-        return 0;
+        return lookupColumnIndex;
+    }
+
+    public void setLookupType(Type lookupType) {
+        this.lookupType = lookupType;
+    }
+
+    public void setArguments(List<Argument> arguments) {
+        this.arguments = arguments;
+    }
+
+    public void setTable(KKimTable table) {
+        this.table = table;
+    }
+
+    public void setTwoWay(boolean twoWay) {
+        this.twoWay = twoWay;
+    }
+
+    public void setRowClassifiers(List<KKimClassifier> rowClassifiers) {
+        this.rowClassifiers = rowClassifiers;
+    }
+
+    public void setColumnClassifiers(List<KKimClassifier> columnClassifiers) {
+        this.columnClassifiers = columnClassifiers;
+    }
+
+    public void setLookupColumnIndex(int lookupColumnIndex) {
+        this.lookupColumnIndex = lookupColumnIndex;
     }
 
 }

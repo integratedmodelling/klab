@@ -42,7 +42,7 @@ public interface KKimScope extends Serializable {
 	 */
 	String getLocationDescriptor();
 
-	String getURI();
+	String getUri();
 
 	void visit(Visitor visitor);
 

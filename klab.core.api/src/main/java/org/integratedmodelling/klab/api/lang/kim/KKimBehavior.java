@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.lang.kim;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.klab.api.lang.KServiceCall;
 
@@ -12,8 +13,14 @@ import org.integratedmodelling.klab.api.lang.KServiceCall;
  * @author fvilla
  *
  */
-public interface KKimBehavior extends KKimStatement, Iterable<KKimAction> {
+public interface KKimBehavior extends KKimStatement {
 
+    /**
+     * 
+     * @return
+     */
+    List<KKimAction> getActions();
+    
     /**
      * Quick check for no-op behaviors.
      * 

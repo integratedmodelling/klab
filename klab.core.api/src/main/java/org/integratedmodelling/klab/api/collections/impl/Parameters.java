@@ -195,7 +195,7 @@ public class Parameters<T> implements KParameters<T> {
 //        if (this.templateVariables != null && ret instanceof TemplateValue) {
 //            ret = ((TemplateValue) ret).getValue(this.templateVariables);
 //        }
-        if (ret instanceof Map) {
+        if (ret instanceof Map && !(ret instanceof KParameters)) {
             ret = new Parameters((Map<?, ?>) ret);
             ((Parameters<?>) ret).templateVariables = this.templateVariables;
         }

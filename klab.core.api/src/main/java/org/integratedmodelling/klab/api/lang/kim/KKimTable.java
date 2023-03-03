@@ -36,13 +36,13 @@ public interface KKimTable extends KKimStatement {
 
 	int getColumnCount();
 
-	KKimClassifier[] getRow(int i);
+	KKimClassifier[] row(int i);
 	
 	/**
 	 * Row classifiers start from the second element if the table is two-way.
 	 * 
 	 * @return
 	 */
-	List<KKimClassifier[]> getRows();
+	List<KKimClassifier[]> rows();
 
 }

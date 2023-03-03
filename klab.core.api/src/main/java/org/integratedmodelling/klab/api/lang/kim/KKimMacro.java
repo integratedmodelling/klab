@@ -64,6 +64,6 @@ public interface KKimMacro extends KKimConceptStatement {
 	 * @param field
 	 * @return the field type
 	 */
-	FieldType getType(Field field);
+	FieldType typeOf(Field field);
 
 }

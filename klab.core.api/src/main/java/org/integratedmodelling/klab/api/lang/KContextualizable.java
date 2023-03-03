@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.data.mediation.KValueMediator;
 import org.integratedmodelling.klab.api.data.mediation.classification.KClassification;
@@ -323,7 +324,7 @@ public interface KContextualizable extends KProvenance.Node {
 	 * 
 	 * @return any literal
 	 */
-	Object getLiteral();
+	KLiteral getLiteral();
 
 	/**
 	 * A literal constant produced in lieu of this computation Only one among

@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.lang.kim;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
+
 /**
  * The syntactic peer of a k.IM 'define' statement.
  * 
@@ -28,6 +30,6 @@ public interface KKimSymbolDefinition extends KKimStatement {
 	 * 
 	 * @return the value defined
 	 */
-	Object getValue();
+	KLiteral getValue();
 
 }

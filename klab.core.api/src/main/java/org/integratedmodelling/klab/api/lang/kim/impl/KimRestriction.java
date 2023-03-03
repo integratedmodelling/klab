@@ -16,7 +16,6 @@ public class KimRestriction extends KimStatement implements KKimRestriction {
 
     @Override
     public Type getType() {
-        // TODO Auto-generated method stub
         return this.type;
     }
 

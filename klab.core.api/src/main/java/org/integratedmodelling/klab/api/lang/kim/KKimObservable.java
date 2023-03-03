@@ -4,6 +4,7 @@ import java.lang.module.ResolutionException;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.collections.impl.Range;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
@@ -43,14 +44,14 @@ public interface KKimObservable extends KKimStatement {
     /**
      * @return the literal value
      */
-    Object getValue();
+    KLiteral getValue();
 
     /**
      * The default value if one is given. The optional state and resolution triggers are affected.
      * 
      * @return
      */
-    Object getDefaultValue();
+    KLiteral getDefaultValue();
 
     /**
      * Resolution exceptions linked to the use of a stated default value.
@@ -64,7 +65,7 @@ public interface KKimObservable extends KKimStatement {
      * 
      * @return
      */
-    List<Pair<ValueOperator, Object>> getValueOperators();
+    List<Pair<ValueOperator, KLiteral>> getValueOperators();
 
     /**
      * If the observable specification had an identifier (rather than a literal value) before an
@@ -75,7 +76,7 @@ public interface KKimObservable extends KKimStatement {
      * 
      * @return true if identified by an attribute to be resolved
      */
-    boolean hasAttributeIdentifier();
+    boolean isAttributeIdentifier();
 
     /**
      * True if the 'optional' clause has been passed.

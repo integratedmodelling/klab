@@ -14,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kdl.model.Kdl;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimLoader;
 import org.integratedmodelling.kim.model.KimLoader.NamespaceDescriptor;
@@ -25,7 +26,9 @@ import org.integratedmodelling.klab.api.knowledge.organization.KProject;
 import org.integratedmodelling.klab.api.knowledge.organization.KWorkspace;
 import org.integratedmodelling.klab.api.lang.kactors.KKActorsBehavior;
 import org.integratedmodelling.klab.api.lang.kdl.KKdlDataflow;
+import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimNamespace;
+import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimNamespace;
 import org.integratedmodelling.klab.api.services.KResources;
 import org.integratedmodelling.klab.configuration.Configuration;
@@ -36,6 +39,7 @@ import org.integratedmodelling.klab.services.resources.lang.KactorsInjectorProvi
 import org.integratedmodelling.klab.services.resources.lang.KdlInjectorProvider;
 import org.integratedmodelling.klab.services.resources.lang.KimInjectorProvider;
 import org.integratedmodelling.klab.services.resources.lang.kim.KimNamespaceAdapter;
+import org.integratedmodelling.klab.services.resources.lang.kim.KimObservableAdapter;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.Utils.Git;
 import org.springframework.stereotype.Service;
@@ -196,7 +200,17 @@ public class ResourcesService implements KResources, KResources.Admin {
     }
 
     @Override
-    public synchronized boolean addProjectToLocalWorkspace(String workspaceName, String projectUrl) {
+    public synchronized boolean addProjectToLocalWorkspace(String workspaceName, String projectUrl, boolean overwriteIfExisting) {
+
+        String projectName = Utils.URLs.getURLBaseName(projectUrl);
+        ProjectConfiguration config = this.configuration.getProjectConfiguration().get(projectName);
+        if (config != null) {
+            if (overwriteIfExisting) {
+                removeProjectFromLocalWorkspace(config.getWorkspaceName(), projectName);
+            } else {
+                return false;
+            }
+        }
 
         if (Utils.Git.isRemoteGitURL(projectUrl)) {
 
@@ -205,10 +219,11 @@ public class ResourcesService implements KResources, KResources.Admin {
             workspace.mkdirs();
             try {
 
-                String projectName = Git.clone(projectUrl, workspace, false);
+                projectName = Git.clone(projectUrl, workspace, false);
                 ProjectConfiguration configuration = new ProjectConfiguration();
                 configuration.setLocalPath(new File(workspace + File.separator + projectName));
                 configuration.setSourceUrl(projectUrl);
+                configuration.setWorkspaceName(workspaceName);
                 configuration.setSyncIntervalMs(DEFAULT_GIT_SYNC_INTERVAL);
 
                 Set<String> projects = this.configuration.getWorkspaces().get(workspaceName);
@@ -250,7 +265,7 @@ public class ResourcesService implements KResources, KResources.Admin {
     @Override
     public void removeProjectFromLocalWorkspace(String workspaceName, String projectName) {
         // TODO Auto-generated method stub
-
+//        ProjectConfiguration configuration = 
     }
 
     @Override
@@ -283,10 +298,25 @@ public class ResourcesService implements KResources, KResources.Admin {
         }
     }
 
-    
-	@Override
-	public Capabilities getCapabilities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Capabilities getCapabilities() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public KKimObservable resolveObservable(String definition) {
+        IKimObservable parsed = Kim.INSTANCE.declare(definition);
+        return parsed == null ? null : new KimObservableAdapter(parsed);
+    }
+
+    @Override
+    public KKimConcept resolveConcept(String definition) {
+        IKimObservable parsed = Kim.INSTANCE.declare(definition);
+        if (parsed == null) {
+            return null;
+        }
+        return new KimObservableAdapter(parsed).getMain();
+
+    }
 }

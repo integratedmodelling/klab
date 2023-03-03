@@ -10,7 +10,7 @@ public class KimScope implements KKimScope {
     
     private List<KKimScope> children;
     private String locationDescriptor;
-    private String URI;
+    private String uri;
 
     @Override
     public List<KKimScope> getChildren() {
@@ -23,8 +23,8 @@ public class KimScope implements KKimScope {
     }
 
     @Override
-    public String getURI() {
-        return this.URI;
+    public String getUri() {
+        return this.uri;
     }
 
     public void setChildren(List<KKimScope> children) {
@@ -35,8 +35,8 @@ public class KimScope implements KKimScope {
         this.locationDescriptor = locationDescriptor;
     }
 
-    public void setURI(String uRI) {
-        URI = uRI;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     @Override

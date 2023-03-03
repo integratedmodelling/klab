@@ -15,7 +15,7 @@ public interface KKimStatement extends KStatement, KKimScope {
     }
 
     /**
-     * 
+     * Documentation metadata is the content of the @documentation annotation if present.
      * @return the documentation
      */
     KParameters<String> getDocumentationMetadata();

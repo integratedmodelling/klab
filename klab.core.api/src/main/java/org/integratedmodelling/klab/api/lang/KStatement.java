@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.lang;
 import java.io.Serializable;
 import java.util.List;
 
-import org.integratedmodelling.klab.api.collections.KParameters;
+import org.integratedmodelling.klab.api.data.KMetadata;
 
 /**
  * All statements in k.LAB-supported languages are serializables. The resource service maintains the
@@ -70,6 +70,6 @@ public interface KStatement extends Serializable {
      * 
      * @return the metadata
      */
-    KParameters<String> getMetadata();
+    KMetadata getMetadata();
 
 }

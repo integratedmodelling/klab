@@ -33,6 +33,7 @@ public class ResourcesConfiguration implements Serializable {
         private boolean authoritative;
         private long syncIntervalMs;
         private File localPath;
+        private String workspaceName;
 
         public String getSourceUrl() {
             return sourceUrl;
@@ -93,6 +94,12 @@ public class ResourcesConfiguration implements Serializable {
         }
         public void setLocalPath(File localPath) {
             this.localPath = localPath;
+        }
+        public String getWorkspaceName() {
+            return this.workspaceName;
+        }
+        public void setWorkspaceName(String workspaceName) {
+            this.workspaceName = workspaceName;
         }
 
     }

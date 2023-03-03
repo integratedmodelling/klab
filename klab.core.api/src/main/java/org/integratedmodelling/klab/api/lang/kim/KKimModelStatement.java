@@ -1,14 +1,14 @@
 package org.integratedmodelling.klab.api.lang.kim;
 
 import java.util.List;
-import java.util.Optional;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
 import org.integratedmodelling.klab.api.lang.KContextualizable;
 
 public interface KKimModelStatement extends KKimActiveStatement {
 
-    Optional<KKimConcept> getReinterpretingRole();
+    KKimConcept getReinterpretingRole();
 
     List<KKimObservable> getDependencies();
 
@@ -32,7 +32,7 @@ public interface KKimModelStatement extends KKimActiveStatement {
 
     String getName();
 
-    Optional<Object> getInlineValue();
+    KLiteral getInlineValue();
 
     /**
      * Contextualizer or processor(s) given after 'using'

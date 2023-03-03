@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.api.lang.kactors;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
+import org.integratedmodelling.klab.api.data.ValueType;
 import org.integratedmodelling.klab.api.lang.kactors.KKActorsStatement.Call;
 
 /**
@@ -25,59 +27,6 @@ import org.integratedmodelling.klab.api.lang.kactors.KKActorsStatement.Call;
  *
  */
 public interface KKActorsValue extends KKActorsCodeStatement {
-
-    public enum Type {
-        REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING, NODATA, RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN,
-
-        /**
-         * Object is a Java object whose constructor is referenced in a set expression.
-         */
-        OBJECT,
-        /**
-         * An action that raises an exception will match this.
-         */
-        ERROR,
-        /**
-         * Empty is a legal "nothing" result which may represent an empty collection or an empty
-         * artifact
-         */
-        EMPTY,
-        /**
-         * enum-like uppercase constant, matching enum values (or strings) at the Java side.
-         */
-        CONSTANT,
-        /**
-         * Matcher for anything that isn't null, false or error
-         */
-        ANYTRUE,
-
-        /**
-         * Objects that don't have literals in the language but can be fired
-         */
-        OBSERVATION,
-
-        /**
-         * Only for matching any object that has a specified annotation.
-         */
-        ANNOTATION,
-
-        /**
-         * A component path and possibly arguments passed after 'new'
-         */
-        COMPONENT,
-
-        /**
-         * A (chain of) function calls
-         */
-        CALLCHAIN,
-
-        /**
-         * A string in the form #KEY, pointing to a localized string in the companion
-         * internationalization map.
-         */
-        LOCALIZED_KEY
-
-    }
 
     /**
      * Only used in cast expression (value as <type>)
@@ -117,7 +66,7 @@ public interface KKActorsValue extends KKActorsCodeStatement {
      * 
      * @return
      */
-    Type getType();
+    ValueType getType();
 
     /**
      * Expression type is VALUE for anything not part of an expression, which is the default.
@@ -134,7 +83,7 @@ public interface KKActorsValue extends KKActorsCodeStatement {
      * 
      * @return
      */
-    Object getStatedValue();
+    KLiteral getStatedValue();
 
     /**
      * Return the value as the type passed. Meant to complement the enum in a fluent API and not to
@@ -154,16 +103,16 @@ public interface KKActorsValue extends KKActorsCodeStatement {
     boolean isExclusive();
 
     /**
-     * If {@link #getExpressionType()} returns {@link Type#TERNARY_EXPRESSION}, this contains the
-     * value to evaluate if this evaluates to true.
+     * If {@link #getExpressionType()} returns {@link ValueType#TERNARY_EXPRESSION}, this contains
+     * the value to evaluate if this evaluates to true.
      * 
      * @return
      */
     KKActorsValue getTrueCase();
 
     /**
-     * If {@link #getExpressionType()} returns {@link Type#TERNARY_EXPRESSION}, this contains the
-     * value to evaluate if this evaluates to false.
+     * If {@link #getExpressionType()} returns {@link ValueType#TERNARY_EXPRESSION}, this contains
+     * the value to evaluate if this evaluates to false.
      * 
      * @return
      */
@@ -183,7 +132,6 @@ public interface KKActorsValue extends KKActorsCodeStatement {
      * @return
      */
     List<Call> getCallChain();
-
 
     /**
      * If a cast was assigned using <code>as</code>, report the type to cast to after evaluation.

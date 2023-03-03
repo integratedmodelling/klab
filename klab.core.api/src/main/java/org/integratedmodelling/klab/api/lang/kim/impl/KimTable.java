@@ -1,60 +1,84 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.lang.kim.KKimClassifier;
 import org.integratedmodelling.klab.api.lang.kim.KKimTable;
 
 public class KimTable extends KimStatement implements KKimTable {
+
     private static final long serialVersionUID = -8528877830924327222L;
+
+    private List<String> headers = new ArrayList<>();
+    private boolean twoWay;
+    private List<KKimClassifier> columnClassifiers = new ArrayList<>();
+    private int rowCount;
+    private int columnCount;
+    private List<KKimClassifier> rowClassifiers = new ArrayList<>();
 
     @Override
     public List<String> getHeaders() {
-        // TODO Auto-generated method stub
-        return null;
+        return headers;
     }
 
     @Override
     public boolean isTwoWay() {
-        // TODO Auto-generated method stub
-        return false;
+        return twoWay;
     }
 
     @Override
     public List<KKimClassifier> getRowClassifiers() {
-        // TODO Auto-generated method stub
-        return null;
+        return rowClassifiers;
     }
 
     @Override
     public List<KKimClassifier> getColumnClassifiers() {
-        // TODO Auto-generated method stub
-        return null;
+        return columnClassifiers;
     }
 
     @Override
     public int getRowCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return rowCount;
     }
 
     @Override
     public int getColumnCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        return columnCount;
     }
 
     @Override
-    public KKimClassifier[] getRow(int i) {
-        // TODO Auto-generated method stub
+    public KKimClassifier[] row(int i) {
         return null;
     }
 
     @Override
-    public List<KKimClassifier[]> getRows() {
-        // TODO Auto-generated method stub
+    public List<KKimClassifier[]> rows() {
         return null;
     }
 
+    public void setHeaders(List<String> headers) {
+        this.headers = headers;
+    }
+
+    public void setTwoWay(boolean twoWay) {
+        this.twoWay = twoWay;
+    }
+
+    public void setColumnClassifiers(List<KKimClassifier> columnClassifiers) {
+        this.columnClassifiers = columnClassifiers;
+    }
+
+    public void setRowCount(int rowCount) {
+        this.rowCount = rowCount;
+    }
+
+    public void setColumnCount(int columnCount) {
+        this.columnCount = columnCount;
+    }
+
+    public void setRowClassifiers(List<KKimClassifier> rowClassifiers) {
+        this.rowClassifiers = rowClassifiers;
+    }
 
 }

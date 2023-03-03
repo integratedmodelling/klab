@@ -12,6 +12,7 @@ class ResourceIngestion {
     @BeforeAll
     static void setUp() throws Exception {
         service = new ResourcesService();
+        service.addProjectToLocalWorkspace("worldview", "https://bitbucket.org/integratedmodelling/im.git#develop", false);
     }
 
     @AfterAll
@@ -20,8 +21,7 @@ class ResourceIngestion {
     }
 
     @Test
-    void importIm() {
-        service.addProjectToLocalWorkspace("worldview", "https://bitbucket.org/integratedmodelling/im.git#develop");
+    void parseObservables() {
     }
 
 }

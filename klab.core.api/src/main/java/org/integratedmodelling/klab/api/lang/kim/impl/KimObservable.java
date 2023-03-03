@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
 import java.lang.module.ResolutionException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.collections.impl.Range;
 import org.integratedmodelling.klab.api.knowledge.KArtifact.Type;
@@ -14,113 +16,185 @@ import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 public class KimObservable extends KimStatement implements KKimObservable {
 
     private static final long serialVersionUID = -727467882879783393L;
+    private KKimConcept main;
+    private Range range;
+    private String unit;
+    private String currency;
+    private String formalName;
+    private KLiteral value;
+    private KLiteral defaultValue;
+    private List<ResolutionException> resolutionExceptions = new ArrayList<>();
+    private List<Pair<ValueOperator, KLiteral>> valueOperators = new ArrayList<>();
+    private boolean attributeIdentifier;
+    private boolean optional;
+    private String modelReference;
+    private Type nonSemanticType;
+    private String definition;
+    private String codeName;
+    private boolean generic;
+    private boolean global;
+    private boolean exclusive;
 
     @Override
     public KKimConcept getMain() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.main;
     }
 
     @Override
     public Range getRange() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.range;
     }
 
     @Override
     public String getUnit() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.unit;
     }
 
     @Override
     public String getCurrency() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.currency;
     }
 
     @Override
     public String getFormalName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.formalName;
     }
 
     @Override
-    public Object getValue() {
-        // TODO Auto-generated method stub
-        return null;
+    public KLiteral getValue() {
+        return this.value;
     }
 
     @Override
-    public Object getDefaultValue() {
-        // TODO Auto-generated method stub
-        return null;
+    public KLiteral getDefaultValue() {
+        return this.defaultValue;
     }
 
     @Override
     public Collection<ResolutionException> getResolutionExceptions() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.resolutionExceptions;
     }
 
     @Override
-    public List<Pair<ValueOperator, Object>> getValueOperators() {
-        // TODO Auto-generated method stub
-        return null;
+    public List<Pair<ValueOperator, KLiteral>> getValueOperators() {
+        return this.valueOperators;
     }
 
     @Override
-    public boolean hasAttributeIdentifier() {
-        // TODO Auto-generated method stub
-        return false;
+    public boolean isAttributeIdentifier() {
+        return this.attributeIdentifier;
     }
 
     @Override
     public boolean isOptional() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.optional;
     }
 
     @Override
     public String getModelReference() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.modelReference;
     }
 
     @Override
     public Type getNonSemanticType() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.nonSemanticType;
     }
 
     @Override
     public String getDefinition() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.definition;
     }
 
     @Override
     public String getCodeName() {
-        // TODO Auto-generated method stub
-        return null;
+        return this.codeName;
     }
 
     @Override
     public boolean isGeneric() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.generic;
     }
 
     @Override
     public boolean isGlobal() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.global;
     }
 
     @Override
     public boolean isExclusive() {
-        // TODO Auto-generated method stub
-        return false;
+        return this.exclusive;
+    }
+
+    public void setMain(KKimConcept main) {
+        this.main = main;
+    }
+
+    public void setRange(Range range) {
+        this.range = range;
+    }
+
+    public void setUnit(String unit) {
+        this.unit = unit;
+    }
+
+    public void setCurrency(String currency) {
+        this.currency = currency;
+    }
+
+    public void setFormalName(String formalName) {
+        this.formalName = formalName;
+    }
+
+    public void setValue(KLiteral value) {
+        this.value = value;
+    }
+
+    public void setDefaultValue(KLiteral defaultValue) {
+        this.defaultValue = defaultValue;
+    }
+
+    public void setResolutionExceptions(List<ResolutionException> resolutionExceptions) {
+        this.resolutionExceptions = resolutionExceptions;
+    }
+
+    public void setValueOperators(List<Pair<ValueOperator, KLiteral>> valueOperators) {
+        this.valueOperators = valueOperators;
+    }
+
+    public void setAttributeIdentifier(boolean attributeIdentifier) {
+        this.attributeIdentifier = attributeIdentifier;
+    }
+
+    public void setOptional(boolean optional) {
+        this.optional = optional;
+    }
+
+    public void setModelReference(String modelReference) {
+        this.modelReference = modelReference;
+    }
+
+    public void setNonSemanticType(Type nonSemanticType) {
+        this.nonSemanticType = nonSemanticType;
+    }
+
+    public void setDefinition(String definition) {
+        this.definition = definition;
+    }
+
+    public void setCodeName(String codeName) {
+        this.codeName = codeName;
+    }
+
+    public void setGeneric(boolean generic) {
+        this.generic = generic;
+    }
+
+    public void setGlobal(boolean global) {
+        this.global = global;
+    }
+
+    public void setExclusive(boolean exclusive) {
+        this.exclusive = exclusive;
     }
 
 }

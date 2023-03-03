@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.collections.Metadata;
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
@@ -38,7 +39,6 @@ import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
 import org.integratedmodelling.klab.api.services.KReasoner;
 import org.integratedmodelling.klab.api.services.runtime.KChannel;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology.NS;
 import org.integratedmodelling.klab.services.reasoner.owl.Ontologies.RestrictionVisitor;
 import org.semanticweb.owlapi.model.OWLAnnotation;
@@ -538,7 +538,7 @@ public class Concept extends Knowledge implements KConcept {
 		if (this.metadata == null) {
 			Ontology ontology = getOntology();
 			if (ontology == null || ontology.ontology == null) {
-				this.metadata = new org.integratedmodelling.klab.data.Metadata();
+				this.metadata = new org.integratedmodelling.klab.api.collections.Metadata();
 			} else {
 				this.metadata = new OWLMetadata(_owl, ontology.ontology);
 			}

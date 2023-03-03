@@ -11,8 +11,7 @@ import org.integratedmodelling.klab.api.lang.kim.KKimExpression;
 import org.integratedmodelling.klab.api.lang.kim.KKimQuantity;
 
 /**
- * Syntactic bean for a k.IM classifier, used in both classifications and
- * lookup tables.
+ * Syntactic bean for a k.IM classifier, used in both classifications and lookup tables.
  * 
  * @author ferdinando.villa
  *
@@ -20,96 +19,155 @@ import org.integratedmodelling.klab.api.lang.kim.KKimQuantity;
 public class KimClassifier extends KimStatement implements KKimClassifier {
 
     private static final long serialVersionUID = 8284840092691497201L;
+    private boolean catchAll;
+    private boolean catchAnything;
+    private boolean negated;
+    private KKimConcept conceptMatch;
+    private Double numberMatch;
+    private Boolean booleanMatch;
+    private ArrayList<KKimClassifier> classifierMatches;
+    private Range intervalMatch;
+    private boolean nullMatch;
+    private KKimExpression expressionMatch;
+    private String stringMatch;
+    private ArrayList<KKimConcept> conceptMatches;
+    private KKimQuantity quantityMatch;
+    private KKimDate dateMatch;
+    private Type type;
 
     @Override
     public boolean isCatchAll() {
-        // TODO Auto-generated method stub
-        return false;
+        return catchAll;
     }
 
     @Override
     public boolean isCatchAnything() {
-        // TODO Auto-generated method stub
-        return false;
+        return catchAnything;
     }
 
     @Override
     public boolean isNegated() {
-        // TODO Auto-generated method stub
-        return false;
+        return negated;
     }
 
     @Override
     public KKimConcept getConceptMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return conceptMatch;
     }
 
     @Override
     public Double getNumberMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return numberMatch;
     }
 
     @Override
     public Boolean getBooleanMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return booleanMatch;
     }
 
     @Override
     public ArrayList<KKimClassifier> getClassifierMatches() {
-        // TODO Auto-generated method stub
-        return null;
+        return classifierMatches;
     }
 
     @Override
     public Range getIntervalMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return intervalMatch;
     }
 
     @Override
     public boolean isNullMatch() {
-        // TODO Auto-generated method stub
-        return false;
+        return nullMatch;
     }
 
     @Override
     public KKimExpression getExpressionMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return expressionMatch;
     }
 
     @Override
     public String getStringMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return stringMatch;
     }
 
     @Override
     public ArrayList<KKimConcept> getConceptMatches() {
-        // TODO Auto-generated method stub
-        return null;
+        return conceptMatches;
     }
 
     @Override
     public KKimQuantity getQuantityMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return quantityMatch;
     }
 
     @Override
     public KKimDate getDateMatch() {
-        // TODO Auto-generated method stub
-        return null;
+        return dateMatch;
     }
 
     @Override
     public Type getType() {
-        // TODO Auto-generated method stub
-        return null;
+        return type;
     }
 
+    public void setCatchAll(boolean catchAll) {
+        this.catchAll = catchAll;
+    }
+
+    public void setCatchAnything(boolean catchAnything) {
+        this.catchAnything = catchAnything;
+    }
+
+    public void setNegated(boolean negated) {
+        this.negated = negated;
+    }
+
+    public void setConceptMatch(KKimConcept conceptMatch) {
+        this.conceptMatch = conceptMatch;
+    }
+
+    public void setNumberMatch(Double numberMatch) {
+        this.numberMatch = numberMatch;
+    }
+
+    public void setBooleanMatch(Boolean booleanMatch) {
+        this.booleanMatch = booleanMatch;
+    }
+
+    public void setClassifierMatches(ArrayList<KKimClassifier> classifierMatches) {
+        this.classifierMatches = classifierMatches;
+    }
+
+    public void setIntervalMatch(Range intervalMatch) {
+        this.intervalMatch = intervalMatch;
+    }
+
+    public void setNullMatch(boolean nullMatch) {
+        this.nullMatch = nullMatch;
+    }
+
+    public void setExpressionMatch(KKimExpression expressionMatch) {
+        this.expressionMatch = expressionMatch;
+    }
+
+    public void setStringMatch(String stringMatch) {
+        this.stringMatch = stringMatch;
+    }
+
+    public void setConceptMatches(ArrayList<KKimConcept> conceptMatches) {
+        this.conceptMatches = conceptMatches;
+    }
+
+    public void setQuantityMatch(KKimQuantity quantityMatch) {
+        this.quantityMatch = quantityMatch;
+    }
+
+    public void setDateMatch(KKimDate dateMatch) {
+        this.dateMatch = dateMatch;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
 
 }

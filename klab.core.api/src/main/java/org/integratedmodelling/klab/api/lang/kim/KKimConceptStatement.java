@@ -60,22 +60,6 @@ public interface KKimConceptStatement extends KKimStatement {
 
     String getUpperConceptDefined();
 
-    /**
-     * Authority, not null when this concept adopts a term from it as a trait. When this is not null,
-     * {@link #getAuthorityTerm} also returns a non-null authority.
-     * 
-     * @return the authority ID
-     */
-    String getAuthority();
-
-    /**
-     * Authority term adopted as a trait. When this is not null, {@link #getAuthority} also returns a non-null
-     * authority.
-     * 
-     * @return the authority term
-     */
-    String getAuthorityTerm();
-
     String getAuthorityDefined();
 
     String getAuthorityRequired();
@@ -83,11 +67,7 @@ public interface KKimConceptStatement extends KKimStatement {
     List<KKimConcept> getQualitiesAffected();
 
     List<KKimConcept> getObservablesCreated();
-
-//    List<IKimConcept> getConstituentParticipants();
-//
-//    List<IKimConcept> getPartParticipants();
-
+    
     List<KKimConcept> getTraitsConferred();
 
     List<KKimConcept> getTraitsInherited();

@@ -15,22 +15,25 @@ import org.eclipse.jgit.api.PullCommand;
 import org.eclipse.jgit.api.errors.GitAPIException;
 import org.eclipse.jgit.internal.storage.file.FileRepository;
 import org.eclipse.jgit.lib.Repository;
-import org.integratedmodelling.klab.api.collections.KParameters;
+import org.integratedmodelling.kim.api.IKimAnnotation;
+import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.collections.Annotation;
+import org.integratedmodelling.klab.api.collections.Metadata;
+import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.exceptions.KIOException;
+import org.integratedmodelling.klab.api.lang.KAnnotation;
+import org.integratedmodelling.klab.api.lang.kim.impl.KimStatement;
 import org.integratedmodelling.klab.data.encoding.JacksonConfiguration;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.logging.Logging;
 
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.SerializerProvider;
@@ -39,6 +42,45 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
 
+    public static class Kim {
+
+        public static void copyStatementData(IKimStatement source, KimStatement destination) {
+
+            destination.setUri(source.getURI());
+            destination.setLocationDescriptor(source.getLocationDescriptor());
+            
+            destination.setFirstLine(source.getFirstLine());
+            destination.setLastLine(source.getLastLine());
+            destination.setFirstCharOffset(source.getFirstCharOffset());
+            destination.setLastCharOffset(source.getLastCharOffset());
+            destination.setSourceCode(source.getSourceCode());
+            
+            for (IKimAnnotation annotation : source.getAnnotations()) {
+                KAnnotation newAnnotation = makeAnnotation(annotation);
+                if ("deprecated".equals(newAnnotation.getName())) {
+                    destination.setDeprecated(true);
+                    destination.setDeprecation(newAnnotation.get(KAnnotation.VALUE_PARAMETER_KEY, String.class));
+                } else if ("documented".equals(newAnnotation.getName())) {
+                    destination.setDocumentationMetadata(newAnnotation);
+                }
+                destination.getAnnotations().add(newAnnotation);
+            }
+        }
+        
+        public static KAnnotation makeAnnotation(IKimAnnotation annotation) {
+            Annotation ret = new Annotation();
+            ret.setName(annotation.getName());
+            ret.putAll(annotation.getParameters());
+            return ret;
+        }
+
+        public static KMetadata makeMetadata(IParameters<String> metadata) {
+            Metadata ret = new Metadata();
+            ret.putAll(metadata);
+            return ret;
+        }
+    }
+    
     public static class YAML {
         
         static ObjectMapper defaultMapper;
@@ -130,7 +172,7 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
                     .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
                     .enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
             defaultMapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
-            JacksonConfiguration.configureObjectMapper(defaultMapper);
+            JacksonConfiguration.configureObjectMapperForKlabTypes(defaultMapper);
         }
 
         static class NullKeySerializer extends StdSerializer<Object> {
