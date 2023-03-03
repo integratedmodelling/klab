@@ -21,11 +21,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -2794,6 +2797,68 @@ public class Utils {
             return dt == -1 ? name : name.substring(0, dt);
         }
 
+        /*
+         * This code is inspired by the <code>sanitize</code> method from <code>com.google.common.html.types.SafeUrls</code>.
+         * The original library is not up to date and contains several vulnerabilities.
+         * @see <a href="https://www.javadoc.io/doc/com.google.common.html.types/types/1.0.4/com/google/common/html/types/SafeUrls.html#sanitize-java.lang.String-java.util.Set-">Original documentation</a>
+         * Comments are taken from the original code 
+         */
+        private static final Set<String> DEFAULT_SAFE_STARTS = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList("http", "https", "mailto", "ftp")));
+        private static final String SAFE_URL = "about:invalid";
+        
+        /**
+         * Sanitizes the given {@code url}, validating that the input string matches a pattern of commonly
+         * used safe URLs. If {@code url} fails validation, this method returns
+         * {@code about:invalid}
+         * 
+         * <p>Specifically, {@code url} may be a URL with any of the default safe schemes (http, https,
+         * ftp, mailto), or a relative URL (i.e., a URL without a scheme; specifically, a scheme-relative,
+         * absolute-path-relative, or path-relative URL).
+         * 
+         * @see http://url.spec.whatwg.org/#concept-relative-url
+         * 
+         * <p>A sanitized URL is a string that carries the security type contract that its value
+         * will not cause untrusted script execution when evaluated as a hyperlink URL in a browser.
+         *
+         * <p>Values of this type are guaranteed to be safe to use in URL/hyperlink contexts, such as
+         * assignment to URL-valued DOM properties, in the sense that the use will not result in a
+         * Cross-Site-Scripting vulnerability. Similarly, a safe url can be interpolated into the URL context
+         * of an HTML template (e.g., inside a href attribute). However, appropriate HTML-escaping must
+         * still be applied.
+         *
+         * <p>Note that this type's contract does not imply any guarantees regarding the resource the URL
+         * refers to. In particular, the sanitized URLs are <b>not</b> safe to use in a context where the referred-to
+         * resource is interpreted as trusted code, e.g., as the src of a script tag.
+         * 
+         */
+        public static String sanitize(String url) {
+            String lowerCased = url.toLowerCase();
+
+            // If some Unicode character lower cases to something that ends up matching these ASCII ones, it's harmless.
+            for (String protocol : DEFAULT_SAFE_STARTS) {
+              if (lowerCased.startsWith(protocol + ":")) {
+                return url;
+              }
+            }
+            
+            for (int i = 0; i < url.length(); i++) {
+              switch (url.charAt(i)) {
+                case '/':
+                case '?':
+                case '#':
+                  // After this the string can end or contain anything else, it won't be interpreted
+                  // as the scheme.
+                  return url;
+                case ':':
+                  // This character is not allowed before seeing one of the above characters.
+                  return SAFE_URL;
+                default:
+                  // Other characters ok.
+                  continue;
+              }
+            }
+            return url;
+        }
     }
 
     public static class Colors {
