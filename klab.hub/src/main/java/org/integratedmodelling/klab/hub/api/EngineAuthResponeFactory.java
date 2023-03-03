@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.api;
 import java.io.IOException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Properties;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
@@ -10,9 +11,9 @@ import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
+import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
-import org.integratedmodelling.klab.hub.exception.LockedUserException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -90,6 +91,24 @@ public class EngineAuthResponeFactory {
 		return null;
 	}
 	
+    private boolean validateAccountStatus(AccountStatus status) {
+        if (status != AccountStatus.active) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean validateAgreementExpirationDate(ProfileResource profile) {
+        Date agreementExpirationDate = profile.getAgreements().get(0).getExpiredDate();
+        if (agreementExpirationDate == null) {
+            return true;
+        }
+        if (new DateTime(agreementExpirationDate).isAfterNow()) {
+            return true;
+        }
+        return false;
+    }
+
 	@SuppressWarnings("unchecked")
     private EngineAuthenticationResponse remoteEngine(ProfileResource profile,
 			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException {
@@ -97,10 +116,15 @@ public class EngineAuthResponeFactory {
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
 		
-		if(profile.accountStatus == AccountStatus.locked) {
-			throw new LockedUserException(profile.getUsername());
-		}
+        if (!validateAccountStatus(profile.accountStatus)) {
+            throw new AuthenticationFailedException("User profile is not active");
+        }
 
+        if (!validateAgreementExpirationDate(profile)) {
+            // TODO do we want to notify about locked users?
+            throw new AuthenticationFailedException("Agreement is expired");
+        }
+		
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
 		
@@ -170,7 +194,6 @@ public class EngineAuthResponeFactory {
 		}
 		return null;
 	}
-	
 
 	@SuppressWarnings("unchecked")
     private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request) {
