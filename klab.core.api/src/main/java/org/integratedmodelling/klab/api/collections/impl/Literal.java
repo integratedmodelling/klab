@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.api.collections.impl;
 
 import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.data.ValueType;
+import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
+import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 
 public class Literal implements KLiteral {
 
@@ -24,7 +26,19 @@ public class Literal implements KLiteral {
     }
 
     private static ValueType classifyLiteral(Object o) {
-        
+        if (o instanceof Number) {
+            return ValueType.NUMBER;
+        } else if (o instanceof String) {
+            return ValueType.STRING;
+        } else if (o instanceof Boolean) {
+            return ValueType.BOOLEAN;
+        } else if (o instanceof Range) {
+            return ValueType.RANGE;
+        } else if (o instanceof KKimObservable) {
+            return ValueType.OBSERVABLE;
+        } else if (o instanceof KKimConcept) {
+            return ValueType.CONCEPT;
+        } // TODO continue
         return null;
     }
 

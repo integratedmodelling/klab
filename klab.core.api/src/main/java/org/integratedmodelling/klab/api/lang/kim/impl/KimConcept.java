@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
+import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
 
@@ -24,7 +26,7 @@ public class KimConcept extends KimStatement implements KKimConcept {
     private SemanticRole semanticRole;
     private boolean traitObservable;
     private String name;
-    private Set<SemanticType> type;
+    private Set<SemanticType> type = EnumSet.noneOf(SemanticType.class);
     private KKimConcept observable;
     private KKimConcept context;
     private KKimConcept inherent;
@@ -38,12 +40,12 @@ public class KimConcept extends KimStatement implements KKimConcept {
     private UnarySemanticOperator semanticModifier;
     private KKimConcept relationshipSource;
     private KKimConcept relationshipTarget;
-    private List<KKimConcept> traits;
-    private List<KKimConcept> roles;
+    private List<KKimConcept> traits = new ArrayList<>();
+    private List<KKimConcept> roles = new ArrayList<>();
     private boolean template;
     private boolean negated;
     private String definition;
-    private List<KKimConcept> operands;
+    private List<KKimConcept> operands = new ArrayList<>();
     private Expression expressionType;
     private SemanticType fundamentalType;
     private KKimConcept cooccurrent;
@@ -187,7 +189,7 @@ public class KimConcept extends KimStatement implements KKimConcept {
     }
 
     @Override
-    public SemanticRole getDistributedInherent() {
+    public SemanticRole getSemanticRole() {
         return this.semanticRole;
     }
 
@@ -199,10 +201,6 @@ public class KimConcept extends KimStatement implements KKimConcept {
     @Override
     public KKimConcept getTemporalInherent() {
         return this.temporalInherent;
-    }
-
-    public SemanticRole getSemanticRole() {
-        return semanticRole;
     }
 
     public void setSemanticRole(SemanticRole semanticRole) {
@@ -321,4 +319,8 @@ public class KimConcept extends KimStatement implements KKimConcept {
         this.temporalInherent = temporalInherent;
     }
 
+    @Override
+    public String toString() {
+        return this.definition;
+    }
 }

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.collections.impl;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -9,9 +10,11 @@ import org.integratedmodelling.klab.api.geometry.KLocator;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.observation.scale.time.KTimeInstant;
 
-public class Range implements KValueMediator {
+public class Range implements KValueMediator, Serializable {
 
-	double lowerBound = Double.NEGATIVE_INFINITY;
+    private static final long serialVersionUID = 874216692405815586L;
+
+    double lowerBound = Double.NEGATIVE_INFINITY;
 	double upperBound = Double.POSITIVE_INFINITY;
 	boolean lowerExclusive = false;
 	boolean upperExclusive = false;

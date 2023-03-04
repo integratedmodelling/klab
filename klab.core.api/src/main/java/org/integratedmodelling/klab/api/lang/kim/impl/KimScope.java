@@ -1,14 +1,15 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 
-public class KimScope implements KKimScope {
+public abstract class KimScope implements KKimScope {
 
     private static final long serialVersionUID = 6072620934600537545L;
     
-    private List<KKimScope> children;
+    private List<KKimScope> children = new ArrayList<>();
     private String locationDescriptor;
     private String uri;
 

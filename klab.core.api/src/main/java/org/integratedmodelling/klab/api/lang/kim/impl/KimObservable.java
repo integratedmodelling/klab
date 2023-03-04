@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.api.lang.kim.impl;
 
-import java.lang.module.ResolutionException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,7 +24,7 @@ public class KimObservable extends KimStatement implements KKimObservable {
     private KLiteral defaultValue;
     private List<ResolutionException> resolutionExceptions = new ArrayList<>();
     private List<Pair<ValueOperator, KLiteral>> valueOperators = new ArrayList<>();
-    private boolean attributeIdentifier;
+    private String attributeIdentifier;
     private boolean optional;
     private String modelReference;
     private Type nonSemanticType;
@@ -81,7 +80,7 @@ public class KimObservable extends KimStatement implements KKimObservable {
     }
 
     @Override
-    public boolean isAttributeIdentifier() {
+    public String getAttributeIdentifier() {
         return this.attributeIdentifier;
     }
 
@@ -161,7 +160,7 @@ public class KimObservable extends KimStatement implements KKimObservable {
         this.valueOperators = valueOperators;
     }
 
-    public void setAttributeIdentifier(boolean attributeIdentifier) {
+    public void setAttributeIdentifier(String attributeIdentifier) {
         this.attributeIdentifier = attributeIdentifier;
     }
 
@@ -197,4 +196,10 @@ public class KimObservable extends KimStatement implements KKimObservable {
         this.exclusive = exclusive;
     }
 
+    @Override
+    public String toString() {
+        return this.definition;
+    }
+
+    
 }

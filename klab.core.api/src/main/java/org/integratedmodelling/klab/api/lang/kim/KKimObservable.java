@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.api.lang.kim;
 
-import java.lang.module.ResolutionException;
 import java.util.Collection;
 import java.util.List;
 
@@ -12,6 +11,20 @@ import org.integratedmodelling.klab.api.lang.ValueOperator;
 
 public interface KKimObservable extends KKimStatement {
 
+    /**
+     * Conditions stated in the observable that control the use of the default value. Only
+     * meaningful if a default value is given.
+     * 
+     * @author Ferd
+     *
+     */
+    enum ResolutionException {
+        Missing,
+        Nodata,
+        Error
+    }
+
+    
     /**
      * @return the main concept
      */
@@ -69,14 +82,14 @@ public interface KKimObservable extends KKimStatement {
 
     /**
      * If the observable specification had an identifier (rather than a literal value) before an
-     * 'as' clause introducing the semantics, this will return true and the {@link #getValue()}
-     * method will return a string with the identifier's value. The interpretation of the identifier
-     * is context-dependent as it may refer to a value previously defined in a 'define' statement,
-     * or to an attribute to be looked up in a referenced resource.
+     * 'as' clause introducing the semantics, this will return it and the {@link #getValue()} method
+     * will return null. The interpretation of the identifier is context-dependent as it may refer
+     * to a value previously defined in a 'define' statement, or to an attribute to be looked up in
+     * a referenced resource.
      * 
      * @return true if identified by an attribute to be resolved
      */
-    boolean isAttributeIdentifier();
+    String getAttributeIdentifier();
 
     /**
      * True if the 'optional' clause has been passed.

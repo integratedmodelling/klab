@@ -8,52 +8,145 @@ import org.integratedmodelling.klab.api.collections.Annotation;
 import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.collections.KParameters;
 import org.integratedmodelling.klab.api.collections.Metadata;
+import org.integratedmodelling.klab.api.collections.impl.Literal;
 import org.integratedmodelling.klab.api.collections.impl.Parameters;
+import org.integratedmodelling.klab.api.collections.impl.Range;
 import org.integratedmodelling.klab.api.data.KMetadata;
+import org.integratedmodelling.klab.api.data.ValueType;
 import org.integratedmodelling.klab.api.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.api.lang.KAnnotation;
+import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
 import org.integratedmodelling.klab.logging.Logging;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTypeResolverBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper.DefaultTyping;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
+import com.fasterxml.jackson.databind.jsontype.impl.LaissezFaireSubTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class JacksonConfiguration {
 
-    static class LiteralSerializer extends JsonSerializer<KLiteral> {
+    static class CustomTypeResolverBuilder extends DefaultTypeResolverBuilder {
+        private static final long serialVersionUID = -8873215972141029473L;
+
+        public CustomTypeResolverBuilder() {
+            super(DefaultTyping.NON_FINAL, LaissezFaireSubTypeValidator.instance);
+        }
 
         @Override
-        public void serialize(KLiteral value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
-            // TODO Auto-generated method stub
-            
+        public boolean useForType(JavaType t) {
+            if (KKimStatement.class.isAssignableFrom(t.getRawClass())) {
+                return true;
+            }
+
+            return false;
         }
-        
     }
-    
+
     static class LiteralDeserializer extends JsonDeserializer<KLiteral> {
 
         @Override
         public KLiteral deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
-            // TODO Auto-generated method stub
-            return null;
+            Literal ret = new Literal();
+            JsonNode node = p.getCodec().readTree(p);
+            ret.setValueType(p.getCodec().treeToValue(node.get("valueType"), ValueType.class));
+            switch(ret.getValueType()) {
+            case ANNOTATION:
+                break;
+            case ANYTHING:
+                break;
+            case ANYTRUE:
+                break;
+            case ANYVALUE:
+                break;
+            case BOOLEAN:
+                ret.setValue(node.get("valueType").asBoolean());
+                break;
+            case CALLCHAIN:
+                break;
+            case CLASS:
+                break;
+            case COMPONENT:
+                break;
+            case CONSTANT:
+                break;
+            case DATE:
+                break;
+            case EMPTY:
+                break;
+            case ERROR:
+                break;
+            case EXPRESSION:
+                break;
+            case IDENTIFIER:
+                break;
+            case LIST:
+                break;
+            case LOCALIZED_KEY:
+                ret.setValue(p.getCodec().treeToValue(node.get("value"), String.class));
+                break;
+            case MAP:
+                break;
+            case NODATA:
+                break;
+            case NUMBER:
+                ret.setValue(node.get("valueType").asDouble());
+                break;
+            case NUMBERED_PATTERN:
+                break;
+            case OBJECT:
+                break;
+            case OBSERVABLE:
+                break;
+            case OBSERVATION:
+                break;
+            case QUANTITY:
+                break;
+            case RANGE:
+                ret.setValue(p.getCodec().treeToValue(node.get("valueType"), Range.class));
+                break;
+            case REGEXP:
+                break;
+            case SET:
+                break;
+            case STRING:
+                ret.setValue(node.get("valueType").asText());
+                break;
+            case TABLE:
+                break;
+            case TREE:
+                break;
+            case TYPE:
+                break;
+            case URN:
+                break;
+            default:
+                break;
+
+            }
+            return ret;
         }
-        
+
     }
-    
+
     @SuppressWarnings("rawtypes")
     static class ParameterSerializer<T extends KParameters> extends JsonSerializer<T> {
 
         @Override
         public void serialize(KParameters value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeStartObject();
-            String type = getTypeName(value);
             gen.writeObjectField("@type", getTypeName(value));
             for (Object key : value.keySet()) {
                 gen.writeObjectField(key.toString(), value.get(key));
@@ -72,12 +165,12 @@ public class JacksonConfiguration {
     }
 
     static class ParameterDeserializer<T extends KParameters<?>> extends JsonDeserializer<T> {
-        
+
         @SuppressWarnings("unchecked")
         @Override
         public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
             JsonNode node = p.getCodec().readTree(p);
-            return (T)readParameters(node, p, node.get("@type").asText());
+            return (T) readParameters(node, p, node.get("@type").asText());
         }
 
         @SuppressWarnings("unchecked")
@@ -88,7 +181,7 @@ public class JacksonConfiguration {
 
                 switch(type) {
                 case "KParameters":
-                    ret = (KParameters<?>)Parameters.create();
+                    ret = (KParameters<?>) Parameters.create();
                     break;
                 case "KAnnotation":
                     ret = new Annotation();
@@ -121,23 +214,26 @@ public class JacksonConfiguration {
                 throw new KlabInternalErrorException(t);
             }
         }
-
     }
 
     @SuppressWarnings({"unchecked"})
     public static void configureObjectMapperForKlabTypes(ObjectMapper mapper) {
         @SuppressWarnings("rawtypes")
-        SimpleModule module = new SimpleModule()
-                .addSerializer(KAnnotation.class, new ParameterSerializer())
+        SimpleModule module = new SimpleModule().addSerializer(KAnnotation.class, new ParameterSerializer())
                 .addSerializer(KMetadata.class, new ParameterSerializer())
                 .addSerializer(KParameters.class, new ParameterSerializer())
-                .addSerializer(KLiteral.class, new LiteralSerializer())
                 .addDeserializer(KMetadata.class, new ParameterDeserializer())
                 .addDeserializer(KAnnotation.class, new ParameterDeserializer())
                 .addDeserializer(KParameters.class, new ParameterDeserializer())
-                .addDeserializer(KLiteral.class, new LiteralDeserializer())
-                ;
+                .addDeserializer(KLiteral.class, new LiteralDeserializer());
         mapper.registerModule(module);
+        mapper.registerModule(new ParameterNamesModule());
+        // mapper.registerModule(MoonwlkerModule.builder().fromProperty("@CLASS").toSubclassesOf(KimStatement.class).build());
+        TypeResolverBuilder<?> typeResolver = new CustomTypeResolverBuilder();
+        typeResolver.init(JsonTypeInfo.Id.CLASS, null);
+        typeResolver.inclusion(JsonTypeInfo.As.PROPERTY);
+        typeResolver.typeProperty("@CLASS");
+        mapper.setDefaultTyping(typeResolver);
     }
 
 }

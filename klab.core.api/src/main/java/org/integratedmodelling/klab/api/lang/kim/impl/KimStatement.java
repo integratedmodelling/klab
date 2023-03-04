@@ -7,13 +7,14 @@ import org.integratedmodelling.klab.api.collections.KParameters;
 import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.lang.KAnnotation;
 import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
+import org.integratedmodelling.klab.api.utils.Utils;
 
 /**
  * 
  * @author Ferd
  *
  */
-public class KimStatement extends KimScope implements KKimStatement {
+public abstract class KimStatement extends KimScope implements KKimStatement {
 
     private static final long serialVersionUID = -7273214821906819558L;
     private int firstLine;
@@ -30,7 +31,12 @@ public class KimStatement extends KimScope implements KKimStatement {
     private KParameters<String> documentationMetadata;
     private String namespace;
     private Scope scope;
-
+//    private String kimStatementClass;
+    
+//    public KimStatement() {
+//        this.kimStatementClass = Utils.Paths.getLast(this.getClass().getCanonicalName(), '.');
+//    }
+    
     @Override
     public int getFirstLine() {
         return this.firstLine;
@@ -162,5 +168,13 @@ public class KimStatement extends KimScope implements KKimStatement {
     public void setScope(Scope scope) {
         this.scope = scope;
     }
+
+//    public String getKimStatementClass() {
+//        return kimStatementClass;
+//    }
+//
+//    public void setKimStatementClass(String kimStatementClass) {
+//        this.kimStatementClass = kimStatementClass;
+//    }
 
 }

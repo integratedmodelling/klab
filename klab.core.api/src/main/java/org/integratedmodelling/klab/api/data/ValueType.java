@@ -8,8 +8,8 @@ package org.integratedmodelling.klab.api.data;
  *
  */
 public enum ValueType {
-    
-    REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING, NODATA, RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN,
+
+    REGEXP, NUMBER, BOOLEAN, STRING, CONCEPT, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING, NODATA, RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN,
 
     /**
      * Object is a Java object whose constructor is referenced in a set expression.

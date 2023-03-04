@@ -37,9 +37,8 @@ import org.integratedmodelling.klab.services.resources.configuration.ResourcesCo
 import org.integratedmodelling.klab.services.resources.configuration.ResourcesConfiguration.ProjectConfiguration;
 import org.integratedmodelling.klab.services.resources.lang.KactorsInjectorProvider;
 import org.integratedmodelling.klab.services.resources.lang.KdlInjectorProvider;
+import org.integratedmodelling.klab.services.resources.lang.KimAdapter;
 import org.integratedmodelling.klab.services.resources.lang.KimInjectorProvider;
-import org.integratedmodelling.klab.services.resources.lang.kim.KimNamespaceAdapter;
-import org.integratedmodelling.klab.services.resources.lang.kim.KimObservableAdapter;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.Utils.Git;
 import org.springframework.stereotype.Service;
@@ -142,7 +141,7 @@ public class ResourcesService implements KResources, KResources.Admin {
     private void loadNamespaces(List<NamespaceDescriptor> namespaces) {
         for (NamespaceDescriptor ns : namespaces) {
             projectLoader.execute(() -> {
-                KimNamespace namespace = new KimNamespaceAdapter(ns);
+                KimNamespace namespace = KimAdapter.adaptKimNamespace(ns);
                 this.localNamespaces.put(namespace.getName(), namespace);
             });
         }
@@ -307,7 +306,7 @@ public class ResourcesService implements KResources, KResources.Admin {
     @Override
     public KKimObservable resolveObservable(String definition) {
         IKimObservable parsed = Kim.INSTANCE.declare(definition);
-        return parsed == null ? null : new KimObservableAdapter(parsed);
+        return parsed == null ? null : KimAdapter.adaptKimObservable(parsed);
     }
 
     @Override
@@ -316,7 +315,7 @@ public class ResourcesService implements KResources, KResources.Admin {
         if (parsed == null) {
             return null;
         }
-        return new KimObservableAdapter(parsed).getMain();
+        return KimAdapter.adaptKimObservable(parsed).getMain();
 
     }
 }

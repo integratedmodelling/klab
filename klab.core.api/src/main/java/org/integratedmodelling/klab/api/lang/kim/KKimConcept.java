@@ -137,7 +137,7 @@ public interface KKimConcept extends KKimStatement {
 	 */
 	String getCodeName();
 
-	SemanticRole getDistributedInherent();
+	SemanticRole getSemanticRole();
 
 	boolean isTraitObservable();
 
