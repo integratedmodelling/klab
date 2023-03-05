@@ -9,15 +9,20 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Path;
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +31,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,6 +46,58 @@ import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 import org.integratedmodelling.klab.api.services.runtime.KNotification;
 
 public class Utils {
+
+    /**
+     * Utility to reduce the ugliness of casting generic collections in Java. If you have say a
+     * Collection<A> (ca) that you know is a Collection<B extends A> and you need a Collection<B>,
+     * do the following:
+     * 
+     * Collection<B> cb = new Cast<A,B>.cast(ca);
+     * 
+     * and type safety be damned. This will not generate any warning and will avoid any silly copy.
+     * Works for generic collections, arraylists and hashsets - add more if needed. Needs something
+     * else for maps.
+     *
+     * @author ferdinando.villa
+     * @version $Id: $Id
+     * @param <B> the generic type
+     * @param <T> the generic type
+     */
+    public static class Casts<B, T> {
+
+        /**
+         * Cast.
+         *
+         * @param b the b
+         * @return the collection
+         */
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public Collection<T> cast(Collection<B> b) {
+            return (Collection<T>) (Collection) b;
+        }
+
+        /**
+         * Cast.
+         *
+         * @param b the b
+         * @return the list
+         */
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public List<T> cast(List<B> b) {
+            return (List<T>) (List) b;
+        }
+
+        /**
+         * Cast.
+         *
+         * @param b the b
+         * @return the sets the
+         */
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        public Set<T> cast(Set<B> b) {
+            return (Set<T>) (Set) b;
+        }
+    }
 
     public static class Paths {
 
@@ -276,6 +334,297 @@ public class Utils {
             return esc.toString();
         }
 
+        /**
+         * Escape characters for text appearing in HTML markup.
+         * 
+         * <P>
+         * This method exists as a defence against Cross Site Scripting (XSS) hacks. This method
+         * escapes all characters recommended by the Open Web App Security Project -
+         * <a href='http://www.owasp.org/index.php/Cross_Site_Scripting'>link</a>.
+         * 
+         * <P>
+         * Note that JSTL's {@code c:out} escapes <em>only the first five</em> of the above
+         * characters.
+         * 
+         * @param aText
+         * @return the escaped string
+         */
+        public static String forHTML(String aText) {
+            final StringBuilder result = new StringBuilder();
+            final StringCharacterIterator iterator = new StringCharacterIterator(aText);
+            char character = iterator.current();
+            while(character != CharacterIterator.DONE) {
+                if (character == '<') {
+                    result.append("&lt;");
+                } else if (character == '>') {
+                    result.append("&gt;");
+                } else if (character == '&') {
+                    result.append("&amp;");
+                } else if (character == '\"') {
+                    result.append("&quot;");
+                } else if (character == '\'') {
+                    result.append("&#039;");
+                } else if (character == '(') {
+                    result.append("&#040;");
+                } else if (character == ')') {
+                    result.append("&#041;");
+                } else if (character == '#') {
+                    result.append("&#035;");
+                } else if (character == '%') {
+                    result.append("&#037;");
+                } else if (character == ';') {
+                    result.append("&#059;");
+                } else if (character == '+') {
+                    result.append("&#043;");
+                } else if (character == '-') {
+                    result.append("&#045;");
+                } else {
+                    // the char is not a special one
+                    // add it to the result as is
+                    result.append(character);
+                }
+                character = iterator.next();
+            }
+            return result.toString();
+        }
+
+        /**
+         * Synonym for <tt>URLEncoder.encode(String, "UTF-8")</tt>.
+         *
+         * <P>
+         * Used to ensure that HTTP query strings are in proper form, by escaping special characters
+         * such as spaces.
+         *
+         * <P>
+         * It is important to note that if a query string appears in an <tt>HREF</tt> attribute,
+         * then there are two issues - ensuring the query string is valid HTTP (it is URL-encoded),
+         * and ensuring it is valid HTML (ensuring the ampersand is escaped).
+         * 
+         * @param aURLFragment
+         * @return the escaped string
+         */
+        public static String forURL(String aURLFragment) {
+            String result = null;
+            try {
+                result = URLEncoder.encode(aURLFragment, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException("UTF-8 not supported", ex);
+            }
+            return result;
+        }
+
+        /**
+         * Synonym for <tt>URLEncoder.encode(String, "UTF-8")</tt>.
+         *
+         * <P>
+         * Used to ensure that HTTP query strings are in proper form, by escaping special characters
+         * such as spaces.
+         *
+         * <P>
+         * It is important to note that if a query string appears in an <tt>HREF</tt> attribute,
+         * then there are two issues - ensuring the query string is valid HTTP (it is URL-encoded),
+         * and ensuring it is valid HTML (ensuring the ampersand is escaped).
+         * 
+         * @param aURLFragment
+         * @return the escaped string
+         */
+        public static String fromURL(String aURLFragment) {
+            String result = null;
+            try {
+                result = URLDecoder.decode(aURLFragment, "UTF-8");
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException("UTF-8 not supported", ex);
+            }
+            return result;
+        }
+
+        /**
+         * Escape characters for text appearing as XML data, between tags.
+         * <p>
+         * Note that JSTL's {@code <c:out>} escapes the exact same set of characters as this method.
+         * <span class='highlight'>That is, {@code <c:out>} is good for escaping to produce valid
+         * XML, but not for producing safe HTML.</span>
+         *
+         * @param aText
+         * @return the escaped string
+         */
+        public static String forXML(String aText) {
+            final StringBuilder result = new StringBuilder();
+            final StringCharacterIterator iterator = new StringCharacterIterator(aText);
+            char character = iterator.current();
+            while(character != CharacterIterator.DONE) {
+                if (character == '<') {
+                    result.append("&lt;");
+                } else if (character == '>') {
+                    result.append("&gt;");
+                } else if (character == '\"') {
+                    result.append("&quot;");
+                } else if (character == '\'') {
+                    result.append("&#039;");
+                } else if (character == '&') {
+                    result.append("&amp;");
+                } else {
+                    // the char is not a special one
+                    // add it to the result as is
+                    result.append(character);
+                }
+                character = iterator.next();
+            }
+            return result.toString();
+        }
+
+        /**
+         * Return <tt>aText</tt> with all <tt>'<'</tt> and <tt>'>'</tt> characters replaced by their
+         * escaped equivalents.
+         * 
+         * @param aText
+         * @return the escaped string
+         */
+        public static String toDisableTags(String aText) {
+            final StringBuilder result = new StringBuilder();
+            final StringCharacterIterator iterator = new StringCharacterIterator(aText);
+            char character = iterator.current();
+            while(character != CharacterIterator.DONE) {
+                if (character == '<') {
+                    result.append("&lt;");
+                } else if (character == '>') {
+                    result.append("&gt;");
+                } else {
+                    // the char is not a special one
+                    // add it to the result as is
+                    result.append(character);
+                }
+                character = iterator.next();
+            }
+            return result.toString();
+        }
+
+        /**
+         * Replace characters having special meaning in regular expressions with their escaped
+         * equivalents, preceded by a '\' character.
+         *
+         * @param aRegexFragment
+         * @return the escaped string
+         */
+        public static String forRegex(String aRegexFragment) {
+            final StringBuilder result = new StringBuilder();
+
+            final StringCharacterIterator iterator = new StringCharacterIterator(aRegexFragment);
+            char character = iterator.current();
+            while(character != CharacterIterator.DONE) {
+                /*
+                 * All literals need to have backslashes doubled.
+                 */
+                if (character == '.') {
+                    result.append("\\.");
+                } else if (character == '\\') {
+                    result.append("\\\\");
+                } else if (character == '?') {
+                    result.append("\\?");
+                } else if (character == '*') {
+                    result.append("\\*");
+                } else if (character == '+') {
+                    result.append("\\+");
+                } else if (character == '&') {
+                    result.append("\\&");
+                } else if (character == ':') {
+                    result.append("\\:");
+                } else if (character == '{') {
+                    result.append("\\{");
+                } else if (character == '}') {
+                    result.append("\\}");
+                } else if (character == '[') {
+                    result.append("\\[");
+                } else if (character == ']') {
+                    result.append("\\]");
+                } else if (character == '(') {
+                    result.append("\\(");
+                } else if (character == ')') {
+                    result.append("\\)");
+                } else if (character == '^') {
+                    result.append("\\^");
+                } else if (character == '$') {
+                    result.append("\\$");
+                } else {
+                    // the char is not a special one
+                    // add it to the result as is
+                    result.append(character);
+                }
+                character = iterator.next();
+            }
+            return result.toString();
+        }
+
+        public static String forSQL(String aRegexFragment) {
+            final StringBuilder result = new StringBuilder();
+
+            final StringCharacterIterator iterator = new StringCharacterIterator(aRegexFragment);
+            char character = iterator.current();
+            while(character != CharacterIterator.DONE) {
+                /*
+                 * All literals need to have backslashes doubled.
+                 */
+                if (character == '\'') {
+                    result.append("''");
+                } else if (character == '\\') {
+                    result.append("\\\\");
+                } else {
+                    // the char is not a special one
+                    // add it to the result as is
+                    result.append(character);
+                }
+                character = iterator.next();
+            }
+            return result.toString();
+        }
+
+        public static String forDoubleQuotedString(String s, boolean removeNewlines) {
+            final StringBuilder result = new StringBuilder();
+
+            final StringCharacterIterator iterator = new StringCharacterIterator(s);
+            char character = iterator.current();
+            while(character != CharacterIterator.DONE) {
+                /*
+                 * All literals need to have backslashes doubled.
+                 */
+                if (character == '"') {
+                    result.append("\\\"");
+                } else if (character == '\n' && removeNewlines) {
+                    result.append(' ');
+                } else {
+                    // the char is not a special one
+                    // add it to the result as is
+                    result.append(character);
+                }
+                character = iterator.next();
+            }
+            return result.toString();
+        }
+
+        public static String collapseWhitespace(String s) {
+
+            final StringBuilder result = new StringBuilder();
+            final StringCharacterIterator iterator = new StringCharacterIterator(s);
+            char character = iterator.current();
+            while(character != CharacterIterator.DONE) {
+                /*
+                 * All literals need to have backslashes doubled.
+                 */
+                boolean wasw = false;
+                while(Character.isWhitespace(character)) {
+                    wasw = true;
+                    character = iterator.next();
+                }
+                if (wasw) {
+                    result.append(' ');
+                } else {
+                    result.append(character);
+                    character = iterator.next();
+                }
+            }
+            return result.toString();
+        }
+
     }
 
     public static class CamelCase {
@@ -463,6 +812,24 @@ public class Utils {
 
     public static class Numbers {
 
+        public static Object[] boxArray(double[] a) {
+            Object[] ret = new Object[a.length];
+            int i = 0;
+            for (double aa : a) {
+                ret[i++] = aa;
+            }
+            return ret;
+        }
+
+        public static Object[] boxArray(long[] a) {
+            Object[] ret = new Object[a.length];
+            int i = 0;
+            for (long aa : a) {
+                ret[i++] = aa;
+            }
+            return ret;
+        }
+
         /**
          * Separate unit.
          *
@@ -612,6 +979,65 @@ public class Utils {
                 }
             }
             return ret;
+        }
+        
+        @SuppressWarnings("unchecked")
+        public static <T> List<T> podListFromString(String array, String splitRegex, Class<? extends T> cls) {
+
+            Object[] pods = objectArrayFromString(array, splitRegex, cls);
+            List<?> ret = null;
+            
+            int nd = 0, ni = 0;
+            int cl = 0;
+            for (int i = 0; i < pods.length; i++) {
+                if (pods[i] instanceof Double) {
+                    if (ret == null) {
+                        ret = new ArrayList<Double>();
+                    }
+                    cl = 1;
+                    ((List<Double>)ret).add((Double)pods[i]);
+                    nd++;
+                } else if (pods[i] instanceof Integer) {
+                    if (ret == null) {
+                        ret = new ArrayList<Integer>();
+                    }
+                    cl = 2;
+                    ((List<Integer>)ret).add((Integer)pods[i]);
+                    ni++;
+                } else if (pods[i] instanceof Long) {
+                    if (ret == null) {
+                        ret = new ArrayList<Long>();
+                    }
+                    cl = 3;
+                    ((List<Long>)ret).add((Long)pods[i]);
+                    ni++;
+                } else if (pods[i] instanceof Float) {
+                    if (ret == null) {
+                        ret = new ArrayList<Float>();
+                    }
+                    cl = 4;
+                    ((List<Float>)ret).add((Float)pods[i]);
+                    ni++;
+                } else if (pods[i] instanceof Boolean) {
+                    if (ret == null) {
+                        ret = new ArrayList<Boolean>();
+                    }
+                    cl = 5;
+                    ((List<Boolean>)ret).add((Boolean)pods[i]);
+                    ni++;
+                }
+            }
+
+            switch(cl) {
+            case 1:
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+                return (List<T>)ret;
+            }
+
+            throw new KIllegalArgumentException("cannot turn array into PODs: type not handled");
         }
 
         public static Object podArrayFromString(String array, String splitRegex, Class<?> cls) {
@@ -948,6 +1374,21 @@ public class Utils {
     }
 
     public static class Strings {
+
+        public static String indent(String text, int spaces) {
+            String pad = spaces(spaces);
+            StringBuffer ret = new StringBuffer(text.length());
+            ret.append(pad);
+            text = text.trim();
+            for (int i = 0; i < text.length(); i++) {
+                char c = text.charAt(i);
+                ret.append(c);
+                if (c == '\n') {
+                    ret.append(pad);
+                }
+            }
+            return ret.toString();
+        }
 
         public static String join(Iterable<?> list, String separator) {
             StringBuffer ret = new StringBuffer(256);
@@ -1649,7 +2090,7 @@ public class Utils {
     }
 
     public static class Files {
-        
+
         /**
          * Return the path leading to file without the file itself.
          *

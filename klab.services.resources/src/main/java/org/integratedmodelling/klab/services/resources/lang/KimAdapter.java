@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.services.resources.lang;
 
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimModel;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.exceptions.KIllegalArgumentException;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
 import org.integratedmodelling.klab.api.knowledge.SemanticRole;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.lang.KContextualizable;
 import org.integratedmodelling.klab.api.lang.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.lang.ValueOperator;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept.Expression;
@@ -185,9 +187,9 @@ public class KimAdapter {
         KimSymbolDefinition ret = new KimSymbolDefinition();
         Utils.Kim.copyStatementData(statement, ret);
 
-        // setDefineClass(String)
-        // setName(String)
-        // setValue(KLiteral)
+        ret.setDefineClass(statement.getDefineClass());
+        ret.setName(statement.getName());
+        ret.setValue(Literal.of(adapt(statement.getValue())));
 
         return ret;
     }
@@ -197,19 +199,33 @@ public class KimAdapter {
         KimModelStatement ret = new KimModelStatement();
         Utils.Kim.copyStatementData(statement, ret);
 
-        // setContextualization(List<KContextualizable>)
-        // setDependencies(List<KKimObservable>)
+        for (IContextualizable contextualizable : statement.getContextualization()) {
+            ret.getContextualization().add(adaptContextualization(contextualizable));
+        }
+        
+        for (IKimObservable dep : statement.getObservables()) {
+            ret.getObservables().add(adaptKimObservable(dep));
+        }
+        for (IKimObservable dep : statement.getDependencies()) {
+            ret.getDependencies().add(adaptKimObservable(dep));
+        }
+
         // setDocstring(String)
         // setInlineValue(KLiteral)
         // setInstantiator(boolean)
         // setInterpreter(boolean)
         // setLearningModel(boolean)
         // setName(String)
-        // setObservables(List<KKimObservable>)
         // setReinterpretingRole(KKimConcept)
         // setResourceUrns(List<String>)
         // setSemantic(boolean)
         // setType(Type)
+        return ret;
+    }
+
+    private static KContextualizable adaptContextualization(IContextualizable contextualizable) {
+        KContextualizable ret = null;
+        // TODO
         return ret;
     }
 

@@ -54,6 +54,7 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
             destination.setFirstCharOffset(source.getFirstCharOffset());
             destination.setLastCharOffset(source.getLastCharOffset());
             destination.setSourceCode(source.getSourceCode());
+            destination.setNamespace(source.getNamespace());
             
             for (IKimAnnotation annotation : source.getAnnotations()) {
                 KAnnotation newAnnotation = makeAnnotation(annotation);

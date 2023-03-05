@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.lang;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,7 @@ import org.integratedmodelling.klab.api.knowledge.KArtifact;
  * @author Ferd
  *
  */
-public interface KPrototype {
+public interface KPrototype extends Serializable {
 
 	/**
 	 * Descriptor for each argument.

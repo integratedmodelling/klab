@@ -26,7 +26,11 @@ public class Literal implements KLiteral {
     }
 
     private static ValueType classifyLiteral(Object o) {
-        if (o instanceof Number) {
+        if (o instanceof Integer) {
+            return ValueType.INTEGER;
+        } else if (o instanceof Double) {
+            return ValueType.DOUBLE;
+        } else if (o instanceof Number) {
             return ValueType.NUMBER;
         } else if (o instanceof String) {
             return ValueType.STRING;

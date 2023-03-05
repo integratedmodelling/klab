@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.api.geometry;
 
 import java.util.Iterator;
 
+import org.integratedmodelling.klab.api.geometry.impl.Offset;
+
 /**
  * Locators are topological subdivisions that can be used to locate and subset observations. A
  * locator is a geometry that comes from a geometry that contains it, and maintains the relationship
@@ -54,7 +56,7 @@ public interface KLocator extends Iterable<KLocator> {
         }
 
         @Override
-        public KGeometry getGeometry() {
+        public KGeometry geometry() {
             return null;
         }
 
@@ -75,7 +77,7 @@ public interface KLocator extends Iterable<KLocator> {
      * 
      * @return
      */
-    KGeometry getGeometry();
+    KGeometry geometry();
 
     /**
      * Return a number between 0 and 1 that represents the amount of extent covered by this locator

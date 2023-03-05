@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.collections.KParameters;
+import org.integratedmodelling.klab.api.geometry.KGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.observation.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.lang.KPrototype;
 
 /**
  * A IGeometry is the declaration of the topological dimensions for the artifacts specified by (or
@@ -124,7 +126,7 @@ public interface KGeometry extends Serializable, KLocator {
      * @author Ferd
      *
      */
-    public interface Dimension {
+    public interface Dimension extends Serializable {
 
         enum Type {
             /**
@@ -184,7 +186,7 @@ public interface KGeometry extends Serializable, KLocator {
          * @param offsets
          * @return
          */
-        long getOffset(long... offsets);
+        long offset(long... offsets);
 
         /**
          * Return the size of this dimension. In a geometry that has been declared but not defined
@@ -210,7 +212,7 @@ public interface KGeometry extends Serializable, KLocator {
          * @return the shape corresponding to the dimension. Never null.
          * @throws IllegalArgumentException if the locator does not have the requested dimension.
          */
-        long[] shape();
+        List<Long> getShape();
 
         /**
          * Additional parameters may be given to further specify a dimension. These are intended to
@@ -235,7 +237,7 @@ public interface KGeometry extends Serializable, KLocator {
          * 
          * @return
          */
-        ExtentDimension getExtentDimension();
+        ExtentDimension extentDimension();
 
         /**
          * Return the parseable string encoding of the dimension.
@@ -250,7 +252,7 @@ public interface KGeometry extends Serializable, KLocator {
          * 
          * @return
          */
-        boolean isDistributed();
+        boolean distributed();
 
     }
 
@@ -287,7 +289,7 @@ public interface KGeometry extends Serializable, KLocator {
      * @param type
      * @return the dimension or null
      */
-    Dimension getDimension(Dimension.Type type);
+    Dimension dimension(Dimension.Type type);
 
     /**
      * A geometry may specify one or multiple objects.
@@ -367,7 +369,7 @@ public interface KGeometry extends Serializable, KLocator {
      * 
      * @return
      */
-    boolean isInfiniteTime();
+    boolean infiniteTime();
 
     /**
      * Quickly check for dimensional compatibility with the geometry specified by the passed string.

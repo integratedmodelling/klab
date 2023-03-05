@@ -7,14 +7,12 @@ package org.integratedmodelling.klab.api.knowledge.observation.scale.space;
  *
  */
 public interface KSpatial {
-
-	
 	
 	/**
 	 * Get the shape.
 	 * 
 	 * @return
 	 */
-	KShape getShape();
+	KShape getGeometricShape();
 	
 }

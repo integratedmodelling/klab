@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.collections.impl.Range;
 import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.data.ValueType;
 import org.integratedmodelling.klab.api.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.api.geometry.KGeometry;
 import org.integratedmodelling.klab.api.lang.KAnnotation;
 import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
 import org.integratedmodelling.klab.logging.Logging;
@@ -38,16 +39,16 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public class JacksonConfiguration {
 
-    static class CustomTypeResolverBuilder extends DefaultTypeResolverBuilder {
+    static class KimStatementResolverBuilder extends DefaultTypeResolverBuilder {
         private static final long serialVersionUID = -8873215972141029473L;
 
-        public CustomTypeResolverBuilder() {
+        public KimStatementResolverBuilder() {
             super(DefaultTyping.NON_FINAL, LaissezFaireSubTypeValidator.instance);
         }
 
         @Override
         public boolean useForType(JavaType t) {
-            if (KKimStatement.class.isAssignableFrom(t.getRawClass())) {
+            if (KKimStatement.class.isAssignableFrom(t.getRawClass()) || KGeometry.class.isAssignableFrom(t.getRawClass())) {
                 return true;
             }
 
@@ -76,11 +77,7 @@ public class JacksonConfiguration {
                 break;
             case CALLCHAIN:
                 break;
-            case CLASS:
-                break;
             case COMPONENT:
-                break;
-            case CONSTANT:
                 break;
             case DATE:
                 break;
@@ -90,12 +87,17 @@ public class JacksonConfiguration {
                 break;
             case EXPRESSION:
                 break;
-            case IDENTIFIER:
-                break;
             case LIST:
                 break;
+            case CONSTANT:
+            case STRING:
+            case CLASS:
+            case IDENTIFIER:
             case LOCALIZED_KEY:
-                ret.setValue(p.getCodec().treeToValue(node.get("value"), String.class));
+            case REGEXP:
+            case NUMBERED_PATTERN:
+            case URN:
+                ret.setValue(node.get("valueType").asText());
                 break;
             case MAP:
                 break;
@@ -103,8 +105,6 @@ public class JacksonConfiguration {
                 break;
             case NUMBER:
                 ret.setValue(node.get("valueType").asDouble());
-                break;
-            case NUMBERED_PATTERN:
                 break;
             case OBJECT:
                 break;
@@ -117,12 +117,7 @@ public class JacksonConfiguration {
             case RANGE:
                 ret.setValue(p.getCodec().treeToValue(node.get("valueType"), Range.class));
                 break;
-            case REGEXP:
-                break;
             case SET:
-                break;
-            case STRING:
-                ret.setValue(node.get("valueType").asText());
                 break;
             case TABLE:
                 break;
@@ -130,11 +125,16 @@ public class JacksonConfiguration {
                 break;
             case TYPE:
                 break;
-            case URN:
+            case CONCEPT:
+                break;
+            case DOUBLE:
+                ret.setValue(node.get("valueType").asDouble());
+                break;
+            case INTEGER:
+                ret.setValue(node.get("valueType").asInt());
                 break;
             default:
                 break;
-
             }
             return ret;
         }
@@ -228,8 +228,8 @@ public class JacksonConfiguration {
                 .addDeserializer(KLiteral.class, new LiteralDeserializer());
         mapper.registerModule(module);
         mapper.registerModule(new ParameterNamesModule());
-        // mapper.registerModule(MoonwlkerModule.builder().fromProperty("@CLASS").toSubclassesOf(KimStatement.class).build());
-        TypeResolverBuilder<?> typeResolver = new CustomTypeResolverBuilder();
+
+        TypeResolverBuilder<?> typeResolver = new KimStatementResolverBuilder();
         typeResolver.init(JsonTypeInfo.Id.CLASS, null);
         typeResolver.inclusion(JsonTypeInfo.As.PROPERTY);
         typeResolver.typeProperty("@CLASS");

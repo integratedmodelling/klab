@@ -2,19 +2,21 @@ package org.integratedmodelling.klab.api.lang;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.collections.KLiteral;
+import org.integratedmodelling.klab.api.collections.KParameters;
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.data.mediation.KValueMediator;
-import org.integratedmodelling.klab.api.data.mediation.classification.KClassification;
-import org.integratedmodelling.klab.api.data.mediation.classification.KLookupTable;
 import org.integratedmodelling.klab.api.geometry.KGeometry;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
-import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.KResource;
 import org.integratedmodelling.klab.api.knowledge.observation.scope.KContextScope;
+import org.integratedmodelling.klab.api.lang.kim.KKimClassification;
+import org.integratedmodelling.klab.api.lang.kim.KKimExpression;
+import org.integratedmodelling.klab.api.lang.kim.KKimLookupTable;
+import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
+import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
 import org.integratedmodelling.klab.api.provenance.KProvenance;
 import org.integratedmodelling.klab.api.services.runtime.KNotification.Mode;
 
@@ -42,7 +44,7 @@ import org.integratedmodelling.klab.api.services.runtime.KNotification.Mode;
  * @author Ferd
  *
  */
-public interface KContextualizable extends KProvenance.Node {
+public interface KContextualizable extends KKimStatement {
 
 	public static enum Type {
 		CLASSIFICATION, SERVICE, LOOKUP_TABLE, RESOURCE, EXPRESSION, CONVERSION, LITERAL,
@@ -283,19 +285,19 @@ public interface KContextualizable extends KProvenance.Node {
 	 * 
 	 * @return the target name
 	 */
-	KObservable getTarget();
+	KKimObservable getTarget();
 
-	/**
-	 * Give the resource a chance to adjust itself to the passed scope and target.
-	 * If nothing is needed, return self. This is called by the runtime before every
-	 * use of the resource in an actuator, and the result is notified to the
-	 * contextualizer that will use it.
-	 * 
-	 * @param target
-	 * @param scope
-	 * @return self or a contextualized resource
-	 */
-	KContextualizable contextualize(KArtifact target, KContextScope scope);
+//	/**
+//	 * Give the resource a chance to adjust itself to the passed scope and target.
+//	 * If nothing is needed, return self. This is called by the runtime before every
+//	 * use of the resource in an actuator, and the result is notified to the
+//	 * contextualizer that will use it.
+//	 * 
+//	 * @param target
+//	 * @param scope
+//	 * @return self or a contextualized resource
+//	 */
+//	KContextualizable contextualize(KArtifact target, KContextScope scope);
 
 	/**
 	 * The target artifact ID when this computation is a mediation. In this case the
@@ -344,7 +346,7 @@ public interface KContextualizable extends KProvenance.Node {
 	 * 
 	 * @return the expression
 	 */
-	KExpression getExpression();
+	KKimExpression getExpression();
 
 	/**
 	 * A classification of the input. Only one among getLiteral(), getServiceCall(),
@@ -353,7 +355,7 @@ public interface KContextualizable extends KProvenance.Node {
 	 * 
 	 * @return the classification
 	 */
-	KClassification getClassification();
+	KKimClassification getClassification();
 
 	/**
 	 * A lookup table translating the inputs. Only one among getLiteral(),
@@ -362,7 +364,7 @@ public interface KContextualizable extends KProvenance.Node {
 	 * 
 	 * @return the lookup table
 	 */
-	KLookupTable getLookupTable();
+	KKimLookupTable getLookupTable();
 
 	/**
 	 * An implicit classification built by matching values of an annotation property
@@ -398,7 +400,7 @@ public interface KContextualizable extends KProvenance.Node {
 	 * 
 	 * @return parameter map, never null, possibly empty.
 	 */
-	Map<String, Object> getParameters();
+	KParameters<String> getParameters();
 
 	/**
 	 * In interactive mode, resources may expose parameters for users to check and
@@ -456,12 +458,12 @@ public interface KContextualizable extends KProvenance.Node {
 	 */
 	boolean isMediation();
 
-	/**
-	 * This should QUICKLY find out if a resource is available for computation.
-	 * 
-	 * @return
-	 */
-	boolean isAvailable();
+//	/**
+//	 * This should QUICKLY find out if a resource is available for computation.
+//	 * 
+//	 * @return
+//	 */
+//	boolean isAvailable();
 
 	/**
 	 * This will return the geometry incarnated by the computable. It should
@@ -493,6 +495,5 @@ public interface KContextualizable extends KProvenance.Node {
 	 * 
 	 * Overridden only to document the difference in semantics.
 	 */
-	@Override
 	boolean isEmpty();
 }

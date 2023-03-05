@@ -184,7 +184,7 @@ public interface KGrid extends Iterable<Cell> {
 		/**
 		 * Return the grid as a shape.
 		 */
-		KShape getShape();
+		KShape getGridShape();
 
 		/**
 		 * Get the geometry this grid is part of.

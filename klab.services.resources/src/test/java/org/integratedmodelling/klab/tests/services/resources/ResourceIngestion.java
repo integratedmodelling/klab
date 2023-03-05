@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.tests.services.resources;
 
 import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.KKimStatement;
-import org.integratedmodelling.klab.api.lang.kim.impl.KimStatement;
 import org.integratedmodelling.klab.services.resources.ResourcesService;
 import org.integratedmodelling.klab.utils.Utils;
 import org.junit.jupiter.api.AfterAll;
@@ -33,7 +32,7 @@ class ResourceIngestion {
 
     @AfterAll
     static void tearDown() throws Exception {
-        service.shutdown();
+        service.shutdown(0);
     }
 
     @Test
@@ -42,23 +41,19 @@ class ResourceIngestion {
         for (String observable : testObservables) {
             KKimObservable obs = service.resolveObservable(observable);
             assert(obs != null);
-            String serialized = Utils.Json.asString(obs);
-            System.out.println(serialized);
-            KKimStatement object = Utils.Json.parseObject(serialized, KimStatement.class);
-            System.out.println(object);
         }
     }
 
-//    @Test
-//    void serializeAndDeserializeObservables() {
-//
-//        for (String observable : testObservables) {
-//            KKimObservable obs = service.resolveObservable(observable);
-//            String serialized = Utils.Json.asString(obs);
-//            Object kimObject = Utils.Json.parseObject(serialized, KKimStatement.class);
-//            assert (kimObject instanceof KKimObservable);
-//        }
-//    }
+    @Test
+    void serializeAndDeserializeObservables() {
+
+        for (String observable : testObservables) {
+            KKimObservable obs = service.resolveObservable(observable);
+            String serialized = Utils.Json.asString(obs);
+            KKimStatement kimObject = Utils.Json.parseObject(serialized, KKimStatement.class);
+            assert (kimObject instanceof KKimObservable);
+        }
+    }
 
     
 }
