@@ -431,14 +431,14 @@ public interface KContextualizable extends KKimStatement {
 	 * @return a tuple containing the original and target value semantics.
 	 */
 	Pair<KValueMediator, KValueMediator> getConversion();
-
-	/**
-	 * Add the resolution mode from the originating model to disambiguate resources
-	 * that can be used in more than one.
-	 * 
-	 * @return
-	 */
-	public Mode getComputationMode();
+//
+//	/**
+//	 * Add the resolution mode from the originating model to disambiguate resources
+//	 * that can be used in more than one.
+//	 * 
+//	 * @return
+//	 */
+//	public Mode getComputationMode();
 
 	/**
 	 * Only meaningful if this computable is a condition computing a (scalar or

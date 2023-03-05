@@ -40,7 +40,6 @@ public class Contextualizable extends KimStatement implements KContextualizable 
     private Collection<String> interactiveParameters;
     private KContextualizable condition;
     private Pair<KValueMediator, KValueMediator> conversion;
-    private Mode computationMode;
     private boolean negated;
     private boolean mediation;
     private KGeometry geometry;
@@ -136,11 +135,6 @@ public class Contextualizable extends KimStatement implements KContextualizable 
     @Override
     public Pair<KValueMediator, KValueMediator> getConversion() {
         return this.conversion;
-    }
-
-    @Override
-    public Mode getComputationMode() {
-        return this.computationMode;
     }
 
     @Override
@@ -243,10 +237,6 @@ public class Contextualizable extends KimStatement implements KContextualizable 
 
     public void setConversion(Pair<KValueMediator, KValueMediator> conversion) {
         this.conversion = conversion;
-    }
-
-    public void setComputationMode(Mode computationMode) {
-        this.computationMode = computationMode;
     }
 
     public void setNegated(boolean negated) {

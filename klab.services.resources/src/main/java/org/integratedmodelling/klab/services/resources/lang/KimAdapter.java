@@ -3,29 +3,51 @@ package org.integratedmodelling.klab.services.resources.lang;
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimAcknowledgement;
+import org.integratedmodelling.kim.api.IKimClassification;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimLoader.NamespaceDescriptor;
 import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.collections.impl.Literal;
 import org.integratedmodelling.klab.api.collections.impl.Pair;
+import org.integratedmodelling.klab.api.collections.impl.Parameters;
 import org.integratedmodelling.klab.api.collections.impl.Range;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.mediation.KValueMediator;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.exceptions.KIllegalArgumentException;
+import org.integratedmodelling.klab.api.geometry.KGeometry;
+import org.integratedmodelling.klab.api.geometry.impl.Geometry;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
+import org.integratedmodelling.klab.api.knowledge.KResource;
 import org.integratedmodelling.klab.api.knowledge.SemanticRole;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
 import org.integratedmodelling.klab.api.lang.KContextualizable;
+import org.integratedmodelling.klab.api.lang.KServiceCall;
 import org.integratedmodelling.klab.api.lang.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.lang.ValueOperator;
+import org.integratedmodelling.klab.api.lang.impl.Contextualizable;
+import org.integratedmodelling.klab.api.lang.kim.KKimClassification;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept.Expression;
+import org.integratedmodelling.klab.api.lang.kim.KKimExpression;
+import org.integratedmodelling.klab.api.lang.kim.KKimLookupTable;
+import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.KKimObservable.ResolutionException;
 import org.integratedmodelling.klab.api.lang.kim.KKimStatement.Scope;
+import org.integratedmodelling.klab.api.lang.kim.impl.KimAcknowledgement;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimConcept;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimConceptStatement;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimModelStatement;
@@ -77,8 +99,28 @@ public class KimAdapter {
             return adaptModelStatement((IKimModel) statement);
         } else if (statement instanceof IKimSymbolDefinition) {
             return adaptSymbolDefinition((IKimSymbolDefinition) statement);
-        }
+        }  else if (statement instanceof IKimAcknowledgement) {
+            return adaptAcknowledgementStatement((IKimAcknowledgement) statement);
+        } 
         throw new KIllegalArgumentException("statement " + statement + " cannot be understood");
+    }
+
+    private static KimStatement adaptAcknowledgementStatement(IKimAcknowledgement statement) {
+        
+        KimAcknowledgement ret = new KimAcknowledgement();
+        Utils.Kim.copyStatementData(statement, ret);
+        
+        ret.setDocstring(statement.getDocstring());
+        ret.setName(statement.getName());
+        ret.setObservable(adaptKimObservable(statement.getObservable()));
+        for (IKimObservable state : statement.getStates()) {
+            ret.getStates().add(adaptKimObservable(state));
+        }
+        ret.setUrn(statement.getUrn());
+        
+        ret.setUri(ret.getNamespace() + ":" + ret.getName());
+        
+        return ret;
     }
 
     public static KimObservable adaptKimObservable(IKimObservable parsed) {
@@ -115,6 +157,8 @@ public class KimAdapter {
             ret.getValueOperators().add(new Pair<ValueOperator, KLiteral>(ValueOperator.valueOf(vop.getFirst().name()),
                     Literal.of(adapt(vop.getSecond()))));
         }
+        
+        ret.setUri(ret.getDefinition());
 
         return ret;
     }
@@ -179,6 +223,8 @@ public class KimAdapter {
                 original.getRelationshipTarget() == null ? null : adaptKimConcept(original.getRelationshipTarget()));
         ret.setTemporalInherent(original.getTemporalInherent() == null ? null : adaptKimConcept(original.getTemporalInherent()));
 
+        ret.setUri(ret.getDefinition());
+        
         return ret;
     }
 
@@ -202,7 +248,7 @@ public class KimAdapter {
         for (IContextualizable contextualizable : statement.getContextualization()) {
             ret.getContextualization().add(adaptContextualization(contextualizable));
         }
-        
+
         for (IKimObservable dep : statement.getObservables()) {
             ret.getObservables().add(adaptKimObservable(dep));
         }
@@ -210,23 +256,102 @@ public class KimAdapter {
             ret.getDependencies().add(adaptKimObservable(dep));
         }
 
-        // setDocstring(String)
-        // setInlineValue(KLiteral)
-        // setInstantiator(boolean)
-        // setInterpreter(boolean)
-        // setLearningModel(boolean)
-        // setName(String)
-        // setReinterpretingRole(KKimConcept)
-        // setResourceUrns(List<String>)
-        // setSemantic(boolean)
-        // setType(Type)
+        ret.setDocstring(statement.getDocstring());
+        ret.setInlineValue(statement.getInlineValue() == null ? null : Literal.of(statement.getInlineValue()));
+        ret.setInstantiator(statement.isInstantiator());
+        ret.setInterpreter(statement.isInterpreter());
+        ret.setLearningModel(statement.isLearningModel());
+        ret.setName(statement.getName());
+        ret.setReinterpretingRole(
+                statement.getReinterpretingRole().isEmpty() ? null : adaptKimConcept(statement.getReinterpretingRole().get()));
+        if (statement.getResourceUrns() != null) {
+            ret.getResourceUrns().addAll(statement.getResourceUrns());
+        }
+        ret.setSemantic(statement.isSemantic());
+        ret.setType(statement.isInactive() ? KArtifact.Type.VOID : KArtifact.Type.valueOf(statement.getType().name()));
+        ret.setUri(ret.getNamespace() + ":" + ret.getName());
+        
         return ret;
     }
 
     private static KContextualizable adaptContextualization(IContextualizable contextualizable) {
-        KContextualizable ret = null;
-        // TODO
+
+        Contextualizable ret = new Contextualizable();
+        Utils.Kim.copyStatementData(contextualizable, ret);
+
+        ret.setAccordingTo(contextualizable.getAccordingTo());
+        ret.setClassification(
+                contextualizable.getClassification() == null ? null : adaptClassification(contextualizable.getClassification()));
+        ret.setCondition(
+                contextualizable.getCondition() == null ? null : adaptContextualization(contextualizable.getCondition()));
+        ret.setConversion(contextualizable.getConversion() == null
+                ? null
+                : new Pair<KValueMediator, KValueMediator>(adaptMediator(contextualizable.getConversion().getFirst()),
+                        adaptMediator(contextualizable.getConversion().getSecond())));
+        ret.setEmpty(contextualizable.isEmpty());
+        ret.setExpression(contextualizable.getExpression() == null ? null : adaptKimExpression(contextualizable.getExpression()));
+        ret.setFinal(contextualizable.isFinal());
+        ret.setGeometry(contextualizable.getGeometry() == null ? null : adaptGeometry(contextualizable.getGeometry()));
+        ret.setInputs(contextualizable.getInputs().stream()
+                .map((c) -> new Pair<>(c.getFirst(), KArtifact.Type.valueOf(c.getSecond().name()))).collect(Collectors.toList()));
+        ret.getInteractiveParameters().addAll(contextualizable.getInteractiveParameters());
+        ret.setLanguage(contextualizable.getLanguage());
+        ret.setLiteral(contextualizable.getLiteral() == null ? null : Literal.of(contextualizable.getLiteral()));
+        ret.setLookupTable(
+                contextualizable.getLookupTable() == null ? null : adaptLookupTable(contextualizable.getLookupTable()));
+        ret.setMediation(contextualizable.isMediation());
+        ret.setMediationTargetId(contextualizable.getMediationTargetId());
+        ret.setNegated(contextualizable.isNegated());
+        ret.setParameters(
+                contextualizable.getParameters() == null ? null : new Parameters<String>(contextualizable.getParameters()));
+        ret.setResource(contextualizable.getResource() == null ? null : adaptResource(contextualizable.getResource()));
+        ret.setServiceCall(
+                contextualizable.getServiceCall() == null ? null : adaptServiceCall(contextualizable.getServiceCall()));
+        ret.setTarget(contextualizable.getTarget() == null ? null : adaptObservable(contextualizable.getTarget()));
+        ret.setTargetId(contextualizable.getTargetId());
+        ret.setType(KContextualizable.Type.valueOf(contextualizable.getType().name()));
+        ret.setUrn(contextualizable.getUrn());
+        ret.setVariable(contextualizable.isVariable());
         return ret;
+    }
+
+    private static KValueMediator adaptMediator(IValueMediator first) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private static KKimExpression adaptKimExpression(IKimExpression expression) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private static KKimObservable adaptObservable(IObservable target) {
+        IKimObservable parsed = Kim.INSTANCE.declare(target.getDefinition());
+        return parsed == null ? null : adaptKimObservable(parsed);
+    }
+
+    private static KServiceCall adaptServiceCall(IServiceCall serviceCall) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private static KResource adaptResource(IResource resource) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private static KKimLookupTable adaptLookupTable(IKimLookupTable lookupTable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private static KGeometry adaptGeometry(IGeometry geometry) {
+        return Geometry.create(geometry.encode());
+    }
+
+    private static KKimClassification adaptClassification(IKimClassification classification) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     private static KimConceptStatement adaptConceptStatement(IKimConceptStatement statement) {

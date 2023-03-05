@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.collections.KParameters;
-import org.integratedmodelling.klab.api.geometry.KGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.observation.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.lang.KPrototype;
 

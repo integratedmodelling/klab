@@ -274,12 +274,9 @@ public class Utils {
          * @return the escaped url.
          */
         public static String escapeurl(String str) {
-            byte buf[];
             int i, a;
             StringBuffer esc = new StringBuffer();
-
-            buf = new byte[str.length()];
-            str.getBytes(0, str.length(), buf, 0);
+            byte[] buf = str.getBytes();
 
             for (i = 0; i < str.length(); i++) {
                 a = buf[i] & 0xff;
@@ -980,14 +977,13 @@ public class Utils {
             }
             return ret;
         }
-        
+
         @SuppressWarnings("unchecked")
         public static <T> List<T> podListFromString(String array, String splitRegex, Class<? extends T> cls) {
 
             Object[] pods = objectArrayFromString(array, splitRegex, cls);
             List<?> ret = null;
-            
-            int nd = 0, ni = 0;
+
             int cl = 0;
             for (int i = 0; i < pods.length; i++) {
                 if (pods[i] instanceof Double) {
@@ -995,36 +991,31 @@ public class Utils {
                         ret = new ArrayList<Double>();
                     }
                     cl = 1;
-                    ((List<Double>)ret).add((Double)pods[i]);
-                    nd++;
+                    ((List<Double>) ret).add((Double) pods[i]);
                 } else if (pods[i] instanceof Integer) {
                     if (ret == null) {
                         ret = new ArrayList<Integer>();
                     }
                     cl = 2;
-                    ((List<Integer>)ret).add((Integer)pods[i]);
-                    ni++;
+                    ((List<Integer>) ret).add((Integer) pods[i]);
                 } else if (pods[i] instanceof Long) {
                     if (ret == null) {
                         ret = new ArrayList<Long>();
                     }
                     cl = 3;
-                    ((List<Long>)ret).add((Long)pods[i]);
-                    ni++;
+                    ((List<Long>) ret).add((Long) pods[i]);
                 } else if (pods[i] instanceof Float) {
                     if (ret == null) {
                         ret = new ArrayList<Float>();
                     }
                     cl = 4;
-                    ((List<Float>)ret).add((Float)pods[i]);
-                    ni++;
+                    ((List<Float>) ret).add((Float) pods[i]);
                 } else if (pods[i] instanceof Boolean) {
                     if (ret == null) {
                         ret = new ArrayList<Boolean>();
                     }
                     cl = 5;
-                    ((List<Boolean>)ret).add((Boolean)pods[i]);
-                    ni++;
+                    ((List<Boolean>) ret).add((Boolean) pods[i]);
                 }
             }
 
@@ -1034,7 +1025,7 @@ public class Utils {
             case 3:
             case 4:
             case 5:
-                return (List<T>)ret;
+                return (List<T>) ret;
             }
 
             throw new KIllegalArgumentException("cannot turn array into PODs: type not handled");
@@ -1047,29 +1038,23 @@ public class Utils {
             long[] lret = new long[pods.length];
             float[] fret = new float[pods.length];
             boolean[] bret = new boolean[pods.length];
-            int nd = 0, ni = 0;
             int cl = 0;
             for (int i = 0; i < pods.length; i++) {
                 if (pods[i] instanceof Double) {
                     cl = 1;
                     dret[i] = (Double) pods[i];
-                    nd++;
                 } else if (pods[i] instanceof Integer) {
                     cl = 2;
                     iret[i] = (Integer) pods[i];
-                    ni++;
                 } else if (pods[i] instanceof Long) {
                     cl = 3;
                     lret[i] = (Long) pods[i];
-                    ni++;
                 } else if (pods[i] instanceof Float) {
                     cl = 4;
                     fret[i] = (Float) pods[i];
-                    ni++;
                 } else if (pods[i] instanceof Boolean) {
                     cl = 5;
                     bret[i] = (Boolean) pods[i];
-                    ni++;
                 }
             }
 
@@ -2633,10 +2618,10 @@ public class Utils {
 
             if (ret == null) {
                 if (cls.equals(Double.class)) {
-                    return (T) new Double(Double.NaN);
+                    return (T) Double.valueOf(Double.NaN);
                 }
                 if (cls.equals(Float.class)) {
-                    return (T) new Float(Float.NaN);
+                    return (T) Float.valueOf(Float.NaN);
                 }
 
                 return null;
@@ -2653,19 +2638,19 @@ public class Utils {
             if (ret instanceof Number) {
                 if (Number.class.isAssignableFrom(cls)) {
                     if (cls.equals(Double.class)) {
-                        return (T) new Double(((Number) ret).doubleValue());
+                        return (T) Double.valueOf(((Number) ret).doubleValue());
                     }
                     if (cls.equals(Long.class)) {
-                        return (T) new Long(((Number) ret).longValue());
+                        return (T) Long.valueOf(((Number) ret).longValue());
                     }
                     if (cls.equals(Integer.class)) {
-                        return (T) new Integer(((Number) ret).intValue());
+                        return (T) Integer.valueOf(((Number) ret).intValue());
                     }
                     if (cls.equals(Short.class)) {
-                        return (T) new Short(((Number) ret).shortValue());
+                        return (T) Short.valueOf(((Number) ret).shortValue());
                     }
                     if (cls.equals(Float.class)) {
-                        return (T) new Float(((Number) ret).floatValue());
+                        return (T) Float.valueOf(((Number) ret).floatValue());
                     }
                 } else if (Boolean.class.isAssignableFrom(cls)) {
                     if (cls.equals(Boolean.class)) {
@@ -2675,39 +2660,39 @@ public class Utils {
             } else if (ret instanceof Boolean) {
 
                 if (cls.equals(Double.class)) {
-                    return (T) new Double(((Boolean) ret) ? 1 : 0);
+                    return (T) Double.valueOf(((Boolean) ret) ? 1 : 0);
                 }
                 if (cls.equals(Long.class)) {
-                    return (T) new Long(((Boolean) ret) ? 1 : 0);
+                    return (T) Long.valueOf(((Boolean) ret) ? 1 : 0);
                 }
                 if (cls.equals(Short.class)) {
-                    return (T) new Short(((Boolean) ret) ? (short) 1 : 0);
+                    return (T) Short.valueOf(((Boolean) ret) ? (short) 1 : 0);
                 }
                 if (cls.equals(Integer.class)) {
-                    return (T) new Integer(((Boolean) ret) ? 1 : 0);
+                    return (T) Integer.valueOf(((Boolean) ret) ? 1 : 0);
                 }
                 if (cls.equals(Float.class)) {
-                    return (T) new Float(((Boolean) ret) ? 1 : 0);
+                    return (T) Float.valueOf(((Boolean) ret) ? 1 : 0);
                 }
 
             } else if (ret instanceof String) {
                 if (cls.equals(Double.class)) {
-                    return (T) new Double(Double.parseDouble((String) ret));
+                    return (T) Double.valueOf((String) ret);
                 }
                 if (cls.equals(Long.class)) {
-                    return (T) new Long(Long.parseLong((String) ret));
+                    return (T) Long.valueOf((String) ret);
                 }
                 if (cls.equals(Short.class)) {
-                    return (T) new Short(Short.parseShort((String) ret));
+                    return (T) Short.valueOf((String) ret);
                 }
                 if (cls.equals(Integer.class)) {
-                    return (T) new Integer(Integer.parseInt((String) ret));
+                    return (T) Integer.valueOf((String) ret);
                 }
                 if (cls.equals(Float.class)) {
-                    return (T) new Float(Float.parseFloat((String) ret));
+                    return (T) Float.valueOf((String) ret);
                 }
                 if (cls.equals(Boolean.class)) {
-                    return (T) new Boolean(Boolean.parseBoolean((String) ret));
+                    return (T) Boolean.valueOf((String) ret);
                 }
                 if (cls.equals(KConcept.class)) {
                     // IConceptService service =
@@ -2721,6 +2706,7 @@ public class Utils {
             throw new KIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
         }
 
+        @SuppressWarnings("unchecked")
         public static <T> T parseAsType(String ret, Class<?> cls) {
 
             if (cls.equals(Object.class) || cls.equals(String.class)) {
@@ -2729,35 +2715,35 @@ public class Utils {
 
             if (Number.class.isAssignableFrom(cls)) {
                 if (cls.equals(Double.class)) {
-                    return (T) new Double(Double.parseDouble(ret));
+                    return (T) Double.valueOf(Double.parseDouble(ret));
                 }
                 if (cls.equals(Long.class)) {
                     if (ret.contains(".") || ret.contains("E")) {
                         // fix legacy issues
-                        ret = "" + new Double(Double.parseDouble(ret)).longValue();
+                        ret = "" + Double.valueOf(Double.parseDouble(ret)).longValue();
                     }
-                    return (T) new Long(Long.parseLong(ret));
+                    return (T) Long.valueOf(Long.parseLong(ret));
                 }
                 if (cls.equals(Integer.class)) {
                     if (ret.contains(".") || ret.contains("E")) {
                         // fix legacy issues
-                        ret = "" + new Double(Double.parseDouble(ret)).intValue();
+                        ret = "" + Double.valueOf(Double.parseDouble(ret)).intValue();
                     }
-                    return (T) new Integer(Integer.parseInt(ret));
+                    return (T) Integer.valueOf(Integer.parseInt(ret));
                 }
                 if (cls.equals(Short.class)) {
                     if (ret.contains(".") || ret.contains("E")) {
                         // fix legacy issues
-                        ret = "" + new Double(Double.parseDouble(ret)).shortValue();
+                        ret = "" + Double.valueOf(Double.parseDouble(ret)).shortValue();
                     }
-                    return (T) new Short(Short.parseShort(ret));
+                    return (T) Short.valueOf(Short.parseShort(ret));
                 }
                 if (cls.equals(Float.class)) {
-                    return (T) new Float(Float.parseFloat(ret));
+                    return (T) Float.valueOf(Float.parseFloat(ret));
                 }
             } else if (Boolean.class.isAssignableFrom(cls)) {
                 if (cls.equals(Boolean.class)) {
-                    return (T) new Boolean(Boolean.parseBoolean(ret));
+                    return (T) Boolean.valueOf(Boolean.parseBoolean(ret));
                 }
             }
 
@@ -2793,13 +2779,13 @@ public class Utils {
                 List<Object> list = new ArrayList<>();
                 return (T) list;
             } else if (cls.equals(Integer.class)) {
-                return (T) new Integer(0);
+                return (T) Integer.valueOf(0);
             } else if (cls.equals(Long.class)) {
-                return (T) new Long(0);
+                return (T) Long.valueOf(0);
             } else if (cls.equals(Double.class)) {
-                return (T) new Double(Double.NaN);
+                return (T) Double.valueOf(Double.NaN);
             } else if (cls.equals(Float.class)) {
-                return (T) new Float(Float.NaN);
+                return (T) Float.valueOf(Float.NaN);
             } else if (cls.equals(String.class)) {
                 return (T) "";
             } else if (cls.equals(Boolean.class)) {

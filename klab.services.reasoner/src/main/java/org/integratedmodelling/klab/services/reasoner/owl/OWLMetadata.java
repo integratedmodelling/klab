@@ -44,9 +44,8 @@ import org.semanticweb.owlapi.vocab.OWLRDFVocabulary;
  */
 public class OWLMetadata extends Metadata implements KMetadata {
 
-    // OWLEntity _owl;
-    // OWLOntology _ontology;
-
+    private static final long serialVersionUID = -2172262717519576273L;
+    
     static HashMap<String, String> _metadataVocabulary = new HashMap<>();
 
     static {
