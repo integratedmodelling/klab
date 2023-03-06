@@ -67,7 +67,7 @@ public class EngineAuthResponeFactory {
 				break;	
 			}
 		case USER:
-			if (IPUtils.isLocalhost(remoteAddr)) {
+			if (IPUtils.isLocalhost(remoteAddr) == false) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return localEngine(request);
 			} else {
@@ -91,22 +91,36 @@ public class EngineAuthResponeFactory {
 		return null;
 	}
 	
-    private boolean validateAccountStatus(AccountStatus status) {
-        if (status != AccountStatus.active) {
-            return false;
+    private void validateProfileAccountStatus(ProfileResource profile) throws AuthenticationFailedException {
+        switch(profile.accountStatus) {
+        case active:
+            return;
+        case locked:
+            throw new AuthenticationFailedException("User profile is locked");
+        case deleted:
+            throw new AuthenticationFailedException("User profile is deleted");
+        case pendingActivation:
+        case verified:
+            throw new AuthenticationFailedException("User profile has not completed the activation process");
+        case expired:
+        default:
+            throw new AuthenticationFailedException("User profile is not active");
         }
-        return true;
     }
 
-    private boolean validateAgreementExpirationDate(ProfileResource profile) {
-        Date agreementExpirationDate = profile.getAgreements().get(0).getExpiredDate();
-        if (agreementExpirationDate == null) {
-            return true;
+    private void validateAgreement(ProfileResource profile) throws AuthenticationFailedException {
+        if (profile.getAgreements().isEmpty()) {
+            // TODO check how we want to treat profiles without agreement
+            return;
         }
-        if (new DateTime(agreementExpirationDate).isAfterNow()) {
-            return true;
+        // TODO for now, we just assume that there is a single agreement per profile.
+        Agreement agreement = profile.getAgreements().get(0);
+        if (agreement.isRevoked()) {
+            throw new AuthenticationFailedException("Agreement has been revoked");
         }
-        return false;
+        if (agreement.isExpired()) {
+            throw new AuthenticationFailedException("Agreement is expired");
+        }
     }
 
 	@SuppressWarnings("unchecked")
@@ -116,14 +130,8 @@ public class EngineAuthResponeFactory {
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
 		
-        if (!validateAccountStatus(profile.accountStatus)) {
-            throw new AuthenticationFailedException("User profile is not active");
-        }
-
-        if (!validateAgreementExpirationDate(profile)) {
-            // TODO do we want to notify about locked users?
-            throw new AuthenticationFailedException("Agreement is expired");
-        }
+        validateProfileAccountStatus(profile);
+        validateAgreement(profile);
 		
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
