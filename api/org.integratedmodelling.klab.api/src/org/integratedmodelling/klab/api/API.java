@@ -352,7 +352,38 @@ public interface API {
          * Base URL path for locked users.
          */
         public static final String LOCKED_USERS = USER_BASE + "/locked-users";
-
+        /**
+         * Base URL path for tag resources on the hub.
+         */
+        public static final String TAG_BASE = API_BASE + "/tags";
+        /**
+         * Base URL path for identifying tags by name.
+         */
+        public static final String TAG_ID = TAG_BASE + "/{name}";
+        /**
+         * Base URL path for all tags referencing a user.
+         */
+        public static final String TAG_OF_USER = TAG_BASE + "/{username}";
+        /**
+         * Base URL path for every unsent tag.
+         */
+        public static final String TAG_UNSENT = API_BASE + "/tags-unsent";
+        /**
+         * Base URL path for all unsent tags referencing a user.
+         */
+        public static final String TAG_UNSENT_OF_USER = TAG_UNSENT + "/{username}";
+        /**
+         * Base URL path for tag notifications on the hub.
+         */
+        public static final String TAG_NOTIFICATIONS = API_BASE + "/tag-notifications";
+        /**
+         * Base URL path for tag notifications by tag.
+         */
+        public static final String TAG_NOTIFICATION_OF_TAG = TAG_NOTIFICATIONS + "/{name}";
+        /**
+         * Base URL path for tag notifications by user.
+         */
+        public static final String TAG_NOTIFICATION_OF_USER = USER_BASE + "/tag-notifications/{name}";
 
         public static interface PARAMETERS {
             /**
@@ -436,6 +467,11 @@ public interface API {
              * URL PARAMETER for user role entry service, lists all the users with a particular role
              */
             public static final String HAS_ROLES = "has-roles";
+            /**
+             * Base PARAMETER for the type of a tag
+             */
+            public static final String TYPE_OF_TAG = "type";
+
         }
 
     }
