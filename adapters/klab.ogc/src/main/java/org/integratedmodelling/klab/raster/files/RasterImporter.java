@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,18 +130,20 @@ public class RasterImporter extends AbstractFilesetImporter {
     @Override
     public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
 
+        boolean addStyle = file.getName().endsWith(".zip");
+
         boolean samefolder = options.get(OPTION_DO_NOT_CREATE_INDIVIDUAL_FOLDERS, Boolean.FALSE);
         
         if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 
             if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
                 File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
-                File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
+                File out = new File(dir, MiscUtilities.getFileName(file));
                 if (!samefolder) {
                     dir.mkdirs();
                 } else {
                     dir.getAbsoluteFile().getParentFile().mkdirs();
-                    out = new File(dir.getAbsoluteFile().getParentFile() + File.separator + MiscUtilities.getFileName(file));
+                    out = new File(dir.getAbsoluteFile().getParentFile(), MiscUtilities.getFileName(file));
                 }
                 GridCoverage2D coverage;
                 IState state = (IState) observation;
@@ -183,23 +186,28 @@ public class RasterImporter extends AbstractFilesetImporter {
                 if (format.equalsIgnoreCase("tiff")) {
                     try {
                         
-                        File raster = new File(MiscUtilities.changeExtension(out.toString(), "tiff"));
-                        GeoTiffWriter writer = new GeoTiffWriter(raster);
+                        File rasterFile = new File(MiscUtilities.changeExtension(out.toString(), "tiff"));
+                        GeoTiffWriter writer = new GeoTiffWriter(rasterFile);
 
                         writer.setMetadataValue(Integer.toString(BaselineTIFFTagSet.TAG_SOFTWARE),
                                 "k.LAB (www.integratedmodelling.org)");
 
                         writer.write(coverage, null);
 
-                        if (dir != null) {
+                        if (dir != null && addStyle) {
                             if (!options.get(OPTION_DO_NOT_ZIP_MULTIPLE_FILES, Boolean.FALSE)) {
-                                File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
+                                File zip = file; //new File(MiscUtilities.changeExtension(file.toString(), "zip"));
+                                if(zip.exists()) {
+                                    zip.delete();
+                                }
                                 ZipUtils.zip(zip, dir, false, false);
                                 file = zip;
                                 org.apache.commons.io.FileUtils.deleteQuietly(dir);
                             } else {
                                 file = dir;
                             }
+                        } else {
+                          file = rasterFile;
                         }
                         return file;
                     } catch (IOException e) {
@@ -310,9 +318,12 @@ public class RasterImporter extends AbstractFilesetImporter {
         double min = range.get(0);
         double max = range.get(1);
         
-        List<String> labels = colorMap.getLabels();
-        List<String> colors = colorMap.getColors();
-
+        List<String> labels = Arrays.asList("" + min, "" + max);
+        List<String> colors = Arrays.asList("#FFFFFF", "#000000");
+        if (colorMap != null) {
+            labels = colorMap.getLabels();
+            colors = colorMap.getColors();
+        }
         
         String ind = "\t";
         StringBuilder sb = new StringBuilder();
@@ -350,6 +361,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         sb.append("</qgis>\n");
         
         FileUtils.writeStringToFile(qmlFile, sb.toString());
+
     }
 
     private boolean writeAuxDbf(File auxDbfFile, IDataKey dataKey) throws Exception {

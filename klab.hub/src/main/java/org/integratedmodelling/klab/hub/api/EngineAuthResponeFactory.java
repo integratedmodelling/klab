@@ -101,7 +101,7 @@ public class EngineAuthResponeFactory {
 		if(profile.accountStatus == AccountStatus.locked) {
 			throw new LockedUserException(profile.getUsername());
 		}
-		
+
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
 		

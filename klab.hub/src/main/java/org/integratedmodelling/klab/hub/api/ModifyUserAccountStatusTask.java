@@ -19,19 +19,19 @@ public class ModifyUserAccountStatusTask extends Task {
 
 	@Component
 	public static class Command extends TaskCommand {
-		
+
 		@Autowired
 		private UserRepository userRepository;
-		
+
 		@Override
 		public void executeAccept(Task task) {
 			ModifyUserAccountStatusTask modifyUserAccountStatusTask = (ModifyUserAccountStatusTask)task;
-			
+
 			User user = userRepository.findByNameIgnoreCase(modifyUserAccountStatusTask.getUsername()).get();
 			modifyUserAccountStatusTask.previousAccountStatus = user.getAccountStatus();
-			
+
 			AccountStatus accountStatus = modifyUserAccountStatusTask.getRequestedAccountStatus();
-			
+
 			// Check if the status modification is allowed
 			switch(accountStatus) {
 			case active:
@@ -64,11 +64,11 @@ public class ModifyUserAccountStatusTask extends Task {
 	}
 
 	public static class Parameters extends TaskParametersWithRoleRequirement {
-		
+
 		String username;
 		AccountStatus accountStatus;
 		Class<? extends ModifyUserAccountStatusTask> clazz;
-		
+
 		public Parameters(HttpServletRequest request, String username, AccountStatus accountStatus, Class<? extends ModifyUserAccountStatusTask> clazz) {
 			super(request, Role.ROLE_ADMINISTRATOR);
 			this.username = username;
@@ -76,7 +76,7 @@ public class ModifyUserAccountStatusTask extends Task {
 			this.clazz = clazz;
 		}
 	}
-	
+
 	@Component
 	public static class Builder extends TaskBuilder {
 
@@ -89,7 +89,7 @@ public class ModifyUserAccountStatusTask extends Task {
 				throw new ClassCastException();
 			}
 
-			ArrayList<Task> ret = new ArrayList<Task>(1);			
+			ArrayList<Task> ret = new ArrayList<Task>(1);
 			Constructor<? extends ModifyUserAccountStatusTask> constructor = null;
 			try {
 				constructor = param.clazz.getConstructor(String.class, AccountStatus.class);
@@ -104,23 +104,23 @@ public class ModifyUserAccountStatusTask extends Task {
 					| InvocationTargetException e) {
 				throw new RuntimeException("Problem creating modify user account status task", e);
 			}
-			
+
 			return ret;
 		}
 	}
-	
+
 	private String username;
 	private AccountStatus previousAccountStatus;
 	private AccountStatus requestedAccountStatus;
-	
+
 	public String getUsername() {
 		return username;
 	}
-	
+
 	public AccountStatus getRequestedAccountStatus() {
 		return requestedAccountStatus;
 	}
-	
+
 	public ModifyUserAccountStatusTask(String username, AccountStatus requestedAccountStatus) {
 		super();
 		this.username = username;
@@ -147,7 +147,7 @@ public class ModifyUserAccountStatusTask extends Task {
 	public void setType() {
 		setType(TaskType.modifyUserAccountStatus);
 	}
-	
+
 	private TaskCommand getCommand() {
 		return command;
 	}

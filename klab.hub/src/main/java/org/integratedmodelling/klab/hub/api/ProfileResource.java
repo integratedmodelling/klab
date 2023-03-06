@@ -51,8 +51,8 @@ public class ProfileResource implements OAuth2User{
     public String affiliation;
 
     public List<Role> roles = new ArrayList<>(); // LDAP security roles or OAuth
-
-    public List<GroupEntry> groupEntries = new ArrayList<>(); // research groups, etc. in web tool
+    
+    public List<Agreement> agreements = new ArrayList<>();
 
     public boolean sendUpdates;
 
@@ -80,7 +80,7 @@ public class ProfileResource implements OAuth2User{
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(name).append(email).append(serverUrl).append(firstName).append(lastName)
-                .append(initials).append(address).append(jobTitle).append(phone).append(affiliation).append(groupEntries)
+                .append(initials).append(address).append(jobTitle).append(phone).append(affiliation).append(agreements)
                 .append(sendUpdates).append(comments).append(accountStatus).hashCode();
     }
 
@@ -100,7 +100,7 @@ public class ProfileResource implements OAuth2User{
         return new EqualsBuilder().append(name, other.name).append(email, other.email)
                 .append(serverUrl, other.serverUrl).append(firstName, other.firstName).append(lastName, other.lastName)
                 .append(initials, other.initials).append(address, other.address).append(jobTitle, other.jobTitle)
-                .append(phone, other.phone).append(affiliation, other.affiliation).append(groupEntries, other.groupEntries)
+                .append(phone, other.phone).append(affiliation, other.affiliation).append(agreements, other.agreements)
                 .append(sendUpdates, other.sendUpdates).append(comments, other.comments)
                 .append(accountStatus, other.accountStatus).isEquals();
     }
@@ -113,15 +113,16 @@ public class ProfileResource implements OAuth2User{
 		this.name = username;
 	}
 	
-    public List<GroupEntry> getGroups() {
-		return groupEntries;
-	}
+    
+	public List<Agreement> getAgreements() {
+        return agreements;
+    }
 
-	public void setGroups(List<GroupEntry> groups) {
-		this.groupEntries = groups;
-	}
+    public void setAgreements(List<Agreement> agreements) {
+        this.agreements = agreements;
+    }
 
-	public List<Role> getRoles() {
+    public List<Role> getRoles() {
 		return roles;
 	}
 
@@ -189,7 +190,8 @@ public class ProfileResource implements OAuth2User{
 
 	public List<String> getGroupsIds() {
 	    List<String> groupsIds = new ArrayList<>();
-	    for (GroupEntry grp : this.getGroups()) {
+	    //TODO Agreement list	    
+	    for (GroupEntry grp : this.getAgreements().get(0).getGroupEntries()) {
             if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
                 groupsIds.add(grp.getGroup().getName());
             }
@@ -199,7 +201,8 @@ public class ProfileResource implements OAuth2User{
 	
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
-		for (GroupEntry grp : this.getGroups()) {
+		//TODO Agreement list 
+		for (GroupEntry grp : this.getAgreements().get(0).getGroupEntries()) {
 			if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
@@ -231,7 +234,7 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.comments = comments;
 		cleanedProfile.email = email;
 		cleanedProfile.firstName = firstName;
-		cleanedProfile.groupEntries = groupEntries;
+		cleanedProfile.agreements = agreements;
 		cleanedProfile.id = id;
 		cleanedProfile.initials = initials;
 		cleanedProfile.jobTitle = jobTitle;
@@ -246,8 +249,9 @@ public class ProfileResource implements OAuth2User{
 		//cleanedProfile.Token = Token;
 		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
+		//TODO Agreement list 
 		List<GroupEntry> safeGroups = new ArrayList<>();
-		for (GroupEntry entry : cleanedProfile.getGroups()) {
+		for (GroupEntry entry : cleanedProfile.getAgreements().get(0).getGroupEntries()) {
 			if(entry != null) {
 				MongoGroup cleanGroup = new MongoGroup();
 				MongoGroup unsafeGroup = entry.getGroup();
@@ -259,14 +263,15 @@ public class ProfileResource implements OAuth2User{
 				safeGroups.add(entry);
 			}
 		}
-		cleanedProfile.groupEntries = cleanedProfile.getGroups();
+		//TODO check
+		cleanedProfile.agreements = cleanedProfile.getAgreements();
 		return cleanedProfile;
 	}
 
 
     public ArrayList<GroupEntry> expiredGroupEntries() {
         ArrayList<GroupEntry> expired = new ArrayList<GroupEntry>();
-        for (GroupEntry e : getGroups()) {
+        for (GroupEntry e : getAgreements().get(0).getGroupEntries()) {
             if(e.getExperation().isBeforeNow()) {
                 expired.add(e);
             }
@@ -276,7 +281,7 @@ public class ProfileResource implements OAuth2User{
     
     public ArrayList<GroupEntry> expiringGroupEntries() {
         ArrayList<GroupEntry> expiring = new ArrayList<GroupEntry>();
-        for (GroupEntry e : getGroups()) {
+        for (GroupEntry e : getAgreements().get(0).getGroupEntries()) {
             if(!e.getExperation().isBeforeNow() && !e.getExperation().isAfter(DateTime.now().plusDays(30))) {
                 expiring.add(e);
             }

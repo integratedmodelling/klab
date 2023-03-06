@@ -24,7 +24,7 @@ public class SetRoleTask extends Task {
 		private String username;
 		private Set<Role> rolesToSet;
 		Class<? extends SetRoleTask> clazz;
-		
+
 		public Parameters(HttpServletRequest request, String username, Set<Role> rolesToSet, Class<? extends SetRoleTask> clazz) {
 			super(request, Role.ROLE_ADMINISTRATOR);
 			this.username = username;
@@ -36,7 +36,7 @@ public class SetRoleTask extends Task {
 			return this.rolesToSet;
 		}
 	}
-	
+
 	@Component
 	public static class Builder extends TaskBuilder {
 		@Override
@@ -47,9 +47,9 @@ public class SetRoleTask extends Task {
 			} else {
 				throw new ClassCastException();
 			}
-			
+
 			ArrayList<Task> ret = new ArrayList<Task>(1);
-			
+
 			Constructor<? extends SetRoleTask> constructor = null;
 			try {
 				constructor = param.clazz.getConstructor(String.class, Set.class);
@@ -57,7 +57,7 @@ public class SetRoleTask extends Task {
 					| NoSuchMethodException | SecurityException e) {
 				throw new RuntimeException("Problem creating set role task", e);
 			}
-			
+
 			Task setRoleTask;
 			try {
 				setRoleTask = constructor.newInstance(param.username, param.rolesToSet);
@@ -70,36 +70,36 @@ public class SetRoleTask extends Task {
 			return ret;
 		}
 	}
-	
+
 	@Component
 	public static class Command extends TaskCommand {
 		@Autowired
 		private UserRepository userRepository;
-		
+
 		@Override
 		public void executeAccept(Task task) {
 			SetRoleTask setRoleTask = (SetRoleTask)task;
-			
+
 			User user = userRepository.findByNameIgnoreCase(setRoleTask.getUsername()).get();
 			Set<Role> rolesToSet = setRoleTask.getRolesToSet();
 			user.addRoles(rolesToSet.toArray(new Role[rolesToSet.size()]));
 			userRepository.save(user);
-			
+
 			task.setStatus(TaskStatus.accepted);
 		}
 	}
-	
+
 	private String username;
 	private Set<Role> rolesToSet;
-	
+
 	public String getUsername() {
 		return this.username;
 	}
-	
+
 	public Set<Role> getRolesToSet() {
 		return this.rolesToSet;
 	}
-	
+
 	public SetRoleTask(String username, Set<Role> rolesToSet) {
 		super();
 		this.username = username;
@@ -126,7 +126,7 @@ public class SetRoleTask extends Task {
 	public void setType() {
 		setType(TaskType.setRoles);
 	}
-	
+
 	private TaskCommand getCommand() {
 		return command;
 	}

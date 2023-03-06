@@ -24,7 +24,7 @@ public class RemoveRoleTask extends Task {
 		private String username;
 		private Set<Role> rolesToRemove;
 		Class<? extends RemoveRoleTask> clazz;
-		
+
 		public Parameters(HttpServletRequest request, String username, Set<Role> rolesToRemove, Class<? extends RemoveRoleTask> clazz) {
 			super(request, Role.ROLE_ADMINISTRATOR);
 			this.username = username;
@@ -47,9 +47,9 @@ public class RemoveRoleTask extends Task {
 			} else {
 				throw new ClassCastException();
 			}
-			
+
 			ArrayList<Task> ret = new ArrayList<Task>(1);
-			
+
 			Constructor<? extends RemoveRoleTask> constructor = null;
 			try {
 				constructor = param.clazz.getConstructor(String.class, Set.class);
@@ -57,7 +57,7 @@ public class RemoveRoleTask extends Task {
 					| NoSuchMethodException | SecurityException e) {
 				throw new RuntimeException("Problem creating remove role task", e);
 			}
-			
+
 			Task setRoleTask;
 			try {
 				setRoleTask = constructor.newInstance(param.username, param.rolesToRemove);
@@ -70,36 +70,36 @@ public class RemoveRoleTask extends Task {
 			return ret;
 		}
 	}
-	
+
 	@Component
 	public static class Command extends TaskCommand {
 		@Autowired
 		private UserRepository userRepository;
-		
+
 		@Override
 		public void executeAccept(Task task) {
 			RemoveRoleTask removeRoleTask = (RemoveRoleTask)task;
-			
+
 			User user = userRepository.findByNameIgnoreCase(removeRoleTask.getUsername()).get();
 			Set<Role> rolesToRemove = removeRoleTask.getRolesToRemove();
 			user.removeRoles(rolesToRemove);
 			userRepository.save(user);
-			
+
 			task.setStatus(TaskStatus.accepted);
 		}
 	}
-	
+
 	private String username;
 	private Set<Role> rolesToRemove;
-	
+
 	public String getUsername() {
 		return this.username;
 	}
-	
+
 	public Set<Role> getRolesToRemove() {
 		return this.rolesToRemove;
 	}
-	
+
 	public RemoveRoleTask(String username, Set<Role> rolesToRemove) {
 		super();
 		this.username = username;
@@ -126,7 +126,7 @@ public class RemoveRoleTask extends Task {
 	public void setType() {
 		setType(TaskType.removeRoles);
 	}
-	
+
 	private TaskCommand getCommand() {
 		return command;
 	}

@@ -49,6 +49,7 @@ public enum CliRuntime {
         console.scream("\n");
         console.scream(Logo.ENGINE_BANNER);
         console.scream("\nSession established: ID is " + this.session.getId() + "\n");
+        console.scream("\nLocal session browser url is: http://localhost:8283/modeler/ui/viewer?session=" + this.session.getId() + "\n");
 
         if (options.isNetwork()) {
             console.echo("Starting network services....\n");

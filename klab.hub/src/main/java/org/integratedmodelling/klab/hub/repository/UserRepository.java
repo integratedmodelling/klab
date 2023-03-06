@@ -29,10 +29,10 @@ public interface UserRepository extends MongoRepository<User, ObjectId>{
     
     @Query("{'groupEntries.group.$id' : ?0}")
 	List<User> getUsersByGroupEntriesWithGroupId(ObjectId id);
-    
+
     @Query("{'roles' : ?0}")
     List<User> getUsersByRole(Role role);
-    
+
     @Query("{'accountStatus' : ?0}")
 	List<User> getUsersByAccountStatus(AccountStatus accountStatus);
 }
