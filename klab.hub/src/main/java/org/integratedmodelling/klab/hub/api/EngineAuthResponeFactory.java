@@ -3,13 +3,14 @@ package org.integratedmodelling.klab.hub.api;
 import java.io.IOException;
 import java.security.NoSuchProviderException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
+
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
@@ -92,35 +93,20 @@ public class EngineAuthResponeFactory {
 		return null;
 	}
 	
-    private void validateProfileAccountStatus(ProfileResource profile) throws AuthenticationFailedException {
+    private void validateProfileAccountStatus(ProfileResource profile) {
         switch(profile.accountStatus) {
         case active:
             return;
         case locked:
-            throw new AuthenticationFailedException("User profile is locked.");
+            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' is locked.");
         case deleted:
-            throw new AuthenticationFailedException("User profile is deleted.");
+            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' is deleted.");
         case pendingActivation:
         case verified:
-            throw new AuthenticationFailedException("User profile has not completed the activation process.");
+            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' has not completed the activation process.");
         case expired:
         default:
-            throw new AuthenticationFailedException("User profile is not active.");
-        }
-    }
-
-    private void validateAgreement(ProfileResource profile) throws AuthenticationFailedException {
-        if (profile.getAgreements().isEmpty()) {
-            // TODO check how we want to treat profiles without agreement
-            return;
-        }
-        // TODO for now, we just assume that there is a single agreement per profile.
-        Agreement agreement = profile.getAgreements().get(0);
-        if (agreement.isRevoked()) {
-            throw new AuthenticationFailedException("Agreement has been revoked.");
-        }
-        if (agreement.isExpired()) {
-            throw new AuthenticationFailedException("Agreement is expired.");
+            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' is not active.");
         }
     }
 
@@ -130,10 +116,27 @@ public class EngineAuthResponeFactory {
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
-		
+
         validateProfileAccountStatus(profile);
-        validateAgreement(profile);
-		
+        
+        List<Agreement> validAgreements = profile.getAgreements().stream()
+                .filter(a -> !a.isRevoked() && !a.isExpired()).collect(Collectors.toList());
+        // TODO for now, we just assume that there is a single agreement per profile.
+        if (validAgreements.isEmpty()) {
+            throw new AuthenticationFailedException("User has no valid agreement.");
+        }
+
+        final DateTime nowPlus30Days = DateTime.now().plusDays(30);
+        validAgreements.stream()
+            .filter(a -> a.hasExpirationDate() && !new DateTime(a.getExpiredDate()).isAfter(nowPlus30Days))
+            .forEach(a -> {
+                HubNotificationMessage msg = HubNotificationMessage.MessageClass
+                        .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpiredDate().toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, a.getExpiredDate())
+                              })));
+                messages.add(msg);
+            });
+
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
 		
