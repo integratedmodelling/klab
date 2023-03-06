@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -69,6 +71,9 @@ public class User extends IdentityModel implements UserDetails{
     boolean sendUpdates = true;
 
     private Set<Role> roles = new HashSet<>();;
+
+    @Reference
+    private List<TagEntry> tags = new ArrayList<>();
 
     @Reference
     private Set<Agreement> agreements = new HashSet<>();
@@ -364,6 +369,32 @@ public class User extends IdentityModel implements UserDetails{
 		this.email = email;
 	}
 
+    public boolean hasTag(String tagName) {
+        return tags.stream()
+        .anyMatch(t -> t.getTag().getName().equals(tagName));
+    }
+	
+    public void addTag(MongoTag mongoTag) {
+        TagEntry tagEntry = new TagEntry(mongoTag);
+        this.tags.add(tagEntry);
+    }
+
+    public void addTags(Collection<MongoTag> tags) {
+        for(MongoTag t : tags) {
+            addTag(t);
+        }
+    }
+
+    public List<TagEntry> getTags() {
+        return tags;
+    }
+
+    public List<TagEntry> getUnsentTags() {
+        return tags.stream()
+                .filter(t -> !t.isSent())
+                .collect(Collectors.toList());
+    }
+
     public Set<Agreement> getAgreements() {
         return agreements;
     }
@@ -371,8 +402,8 @@ public class User extends IdentityModel implements UserDetails{
     public void setAgreements(Set<Agreement> agreements) {
         this.agreements = agreements;
     }
-	
-	
+    
+
     public Set<CustomProperty> getCustomProperties() {
         return customProperties;
     }
