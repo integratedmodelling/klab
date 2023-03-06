@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +36,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.integratedmodelling.klab.api.collections.Metadata;
 import org.integratedmodelling.klab.api.exceptions.KIOException;
 import org.integratedmodelling.klab.api.exceptions.KInternalErrorException;
-import org.integratedmodelling.klab.api.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.api.exceptions.KValidationException;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
 import org.integratedmodelling.klab.api.lang.kim.KKimNamespace;
 import org.integratedmodelling.klab.api.utils.Utils;
@@ -71,30 +72,32 @@ import org.semanticweb.owlapi.model.OWLProperty;
  */
 public class Ontology /* implements IOntology */ {
 
-    String                       id;
-    private Set<String>          imported      = new HashSet<>();
-    private Map<String, Concept> delegates     = new HashMap<>();
-    OWLOntology                  ontology;
-    private String               prefix;
-    private Map<String, Concept> conceptIDs    = new HashMap<>();
-    Map<String, Individual>      individuals   = new LinkedHashMap<>();
+    String id;
+    private Set<String> imported = new HashSet<>();
+    private Map<String, Concept> delegates = new HashMap<>();
+    OWLOntology ontology;
+    private String prefix;
+    private Map<String, Concept> conceptIDs = new HashMap<>();
+    Map<String, Individual> individuals = new LinkedHashMap<>();
 
     /*
      * all properties
      */
-    Set<String>                  propertyIDs   = new HashSet<>();
+    Set<String> propertyIDs = new HashSet<>();
 
     /*
      * property IDs by class - no other way to return the OWL objects quickly. what a pain
      */
-    Set<String>                  opropertyIDs  = new HashSet<>();
-    Set<String>                  dpropertyIDs  = new HashSet<>();
-    Set<String>                  apropertyIDs  = new HashSet<>();
-    Map<String, String>          definitionIds = Collections.synchronizedMap(new HashMap<>());
+    Set<String> opropertyIDs = new HashSet<>();
+    Set<String> dpropertyIDs = new HashSet<>();
+    Set<String> apropertyIDs = new HashSet<>();
+    Map<String, String> definitionIds = Collections.synchronizedMap(new HashMap<>());
 
-    private String               resourceUrl;
-    private boolean              isInternal    = false;
-    private AtomicInteger        idCounter     = new AtomicInteger(0);
+    private String resourceUrl;
+    private boolean isInternal = false;
+    private AtomicInteger idCounter = new AtomicInteger(0);
+
+    List<IAxiom> axiomCache = new ArrayList<>();
 
     Ontology(OWLOntology ontology, String id) {
 
@@ -108,7 +111,7 @@ public class Ontology /* implements IOntology */ {
         if (this.prefix.equals("http://purl.obolibrary.org/obo/bfo.owl")) {
             this.prefix = "http://purl.obolibrary.org/obo";
         }
-        
+
         scan();
     }
 
@@ -117,15 +120,14 @@ public class Ontology /* implements IOntology */ {
     }
 
     /*
-     * build a catalog of names, as there seems to be no way to quickly assess if an ontology contains
-     * a named entity or not. This needs to be kept in sync with any changes, which is a pain. FIXME
-     * reintegrate the conditionals when define() works properly.
+     * build a catalog of names, as there seems to be no way to quickly assess if an ontology
+     * contains a named entity or not. This needs to be kept in sync with any changes, which is a
+     * pain. FIXME reintegrate the conditionals when define() works properly.
      */
     private void scan() {
 
         for (OWLClass c : this.ontology.getClassesInSignature(false)) {
-            if (c.getIRI().toString().contains(this.prefix)
-                    && !this.conceptIDs.containsKey(c.getIRI().getFragment())) {
+            if (c.getIRI().toString().contains(this.prefix) && !this.conceptIDs.containsKey(c.getIRI().getFragment())) {
                 this.conceptIDs.put(c.getIRI().getFragment(), new Concept(c, this.id, OWL.emptyType));
             }
         }
@@ -147,18 +149,18 @@ public class Ontology /* implements IOntology */ {
                 this.propertyIDs.add(p.getIRI().getFragment());
             }
         }
-//        for (OWLNamedIndividual i : this.ontology.getIndividualsInSignature()) {
-//            if (i.getIRI().toString().contains(this.prefix)) {
-//            	Individual individual = new Individual(i, this);
-//            	this.individuals.put(individual.getName(), individual);
-//            }
-//        }
+        // for (OWLNamedIndividual i : this.ontology.getIndividualsInSignature()) {
+        // if (i.getIRI().toString().contains(this.prefix)) {
+        // Individual individual = new Individual(i, this);
+        // this.individuals.put(individual.getName(), individual);
+        // }
+        // }
     }
-    
+
     public void addDelegateConcept(String id, String namespace, Concept concept) {
         this.delegates.put(id, wrapDelegate(concept, id));
-        concept.getOntology().define(Collections.singleton(Axiom.AnnotationAssertion(concept
-                .getName(), NS.LOCAL_ALIAS_PROPERTY, namespace + ":" + id)));
+        concept.getOntology().define(Collections
+                .singleton(Axiom.AnnotationAssertion(concept.getName(), NS.LOCAL_ALIAS_PROPERTY, namespace + ":" + id)));
     }
 
     private Concept wrapDelegate(Concept concept, String id) {
@@ -169,7 +171,7 @@ public class Ontology /* implements IOntology */ {
         return ret;
     }
 
-//    @Override
+    // @Override
     public Collection<Concept> getConcepts() {
 
         ArrayList<Concept> ret = new ArrayList<>(conceptIDs.values());
@@ -179,7 +181,7 @@ public class Ontology /* implements IOntology */ {
         return ret;
     }
 
-//    @Override
+    // @Override
     public Collection<Property> getProperties() {
         ArrayList<Property> ret = new ArrayList<>();
         for (OWLProperty<?, ?> p : this.ontology.getDataPropertiesInSignature(false)) {
@@ -195,7 +197,7 @@ public class Ontology /* implements IOntology */ {
         return ret;
     }
 
-//    @Override
+    // @Override
     public Concept getConcept(String ID) {
         Concept ret = this.conceptIDs.get(ID);
         if (ret != null) {
@@ -204,7 +206,7 @@ public class Ontology /* implements IOntology */ {
         return delegates.get(ID);
     }
 
-//    @Override
+    // @Override
     public Property getProperty(String ID) {
         if (this.opropertyIDs.contains(ID)) {
             return new Property(this.ontology.getOWLOntologyManager().getOWLDataFactory()
@@ -221,12 +223,12 @@ public class Ontology /* implements IOntology */ {
         return null;
     }
 
-//    @Override
+    // @Override
     public String getURI() {
         return this.ontology.getOWLOntologyManager().getOntologyDocumentIRI(this.ontology).toString();
     }
 
-//    @Override
+    // @Override
     public boolean write(File file, boolean writeImported) {
 
         if (writeImported) {
@@ -244,18 +246,17 @@ public class Ontology /* implements IOntology */ {
                         if (!fr.endsWith(".owl")) {
                             fr += ".owl";
                         }
-                        File efile = new File((path.toString().equals(".") ? "" : (path + File.separator))
-                                + fr);
+                        File efile = new File((path.toString().equals(".") ? "" : (path + File.separator)) + fr);
                         // FIXME get it from OWL
-//                        other.getOntology().write(efile, false);
-//                        authorities.addAll(((Ontology) other.getOntology()).getDelegateOntologies());
+                        // other.getOntology().write(efile, false);
+                        // authorities.addAll(((Ontology)
+                        // other.getOntology()).getDelegateOntologies());
                     }
                 }
             }
 
             for (Ontology o : authorities) {
-                File efile = new File((path.toString().equals(".") ? "" : (path + File.separator))
-                        + o.getName() + ".owl");
+                File efile = new File((path.toString().equals(".") ? "" : (path + File.separator)) + o.getName() + ".owl");
                 o.write(efile, false);
             }
         }
@@ -267,8 +268,7 @@ public class Ontology /* implements IOntology */ {
             owlxmlFormat.copyPrefixesFrom(format.asPrefixOWLOntologyFormat());
         }
         try {
-            this.ontology.getOWLOntologyManager()
-                    .saveOntology(this.ontology, owlxmlFormat, IRI.create(file.toURI()));
+            this.ontology.getOWLOntologyManager().saveOntology(this.ontology, owlxmlFormat, IRI.create(file.toURI()));
         } catch (OWLOntologyStorageException e) {
             throw new KIOException(e);
         }
@@ -289,31 +289,48 @@ public class Ontology /* implements IOntology */ {
         return ret;
     }
 
-//    @Override
+    /**
+     * Incrementally add an axiom. It is just stored until define() is called.
+     * 
+     * @param axiom
+     */
+    public void add(IAxiom axiom) {
+        this.axiomCache.add(axiom);
+    }
+
+    /**
+     * Incorporate all the axioms introduced with {@link #add(IAxiom)}.
+     * 
+     * @return
+     */
+    public Collection<String> define() {
+        Collection<String> ret = define(axiomCache);
+        axiomCache.clear();
+        return ret;
+    }
+
     public Collection<String> define(Collection<IAxiom> axioms) {
 
         ArrayList<String> errors = new ArrayList<>();
 
         /*
-         * ACHTUNG remember to add IDs to appropriate catalogs as classes and property assertions are
-         * encountered. This can be called incrementally, so better not to call scan() every time.
+         * ACHTUNG remember to add IDs to appropriate catalogs as classes and property assertions
+         * are encountered. This can be called incrementally, so better not to call scan() every
+         * time.
          */
         OWLDataFactory factory = this.ontology.getOWLOntologyManager().getOWLDataFactory();
 
         for (IAxiom axiom : axioms) {
 
-//             System.out.println(" [" + id + "] => " + axiom);
+            // System.out.println(" [" + id + "] => " + axiom);
 
             try {
 
                 if (axiom.is(IAxiom.CLASS_ASSERTION)) {
 
-                    OWLClass newcl = factory
-                            .getOWLClass(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
-                    this.ontology.getOWLOntologyManager()
-                            .addAxiom(this.ontology, factory.getOWLDeclarationAxiom(newcl));
-                    this.conceptIDs.put(axiom.getArgument(0)
-                            .toString(), new Concept(newcl, id, ((Axiom) axiom).conceptType));
+                    OWLClass newcl = factory.getOWLClass(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
+                    this.ontology.getOWLOntologyManager().addAxiom(this.ontology, factory.getOWLDeclarationAxiom(newcl));
+                    this.conceptIDs.put(axiom.getArgument(0).toString(), new Concept(newcl, id, ((Axiom) axiom).conceptType));
 
                 } else if (axiom.is(IAxiom.SUBCLASS_OF)) {
 
@@ -321,8 +338,7 @@ public class Ontology /* implements IOntology */ {
                     OWLClass superclass = findClass(axiom.getArgument(0).toString(), errors);
 
                     if (subclass != null && superclass != null) {
-                        OWL.INSTANCE.manager
-                                .addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(subclass, superclass));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(subclass, superclass));
                     }
 
                 } else if (axiom.is(IAxiom.ANNOTATION_PROPERTY_ASSERTION)) {
@@ -333,15 +349,12 @@ public class Ontology /* implements IOntology */ {
                     // factory.getOWLDeclarationAxiom(p));
                     this.propertyIDs.add(axiom.getArgument(0).toString());
                     this.apropertyIDs.add(axiom.getArgument(0).toString());
-                    OWLMetadata._metadataVocabulary
-                            .put(p.getIRI().toString(), getName() + ":" + axiom.getArgument(0));
+                    OWLMetadata._metadataVocabulary.put(p.getIRI().toString(), getName() + ":" + axiom.getArgument(0));
 
                 } else if (axiom.is(IAxiom.DATA_PROPERTY_ASSERTION)) {
 
-                    OWLDataProperty p = factory
-                            .getOWLDataProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
-                    this.ontology.getOWLOntologyManager()
-                            .addAxiom(this.ontology, factory.getOWLDeclarationAxiom(p));
+                    OWLDataProperty p = factory.getOWLDataProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
+                    this.ontology.getOWLOntologyManager().addAxiom(this.ontology, factory.getOWLDeclarationAxiom(p));
                     this.propertyIDs.add(axiom.getArgument(0).toString());
                     this.dpropertyIDs.add(axiom.getArgument(0).toString());
 
@@ -351,8 +364,8 @@ public class Ontology /* implements IOntology */ {
                     OWLClass classExp = findClass(axiom.getArgument(1).toString(), errors);
 
                     if (property != null && classExp != null) {
-                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory
-                                .getOWLDataPropertyDomainAxiom(property.asOWLDataProperty(), classExp));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology,
+                                factory.getOWLDataPropertyDomainAxiom(property.asOWLDataProperty(), classExp));
                     }
 
                 } else if (axiom.is(IAxiom.DATA_PROPERTY_RANGE)) {
@@ -369,10 +382,8 @@ public class Ontology /* implements IOntology */ {
 
                 } else if (axiom.is(IAxiom.OBJECT_PROPERTY_ASSERTION)) {
 
-                    OWLObjectProperty p = factory
-                            .getOWLObjectProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
-                    this.ontology.getOWLOntologyManager()
-                            .addAxiom(this.ontology, factory.getOWLDeclarationAxiom(p));
+                    OWLObjectProperty p = factory.getOWLObjectProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
+                    this.ontology.getOWLOntologyManager().addAxiom(this.ontology, factory.getOWLDeclarationAxiom(p));
                     this.propertyIDs.add(axiom.getArgument(0).toString());
                     this.opropertyIDs.add(axiom.getArgument(0).toString());
 
@@ -382,8 +393,8 @@ public class Ontology /* implements IOntology */ {
                     OWLClass classExp = findClass(axiom.getArgument(1).toString(), errors);
 
                     if (property != null && classExp != null) {
-                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory
-                                .getOWLObjectPropertyDomainAxiom(property.asOWLObjectProperty(), classExp));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology,
+                                factory.getOWLObjectPropertyDomainAxiom(property.asOWLObjectProperty(), classExp));
                     }
 
                 } else if (axiom.is(IAxiom.OBJECT_PROPERTY_RANGE)) {
@@ -392,8 +403,8 @@ public class Ontology /* implements IOntology */ {
                     OWLClass classExp = findClass(axiom.getArgument(1).toString(), errors);
 
                     if (property != null && classExp != null) {
-                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory
-                                .getOWLObjectPropertyRangeAxiom(property.asOWLObjectProperty(), classExp));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology,
+                                factory.getOWLObjectPropertyRangeAxiom(property.asOWLObjectProperty(), classExp));
                     }
 
                 } else if (axiom.is(IAxiom.ALL_VALUES_FROM_RESTRICTION)) {
@@ -401,12 +412,10 @@ public class Ontology /* implements IOntology */ {
                     OWLEntity property = findProperty(axiom.getArgument(1).toString(), false, errors);
                     OWLClass target = findClass(axiom.getArgument(0).toString(), errors);
                     OWLClass filler = findClass(axiom.getArgument(2).toString(), errors);
-                    OWLClassExpression restr = factory
-                            .getOWLObjectAllValuesFrom(property.asOWLObjectProperty(), filler);
+                    OWLClassExpression restr = factory.getOWLObjectAllValuesFrom(property.asOWLObjectProperty(), filler);
 
                     if (property != null && filler != null && target != null && restr != null) {
-                        OWL.INSTANCE.manager
-                                .addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
                     }
 
                 } else if (axiom.is(IAxiom.AT_LEAST_N_VALUES_FROM_RESTRICTION)) {
@@ -417,12 +426,10 @@ public class Ontology /* implements IOntology */ {
                     OWLClass target = findClass(axiom.getArgument(0).toString(), errors);
                     OWLClass filler = findClass(axiom.getArgument(2).toString(), errors);
 
-                    OWLClassExpression restr = factory
-                            .getOWLObjectMinCardinality(n, property.asOWLObjectProperty(), filler);
+                    OWLClassExpression restr = factory.getOWLObjectMinCardinality(n, property.asOWLObjectProperty(), filler);
 
                     if (property != null && filler != null && target != null && restr != null) {
-                        OWL.INSTANCE.manager
-                                .addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
                     }
 
                 } else if (axiom.is(IAxiom.AT_MOST_N_VALUES_FROM_RESTRICTION)) {
@@ -433,12 +440,10 @@ public class Ontology /* implements IOntology */ {
                     OWLClass target = findClass(axiom.getArgument(0).toString(), errors);
                     OWLClass filler = findClass(axiom.getArgument(2).toString(), errors);
 
-                    OWLClassExpression restr = factory
-                            .getOWLObjectMaxCardinality(n, property.asOWLObjectProperty(), filler);
+                    OWLClassExpression restr = factory.getOWLObjectMaxCardinality(n, property.asOWLObjectProperty(), filler);
 
                     if (property != null && filler != null && target != null && restr != null) {
-                        OWL.INSTANCE.manager
-                                .addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
                     }
 
                 } else if (axiom.is(IAxiom.EXACTLY_N_VALUES_FROM_RESTRICTION)) {
@@ -449,12 +454,10 @@ public class Ontology /* implements IOntology */ {
                     OWLClass target = findClass(axiom.getArgument(0).toString(), errors);
                     OWLClass filler = findClass(axiom.getArgument(2).toString(), errors);
 
-                    OWLClassExpression restr = factory
-                            .getOWLObjectExactCardinality(n, property.asOWLObjectProperty(), filler);
+                    OWLClassExpression restr = factory.getOWLObjectExactCardinality(n, property.asOWLObjectProperty(), filler);
 
                     if (property != null && filler != null && target != null && restr != null) {
-                        OWL.INSTANCE.manager
-                                .addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
                     }
 
                 } else if (axiom.is(IAxiom.SOME_VALUES_FROM_RESTRICTION)) {
@@ -463,12 +466,10 @@ public class Ontology /* implements IOntology */ {
                     OWLClass target = findClass(axiom.getArgument(0).toString(), errors);
                     OWLClass filler = findClass(axiom.getArgument(2).toString(), errors);
 
-                    OWLClassExpression restr = factory
-                            .getOWLObjectSomeValuesFrom(property.asOWLObjectProperty(), filler);
+                    OWLClassExpression restr = factory.getOWLObjectSomeValuesFrom(property.asOWLObjectProperty(), filler);
 
                     if (property != null && filler != null && target != null && restr != null) {
-                        OWL.INSTANCE.manager
-                                .addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLSubClassOfAxiom(target, restr));
                     }
 
                 } else if (axiom.is(IAxiom.DATATYPE_DEFINITION)) {
@@ -480,8 +481,7 @@ public class Ontology /* implements IOntology */ {
                         OWLClass p = factory.getOWLClass(IRI.create(this.prefix + "#" + arg));
                         classExpressions.add(p);
                     }
-                    OWL.INSTANCE.manager
-                            .addAxiom(this.ontology, factory.getOWLDisjointClassesAxiom(classExpressions));
+                    OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLDisjointClassesAxiom(classExpressions));
 
                 } else if (axiom.is(IAxiom.ASYMMETRIC_OBJECT_PROPERTY)) {
 
@@ -500,8 +500,7 @@ public class Ontology /* implements IOntology */ {
                         OWLClass classExp = findClass(arg.toString(), errors);
                         classExpressions.add(classExp);
                     }
-                    OWL.INSTANCE.manager
-                            .addAxiom(this.ontology, factory.getOWLEquivalentClassesAxiom(classExpressions));
+                    OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLEquivalentClassesAxiom(classExpressions));
 
                 } else if (axiom.is(IAxiom.EQUIVALENT_DATA_PROPERTIES)) {
 
@@ -509,17 +508,13 @@ public class Ontology /* implements IOntology */ {
 
                 } else if (axiom.is(IAxiom.FUNCTIONAL_DATA_PROPERTY)) {
 
-                    OWLDataProperty prop = factory
-                            .getOWLDataProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
-                    OWL.INSTANCE.manager
-                            .addAxiom(this.ontology, factory.getOWLFunctionalDataPropertyAxiom(prop));
+                    OWLDataProperty prop = factory.getOWLDataProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
+                    OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLFunctionalDataPropertyAxiom(prop));
 
                 } else if (axiom.is(IAxiom.FUNCTIONAL_OBJECT_PROPERTY)) {
 
-                    OWLObjectProperty prop = factory
-                            .getOWLObjectProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
-                    OWL.INSTANCE.manager
-                            .addAxiom(this.ontology, factory.getOWLFunctionalObjectPropertyAxiom(prop));
+                    OWLObjectProperty prop = factory.getOWLObjectProperty(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
+                    OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLFunctionalObjectPropertyAxiom(prop));
 
                 } else if (axiom.is(IAxiom.INVERSE_FUNCTIONAL_OBJECT_PROPERTY)) {
 
@@ -537,38 +532,34 @@ public class Ontology /* implements IOntology */ {
 
                 } else if (axiom.is(IAxiom.SUB_DATA_PROPERTY)) {
 
-                    OWLDataProperty subdprop = (OWLDataProperty) findProperty(axiom.getArgument(1)
-                            .toString(), true, errors);
-                    OWLDataProperty superdprop = (OWLDataProperty) findProperty(axiom.getArgument(0)
-                            .toString(), true, errors);
+                    OWLDataProperty subdprop = (OWLDataProperty) findProperty(axiom.getArgument(1).toString(), true, errors);
+                    OWLDataProperty superdprop = (OWLDataProperty) findProperty(axiom.getArgument(0).toString(), true, errors);
 
                     if (subdprop != null && superdprop != null) {
-                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory
-                                .getOWLSubDataPropertyOfAxiom(subdprop, superdprop));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory.getOWLSubDataPropertyOfAxiom(subdprop, superdprop));
                     }
 
                 } else if (axiom.is(IAxiom.SUB_ANNOTATION_PROPERTY)) {
 
-                    OWLAnnotationProperty suboprop = (OWLAnnotationProperty) findProperty(axiom.getArgument(1)
-                            .toString(), false, errors);
-                    OWLAnnotationProperty superoprop = (OWLAnnotationProperty) findProperty(axiom
-                            .getArgument(0).toString(), false, errors);
+                    OWLAnnotationProperty suboprop = (OWLAnnotationProperty) findProperty(axiom.getArgument(1).toString(), false,
+                            errors);
+                    OWLAnnotationProperty superoprop = (OWLAnnotationProperty) findProperty(axiom.getArgument(0).toString(),
+                            false, errors);
 
                     if (suboprop != null && superoprop != null) {
-                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory
-                                .getOWLSubAnnotationPropertyOfAxiom(suboprop, superoprop));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology,
+                                factory.getOWLSubAnnotationPropertyOfAxiom(suboprop, superoprop));
                     }
 
                 } else if (axiom.is(IAxiom.SUB_OBJECT_PROPERTY)) {
 
-                    OWLObjectProperty suboprop = (OWLObjectProperty) findProperty(axiom.getArgument(1)
-                            .toString(), false, errors);
-                    OWLObjectProperty superoprop = (OWLObjectProperty) findProperty(axiom.getArgument(0)
-                            .toString(), false, errors);
+                    OWLObjectProperty suboprop = (OWLObjectProperty) findProperty(axiom.getArgument(1).toString(), false, errors);
+                    OWLObjectProperty superoprop = (OWLObjectProperty) findProperty(axiom.getArgument(0).toString(), false,
+                            errors);
 
                     if (suboprop != null && superoprop != null) {
-                        OWL.INSTANCE.manager.addAxiom(this.ontology, factory
-                                .getOWLSubObjectPropertyOfAxiom(suboprop, superoprop));
+                        OWL.INSTANCE.manager.addAxiom(this.ontology,
+                                factory.getOWLSubObjectPropertyOfAxiom(suboprop, superoprop));
                     }
 
                 } else if (axiom.is(IAxiom.SUB_PROPERTY_CHAIN_OF)) {
@@ -583,8 +574,7 @@ public class Ontology /* implements IOntology */ {
 
                 } else if (axiom.is(IAxiom.ANNOTATION_ASSERTION)) {
 
-                    OWLAnnotationProperty property = findAnnotationProperty(axiom.getArgument(1)
-                            .toString(), errors);
+                    OWLAnnotationProperty property = findAnnotationProperty(axiom.getArgument(1).toString(), errors);
                     Object value = axiom.getArgument(2);
                     OWLLiteral literal = null;
                     OWLEntity target = findKnowledge(axiom.getArgument(0).toString(), errors);
@@ -609,8 +599,8 @@ public class Ontology /* implements IOntology */ {
                          */
                         if (property != null && literal != null) {
                             OWLAnnotation annotation = factory.getOWLAnnotation(property, literal);
-                            OWL.INSTANCE.manager.addAxiom(this.ontology, factory
-                                    .getOWLAnnotationAssertionAxiom(target.getIRI(), annotation));
+                            OWL.INSTANCE.manager.addAxiom(this.ontology,
+                                    factory.getOWLAnnotationAssertionAxiom(target.getIRI(), annotation));
                         }
                     }
 
@@ -626,8 +616,6 @@ public class Ontology /* implements IOntology */ {
 
         }
 
-        
-        
         scan();
         return errors;
     }
@@ -672,8 +660,8 @@ public class Ontology /* implements IOntology */ {
 
                 this.imported.add(cc.getNamespace());
                 IRI importIRI = ((Ontology) cc.getOntology()).ontology.getOntologyID().getOntologyIRI();
-                OWLImportsDeclaration importDeclaraton = this.ontology.getOWLOntologyManager()
-                        .getOWLDataFactory().getOWLImportsDeclaration(importIRI);
+                OWLImportsDeclaration importDeclaraton = this.ontology.getOWLOntologyManager().getOWLDataFactory()
+                        .getOWLImportsDeclaration(importIRI);
                 OWL.INSTANCE.manager.applyChange(new AddImport(this.ontology, importDeclaraton));
             }
 
@@ -687,8 +675,7 @@ public class Ontology /* implements IOntology */ {
                 ret = ((Concept) cc)._owl;
             } else {
 
-                ret = this.ontology.getOWLOntologyManager().getOWLDataFactory()
-                        .getOWLClass(IRI.create(this.prefix + "#" + c));
+                ret = this.ontology.getOWLOntologyManager().getOWLDataFactory().getOWLClass(IRI.create(this.prefix + "#" + c));
 
                 this.conceptIDs.put(c, new Concept(ret, c, OWL.emptyType));
             }
@@ -716,18 +703,18 @@ public class Ontology /* implements IOntology */ {
 
                 this.imported.add(cc.getNamespace());
                 IRI importIRI = ((Ontology) cc.getOntology()).ontology.getOntologyID().getOntologyIRI();
-                OWLImportsDeclaration importDeclaraton = this.ontology.getOWLOntologyManager()
-                        .getOWLDataFactory().getOWLImportsDeclaration(importIRI);
+                OWLImportsDeclaration importDeclaraton = this.ontology.getOWLOntologyManager().getOWLDataFactory()
+                        .getOWLImportsDeclaration(importIRI);
                 OWL.INSTANCE.manager.applyChange(new AddImport(this.ontology, importDeclaraton));
             }
 
             ret = ((Property) cc)._owl;
 
             if (isData && ret instanceof OWLObjectProperty) {
-                throw new KlabValidationException(cc + " is an object property: data expected");
+                throw new KValidationException(cc + " is an object property: data expected");
             }
             if (!isData && ret instanceof OWLDataProperty) {
-                throw new KlabValidationException(cc + " is a data property: object expected");
+                throw new KValidationException(cc + " is a data property: object expected");
             }
 
         } else {
@@ -773,15 +760,14 @@ public class Ontology /* implements IOntology */ {
                 QualifiedName ct = new QualifiedName(c);
                 Ontology ontology = OWL.INSTANCE.getOntology(ct.getName());
                 // FIXME check
-                //                if (ontology == null) {
-//                    KKimNamespace ns = Namespaces.INSTANCE.getNamespace(ct.getName());
-//                    if (ns != null)
-//                        ontology = OWL.INSTANCE.getOntology(ct.getName());
-//                }
+                // if (ontology == null) {
+                // KKimNamespace ns = Namespaces.INSTANCE.getNamespace(ct.getName());
+                // if (ns != null)
+                // ontology = OWL.INSTANCE.getOntology(ct.getName());
+                // }
                 if (ontology != null) {
                     ret = ((Ontology) ontology).ontology.getOWLOntologyManager().getOWLDataFactory()
-                            .getOWLAnnotationProperty(IRI
-                                    .create(((Ontology) ontology).prefix + "#" + ct.getName()));
+                            .getOWLAnnotationProperty(IRI.create(((Ontology) ontology).prefix + "#" + ct.getName()));
                 }
             }
         } else {
@@ -794,23 +780,23 @@ public class Ontology /* implements IOntology */ {
         return ret;
     }
 
-////    @Override
-//    public IMetadata getMetadata() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+    //// @Override
+    // public IMetadata getMetadata() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
 
-//    @Override
+    // @Override
     public String getName() {
         return this.id;
     }
 
-//    @Override
+    // @Override
     public int getConceptCount() {
         return this.conceptIDs.size();
     }
 
-//    @Override
+    // @Override
     public int getPropertyCount() {
         return this.propertyIDs.size();
     }
@@ -877,8 +863,8 @@ public class Ontology /* implements IOntology */ {
 
         if (!this.ontology.getImports().contains(((Ontology) ontology).ontology)) {
             OWLDataFactory factory = this.ontology.getOWLOntologyManager().getOWLDataFactory();
-            OWLImportsDeclaration imp = factory.getOWLImportsDeclaration(IRI
-                    .create(((Ontology) ontology).ontology.getOntologyID().getOntologyIRI().toString()));
+            OWLImportsDeclaration imp = factory.getOWLImportsDeclaration(
+                    IRI.create(((Ontology) ontology).ontology.getOntologyID().getOntologyIRI().toString()));
             this.ontology.getOWLOntologyManager().applyChange(new AddImport(this.ontology, imp));
             this.imported.add(ontology.getName());
         }
@@ -910,13 +896,12 @@ public class Ontology /* implements IOntology */ {
      * @return the new ID
      */
     public String createIdForDefinition(String definition) {
-        String id = getName().replaceAll("\\.", "_").toUpperCase() + "_"
-                + String.format("%09d", idCounter.incrementAndGet());
+        String id = getName().replaceAll("\\.", "_").toUpperCase() + "_" + String.format("%09d", idCounter.incrementAndGet());
         this.definitionIds.put(definition, id);
         return id;
     }
 
-//    @Override
+    // @Override
     public Set<Ontology> getImports(boolean recursive) {
         return getImports(this, recursive, new HashSet<>());
     }
@@ -959,11 +944,12 @@ public class Ontology /* implements IOntology */ {
         return true;
     }
 
-//	@Override
-	public Concept getIdentity(String authority, String authorityIdentity) {
-//		KAuthority.Identity identity = Authorities.INSTANCE.getIdentity(authority, authorityIdentity);
-		return null;
-	}
+    // @Override
+    public Concept getIdentity(String authority, String authorityIdentity) {
+        // KAuthority.Identity identity = Authorities.INSTANCE.getIdentity(authority,
+        // authorityIdentity);
+        return null;
+    }
 
     // public IIndividual getSingletonIndividual(IConcept concept) {
     // String iName = "the" + concept.getLocalName();

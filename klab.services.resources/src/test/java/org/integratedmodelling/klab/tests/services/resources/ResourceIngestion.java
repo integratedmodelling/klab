@@ -13,7 +13,7 @@ class ResourceIngestion {
     private static ResourcesService service = null;
 
     /*
-     * TODO fill in with as many observable use cases as possible
+     * TODO substitute with online service filled in with as many observable use cases as possible
      */
     private static String[] testObservables = {
             "geography:Elevation in m",
@@ -40,6 +40,7 @@ class ResourceIngestion {
 
         for (String observable : testObservables) {
             KKimObservable obs = service.resolveObservable(observable);
+            System.out.println(obs);
             assert(obs != null);
         }
     }

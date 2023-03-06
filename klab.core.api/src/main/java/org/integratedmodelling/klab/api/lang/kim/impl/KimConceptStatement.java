@@ -37,6 +37,7 @@ public class KimConceptStatement extends KimStatement implements KKimConceptStat
     private String docstring;
     private String upperConceptDefined;
     private String authorityDefined;
+    private List<ParentConcept> parents = new ArrayList<>();
 
     @Override
     public Set<SemanticType> getType() {
@@ -234,6 +235,15 @@ public class KimConceptStatement extends KimStatement implements KKimConceptStat
 
     public void setAuthorityDefined(String authorityDefined) {
         this.authorityDefined = authorityDefined;
+    }
+
+    @Override
+    public List<ParentConcept> getParents() {
+        return parents;
+    }
+
+    public void setParents(List<ParentConcept> parents) {
+        this.parents = parents;
     }
 
 }

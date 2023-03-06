@@ -65,7 +65,7 @@ public interface KShape extends KReferenced, KSpace {
 	 *                   {@link org.integratedmodelling.klab.api.KProjection.scale.space.IProjection}
 	 *                   object.
 	 * @return the transformed shape
-	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
+	 * @throws org.integratedmodelling.klab.KValidationException.KlabValidationException
 	 */
 	KShape transform(KProjection projection);
 

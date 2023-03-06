@@ -16,9 +16,6 @@ package org.integratedmodelling.klab.api.lang;
  */
 public enum BinarySemanticOperator {
 
-    @Deprecated
-    NONE(null),
-
     /**
      * A UNION B creates a concept that is either A or B.
      */

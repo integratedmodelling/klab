@@ -14,7 +14,7 @@
 package org.integratedmodelling.klab.api.knowledge.observation.scale.time;
 
 import org.integratedmodelling.klab.api.data.mediation.KUnit;
-import org.integratedmodelling.klab.api.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.api.exceptions.KValidationException;
 import org.integratedmodelling.klab.api.geometry.KGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.observation.scale.KExtent;
 import org.integratedmodelling.klab.api.knowledge.observation.scale.KTopologicallyComparable;
@@ -208,7 +208,7 @@ public interface KTime extends KExtent {
                 case "millisecond":
                     return Type.MILLISECOND;
                 }
-                throw new KlabValidationException("invalid time unit for resolution: " + unit);
+                throw new KValidationException("invalid time unit for resolution: " + unit);
             }
 
         }

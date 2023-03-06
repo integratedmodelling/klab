@@ -12,32 +12,29 @@ import java.util.Set;
 
 import org.codehaus.groovy.transform.trait.Traits;
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.UnarySemanticOperator;
-import org.integratedmodelling.kim.api.ValueOperator;
-import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Klab;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.api.data.mediation.ICurrency;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.collections.impl.Pair;
+import org.integratedmodelling.klab.api.collections.impl.Range;
+import org.integratedmodelling.klab.api.data.mediation.KCurrency;
+import org.integratedmodelling.klab.api.data.mediation.KUnit;
+import org.integratedmodelling.klab.api.exceptions.KValidationException;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
-import org.integratedmodelling.klab.api.knowledge.IObservable.ResolutionException;
+import org.integratedmodelling.klab.api.knowledge.KConcept;
+import org.integratedmodelling.klab.api.knowledge.KObservable;
+import org.integratedmodelling.klab.api.knowledge.KObservable.Builder;
+import org.integratedmodelling.klab.api.knowledge.KObservable.Resolution;
+import org.integratedmodelling.klab.api.knowledge.SemanticRole;
+import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.lang.KAnnotation;
+import org.integratedmodelling.klab.api.lang.UnarySemanticOperator;
+import org.integratedmodelling.klab.api.lang.ValueOperator;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimConcept;
-import org.integratedmodelling.klab.api.model.IAnnotation;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.runtime.KChannel;
 import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.common.SemanticType;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology.NS;
@@ -46,47 +43,44 @@ import org.integratedmodelling.klab.services.reasoner.owl.Concept;
 import org.integratedmodelling.klab.services.reasoner.owl.OWL;
 import org.integratedmodelling.klab.services.reasoner.owl.Ontologies;
 import org.integratedmodelling.klab.services.reasoner.owl.Ontology;
-import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Range;
-import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils.Kim;
 
-public class ObservableBuilder implements KObservableBuilder {
+public class ObservableBuilder implements KObservable.Builder {
 
-    private IMonitor monitor;
+    private KChannel monitor;
 
     private Ontology ontology;
 
-    private Concept main;
+    private KConcept main;
     private String mainId;
-    private Set<Type> type;
-    private IConcept inherent;
-    private IConcept context;
-    private IConcept compresent;
-    private IConcept causant;
-    private IConcept caused;
-    private IConcept goal;
-    private IConcept cooccurrent;
-    private IConcept adjacent;
-    private IConcept comparison;
-    private IConcept relationshipSource;
-    private IConcept relationshipTarget;
+    private Collection<SemanticType> type = EnumSet.noneOf(SemanticType.class);
+    private KConcept inherent;
+    private KConcept context;
+    private KConcept compresent;
+    private KConcept causant;
+    private KConcept caused;
+    private KConcept goal;
+    private KConcept cooccurrent;
+    private KConcept adjacent;
+    private KConcept comparison;
+    private KConcept relationshipSource;
+    private KConcept relationshipTarget;
     private boolean optional;
     private String name;
-    private IConcept targetPredicate;
-    private IConcept temporalInherent;
+    private KConcept targetPredicate;
+    private KConcept temporalInherent;
     private boolean mustContextualize = false;
     private String statedName;
     private String url;
 
-    private List<IConcept> traits = new ArrayList<>();
-    private List<IConcept> roles = new ArrayList<>();
-    private List<IConcept> removed = new ArrayList<>();
+    private List<KConcept> traits = new ArrayList<>();
+    private List<KConcept> roles = new ArrayList<>();
+    private List<KConcept> removed = new ArrayList<>();
     private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
-    private List<KlabValidationException> errors = new ArrayList<>();
-    private IUnit unit;
-    private ICurrency currency;
-    private List<IAnnotation> annotations = new ArrayList<>();
+    private List<KValidationException> errors = new ArrayList<>();
+    private KUnit unit;
+    private KCurrency currency;
+    private List<KAnnotation> annotations = new ArrayList<>();
     private String dereifiedAttribute;
     private boolean isTrivial = true;
     private boolean distributedInherency = false;
@@ -101,7 +95,7 @@ public class ObservableBuilder implements KObservableBuilder {
     Resolution resolution;
     boolean fluidUnits;
     private Object defaultValue = null;
-    private Set<ResolutionException> resolutionExceptions = EnumSet.noneOf(ResolutionException.class);
+    private Set<KObservable.ResolutionException> resolutionExceptions = EnumSet.noneOf(KObservable.ResolutionException.class);
 
     // this gets set to true if a finished declaration is set using
     // withDeclaration() and the
@@ -115,31 +109,27 @@ public class ObservableBuilder implements KObservableBuilder {
 
     private boolean hasUnaryOp;
 
-    private Observable incarnatedAbstractObservable;
+    private KObservable incarnatedAbstractObservable;
 
-    private Observable deferredTarget;
+    private KObservable deferredTarget;
 
-    public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
-        return new ObservableBuilder((Observable) observable, monitor);
-    }
-
-    public static ObservableBuilder getBuilder(IConcept concept, IMonitor monitor) {
+    public static ObservableBuilder getBuilder(KConcept concept, KChannel monitor) {
         return new ObservableBuilder(concept, monitor);
     }
 
-    public ObservableBuilder(Concept main, Ontology ontology, IMonitor monitor) {
+    public ObservableBuilder(KConcept main, Ontology ontology, KChannel monitor) {
         this.main = main;
         this.ontology = ontology;
         this.declaration = Concepts.INSTANCE.getDeclaration(main);
-        this.type = ((Concept) main).type;
+        this.type = main.getType();
         this.monitor = monitor;
     }
 
-    public ObservableBuilder(IConcept main, IMonitor monitor) {
-        this.main = (Concept) main;
-        this.ontology = (Ontology) main.getOntology();
+    public ObservableBuilder(KConcept main, KChannel monitor) {
+        this.main = main;
+        this.ontology = OWL.INSTANCE.getOntology(main.getNamespace());
         this.declaration = Concepts.INSTANCE.getDeclaration(main);
-        this.type = ((Concept) main).type;
+        this.type.addAll(main.getType());
         this.monitor = monitor;
     }
 
@@ -150,40 +140,32 @@ public class ObservableBuilder implements KObservableBuilder {
      * 
      * @param observable
      */
-    public ObservableBuilder(Observable observable, IMonitor monitor) {
+    public ObservableBuilder(KObservable observable, KChannel monitor) {
 
-        /*
-         * TODO the operator should be separated based on the type, and added back when
-         * reconstructing.
-         */
-
-        this.main = (Concept) Observables.INSTANCE.getRawObservable(observable.getType());
-        this.type = this.main.getTypeSet();
-        this.ontology = (Ontology) observable.getType().getOntology();
-        this.context = Observables.INSTANCE.getDirectContextType(observable.getType());
-        this.adjacent = Observables.INSTANCE.getDirectAdjacentType(observable.getType());
-        this.inherent = Observables.INSTANCE.getDirectInherentType(observable.getType());
-        this.causant = Observables.INSTANCE.getDirectCausantType(observable.getType());
-        this.caused = Observables.INSTANCE.getDirectCausedType(observable.getType());
-        this.cooccurrent = Observables.INSTANCE.getDirectCooccurrentType(observable.getType());
-        this.goal = Observables.INSTANCE.getDirectGoalType(observable.getType());
-        this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
-        this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
+        this.main = Observables.INSTANCE.getRawObservable(observable.getSemantics());
+        this.type = this.main.getType();
+        this.ontology = OWL.INSTANCE.getOntology(observable.getSemantics().getNamespace());
+        this.context = Observables.INSTANCE.getDirectContextType(observable.getSemantics());
+        this.adjacent = Observables.INSTANCE.getDirectAdjacentType(observable.getSemantics());
+        this.inherent = Observables.INSTANCE.getDirectInherentType(observable.getSemantics());
+        this.causant = Observables.INSTANCE.getDirectCausantType(observable.getSemantics());
+        this.caused = Observables.INSTANCE.getDirectCausedType(observable.getSemantics());
+        this.cooccurrent = Observables.INSTANCE.getDirectCooccurrentType(observable.getSemantics());
+        this.goal = Observables.INSTANCE.getDirectGoalType(observable.getSemantics());
+        this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getSemantics());
+        this.declaration = Concepts.INSTANCE.getDeclaration(observable.getSemantics());
         this.mustContextualize = observable.mustContextualizeAtResolution();
         this.temporalInherent = observable.getTemporalInherent();
-        // NO! don't carry this around. Needs an explicit .named() call. this.statedName
-        // =
-        // observable.getStatedName();
         this.annotations.addAll(observable.getAnnotations());
         this.incarnatedAbstractObservable = observable.incarnatedAbstractObservable;
         this.deferredTarget = observable.getDeferredTarget();
         this.defaultValue = observable.getDefaultValue();
         this.resolutionExceptions.addAll(observable.getResolutionExceptions());
 
-        for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
+        for (KConcept role : Roles.INSTANCE.getDirectRoles(observable.getSemantics())) {
             this.roles.add(role);
         }
-        for (IConcept trait : Traits.INSTANCE.getDirectTraits(observable.getType())) {
+        for (KConcept trait : Traits.INSTANCE.getDirectTraits(observable.getSemantics())) {
             this.traits.add(trait);
         }
 
@@ -234,7 +216,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withDeclaration(IKimConcept declaration, IMonitor monitor) {
+    public Builder withDeclaration(KKimConcept declaration, KChannel monitor) {
         this.declaration = (KimConcept) declaration;
         this.monitor = monitor;
         this.declarationIsComplete = true;
@@ -242,7 +224,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder of(IConcept concept) {
+    public Builder of(KConcept concept) {
         this.inherent = concept;
         if (!declarationIsComplete) {
             this.declaration.setInherent((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
@@ -258,7 +240,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder within(IConcept concept) {
+    public Builder within(KConcept concept) {
         this.context = concept;
         if (this.declaration != null) {
             this.declaration.setContext((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
@@ -268,14 +250,14 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withTemporalInherent(IConcept concept) {
+    public Builder withTemporalInherent(KConcept concept) {
         this.temporalInherent = concept;
         isTrivial = false;
         return this;
     }
 
     @Override
-    public Builder to(IConcept concept) {
+    public Builder to(KConcept concept) {
         this.caused = concept;
         if (!declarationIsComplete) {
             this.declaration.setCaused((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
@@ -285,17 +267,17 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder from(IConcept concept) {
+    public Builder from(KConcept concept) {
         this.causant = concept;
         if (!declarationIsComplete) {
-            this.declaration.setCausant((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
+            this.declaration.setCausant(Concepts.INSTANCE.getDeclaration(concept));
         }
         isTrivial = false;
         return this;
     }
 
     @Override
-    public Builder with(IConcept concept) {
+    public Builder with(KConcept concept) {
         this.compresent = concept;
         if (!declarationIsComplete) {
             this.declaration.setCompresent((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
@@ -305,8 +287,8 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withRole(IConcept concept) {
-        if (!concept.is(Type.ROLE)) {
+    public Builder withRole(KConcept concept) {
+        if (!concept.is(SemanticType.ROLE)) {
             errors.add(new KlabValidationException("cannot use concept " + concept + " as a role"));
         }
         if (!declarationIsComplete) {
@@ -318,7 +300,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withGoal(IConcept goal) {
+    public Builder withGoal(KConcept goal) {
         this.goal = goal;
         if (!declarationIsComplete) {
             this.declaration.setMotivation((KimConcept) Concepts.INSTANCE.getDeclaration(goal));
@@ -328,7 +310,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withCooccurrent(IConcept cooccurrent) {
+    public Builder withCooccurrent(KConcept cooccurrent) {
         this.cooccurrent = cooccurrent;
         if (!declarationIsComplete) {
             this.declaration.setCooccurrent((KimConcept) Concepts.INSTANCE.getDeclaration(cooccurrent));
@@ -338,7 +320,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withAdjacent(IConcept adjacent) {
+    public Builder withAdjacent(KConcept adjacent) {
         this.adjacent = adjacent;
         if (!declarationIsComplete) {
             this.declaration.setAdjacent((KimConcept) Concepts.INSTANCE.getDeclaration(adjacent));
@@ -348,7 +330,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder linking(IConcept source, IConcept target) {
+    public Builder linking(KConcept source, KConcept target) {
         this.relationshipSource = source;
         this.relationshipTarget = target;
         isTrivial = false;
@@ -356,7 +338,7 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException {
+    public Builder as(UnarySemanticOperator type, KConcept... participants) throws KlabValidationException {
 
         Concept argument = null;
         if (resolveMain()) {
@@ -474,38 +456,38 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Collection<KlabValidationException> getErrors() {
+    public Collection<KValidationException> getErrors() {
         return errors;
     }
 
     @Override
-    public Builder without(Collection<IConcept> concepts) {
-        return without(concepts.toArray(new IConcept[concepts.size()]));
+    public Builder without(Collection<KConcept> concepts) {
+        return without(concepts.toArray(new KConcept[concepts.size()]));
     }
 
     @Override
-    public Builder without(ObservableRole... roles) {
+    public Builder without(SemanticRole... roles) {
 
-        Set<ObservableRole> r = EnumSet.noneOf(ObservableRole.class);
+        Set<SemanticRole> r = EnumSet.noneOf(SemanticRole.class);
         if (roles != null) {
-            for (ObservableRole role : roles) {
+            for (SemanticRole role : roles) {
                 r.add(role);
             }
         }
 
-        KimConcept newDeclaration = this.declaration.removeComponents(roles);
+        KKimConcept newDeclaration = this.declaration.removeComponents(roles);
         ObservableBuilder ret = new ObservableBuilder(Concepts.INSTANCE.declare(newDeclaration), monitor);
 
         /*
          * copy the rest unless excluded
          */
-        if (!r.contains(ObservableRole.UNIT)) {
+        if (!r.contains(SemanticRole.UNIT)) {
             ret.unit = unit;
         }
-        if (!r.contains(ObservableRole.CURRENCY)) {
+        if (!r.contains(SemanticRole.CURRENCY)) {
             ret.currency = currency;
         }
-        if (!r.contains(ObservableRole.VALUE_OPERATOR)) {
+        if (!r.contains(SemanticRole.VALUE_OPERATOR)) {
             ret.valueOperators.addAll(valueOperators);
         }
 
@@ -523,81 +505,81 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withoutAny(Collection<IConcept> concepts) {
-        return withoutAny(concepts.toArray(new IConcept[concepts.size()]));
+    public Builder withoutAny(Collection<KConcept> concepts) {
+        return withoutAny(concepts.toArray(new KConcept[concepts.size()]));
     }
 
     @Override
-    public Builder without(IConcept... concepts) {
+    public Builder without(KConcept... concepts) {
 
         ObservableBuilder ret = new ObservableBuilder(this);
-        List<ObservableRole> removedRoles = new ArrayList<>();
-        for (IConcept concept : concepts) {
-            Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithout(
+        List<SemanticRole> removedRoles = new ArrayList<>();
+        for (KConcept concept : concepts) {
+            Pair<Collection<KConcept>, Collection<KConcept>> tdelta = Concepts.INSTANCE.copyWithout(
                     ret.traits,
                     concept);
             ret.traits = new ArrayList<>(tdelta.getFirst());
             ret.removed.addAll(tdelta.getSecond());
             for (int i = 0; i < tdelta.getSecond().size(); i++) {
-                removedRoles.add(ObservableRole.TRAIT);
+                removedRoles.add(SemanticRole.TRAIT);
             }
-            Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles,
+            Pair<Collection<KConcept>, Collection<KConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles,
                     concept);
             ret.roles = new ArrayList<>(rdelta.getFirst());
             ret.removed.addAll(rdelta.getSecond());
             for (int i = 0; i < rdelta.getSecond().size(); i++) {
-                removedRoles.add(ObservableRole.ROLE);
+                removedRoles.add(SemanticRole.ROLE);
             }
             if (ret.context != null && ret.context.equals(concept)) {
                 ret.context = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.CONTEXT);
+                removedRoles.add(SemanticRole.CONTEXT);
             }
             if (ret.inherent != null && ret.inherent.equals(concept)) {
                 ret.inherent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.INHERENT);
+                removedRoles.add(SemanticRole.INHERENT);
             }
             if (ret.adjacent != null && ret.adjacent.equals(concept)) {
                 ret.adjacent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.ADJACENT);
+                removedRoles.add(SemanticRole.ADJACENT);
             }
             if (ret.caused != null && ret.caused.equals(concept)) {
                 ret.caused = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.CAUSED);
+                removedRoles.add(SemanticRole.CAUSED);
             }
             if (ret.causant != null && ret.causant.equals(concept)) {
                 ret.causant = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.CAUSANT);
+                removedRoles.add(SemanticRole.CAUSANT);
             }
             if (ret.compresent != null && ret.compresent.equals(concept)) {
                 ret.compresent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.COMPRESENT);
+                removedRoles.add(SemanticRole.COMPRESENT);
             }
             if (ret.goal != null && ret.goal.equals(concept)) {
                 ret.goal = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.GOAL);
+                removedRoles.add(SemanticRole.GOAL);
             }
             if (ret.cooccurrent != null && ret.cooccurrent.equals(concept)) {
                 ret.cooccurrent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.COOCCURRENT);
+                removedRoles.add(SemanticRole.COOCCURRENT);
             }
             if (ret.temporalInherent != null && ret.temporalInherent.is(concept)) {
                 ret.temporalInherent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.TEMPORAL_INHERENT);
+                removedRoles.add(SemanticRole.TEMPORAL_INHERENT);
             }
         }
         if (ret.removed.size() > 0) {
             List<String> declarations = new ArrayList<>();
-            for (IConcept r : ret.removed) {
-                declarations.add(r.getDefinition());
+            for (KConcept r : ret.removed) {
+                declarations.add(r.getUri());
             }
             ret.declaration = ret.declaration.removeComponents(declarations, removedRoles);
         }
@@ -608,77 +590,77 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withoutAny(IKimConcept.Type... concepts) {
+    public Builder withoutAny(SemanticType... concepts) {
 
         ObservableBuilder ret = new ObservableBuilder(this);
-        List<ObservableRole> removedRoles = new ArrayList<>();
-        for (IKimConcept.Type concept : concepts) {
-            Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(
+        List<SemanticRole> removedRoles = new ArrayList<>();
+        for (SemanticType concept : concepts) {
+            Pair<Collection<KConcept>, Collection<KConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(
                     ret.traits,
                     concept);
             ret.traits = new ArrayList<>(tdelta.getFirst());
             ret.removed.addAll(tdelta.getSecond());
             for (int i = 0; i < tdelta.getSecond().size(); i++) {
-                removedRoles.add(ObservableRole.TRAIT);
+                removedRoles.add(SemanticRole.TRAIT);
             }
-            Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(
+            Pair<Collection<KConcept>, Collection<KConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(
                     ret.roles,
                     concept);
             ret.roles = new ArrayList<>(rdelta.getFirst());
             ret.removed.addAll(rdelta.getSecond());
             for (int i = 0; i < tdelta.getSecond().size(); i++) {
-                removedRoles.add(ObservableRole.ROLE);
+                removedRoles.add(SemanticRole.ROLE);
             }
             if (ret.context != null && ret.context.is(concept)) {
                 ret.removed.add(ret.context);
                 ret.context = null;
-                removedRoles.add(ObservableRole.CONTEXT);
+                removedRoles.add(SemanticRole.CONTEXT);
             }
             if (ret.inherent != null && ret.inherent.is(concept)) {
                 ret.removed.add(ret.inherent);
                 ret.inherent = null;
-                removedRoles.add(ObservableRole.INHERENT);
+                removedRoles.add(SemanticRole.INHERENT);
             }
             if (ret.adjacent != null && ret.adjacent.is(concept)) {
                 ret.removed.add(ret.adjacent);
                 ret.adjacent = null;
-                removedRoles.add(ObservableRole.ADJACENT);
+                removedRoles.add(SemanticRole.ADJACENT);
             }
             if (ret.caused != null && ret.caused.is(concept)) {
                 ret.removed.add(ret.caused);
                 ret.caused = null;
-                removedRoles.add(ObservableRole.CAUSED);
+                removedRoles.add(SemanticRole.CAUSED);
             }
             if (ret.causant != null && ret.causant.is(concept)) {
                 ret.removed.add(ret.causant);
                 ret.causant = null;
-                removedRoles.add(ObservableRole.CAUSANT);
+                removedRoles.add(SemanticRole.CAUSANT);
             }
             if (ret.compresent != null && ret.compresent.is(concept)) {
                 ret.removed.add(ret.compresent);
                 ret.compresent = null;
-                removedRoles.add(ObservableRole.COMPRESENT);
+                removedRoles.add(SemanticRole.COMPRESENT);
             }
             if (ret.goal != null && ret.goal.is(concept)) {
                 ret.removed.add(ret.goal);
                 ret.goal = null;
-                removedRoles.add(ObservableRole.GOAL);
+                removedRoles.add(SemanticRole.GOAL);
             }
             if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
                 ret.removed.add(ret.cooccurrent);
                 ret.cooccurrent = null;
-                removedRoles.add(ObservableRole.COOCCURRENT);
+                removedRoles.add(SemanticRole.COOCCURRENT);
             }
             if (ret.temporalInherent != null && ret.temporalInherent.is(concept)) {
                 ret.temporalInherent = null;
                 ret.removed.add(ret.temporalInherent);
-                removedRoles.add(ObservableRole.TEMPORAL_INHERENT);
+                removedRoles.add(SemanticRole.TEMPORAL_INHERENT);
             }
         }
         if (ret.removed.size() > 0) {
             List<String> declarations = new ArrayList<>();
-            for (IConcept r : ret.removed) {
-                declarations.add(r.getDefinition());
+            for (KConcept r : ret.removed) {
+                declarations.add(r.getUri());
             }
             ret.declaration = ret.declaration.removeComponents(declarations, removedRoles);
         }
@@ -690,77 +672,77 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withoutAny(IConcept... concepts) {
+    public Builder withoutAny(KConcept... concepts) {
 
         ObservableBuilder ret = new ObservableBuilder(this);
-        List<ObservableRole> removedRoles = new ArrayList<>();
-        for (IConcept concept : concepts) {
-            Pair<Collection<IConcept>, Collection<IConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(
+        List<SemanticRole> removedRoles = new ArrayList<>();
+        for (KConcept concept : concepts) {
+            Pair<Collection<KConcept>, Collection<KConcept>> tdelta = Concepts.INSTANCE.copyWithoutAny(
                     ret.traits,
                     concept);
             ret.traits = new ArrayList<>(tdelta.getFirst());
             ret.removed.addAll(tdelta.getSecond());
             for (int i = 0; i < tdelta.getSecond().size(); i++) {
-                removedRoles.add(ObservableRole.TRAIT);
+                removedRoles.add(SemanticRole.TRAIT);
             }
-            Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(
+            Pair<Collection<KConcept>, Collection<KConcept>> rdelta = Concepts.INSTANCE.copyWithoutAny(
                     ret.roles,
                     concept);
             ret.roles = new ArrayList<>(rdelta.getFirst());
             ret.removed.addAll(rdelta.getSecond());
             for (int i = 0; i < tdelta.getSecond().size(); i++) {
-                removedRoles.add(ObservableRole.ROLE);
+                removedRoles.add(SemanticRole.ROLE);
             }
             if (ret.context != null && ret.context.is(concept)) {
                 ret.context = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.CONTEXT);
+                removedRoles.add(SemanticRole.CONTEXT);
             }
             if (ret.inherent != null && ret.inherent.is(concept)) {
                 ret.inherent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.INHERENT);
+                removedRoles.add(SemanticRole.INHERENT);
             }
             if (ret.adjacent != null && ret.adjacent.is(concept)) {
                 ret.adjacent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.ADJACENT);
+                removedRoles.add(SemanticRole.ADJACENT);
             }
             if (ret.caused != null && ret.caused.is(concept)) {
                 ret.caused = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.CAUSED);
+                removedRoles.add(SemanticRole.CAUSED);
             }
             if (ret.causant != null && ret.causant.is(concept)) {
                 ret.causant = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.CAUSANT);
+                removedRoles.add(SemanticRole.CAUSANT);
             }
             if (ret.compresent != null && ret.compresent.is(concept)) {
                 ret.compresent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.COMPRESENT);
+                removedRoles.add(SemanticRole.COMPRESENT);
             }
             if (ret.goal != null && ret.goal.is(concept)) {
                 ret.goal = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.GOAL);
+                removedRoles.add(SemanticRole.GOAL);
             }
             if (ret.cooccurrent != null && ret.cooccurrent.is(concept)) {
                 ret.cooccurrent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.COOCCURRENT);
+                removedRoles.add(SemanticRole.COOCCURRENT);
             }
             if (ret.temporalInherent != null && ret.temporalInherent.is(concept)) {
                 ret.temporalInherent = null;
                 ret.removed.add(concept);
-                removedRoles.add(ObservableRole.TEMPORAL_INHERENT);
+                removedRoles.add(SemanticRole.TEMPORAL_INHERENT);
             }
         }
         if (ret.removed.size() > 0) {
             List<String> declarations = new ArrayList<>();
-            for (IConcept r : ret.removed) {
-                declarations.add(r.getDefinition());
+            for (KConcept r : ret.removed) {
+                declarations.add(r.getUri());
             }
             ret.declaration = ret.declaration.removeComponents(declarations, removedRoles);
         }
@@ -779,9 +761,9 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withTrait(IConcept... concepts) {
-        for (IConcept concept : concepts) {
-            if (!concept.is(Type.TRAIT)) {
+    public Builder withTrait(KConcept... concepts) {
+        for (KConcept concept : concepts) {
+            if (!concept.is(SemanticType.TRAIT)) {
                 errors.add(new KlabValidationException("cannot use concept " + concept + " as a trait"));
             } else {
                 traits.add(concept);
@@ -795,8 +777,8 @@ public class ObservableBuilder implements KObservableBuilder {
     }
 
     @Override
-    public Builder withTrait(Collection<IConcept> concepts) {
-        return withTrait(concepts.toArray(new IConcept[concepts.size()]));
+    public Builder withTrait(Collection<KConcept> concepts) {
+        return withTrait(concepts.toArray(new KConcept[concepts.size()]));
     }
 
     /**
@@ -808,20 +790,20 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeChange(IConcept concept, boolean addDefinition) {
+    public Concept makeChange(KConcept concept, boolean addDefinition) {
 
         String cName = getCleanId(concept) + "Change";
 
-        if (!concept.is(Type.QUALITY)) {
+        if (!concept.is(SemanticType.QUALITY)) {
             return null;
         }
 
         this.hasUnaryOp = true;
 
-        String definition = UnarySemanticOperator.CHANGE.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.CHANGE.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
-        IConcept context = Observables.INSTANCE.getContextType(concept);
+        KConcept context = Observables.INSTANCE.getContextType(concept);
 
         if (conceptId == null) {
 
@@ -831,7 +813,7 @@ public class ObservableBuilder implements KObservableBuilder {
                     null);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGE.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -846,7 +828,7 @@ public class ObservableBuilder implements KObservableBuilder {
             }
             ontology.define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.DESCRIBES_OBSERVABLE_PROPERTY), concept,
                     ontology);
@@ -874,20 +856,20 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeRate(IConcept concept, boolean addDefinition) {
+    public Concept makeRate(KConcept concept, boolean addDefinition) {
 
         String cName = getCleanId(concept) + "ChangeRate";
 
-        if (!concept.is(Type.QUALITY)) {
+        if (!concept.is(SemanticType.QUALITY)) {
             return null;
         }
 
         this.hasUnaryOp = true;
 
-        String definition = UnarySemanticOperator.RATE.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.RATE.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
-        IConcept context = Observables.INSTANCE.getContextType(concept);
+        KConcept context = Observables.INSTANCE.getContextType(concept);
 
         if (conceptId == null) {
 
@@ -897,7 +879,7 @@ public class ObservableBuilder implements KObservableBuilder {
                     null);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATE.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -912,7 +894,7 @@ public class ObservableBuilder implements KObservableBuilder {
             }
             ontology.define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.DESCRIBES_OBSERVABLE_PROPERTY), concept,
                     ontology);
@@ -940,20 +922,20 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeChanged(IConcept concept, boolean addDefinition) {
+    public Concept makeChanged(KConcept concept, boolean addDefinition) {
 
         String cName = "Changed" + getCleanId(concept);
 
-        if (!concept.is(Type.QUALITY)) {
+        if (!concept.is(SemanticType.QUALITY)) {
             return null;
         }
 
         this.hasUnaryOp = true;
 
-        String definition = UnarySemanticOperator.CHANGED.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.CHANGED.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
-        IConcept context = Observables.INSTANCE.getContextType(concept);
+        KConcept context = Observables.INSTANCE.getContextType(concept);
 
         if (conceptId == null) {
 
@@ -963,7 +945,7 @@ public class ObservableBuilder implements KObservableBuilder {
                     null);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGED.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -978,7 +960,7 @@ public class ObservableBuilder implements KObservableBuilder {
             }
             ontology.define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.DESCRIBES_OBSERVABLE_PROPERTY), concept,
                     ontology);
@@ -1006,17 +988,17 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeAssessment(IConcept concept, boolean addDefinition) {
+    public Concept makeAssessment(KConcept concept, boolean addDefinition) {
 
         String cName = getCleanId(concept) + "Assessment";
 
         this.hasUnaryOp = true;
 
-        if (!concept.is(Type.QUALITY)) {
+        if (!concept.is(SemanticType.QUALITY)) {
             return null;
         }
 
-        String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.ASSESSMENT.declaration[0] + " " + concept.getUrn();
         String reference = UnarySemanticOperator.ASSESSMENT.getReferenceName(concept.getReferenceName(),
                 null);
         Ontology ontology = (Ontology) concept.getOntology();
@@ -1027,7 +1009,7 @@ public class ObservableBuilder implements KObservableBuilder {
             conceptId = ontology.createIdForDefinition(definition);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1040,7 +1022,7 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
             OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.OBSERVES_PROPERTY), concept, ontology);
         }
 
@@ -1056,12 +1038,12 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeCount(IConcept concept, boolean addDefinition) {
+    public Concept makeCount(KConcept concept, boolean addDefinition) {
 
         /*
          * first, ensure we're counting countable things.
          */
-        if (!concept.is(Type.COUNTABLE)) {
+        if (!concept.is(SemanticType.COUNTABLE)) {
             monitor.error("cannot count a non-countable observable", declaration);
         }
 
@@ -1073,7 +1055,7 @@ public class ObservableBuilder implements KObservableBuilder {
          * make a ConceptCount if not there, and ensure it's a continuously quantifiable quality.
          * Must be in same ontology as the original concept.
          */
-        String definition = UnarySemanticOperator.COUNT.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.COUNT.declaration[0] + " " + concept.getUrn();
         String reference = UnarySemanticOperator.COUNT.getReferenceName(concept.getReferenceName(), null);
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -1083,7 +1065,7 @@ public class ObservableBuilder implements KObservableBuilder {
             conceptId = ontology.createIdForDefinition(definition);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.COUNT.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_COUNT, conceptId));
@@ -1094,7 +1076,7 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * numerosity is inherent to the thing that's counted.
@@ -1115,16 +1097,16 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeDistance(IConcept concept, boolean addDefinition) {
+    public Concept makeDistance(KConcept concept, boolean addDefinition) {
 
-        if (!concept.is(Type.COUNTABLE)) {
+        if (!concept.is(SemanticType.COUNTABLE)) {
             monitor.error("cannot compute the distance to a non-countable observable", declaration);
         }
 
         this.hasUnaryOp = true;
 
         String cName = "DistanceTo" + getCleanId(concept);
-        String definition = UnarySemanticOperator.DISTANCE.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.DISTANCE.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1135,7 +1117,7 @@ public class ObservableBuilder implements KObservableBuilder {
                     null);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.DISTANCE.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1148,11 +1130,11 @@ public class ObservableBuilder implements KObservableBuilder {
             }
             ontology.define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
             /*
              * distance is inherent to the thing that's present.
              */
-            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (IConcept) concept,
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (KConcept) concept,
                     ontology);
         }
 
@@ -1168,10 +1150,10 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makePresence(IConcept concept, boolean addDefinition) {
+    public Concept makePresence(KConcept concept, boolean addDefinition) {
 
-        if (concept.is(Type.QUALITY) || concept.is(Type.CONFIGURATION) || concept.is(Type.TRAIT)
-                || concept.is(Type.ROLE)) {
+        if (concept.is(SemanticType.QUALITY) || concept.is(SemanticType.CONFIGURATION) || concept.is(SemanticType.TRAIT)
+                || concept.is(SemanticType.ROLE)) {
             monitor.error("presence can be observed only for subjects, events, processes and relationships",
                     declaration);
         }
@@ -1179,7 +1161,7 @@ public class ObservableBuilder implements KObservableBuilder {
         this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Presence";
-        String definition = UnarySemanticOperator.PRESENCE.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.PRESENCE.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1191,7 +1173,7 @@ public class ObservableBuilder implements KObservableBuilder {
                     null);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PRESENCE.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_PRESENCE, conceptId));
@@ -1202,12 +1184,12 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * presence is inherent to the thing that's present.
              */
-            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (IConcept) concept,
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (KConcept) concept,
                     ontology);
         }
 
@@ -1224,9 +1206,9 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeOccurrence(IConcept concept, boolean addDefinition) {
+    public Concept makeOccurrence(KConcept concept, boolean addDefinition) {
 
-        if (!concept.is(Type.DIRECT_OBSERVABLE)) {
+        if (!concept.is(SemanticType.DIRECT_OBSERVABLE)) {
             monitor.error(
                     "occurrences (probability of presence) can be observed only for subjects, events, processes and relationships",
                     declaration);
@@ -1235,7 +1217,7 @@ public class ObservableBuilder implements KObservableBuilder {
         this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Occurrence";
-        String definition = UnarySemanticOperator.OCCURRENCE.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.OCCURRENCE.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1246,7 +1228,7 @@ public class ObservableBuilder implements KObservableBuilder {
 
             conceptId = ontology.createIdForDefinition(definition);
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OCCURRENCE.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1259,7 +1241,7 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * occurrence is inherent to the event that's possible.
@@ -1280,9 +1262,9 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeObservability(IConcept concept, boolean addDefinition) {
+    public Concept makeObservability(KConcept concept, boolean addDefinition) {
 
-        if (!concept.is(Type.OBSERVABLE)) {
+        if (!concept.is(SemanticType.OBSERVABLE)) {
             monitor.error("observabilities can only be defined for observables", declaration);
         }
 
@@ -1290,7 +1272,7 @@ public class ObservableBuilder implements KObservableBuilder {
 
         String cName = getCleanId(concept) + "Observability";
         String definition = UnarySemanticOperator.OBSERVABILITY.declaration[0] + " "
-                + concept.getDefinition();
+                + concept.getUri();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1302,7 +1284,7 @@ public class ObservableBuilder implements KObservableBuilder {
                     .getReferenceName(concept.getReferenceName(), null);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1315,11 +1297,11 @@ public class ObservableBuilder implements KObservableBuilder {
             }
             ontology.define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
             /*
              * observability is inherent to the thing that's present.
              */
-            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (IConcept) concept,
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (KConcept) concept,
                     ontology);
         }
 
@@ -1335,9 +1317,9 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeMagnitude(IConcept concept, boolean addDefinition) {
+    public Concept makeMagnitude(KConcept concept, boolean addDefinition) {
 
-        if (Kim.intersection(((Concept) concept).getTypeSet(), IKimConcept.CONTINUOUS_QUALITY_TYPES)
+        if (Kim.intersection(concept.getType(), IKimConcept.CONTINUOUS_QUALITY_TYPES)
                 .size() == 0) {
             monitor.error("magnitudes can only be observed only for quantifiable qualities", declaration);
         }
@@ -1345,7 +1327,7 @@ public class ObservableBuilder implements KObservableBuilder {
         this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Magnitude";
-        String definition = UnarySemanticOperator.MAGNITUDE.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.MAGNITUDE.declaration[0] + " " + concept.getUri();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1357,7 +1339,7 @@ public class ObservableBuilder implements KObservableBuilder {
                     null);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.MAGNITUDE.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1369,7 +1351,7 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * probability is inherent to the event that's possible.
@@ -1389,9 +1371,9 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeLevel(IConcept concept, boolean addDefinition) {
+    public Concept makeLevel(KConcept concept, boolean addDefinition) {
 
-        if (Kim.intersection(((Concept) concept).getTypeSet(), IKimConcept.CONTINUOUS_QUALITY_TYPES)
+        if (Kim.intersection(concept.getType(), IKimConcept.CONTINUOUS_QUALITY_TYPES)
                 .size() == 0) {
             monitor.error("magnitudes can only be observed only for quantifiable qualities", declaration);
         }
@@ -1399,7 +1381,7 @@ public class ObservableBuilder implements KObservableBuilder {
         this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Level";
-        String definition = UnarySemanticOperator.LEVEL.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.LEVEL.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1408,7 +1390,7 @@ public class ObservableBuilder implements KObservableBuilder {
             conceptId = ontology.createIdForDefinition(definition);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.LEVEL.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             String reference = UnarySemanticOperator.LEVEL.getReferenceName(concept.getReferenceName(), null);
 
@@ -1422,7 +1404,7 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * probability is inherent to the event that's possible.
@@ -1442,16 +1424,16 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeProbability(IConcept concept, boolean addDefinition) {
+    public Concept makeProbability(KConcept concept, boolean addDefinition) {
 
-        if (!concept.is(Type.EVENT)) {
+        if (!concept.is(SemanticType.EVENT)) {
             monitor.error("probabilities can only be observed only for events", declaration);
         }
 
         this.hasUnaryOp = true;
 
         String cName = getCleanId(concept) + "Probability";
-        String definition = UnarySemanticOperator.PROBABILITY.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.PROBABILITY.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1460,7 +1442,7 @@ public class ObservableBuilder implements KObservableBuilder {
             conceptId = ontology.createIdForDefinition(definition);
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROBABILITY.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             String reference = UnarySemanticOperator.PROBABILITY.getReferenceName(concept.getReferenceName(),
                     null);
@@ -1475,7 +1457,7 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * probability is inherent to the event that's possible.
@@ -1495,10 +1477,10 @@ public class ObservableBuilder implements KObservableBuilder {
      *        used from outside the builder
      * @return the transformed concept
      */
-    public Concept makeUncertainty(IConcept concept, boolean addDefinition) {
+    public Concept makeUncertainty(KConcept concept, boolean addDefinition) {
 
         String cName = "UncertaintyOf" + getCleanId(concept);
-        String definition = UnarySemanticOperator.UNCERTAINTY.declaration[0] + " " + concept.getDefinition();
+        String definition = UnarySemanticOperator.UNCERTAINTY.declaration[0] + " " + concept.getUrn();
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1511,7 +1493,7 @@ public class ObservableBuilder implements KObservableBuilder {
 
             conceptId = ontology.createIdForDefinition(definition);
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1523,22 +1505,22 @@ public class ObservableBuilder implements KObservableBuilder {
                 ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(ax);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
             /*
              * uncertainty is inherent to the thing that's present.
              */
-            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (IConcept) concept,
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (KConcept) concept,
                     ontology);
         }
 
         return ontology.getConcept(conceptId);
     }
 
-    public Concept makeProportion(IConcept concept,  IConcept comparison, boolean addDefinition,
+    public Concept makeProportion(KConcept concept,  KConcept comparison, boolean addDefinition,
             boolean isPercentage) {
-W
-        if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT))
-                && (comparison != null && !comparison.is(Type.QUALITY))) {
+
+        if (!(concept.is(SemanticType.QUALITY) || concept.is(SemanticType.TRAIT))
+                && (comparison != null && !comparison.is(SemanticType.QUALITY))) {
             monitor.error("proportion must be of qualities or traits to qualities", declaration);
         }
 
@@ -1550,13 +1532,13 @@ W
         String definition = (isPercentage
                 ? UnarySemanticOperator.PERCENTAGE.declaration[0]
                 : UnarySemanticOperator.PROPORTION.declaration[0])
-                + " (" + concept.getDefinition() + ")"
+                + " (" + concept.getUri() + ")"
                 + (comparison == null
                         ? ""
                         : (" " + (isPercentage
                                 ? UnarySemanticOperator.PERCENTAGE.declaration[1]
                                 : UnarySemanticOperator.PROPORTION.declaration[1]) + " ("
-                                + comparison.getDefinition()
+                                + comparison.getUri()
                                 + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
@@ -1576,7 +1558,7 @@ W
                     isPercentage
                             ? UnarySemanticOperator.PERCENTAGE.name()
                             : UnarySemanticOperator.PROPORTION.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1589,11 +1571,11 @@ W
             }
             ontology.define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
             /*
              * proportion is inherent to the thing that's present.
              */
-            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (IConcept) concept,
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), (KConcept) concept,
                     ontology);
             if (comparison != null) {
                 OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.IS_COMPARED_TO_PROPERTY), comparison, ontology);
@@ -1603,12 +1585,12 @@ W
         return ontology.getConcept(conceptId);
     }
 
-    public Concept makeRatio(IConcept concept, IConcept comparison, boolean addDefinition) {
+    public Concept makeRatio(KConcept concept, KConcept comparison, boolean addDefinition) {
 
         /*
          * accept only two qualities of the same physical nature (TODO)
          */
-        if (!(concept.is(Type.QUALITY) || concept.is(Type.TRAIT)) || !comparison.is(Type.QUALITY)) {
+        if (!(concept.is(SemanticType.QUALITY) || concept.is(SemanticType.TRAIT)) || !comparison.is(SemanticType.QUALITY)) {
             monitor.error("ratios must be between qualities of the same nature or traits to qualities",
                     declaration);
         }
@@ -1617,11 +1599,11 @@ W
 
         String cName = getCleanId(concept) + "To" + getCleanId(comparison) + "Ratio";
 
-        String definition = UnarySemanticOperator.RATIO.declaration[0] + " (" + concept.getDefinition() + ")"
+        String definition = UnarySemanticOperator.RATIO.declaration[0] + " (" + concept.getUrn() + ")"
                 + (comparison == null
                         ? ""
                         : " " + (UnarySemanticOperator.RATIO.declaration[1] + " ("
-                                + comparison.getDefinition() + ")"));
+                                + comparison.getUrn() + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -1634,7 +1616,7 @@ W
                     comparison == null ? null : comparison.getReferenceName());
 
             EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATIO.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1647,8 +1629,8 @@ W
             }
 
             // unit for ratios of physical properties
-            if ((concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY))
-                    && (comparison.is(Type.EXTENSIVE_PROPERTY) || comparison.is(Type.INTENSIVE_PROPERTY))) {
+            if ((concept.is(SemanticType.EXTENSIVE_PROPERTY) || concept.is(SemanticType.INTENSIVE_PROPERTY))
+                    && (comparison.is(SemanticType.EXTENSIVE_PROPERTY) || comparison.is(SemanticType.INTENSIVE_PROPERTY))) {
                 Object unit1 = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
                 Object unit2 = Concepts.INSTANCE.getMetadata(comparison, NS.SI_UNIT_PROPERTY);
                 if (unit1 != null && unit2 != null) {
@@ -1659,7 +1641,7 @@ W
 
             ontology.define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * ratio is inherent to the thing that's present.
@@ -1672,18 +1654,18 @@ W
         return ontology.getConcept(conceptId);
     }
 
-    public Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition, boolean monetary) {
+    public Concept makeValue(KConcept concept, KConcept comparison, boolean addDefinition, boolean monetary) {
 
         String cName = (monetary ? "MonetaryValueOf" : "ValueOf") + getCleanId(concept)
                 + (comparison == null ? "" : ("Vs" + getCleanId(comparison)));
 
         String definition = (monetary
                 ? UnarySemanticOperator.MONETARY_VALUE.declaration[0]
-                : UnarySemanticOperator.VALUE.declaration[0]) + " (" + concept.getDefinition() + ")"
+                : UnarySemanticOperator.VALUE.declaration[0]) + " (" + concept.getUrn() + ")"
                 + (comparison == null
                         ? ""
                         : " " + (UnarySemanticOperator.VALUE.declaration[1] + " ("
-                                + comparison.getDefinition() + ")"));
+                                + comparison.getUrn() + ")"));
 
         Ontology ontology = (Ontology) concept.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
@@ -1704,7 +1686,7 @@ W
                     monetary
                             ? UnarySemanticOperator.MONETARY_VALUE.name()
                             : UnarySemanticOperator.VALUE.name(),
-                    ((Concept) concept).getTypeSet());
+                    concept.getType());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1717,7 +1699,7 @@ W
             }
             concept.getOntology().define(ax);
 
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             /*
              * value is inherent to the thing that's present.
@@ -1739,10 +1721,10 @@ W
      * @param addDefinition
      * @return
      */
-    public Concept makeType(IConcept classified, boolean addDefinition) {
+    public Concept makeType(KConcept classified, boolean addDefinition) {
 
         String traitID = getCleanId(classified) + "Type";
-        String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + classified.getDefinition();
+        String definition = UnarySemanticOperator.TYPE.declaration[0] + " " + classified.getUrn();
         Ontology ontology = (Ontology) classified.getOntology();
         String conceptId = ontology.getIdForDefinition(definition);
 
@@ -1769,7 +1751,7 @@ W
                 axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
             }
             ontology.define(axioms);
-            IConcept ret = ontology.getConcept(conceptId);
+            KConcept ret = ontology.getConcept(conceptId);
 
             OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), classified,
                     ontology);
@@ -1777,7 +1759,7 @@ W
             /*
              * types inherit the context from their trait
              */
-            IConcept context = Observables.INSTANCE.getContextType(classified);
+            KConcept context = Observables.INSTANCE.getContextType(classified);
             if (context != null) {
                 OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
             }
@@ -1843,29 +1825,29 @@ W
         /*
          * retrieve the ID for the declaration; if present, just return the corresponding concept
          */
-        String conceptId = this.ontology.getIdForDefinition(declaration.getDefinition());
+        String conceptId = this.ontology.getIdForDefinition(declaration.getUri());
         if (conceptId != null && this.ontology.getConcept(conceptId) != null) {
             return this.ontology.getConcept(conceptId);
         }
 
         // System.out.println("building " + declaration + " in " + ontology);
 
-        conceptId = this.ontology.createIdForDefinition(declaration.getDefinition());
+        conceptId = this.ontology.createIdForDefinition(declaration.getUri());
 
-        Set<IConcept> identities = new HashSet<>();
-        Set<IConcept> attributes = new HashSet<>();
-        Set<IConcept> realms = new HashSet<>();
+        Set<KConcept> identities = new HashSet<>();
+        Set<KConcept> attributes = new HashSet<>();
+        Set<KConcept> realms = new HashSet<>();
 
         /*
          * to ensure traits are not conflicting
          */
-        Set<IConcept> baseTraits = new HashSet<>();
+        Set<KConcept> baseTraits = new HashSet<>();
 
         /*
          * to ensure we know if we concretized any abstract traits so we can properly compute our
          * abstract status.
          */
-        Set<IConcept> abstractTraitBases = new HashSet<>();
+        Set<KConcept> abstractTraitBases = new HashSet<>();
 
         Concept ret = main;
         // display IDs without namespaces
@@ -1877,8 +1859,8 @@ W
          * preload any base traits we already have. If any of them is abstract, take notice so we
          * can see if they are all concretized later.
          */
-        for (IConcept c : Traits.INSTANCE.getTraits(main)) {
-            IConcept base = Traits.INSTANCE.getBaseParentTrait(c);
+        for (KConcept c : Traits.INSTANCE.getTraits(main)) {
+            KConcept base = Traits.INSTANCE.getBaseParentTrait(c);
             baseTraits.add(base);
             if (c.isAbstract()) {
                 abstractTraitBases.add(base);
@@ -1899,7 +1881,7 @@ W
 
         if (traits != null && traits.size() > 0) {
 
-            for (IConcept t : traits) {
+            for (KConcept t : traits) {
 
                 if (t.equals(main)) {
                     continue;
@@ -1912,15 +1894,15 @@ W
                     // + Concepts.INSTANCE.getDisplayName(t), declaration);
                 }
 
-                if (t.is(Type.IDENTITY)) {
+                if (t.is(SemanticType.IDENTITY)) {
                     identities.add(t);
-                } else if (t.is(Type.REALM)) {
+                } else if (t.is(SemanticType.REALM)) {
                     realms.add(t);
-                } else if (!t.is(Type.SUBJECTIVE)) {
+                } else if (!t.is(SemanticType.SUBJECTIVE)) {
                     attributes.add(t);
                 }
 
-                IConcept base = Traits.INSTANCE.getBaseParentTrait(t);
+                KConcept base = Traits.INSTANCE.getBaseParentTrait(t);
 
                 if (base == null) {
                     monitor.error("base declaration for trait " + t + " could not be found", declaration);
@@ -1972,7 +1954,7 @@ W
          * handle context, inherency etc.
          */
         if (inherent != null) {
-            IConcept other = Observables.INSTANCE.getInherentType(main);
+            KConcept other = Observables.INSTANCE.getInherentType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(inherent, other)) {
                 monitor.error(
                         "cannot set the inherent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
@@ -1988,7 +1970,7 @@ W
         }
 
         if (context != null) {
-            IConcept other = Observables.INSTANCE.getContextType(main);
+            KConcept other = Observables.INSTANCE.getContextType(main);
             // use the version of isCompatible that allows for observations that are
             // compatible with
             // the context's context if the context is an occurrent (e.g. Precipitation of
@@ -2009,7 +1991,7 @@ W
         }
 
         if (compresent != null) {
-            IConcept other = Observables.INSTANCE.getCompresentType(main);
+            KConcept other = Observables.INSTANCE.getCompresentType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(compresent, other)) {
                 monitor.error(
                         "cannot set the compresent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
@@ -2026,7 +2008,7 @@ W
 
         if (goal != null) {
             // TODO transform as necessary
-            IConcept other = Observables.INSTANCE.getGoalType(main);
+            KConcept other = Observables.INSTANCE.getGoalType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(goal, other)) {
                 monitor.error("cannot set the goal type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
                         + Concepts.INSTANCE.getDisplayName(goal)
@@ -2040,7 +2022,7 @@ W
         }
 
         if (caused != null) {
-            IConcept other = Observables.INSTANCE.getCausedType(main);
+            KConcept other = Observables.INSTANCE.getCausedType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(caused, other)) {
                 monitor.error(
                         "cannot set the caused type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
@@ -2056,7 +2038,7 @@ W
         }
 
         if (causant != null) {
-            IConcept other = Observables.INSTANCE.getCausantType(main);
+            KConcept other = Observables.INSTANCE.getCausantType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(causant, other)) {
                 monitor.error(
                         "cannot set the causant type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
@@ -2072,7 +2054,7 @@ W
         }
 
         if (adjacent != null) {
-            IConcept other = Observables.INSTANCE.getAdjacentType(main);
+            KConcept other = Observables.INSTANCE.getAdjacentType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(adjacent, other)) {
                 monitor.error(
                         "cannot set the adjacent type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
@@ -2088,7 +2070,7 @@ W
         }
 
         if (cooccurrent != null) {
-            IConcept other = Observables.INSTANCE.getCooccurrentType(main);
+            KConcept other = Observables.INSTANCE.getCooccurrentType(main);
             if (other != null && !Observables.INSTANCE.isCompatible(cooccurrent, other)) {
                 monitor.error("cannot set the co-occurrent type of " + Concepts.INSTANCE.getDisplayName(main)
                         + " to "
@@ -2103,7 +2085,7 @@ W
         }
 
         if (relationshipSource != null) {
-            IConcept other = Observables.INSTANCE.getRelationshipSource(main);
+            KConcept other = Observables.INSTANCE.getRelationshipSource(main);
             if (other != null && !Observables.INSTANCE.isCompatible(relationshipSource, other)) {
                 monitor.error(
                         "cannot set the relationship source type of " + Concepts.INSTANCE.getDisplayName(main)
@@ -2112,7 +2094,7 @@ W
                                 + Concepts.INSTANCE.getDisplayName(other),
                         declaration);
             }
-            IConcept other2 = Observables.INSTANCE.getRelationshipTarget(main);
+            KConcept other2 = Observables.INSTANCE.getRelationshipTarget(main);
             if (other2 != null && !Observables.INSTANCE.isCompatible(relationshipTarget, other2)) {
                 monitor.error(
                         "cannot set the relationship target type of " + Concepts.INSTANCE.getDisplayName(main)
@@ -2133,10 +2115,10 @@ W
 
         String roleIds = "";
         List<String> rids = new ArrayList<>();
-        Set<IConcept> acceptedRoles = new HashSet<>();
+        Set<KConcept> acceptedRoles = new HashSet<>();
 
         if (roles != null && roles.size() > 0) {
-            for (IConcept role : roles) {
+            for (KConcept role : roles) {
                 if (Roles.INSTANCE.getRoles(main).contains(role)) {
                     monitor.error("concept " + Concepts.INSTANCE.getDisplayName(main) + " already has role "
                             + Concepts.INSTANCE.getDisplayName(role), declaration);
@@ -2200,9 +2182,9 @@ W
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CORE_OBSERVABLE_PROPERTY, main.toString()));
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, rId));
         axioms.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY,
-                declaration.getDefinition()));
+                declaration.getUri()));
 
-        if (type.contains(Type.ABSTRACT)) {
+        if (type.contains(SemanticType.ABSTRACT)) {
             axioms.add(Axiom.AnnotationAssertion(conceptId, NS.IS_ABSTRACT, "true"));
         }
 
@@ -2274,12 +2256,12 @@ W
 
     private void evaluateAbstractStatus() {
 
-        if (this.type.contains(Type.ABSTRACT)) {
+        if (this.type.contains(SemanticType.ABSTRACT)) {
             // see if we need to remove it
             boolean remove = hasUnaryOp;
             if (!remove) {
-                for (IConcept t : traits) {
-                    if (t.is(Type.IDENTITY) && !t.isAbstract()) {
+                for (KConcept t : traits) {
+                    if (t.is(SemanticType.IDENTITY) && !t.isAbstract()) {
                         remove = true;
                         break;
                     }
@@ -2288,14 +2270,14 @@ W
             if (!remove && inherent != null) {
                 remove = !inherent.isAbstract();
             }
-            if (this.type.contains(Type.RELATIONSHIP)) {
+            if (this.type.contains(SemanticType.RELATIONSHIP)) {
                 remove = relationshipSource != null && !relationshipSource.isAbstract()
                         && relationshipTarget != null
                         && !relationshipTarget.isAbstract();
             }
 
             if (remove) {
-                this.type.remove(Type.ABSTRACT);
+                this.type.remove(SemanticType.ABSTRACT);
             }
 
         } else {
@@ -2319,7 +2301,7 @@ W
                 compresent, goal, cooccurrent, adjacent);
     }
 
-    public static String getCleanId(IConcept main) {
+    public static String getCleanId(KConcept main) {
         String id = main.getMetadata().get(IMetadata.DC_LABEL, String.class);
         if (id == null) {
             id = main.getName();
@@ -2336,14 +2318,14 @@ W
     }
 
     @Override
-    public Collection<IConcept> getRemoved() {
+    public Collection<KConcept> getRemoved() {
         return removed;
     }
 
     @Override
-    public Observable buildObservable() throws KlabValidationException {
+    public KObservable buildObservable() throws KlabValidationException {
 
-        IConcept obs = buildConcept();
+        KConcept obs = buildConcept();
 
         if (obs == null) {
             return null;
@@ -2353,10 +2335,10 @@ W
 
         if (currency != null) {
             ret.setCurrency((Currency) currency);
-            ret.setDefinition(ret.getDefinition() + " in " + ret.getCurrency());
+            ret.setDefinition(ret.getUri() + " in " + ret.getCurrency());
         } else if (unit != null) {
             ret.setUnit((Unit) unit);
-            ret.setDefinition(ret.getDefinition() + " in " + ret.getUnit());
+            ret.setDefinition(ret.getUri() + " in " + ret.getUnit());
         }
 
         String opId = "";
@@ -2367,7 +2349,7 @@ W
             ValueOperator valueOperator = op.getFirst();
             Object valueOperand = op.getSecond();
 
-            ret.setDefinition(ret.getDefinition() + " " + valueOperator.declaration);
+            ret.setDefinition(ret.getUri() + " " + valueOperator.declaration);
 
             opId += (opId.isEmpty() ? "" : "_") + valueOperator.textForm;
             cdId += (cdId.isEmpty() ? "" : "_") + valueOperator.textForm;
@@ -2381,9 +2363,9 @@ W
                 valueOperand = Concepts.INSTANCE.declare((IKimConcept) valueOperand);
             }
 
-            if (valueOperand instanceof IConcept) {
+            if (valueOperand instanceof KConcept) {
 
-                ret.setDefinition(ret.getDefinition() + " " + ((IConcept) valueOperand).getDefinition());
+                ret.setDefinition(ret.getUri() + " " + ((KConcept) valueOperand).getUri());
 
                 opId += (opId.isEmpty() ? "" : "_") + ((Concept) valueOperand).getReferenceName();
                 cdId += (cdId.isEmpty() ? "" : "_") + Concepts.INSTANCE.getDisplayName((Concept) valueOperand)
@@ -2394,10 +2376,10 @@ W
                             .replaceAll("\\-", "_").replaceAll(" ", "_"));
                 }
 
-            } else if (valueOperand instanceof IObservable) {
+            } else if (valueOperand instanceof KObservable) {
 
                 ret.setDefinition(
-                        ret.getDefinition() + " (" + ((Observable) valueOperand).getDefinition() + ")");
+                        ret.getUri() + " (" + ((Observable) valueOperand).getUri() + ")");
                 opId += (opId.isEmpty() ? "" : "_") + ((Observable) valueOperand).getReferenceName();
                 cdId += (cdId.isEmpty() ? "" : "_")
                         + Observables.INSTANCE.getDisplayName((Observable) valueOperand);
@@ -2406,7 +2388,7 @@ W
 
                 if (valueOperand != null) {
 
-                    ret.setDefinition(ret.getDefinition() + " " + valueOperand);
+                    ret.setDefinition(ret.getUri() + " " + valueOperand);
 
                     opId += (opId.isEmpty() ? "" : "_") + getCodeForm(valueOperand, true);
                     cdId += (cdId.isEmpty() ? "" : "_") + getCodeForm(valueOperand, false);
@@ -2479,8 +2461,8 @@ W
             return "empty";
         } else if (o instanceof IKnowledge) {
             return reference
-                    ? (((IConcept) o).getReferenceName())
-                    : Concepts.INSTANCE.getCodeName((IConcept) o);
+                    ? (((KConcept) o).getReferenceName())
+                    : Concepts.INSTANCE.getCodeName((KConcept) o);
         } else if (o instanceof Integer || o instanceof Long) {
             return ("i" + o).replaceAll("-", "_");
         } else if (o instanceof IKimConcept) {
@@ -2498,13 +2480,13 @@ W
     }
 
     @Override
-    public Builder withUnit(IUnit unit) {
+    public Builder withUnit(KUnit unit) {
         this.unit = unit;
         return this;
     }
 
     @Override
-    public Builder withCurrency(ICurrency currency) {
+    public Builder withCurrency(KCurrency currency) {
         this.currency = currency;
         return this;
     }
@@ -2534,7 +2516,7 @@ W
     }
 
     @Override
-    public Builder withTargetPredicate(IConcept targetPredicate) {
+    public Builder withTargetPredicate(KConcept targetPredicate) {
         this.targetPredicate = targetPredicate;
         return this;
     }
@@ -2605,7 +2587,7 @@ W
     }
 
     @Override
-    public Builder withAnnotation(IAnnotation annotation) {
+    public Builder withAnnotation(KAnnotation annotation) {
         this.annotations.add(annotation);
         return this;
     }
@@ -2629,7 +2611,7 @@ W
     }
 
     @Override
-    public Builder withResolutionException(ResolutionException resolutionException) {
+    public Builder withResolutionException(KObservable.ResolutionException resolutionException) {
         this.resolutionExceptions.add(resolutionException);
         return this;
     }

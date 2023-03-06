@@ -2,31 +2,91 @@ package org.integratedmodelling.klab.services.reasoner;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement;
+import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
+import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 import org.integratedmodelling.klab.api.services.KReasoner;
 import org.integratedmodelling.klab.api.services.KResources;
+import org.integratedmodelling.klab.services.reasoner.internal.SemanticTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 @Service
 public class ReasonerService implements KReasoner, KReasoner.Admin {
 
     @Autowired
     KResources resourceService;
-    
+
+    @Autowired
+    SemanticTranslator semanticTranslator;
+
+    /**
+     * Caches for concepts and observables, linked to the URI in the corresponding
+     * {@link KKimScope}.
+     */
+    LoadingCache<String, KConcept> concepts = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)
+            .build(new CacheLoader<String, KConcept>(){
+                public KConcept load(String key) {
+                    KKimConcept parsed = resourceService.resolveConcept(key);
+                    return semanticTranslator.defineConcept(parsed);
+                }
+            });
+
+    LoadingCache<String, KObservable> observables = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)
+            .build(new CacheLoader<String, KObservable>(){
+                public KObservable load(String key) { // no checked exception
+                    KKimObservable parsed = resourceService.resolveObservable(key);
+                    return semanticTranslator.defineObservable(parsed);
+                }
+            });
+
+    @Autowired
+    public ReasonerService(KResources resourceService, SemanticTranslator semanticTranslator) {
+        this.resourceService = resourceService;
+    }
+
     @Override
-    public KConcept resolveConcept(String definition) {
+    public KConcept addConcept(KKimConceptStatement statement) {
         return null;
     }
 
     @Override
+    public KConcept resolveConcept(String definition) {
+        try {
+            return concepts.get(definition);
+        } catch (ExecutionException e) {
+            return errorConcept(definition);
+        }
+    }
+
+    @Override
     public KObservable resolveObservable(String definition) {
+        try {
+            return observables.get(definition);
+        } catch (ExecutionException e) {
+            return errorObservable(definition);
+        }
+    }
+
+    private KObservable errorObservable(String definition) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    private KConcept errorConcept(String definition) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -247,15 +307,10 @@ public class ReasonerService implements KReasoner, KReasoner.Admin {
         return null;
     }
 
-	@Override
-	public Capabilities getCapabilities() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
     @Override
-    public KConcept addConcept(KKimConceptStatement statement) {
+    public Capabilities getCapabilities() {
         // TODO Auto-generated method stub
         return null;
     }
+
 }

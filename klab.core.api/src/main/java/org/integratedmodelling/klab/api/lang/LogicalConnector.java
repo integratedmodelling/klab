@@ -15,7 +15,7 @@
  */
 package org.integratedmodelling.klab.api.lang;
 
-import org.integratedmodelling.klab.api.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.api.exceptions.KValidationException;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -73,7 +73,7 @@ public class LogicalConnector {
         boolean ret = true;
         try {
             parseLogicalConnector(s);
-        } catch (KlabValidationException e) {
+        } catch (KValidationException e) {
             ret = false;
         }
         return ret;
@@ -85,7 +85,7 @@ public class LogicalConnector {
      *
      * @param s A string representing a logical connector.
      * @return a LogicalConnector
-     * @throws KlabValidationException the klab validation exception
+     * @throws KValidationException the klab validation exception
      */
     public static LogicalConnector parseLogicalConnector(String s) {
 
@@ -103,7 +103,7 @@ public class LogicalConnector {
         else if (s.equals("xor") || s.equals("disjoint-union"))
             value = DISJOINT_UNION;
         else
-            throw new KlabValidationException(s + " is not a valid logical connector");
+            throw new KValidationException(s + " is not a valid logical connector");
 
         return value;
     }
@@ -137,7 +137,7 @@ public class LogicalConnector {
      *
      * @param s the s
      * @return a boolean.
-     * @throws KlabValidationException the klab validation exception
+     * @throws KValidationException the klab validation exception
      */
     public boolean equals(String s) {
         return value == parseLogicalConnector(s).value;
