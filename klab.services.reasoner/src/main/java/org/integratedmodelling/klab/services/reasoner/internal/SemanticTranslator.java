@@ -2,33 +2,41 @@ package org.integratedmodelling.klab.services.reasoner.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.codehaus.groovy.transform.trait.Traits;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
 import org.integratedmodelling.klab.api.exceptions.KValidationException;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
-import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KScope;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement;
-import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement.ApplicableConcept;
+import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimConceptStatement;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.services.runtime.KChannel;
 import org.integratedmodelling.klab.common.LogicalConnector;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.services.reasoner.ReasonerService;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology.NS;
 import org.integratedmodelling.klab.services.reasoner.owl.Axiom;
 import org.integratedmodelling.klab.services.reasoner.owl.Concept;
@@ -37,16 +45,102 @@ import org.integratedmodelling.klab.services.reasoner.owl.Ontology;
 import org.integratedmodelling.klab.services.reasoner.owl.Property;
 import org.integratedmodelling.klab.services.reasoner.owl.adapter.ErrorNotifyingMonitor;
 import org.semanticweb.owlapi.model.OWLClass;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SemanticTranslator {
 
+    @Autowired
+    ReasonerService reasonerService;
+    
     /*
      * the back-end implementation of each concept, linked to the ID in the concept class.
      */
     private Map<Long, OWLClass> owlClasses = new HashMap<>();
 
+
+    /**
+     * An emergence is the appearance of an observation triggered by another, under
+     * the assumptions stated in the worldview. It applies to processes and
+     * relationships and its emergent observable can be a configuration, subject or
+     * process.
+     * 
+     * @author Ferd
+     *
+     */
+    public class Emergence {
+
+        public Set<IConcept> triggerObservables = new LinkedHashSet<>();
+        public IConcept emergentObservable;
+        public String namespaceId;
+
+        public Set<IObservation> matches(IConcept relationship, KScope scope) {
+
+            for (IConcept trigger : triggerObservables) {
+                Set<IObservation> ret = new HashSet<>();
+                checkScope(trigger, scope.getCatalog(), relationship, ret);
+                if (!ret.isEmpty()) {
+                    return ret;
+                }
+            }
+
+            return Collections.emptySet();
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + getEnclosingInstance().hashCode();
+            result = prime * result + Objects.hash(emergentObservable, namespaceId, triggerObservables);
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            Emergence other = (Emergence) obj;
+            if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+                return false;
+            return Objects.equals(emergentObservable, other.emergentObservable)
+                    && Objects.equals(namespaceId, other.namespaceId)
+                    && Objects.equals(triggerObservables, other.triggerObservables);
+        }
+
+        /*
+         * current observable must be one of the triggers, any others need to be in
+         * scope
+         */
+        private void checkScope(IConcept trigger, Map<IObservedConcept, IObservation> map, IConcept relationship,
+                Set<IObservation> obs) {
+            if (trigger.is(Type.UNION)) {
+                for (IConcept trig : trigger.getOperands()) {
+                    checkScope(trig, map, relationship, obs);
+                }
+            } else if (trigger.is(Type.INTERSECTION)) {
+                for (IConcept trig : trigger.getOperands()) {
+                    Set<IObservation> oobs = new HashSet<>();
+                    checkScope(trig, map, relationship, oobs);
+                    if (oobs.isEmpty()) {
+                        obs = oobs;
+                    }
+                }
+            } else {
+                IObservation a = map.get(new ObservedConcept(trigger));
+                if (a != null) {
+                    obs.add(a);
+                }
+            }
+        }
+    }
+
+    
     public KConcept defineConcept(KKimConcept parsed) {
         // TODO Auto-generated method stub
         return null;
@@ -81,7 +175,7 @@ public class SemanticTranslator {
                     if (parent == null) {
                         monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
                     } else {
-                        ((Concept) parent).getTypeSet().addAll(concept.getType());
+                        parent.getType().addAll(concept.getType());
                     }
                 } else {
 
