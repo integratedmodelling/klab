@@ -67,7 +67,7 @@ public class EngineAuthResponeFactory {
 				break;	
 			}
 		case USER:
-			if (IPUtils.isLocalhost(remoteAddr) == false) {
+			if (IPUtils.isLocalhost(remoteAddr)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return localEngine(request);
 			} else {
@@ -96,15 +96,15 @@ public class EngineAuthResponeFactory {
         case active:
             return;
         case locked:
-            throw new AuthenticationFailedException("User profile is locked");
+            throw new AuthenticationFailedException("User profile is locked.");
         case deleted:
-            throw new AuthenticationFailedException("User profile is deleted");
+            throw new AuthenticationFailedException("User profile is deleted.");
         case pendingActivation:
         case verified:
-            throw new AuthenticationFailedException("User profile has not completed the activation process");
+            throw new AuthenticationFailedException("User profile has not completed the activation process.");
         case expired:
         default:
-            throw new AuthenticationFailedException("User profile is not active");
+            throw new AuthenticationFailedException("User profile is not active.");
         }
     }
 
@@ -116,16 +116,16 @@ public class EngineAuthResponeFactory {
         // TODO for now, we just assume that there is a single agreement per profile.
         Agreement agreement = profile.getAgreements().get(0);
         if (agreement.isRevoked()) {
-            throw new AuthenticationFailedException("Agreement has been revoked");
+            throw new AuthenticationFailedException("Agreement has been revoked.");
         }
         if (agreement.isExpired()) {
-            throw new AuthenticationFailedException("Agreement is expired");
+            throw new AuthenticationFailedException("Agreement is expired.");
         }
     }
 
 	@SuppressWarnings("unchecked")
     private EngineAuthenticationResponse remoteEngine(ProfileResource profile,
-			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException {
+			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException, AuthenticationFailedException {
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
