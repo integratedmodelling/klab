@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.services.reasoner.owl;
+package org.integratedmodelling.klab.services.reasoner.owl.obsolete;
 //package org.integratedmodelling.klab.owl;
 //
 //import java.util.HashMap;

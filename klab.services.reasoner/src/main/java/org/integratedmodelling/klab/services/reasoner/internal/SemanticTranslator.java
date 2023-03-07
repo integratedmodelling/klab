@@ -12,7 +12,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
@@ -25,7 +24,6 @@ import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement.Applicable
 import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.KKimScope;
-import org.integratedmodelling.klab.api.lang.kim.impl.KimConceptStatement;
 import org.integratedmodelling.klab.api.services.runtime.KChannel;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.knowledge.IntelligentMap;
