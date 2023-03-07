@@ -12,18 +12,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.codehaus.groovy.transform.trait.Traits;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
-import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.api.engine.IEngineService.Reasoner;
-import org.integratedmodelling.klab.api.exceptions.KValidationException;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
-import org.integratedmodelling.klab.api.knowledge.observation.scope.KScope;
+import org.integratedmodelling.klab.api.knowledge.observation.KObservation;
+import org.integratedmodelling.klab.api.knowledge.observation.scope.KContextScope;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement;
 import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement.ApplicableConcept;
@@ -31,54 +26,49 @@ import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement.ParentConc
 import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimConceptStatement;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.services.runtime.KChannel;
-import org.integratedmodelling.klab.common.LogicalConnector;
-import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.services.reasoner.ReasonerService;
+import org.integratedmodelling.klab.knowledge.IntelligentMap;
 import org.integratedmodelling.klab.services.reasoner.internal.CoreOntology.NS;
 import org.integratedmodelling.klab.services.reasoner.owl.Axiom;
-import org.integratedmodelling.klab.services.reasoner.owl.Concept;
 import org.integratedmodelling.klab.services.reasoner.owl.OWL;
 import org.integratedmodelling.klab.services.reasoner.owl.Ontology;
-import org.integratedmodelling.klab.services.reasoner.owl.Property;
-import org.integratedmodelling.klab.services.reasoner.owl.adapter.ErrorNotifyingMonitor;
-import org.semanticweb.owlapi.model.OWLClass;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SemanticTranslator {
 
-    @Autowired
-    ReasonerService reasonerService;
+    private Map<String, String> coreConceptPeers = new HashMap<>();
+    Map<KConcept, Emergence> emergent = new HashMap<>();
+    IntelligentMap<Set<Emergence>> emergence = new IntelligentMap<>();
+
     
     /*
-     * the back-end implementation of each concept, linked to the ID in the concept class.
+     * Record correspondence of core concept peers to worldview concepts. Called by KimValidator for
+     * later use at namespace construction.
      */
-    private Map<Long, OWLClass> owlClasses = new HashMap<>();
-
-
+    public void setWorldviewPeer(String coreConcept, String worldviewConcept) {
+        coreConceptPeers.put(worldviewConcept, coreConcept);
+    }
+    
     /**
-     * An emergence is the appearance of an observation triggered by another, under
-     * the assumptions stated in the worldview. It applies to processes and
-     * relationships and its emergent observable can be a configuration, subject or
-     * process.
+     * An emergence is the appearance of an observation triggered by another, under the assumptions
+     * stated in the worldview. It applies to processes and relationships and its emergent
+     * observable can be a configuration, subject or process.
      * 
      * @author Ferd
      *
      */
     public class Emergence {
 
-        public Set<IConcept> triggerObservables = new LinkedHashSet<>();
-        public IConcept emergentObservable;
+        public Set<KConcept> triggerObservables = new LinkedHashSet<>();
+        public KConcept emergentObservable;
         public String namespaceId;
 
-        public Set<IObservation> matches(IConcept relationship, KScope scope) {
+        public Set<KObservation> matches(KConcept relationship, KContextScope scope) {
 
-            for (IConcept trigger : triggerObservables) {
-                Set<IObservation> ret = new HashSet<>();
+            for (KConcept trigger : triggerObservables) {
+                Set<KObservation> ret = new HashSet<>();
                 checkScope(trigger, scope.getCatalog(), relationship, ret);
                 if (!ret.isEmpty()) {
                     return ret;
@@ -97,6 +87,10 @@ public class SemanticTranslator {
             return result;
         }
 
+        private Object getEnclosingInstance() {
+            return SemanticTranslator.this;
+        }
+
         @Override
         public boolean equals(Object obj) {
             if (this == obj)
@@ -108,31 +102,29 @@ public class SemanticTranslator {
             Emergence other = (Emergence) obj;
             if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
                 return false;
-            return Objects.equals(emergentObservable, other.emergentObservable)
-                    && Objects.equals(namespaceId, other.namespaceId)
+            return Objects.equals(emergentObservable, other.emergentObservable) && Objects.equals(namespaceId, other.namespaceId)
                     && Objects.equals(triggerObservables, other.triggerObservables);
         }
 
         /*
-         * current observable must be one of the triggers, any others need to be in
-         * scope
+         * current observable must be one of the triggers, any others need to be in scope
          */
-        private void checkScope(IConcept trigger, Map<IObservedConcept, IObservation> map, IConcept relationship,
-                Set<IObservation> obs) {
-            if (trigger.is(Type.UNION)) {
-                for (IConcept trig : trigger.getOperands()) {
+        private void checkScope(KConcept trigger, Map<KObservable, KObservation> map, KConcept relationship,
+                Set<KObservation> obs) {
+            if (trigger.is(SemanticType.UNION)) {
+                for (KConcept trig : trigger.operands()) {
                     checkScope(trig, map, relationship, obs);
                 }
-            } else if (trigger.is(Type.INTERSECTION)) {
-                for (IConcept trig : trigger.getOperands()) {
-                    Set<IObservation> oobs = new HashSet<>();
+            } else if (trigger.is(SemanticType.INTERSECTION)) {
+                for (KConcept trig : trigger.operands()) {
+                    Set<KObservation> oobs = new HashSet<>();
                     checkScope(trig, map, relationship, oobs);
                     if (oobs.isEmpty()) {
                         obs = oobs;
                     }
                 }
             } else {
-                IObservation a = map.get(new ObservedConcept(trigger));
+                KObservation a = map.get(trigger);
                 if (a != null) {
                     obs.add(a);
                 }
@@ -140,7 +132,6 @@ public class SemanticTranslator {
         }
     }
 
-    
     public KConcept defineConcept(KKimConcept parsed) {
         // TODO Auto-generated method stub
         return null;
@@ -204,7 +195,7 @@ public class SemanticTranslator {
                 }
 
                 if (parent != null) {
-                    ontology.addDelegateConcept(concept.getName(), ontology.getName(), (Concept) parent);
+                    ontology.addDelegateConcept(concept.getName(), ontology.getName(), parent);
                 }
 
                 return null;
@@ -215,15 +206,15 @@ public class SemanticTranslator {
             if (concept.getParents().isEmpty()) {
                 KConcept parent = null;
                 if (concept.getUpperConceptDefined() != null) {
-                    upperConceptDefined = parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
+                    upperConceptDefined = parent = OWL.INSTANCE.getConcept(concept.getUpperConceptDefined());
                     if (parent == null) {
                         monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
                     }
                 } else {
-                    parent = Resources.INSTANCE.getUpperOntology().getCoreType(concept.getType());
+                    parent = OWL.INSTANCE.getCoreOntology().getCoreType(concept.getType());
                     if (coreConceptPeers.containsKey(ret.toString())) {
                         // ensure that any non-trivial core inheritance is dealt with appropriately
-                        parent = Resources.INSTANCE.getUpperOntology().alignCoreInheritance(ret);
+                        parent = OWL.INSTANCE.getCoreOntology().alignCoreInheritance(ret);
                     }
                 }
 
@@ -233,13 +224,13 @@ public class SemanticTranslator {
             }
 
             if (ret != null) {
-                ontology.addAxiom(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
+                ontology.add(Axiom.AnnotationAssertion(ret.getName(), NS.BASE_DECLARATION, "true"));
                 createProperties(ret, ontology);
                 ontology.define();
 
                 if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null
                         && "true".equals(upperConceptDefined.getMetadata().get(NS.IS_CORE_KIM_TYPE, "false"))) {
-                    Resources.INSTANCE.getUpperOntology().setAsCoreType(ret);
+                    OWL.INSTANCE.getCoreOntology().setAsCoreType(ret);
                 }
 
             }
@@ -252,10 +243,10 @@ public class SemanticTranslator {
         return null;
     }
 
-    private Concept buildInternal(final KKimConceptStatement concept, final Ontology ontology, KKimConceptStatement kimObject,
+    private KConcept buildInternal(final KKimConceptStatement concept, Ontology ontology, KKimConceptStatement kimObject,
             final KChannel monitor) {
 
-        Concept main = null;
+        KConcept main = null;
         String mainId = concept.getName();
 
         ontology.add(Axiom.ClassAssertion(mainId,
@@ -267,7 +258,7 @@ public class SemanticTranslator {
 
         // and the reference name
         ontology.add(Axiom.AnnotationAssertion(mainId, NS.REFERENCE_NAME_PROPERTY,
-                getCleanFullId(ontology.getName(), concept.getName())));
+                OWL.getCleanFullId(ontology.getName(), concept.getName())));
 
         /*
          * basic attributes subjective deniable internal uni/bidirectional (relationship)
@@ -297,10 +288,10 @@ public class SemanticTranslator {
                 KConcept expr = null;
                 switch(parent.getConnector()) {
                 case INTERSECTION:
-                    expr = OWL.INSTANCE.getIntersection(concepts, ontology, ((Concept) concepts.get(0)).getTypeSet());
+                    expr = OWL.INSTANCE.getIntersection(concepts, ontology, concepts.get(0).getType());
                     break;
                 case UNION:
-                    expr = OWL.INSTANCE.getUnion(concepts, ontology, ((Concept) concepts.get(0)).getTypeSet());
+                    expr = OWL.INSTANCE.getUnion(concepts, ontology, concepts.get(0).getType());
                     break;
                 case FOLLOWS:
                     expr = OWL.INSTANCE.getConsequentialityEvent(concepts, ontology);
@@ -310,7 +301,7 @@ public class SemanticTranslator {
                     break;
                 }
                 if (concept.isAlias()) {
-                    ontology.addDelegateConcept(mainId, ontology, (Concept) expr);
+                    ontology.addDelegateConcept(mainId, ontology.getName(), expr);
                 } else {
                     ontology.add(Axiom.SubClass(expr.getUrn(), mainId));
                 }
@@ -321,14 +312,15 @@ public class SemanticTranslator {
         for (KKimScope child : concept.getChildren()) {
             if (child instanceof KKimConceptStatement) {
                 try {
-                    KimConceptStatement chobj = kimObject == null ? null : new KimConceptStatement((IKimConceptStatement) child);
-                    KConcept childConcept = buildInternal((IKimConceptStatement) child, ontology, chobj,
-                            monitor instanceof ErrorNotifyingMonitor
-                                    ? ((ErrorNotifyingMonitor) monitor).contextualize(child)
-                                    : monitor);
+//                    KimConceptStatement chobj = kimObject == null ? null : new KimConceptStatement((IKimConceptStatement) child);
+                    KConcept childConcept = buildInternal((KKimConceptStatement) child, ontology, concept,
+                            /*
+                             * monitor instanceof ErrorNotifyingMonitor ? ((ErrorNotifyingMonitor)
+                             * monitor).contextualize(child) :
+                             */ monitor);
                     ontology.add(Axiom.SubClass(mainId, childConcept.getName()));
                     ontology.define();
-                    kimObject.getChildren().add(chobj);
+//                    kimObject.getChildren().add(chobj);
                 } catch (Throwable e) {
                     monitor.error(e, child);
                 }
@@ -342,7 +334,7 @@ public class SemanticTranslator {
                 return null;
             }
             try {
-                Traits.INSTANCE.addTrait(main, trait, ontology);
+                OWL.INSTANCE.addTrait(main, trait, ontology);
             } catch (KlabValidationException e) {
                 monitor.error(e, inherited);
             }
@@ -355,7 +347,7 @@ public class SemanticTranslator {
                 monitor.error("affected " + affected.getName() + " does not identify known concepts", affected);
                 return null;
             }
-            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.AFFECTS_PROPERTY), quality, namespace.getOntology());
+            OWL.INSTANCE.restrictSome(main, OWL.INSTANCE.getProperty(CoreOntology.NS.AFFECTS_PROPERTY), quality, ontology);
         }
 
         for (KKimConcept required : concept.getRequiredIdentities()) {
@@ -364,7 +356,7 @@ public class SemanticTranslator {
                 monitor.error("required " + required.getName() + " does not identify known concepts", required);
                 return null;
             }
-            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.REQUIRES_IDENTITY_PROPERTY), quality, ontology);
+            OWL.INSTANCE.restrictSome(main, OWL.INSTANCE.getProperty(NS.REQUIRES_IDENTITY_PROPERTY), quality, ontology);
         }
 
         for (KKimConcept affected : concept.getObservablesCreated()) {
@@ -373,13 +365,13 @@ public class SemanticTranslator {
                 monitor.error("created " + affected.getName() + " does not identify known concepts", affected);
                 return null;
             }
-            OWL.INSTANCE.restrictSome(main, Concepts.p(NS.CREATES_PROPERTY), quality, namespace.getOntology());
+            OWL.INSTANCE.restrictSome(main, OWL.INSTANCE.getProperty(NS.CREATES_PROPERTY), quality, ontology);
         }
 
         for (ApplicableConcept link : concept.getSubjectsLinked()) {
             if (link.getOriginalObservable() == null && link.getSource() != null) {
                 // relationship source->target
-                Observables.INSTANCE.defineRelationship(main, declare(link.getSource(), ontology, monitor),
+                OWL.INSTANCE.defineRelationship(main, declare(link.getSource(), ontology, monitor),
                         declare(link.getTarget(), ontology, monitor), ontology);
             } else {
                 // TODO
@@ -391,14 +383,77 @@ public class SemanticTranslator {
             for (KKimConcept trigger : concept.getEmergenceTriggers()) {
                 triggers.add(declare(trigger, ontology, monitor));
             }
-            Reasoner.INSTANCE.registerEmergent(main, triggers);
+            registerEmergent(main, triggers);
         }
 
-        if (kimObject != null) {
-            kimObject.set(main);
-        }
+//        if (kimObject != null) {
+//            kimObject.set(main);
+//        }
 
         return main;
+    }
+
+    /*
+     * Register the triggers and each triggering concept in the emergence map.
+     */
+    public boolean registerEmergent(KConcept configuration, Collection<KConcept> triggers) {
+
+        if (!configuration.isAbstract()) {
+
+//          DebugFile.println("CHECK for storage of " + configuration + " based on " + triggers);
+            
+            if (this.emergent.containsKey(configuration)) {
+                return true;
+            }
+
+//          DebugFile.println("   STORED " + configuration);
+
+            Emergence descriptor = new Emergence();
+            descriptor.emergentObservable = configuration;
+            descriptor.triggerObservables.addAll(triggers);
+            descriptor.namespaceId = configuration.getNamespace();
+            this.emergent.put(configuration, descriptor);
+
+            for (KConcept trigger : triggers) {
+                for (KConcept tr : OWL.INSTANCE.flattenOperands(trigger)) {
+                    Set<Emergence> es = emergence.get(tr);
+                    if (es == null) {
+                        es = new HashSet<>();
+                        emergence.put(tr, es);
+                    }
+                    es.add(descriptor);
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void createProperties(KConcept ret, Ontology ns) {
+
+        String pName = null;
+        String pProp = null;
+        if (ret.is(SemanticType.ATTRIBUTE)) {
+            // hasX
+            pName = "has" + ret.getName();
+            pProp = NS.HAS_ATTRIBUTE_PROPERTY;
+        } else if (ret.is(SemanticType.REALM)) {
+            // inX
+            pName = "in" + ret.getName();
+            pProp = NS.HAS_REALM_PROPERTY;
+        } else if (ret.is(SemanticType.IDENTITY)) {
+            // isX
+            pName = "is" + ret.getName();
+            pProp = NS.HAS_IDENTITY_PROPERTY;
+        }
+        if (pName != null) {
+            ns.add(Axiom.ObjectPropertyAssertion(pName));
+            ns.add(Axiom.ObjectPropertyRange(pName, ret.getName()));
+            ns.add(Axiom.SubObjectProperty(pProp, pName));
+            ns.add(Axiom.AnnotationAssertion(ret.getName(), NS.TRAIT_RESTRICTING_PROPERTY, ns.getName() + ":" + pName));
+        }
     }
 
     private KConcept declare(KKimConcept affected, Ontology ontology, KChannel monitor) {
@@ -406,65 +461,12 @@ public class SemanticTranslator {
         return null;
     }
 
-
-    public void restrict(KConcept target, Property property, LogicalConnector how, Collection<KConcept> fillers, Ontology ontology)
-            throws KValidationException {
-
-        /*
-         * divide up in bins according to base trait; take property from annotation;
-         * restrict each group.
-         */
-        Map<KConcept, List<KConcept>> pairs = new HashMap<>();
-        for (KConcept t : fillers) {
-            KConcept base = getBaseParentTrait(t);
-            if (!pairs.containsKey(base)) {
-                pairs.put(base, new ArrayList<>());
-            }
-            pairs.get(base).add(t);
+    public static String getCleanId(KConcept main) {
+        String id = main.getMetadata().get(IMetadata.DC_LABEL, String.class);
+        if (id == null) {
+            id = main.getName();
         }
-
-        for (KConcept base : pairs.keySet()) {
-
-            String prop = base.getMetadata().get(NS.TRAIT_RESTRICTING_PROPERTY, String.class);
-            if (prop == null || Concepts.INSTANCE.getProperty(prop) == null) {
-                if (base.is(SemanticType.SUBJECTIVE)) {
-                    /*
-                     * we can assign any subjective traits to anything
-                     */
-                    prop = NS.HAS_SUBJECTIVE_TRAIT_PROPERTY;
-                } else {
-                    throw new KlabValidationException("cannot find property to restrict for trait " + base);
-                }
-            }
-            // System.out.println("TRAIT " + pairs.get(base) + " for " + target + " with " +
-            // prop);
-            OWL.INSTANCE.restrictSome(target, Concepts.p(prop), how, pairs.get(base), (Ontology) ontology);
-        }
+        return id;
     }
-    
 
-    @Override
-    public KConcept getBaseParentTrait(KConcept trait) {
-
-        String orig = trait.getMetadata().get(NS.ORIGINAL_TRAIT, String.class);
-        if (orig != null) {
-            trait = Concepts.c(orig);
-        }
-
-        /*
-         * there should only be one of these or none.
-         */
-        if (trait.getMetadata().get(NS.BASE_DECLARATION) != null) {
-            return trait;
-        }
-
-        for (KConcept c : trait.getParents()) {
-            KConcept r = getBaseParentTrait(c);
-            if (r != null) {
-                return r;
-            }
-        }
-        return null;
-    }
-    
 }

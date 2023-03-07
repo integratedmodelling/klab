@@ -10,11 +10,8 @@ import org.integratedmodelling.klab.api.identities.KUserIdentity;
 import org.integratedmodelling.klab.api.knowledge.observation.scope.KScope;
 import org.integratedmodelling.klab.api.knowledge.observation.scope.KSessionScope;
 import org.integratedmodelling.klab.api.knowledge.observation.scope.KSessionScope.Status;
-import org.integratedmodelling.klab.api.services.KReasoner;
-import org.integratedmodelling.klab.api.services.KResolver;
-import org.integratedmodelling.klab.api.services.KResources;
-import org.integratedmodelling.klab.api.services.KRuntime;
 import org.integratedmodelling.klab.api.services.runtime.KMessage;
+import org.integratedmodelling.klab.configuration.Services;
 import org.integratedmodelling.klab.services.actors.messages.user.CreateApplication;
 import org.integratedmodelling.klab.services.actors.messages.user.CreateSession;
 import org.integratedmodelling.klab.services.engine.EngineService;
@@ -25,28 +22,15 @@ public class Scope implements KScope {
 
     private KParameters<String> data = Parameters.create();
     private KUserIdentity user;
-    private KReasoner reasonerService;
-    private KResources resourceService;
-    private KResolver resolverService;
-    private KRuntime runtimeService;
     private Ref agent;
 
-    public Scope(KUserIdentity user, KReasoner reasonerService, KResources resourceService, KResolver resolverService,
-            KRuntime runtimeService) {
+    public Scope(KUserIdentity user) {
         this.user = user;
-        this.reasonerService = reasonerService;
-        this.resourceService = resourceService;
-        this.resolverService = resolverService;
-        this.runtimeService = runtimeService;
-        EngineService.INSTANCE.registerScope(this);
+        ((EngineService)Services.INSTANCE.getEngine()).registerScope(this);
     }
 
     protected Scope(Scope parent) {
         this.user = parent.user;
-        this.reasonerService = parent.reasonerService;
-        this.resourceService = parent.resourceService;
-        this.resolverService = parent.resolverService;
-        this.runtimeService = parent.runtimeService;
     }
     
     @Override

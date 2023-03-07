@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.api.services.reasoner.objects;
+package org.integratedmodelling.klab.knowledge;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -8,19 +8,19 @@ import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
-import org.integratedmodelling.klab.api.services.KReasoner;
 
 public class Concept implements Serializable, KConcept {
 
     private static final long serialVersionUID = -6871573029225503370L;
+    
     private long id;
     private String urn;
     private KMetadata metadata;
     private Set<SemanticType> type;
     private String namespace;
+    private String name;
+    private String referenceName;
     
-    transient private KReasoner reasonerService;
-
     @Override
     public String getUrn() {
         return urn;
@@ -134,6 +134,16 @@ public class Concept implements Serializable, KConcept {
 
     public void setNamespace(String namespace) {
         this.namespace = namespace;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public String getReferenceName() {
+        return referenceName;
     }
 
 }

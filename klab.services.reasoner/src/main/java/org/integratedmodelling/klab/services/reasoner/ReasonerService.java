@@ -10,12 +10,14 @@ import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.KSemantics;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
+import org.integratedmodelling.klab.api.knowledge.observation.KObservation;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
 import org.integratedmodelling.klab.api.lang.kim.KKimConceptStatement;
 import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 import org.integratedmodelling.klab.api.services.KReasoner;
 import org.integratedmodelling.klab.api.services.KResources;
+import org.integratedmodelling.klab.configuration.Services;
 import org.integratedmodelling.klab.services.reasoner.internal.SemanticTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,17 +29,15 @@ import com.google.common.cache.LoadingCache;
 @Service
 public class ReasonerService implements KReasoner, KReasoner.Admin {
 
-    @Autowired
-    KResources resourceService;
-
-    @Autowired
-    SemanticTranslator semanticTranslator;
+    private KResources resourceService;
+    private SemanticTranslator semanticTranslator;
 
     /**
      * Caches for concepts and observables, linked to the URI in the corresponding
      * {@link KKimScope}.
      */
-    LoadingCache<String, KConcept> concepts = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)
+    LoadingCache<String, KConcept> concepts = CacheBuilder.newBuilder()
+//            .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<String, KConcept>(){
                 public KConcept load(String key) {
                     KKimConcept parsed = resourceService.resolveConcept(key);
@@ -45,7 +45,8 @@ public class ReasonerService implements KReasoner, KReasoner.Admin {
                 }
             });
 
-    LoadingCache<String, KObservable> observables = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES)
+    LoadingCache<String, KObservable> observables = CacheBuilder.newBuilder()
+//            .expireAfterAccess(10, TimeUnit.MINUTES)
             .build(new CacheLoader<String, KObservable>(){
                 public KObservable load(String key) { // no checked exception
                     KKimObservable parsed = resourceService.resolveObservable(key);
@@ -56,6 +57,7 @@ public class ReasonerService implements KReasoner, KReasoner.Admin {
     @Autowired
     public ReasonerService(KResources resourceService, SemanticTranslator semanticTranslator) {
         this.resourceService = resourceService;
+        Services.INSTANCE.setReasoner(this);
     }
 
     @Override
@@ -309,6 +311,102 @@ public class ReasonerService implements KReasoner, KReasoner.Admin {
 
     @Override
     public Capabilities getCapabilities() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> identities(KConcept concept) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> attributes(KConcept concept) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> realms(KConcept concept) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public KConcept baseParentTrait(KConcept trait) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean hasParentTrait(KConcept type, KConcept trait) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Collection<KConcept> directTraits(KConcept concept) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public KConcept negated(KConcept concept) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Class<? extends KObservation> observationClass(KObservable observable) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public SemanticType observableType(KObservable observable, boolean acceptTraits) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public KConcept relationshipSource(KConcept relationship) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> relationshipSources(KConcept relationship) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public KConcept relationshipTarget(KConcept relationship) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> relationshipTargets(KConcept relationship) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public boolean satisfiable(KConcept ret) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public Collection<KConcept> applicableObservables(KConcept main) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Collection<KConcept> directRoles(KConcept concept) {
         // TODO Auto-generated method stub
         return null;
     }

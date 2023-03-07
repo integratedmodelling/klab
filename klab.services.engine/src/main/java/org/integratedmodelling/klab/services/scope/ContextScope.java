@@ -1,12 +1,15 @@
 package org.integratedmodelling.klab.services.scope;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.geometry.KGeometry;
 import org.integratedmodelling.klab.api.identities.KIdentity;
+import org.integratedmodelling.klab.api.knowledge.KObservable;
 import org.integratedmodelling.klab.api.knowledge.observation.KDirectObservation;
 import org.integratedmodelling.klab.api.knowledge.observation.KObservation;
 import org.integratedmodelling.klab.api.knowledge.observation.KRelationship;
@@ -25,6 +28,7 @@ public class ContextScope extends SessionScope implements KContextScope {
     ContextScope parent;
     KGeometry geometry;
     String token;
+    Map<KObservable, KObservation> catalog = new HashMap<>();
 
     ContextScope(SessionScope parent) {
         super(parent);
@@ -126,6 +130,11 @@ public class ContextScope extends SessionScope implements KContextScope {
     public Collection<KRelationship> getIncomingRelationships(KDirectObservation observation) {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public Map<KObservable, KObservation> getCatalog() {
+        return catalog;
     }
 
 }

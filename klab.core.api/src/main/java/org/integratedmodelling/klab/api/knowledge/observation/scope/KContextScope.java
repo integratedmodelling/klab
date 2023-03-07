@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.knowledge.observation.scope;
 
 import java.util.Collection;
+import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.geometry.KGeometry;
@@ -136,8 +137,8 @@ public interface KContextScope extends KSessionScope {
      * Inspect the network graph of the current context, returning all relationships that have the
      * passed subject as target.
      *
-     * @param observation a {@link org.integratedmodelling.klab.api.KDirectObservation.IDirectObservation}
-     *        object.
+     * @param observation a
+     *        {@link org.integratedmodelling.klab.api.KDirectObservation.IDirectObservation} object.
      * @return a {@link java.util.Collection} object.
      */
     Collection<KRelationship> getOutgoingRelationships(KDirectObservation observation);
@@ -146,10 +147,17 @@ public interface KContextScope extends KSessionScope {
      * Inspect the network graph of the current context, returning all relationships that have the
      * passed subject as target.
      *
-     * @param observation a {@link org.integratedmodelling.klab.api.KDirectObservation.IDirectObservation}
-     *        object.
+     * @param observation a
+     *        {@link org.integratedmodelling.klab.api.KDirectObservation.IDirectObservation} object.
      * @return a {@link java.util.Collection} object.
      */
     Collection<KRelationship> getIncomingRelationships(KDirectObservation observation);
+
+    /**
+     * Return the currently known observations as a map indexed by observable.
+     * 
+     * @return
+     */
+    Map<KObservable, KObservation> getCatalog();
 
 }

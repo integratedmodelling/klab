@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.api.exceptions.KIllegalArgumentException;
 import org.integratedmodelling.klab.api.knowledge.KArtifact;
 import org.integratedmodelling.klab.api.knowledge.KArtifact.Type;
 import org.integratedmodelling.klab.api.knowledge.KConcept;
+import org.integratedmodelling.klab.api.knowledge.observation.KObservation;
 import org.integratedmodelling.klab.api.lang.kim.KKimScope;
 import org.integratedmodelling.klab.api.services.runtime.KNotification;
 
@@ -3221,6 +3222,113 @@ public class Utils {
             return dt == -1 ? name : name.substring(0, dt);
         }
 
+    }
+
+    public static class Collections {
+
+        public static <T> List<T> arrayToList(T[] objects) {
+            List<T> ret = new ArrayList<>();
+            if (objects != null) {
+                for (T obj : objects) {
+                    ret.add(obj);
+                }
+            }
+            return ret;
+        }
+
+        @SafeVarargs
+        public static <T> List<T> join(Collection<T>... resources) {
+            List<T> ret = new ArrayList<>();
+            for (Collection<T> list : resources) {
+                ret.addAll(list);
+            }
+            return ret;
+        }
+
+        @SafeVarargs
+        public static <T> List<T> join(Iterable<T>... resources) {
+            List<T> ret = new ArrayList<>();
+            for (Iterable<T> list : resources) {
+                for (T o : list) {
+                    ret.add(o);
+                }
+            }
+            return ret;
+        }
+
+        /**
+         * Return a single collection containing all the artifacts in each artifact passed.
+         * 
+         * @param artifacts
+         * @return
+         */
+        public static Collection<KArtifact> joinArtifacts(Collection<KArtifact> artifacts) {
+            List<KArtifact> ret = new ArrayList<>();
+            for (KArtifact artifact : artifacts) {
+                for (KArtifact a : artifact) {
+                    ret.add(a);
+                }
+            }
+            return ret;
+        }
+
+        public static Collection<KObservation> joinObservations(Collection<KObservation> artifacts) {
+            List<KObservation> ret = new ArrayList<>();
+            for (KObservation artifact : artifacts) {
+                for (KArtifact a : artifact) {
+                    ret.add((KObservation) a);
+                }
+            }
+            return ret;
+        }
+
+        /**
+         * Pack the arguments into a collection; if any argument is a collection, add its elements
+         * but do not unpack below the first level.
+         * 
+         * @param objects
+         * @return
+         */
+        public static Collection<Object> shallowCollection(Object... objects) {
+            List<Object> ret = new ArrayList<>();
+            for (Object o : objects) {
+                if (o instanceof Collection) {
+                    ret.addAll((Collection<?>) o);
+                } else {
+                    ret.add(o);
+                }
+            }
+            return ret;
+        }
+
+        /**
+         * Pack the arguments into a collection; if any argument is a collection, unpack its
+         * elements recursively so that no collections remain.
+         * 
+         * @param objects
+         * @return
+         */
+        public static Collection<Object> flatCollection(Object... objects) {
+            List<Object> ret = new ArrayList<>();
+            addToCollection(ret, objects);
+            return ret;
+        }
+
+        private static void addToCollection(List<Object> ret, Object... objects) {
+            for (Object o : objects) {
+                if (o instanceof Collection) {
+                    for (Object oo : ((Collection<?>) o)) {
+                        addToCollection(ret, oo);
+                    }
+                } else if (o != null && o.getClass().isArray()) {
+                    for (int i = 0; i < Array.getLength(o); i++) {
+                        addToCollection(ret, Array.get(o, i));
+                    }
+                } else {
+                    ret.add(o);
+                }
+            }
+        }
     }
 
     public static class Colors {

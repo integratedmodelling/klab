@@ -2,15 +2,18 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.collections.KLiteral;
 import org.integratedmodelling.klab.api.collections.impl.Pair;
 import org.integratedmodelling.klab.api.collections.impl.Range;
 import org.integratedmodelling.klab.api.data.mediation.KCurrency;
 import org.integratedmodelling.klab.api.data.mediation.KUnit;
+import org.integratedmodelling.klab.api.data.mediation.KValueMediator;
 import org.integratedmodelling.klab.api.exceptions.KValidationException;
 import org.integratedmodelling.klab.api.lang.KAnnotation;
 import org.integratedmodelling.klab.api.lang.UnarySemanticOperator;
 import org.integratedmodelling.klab.api.lang.ValueOperator;
 import org.integratedmodelling.klab.api.lang.kim.KKimConcept;
+import org.integratedmodelling.klab.api.provenance.KActivity;
 import org.integratedmodelling.klab.api.services.runtime.KChannel;
 
 public interface KObservable extends KSemantics {
@@ -32,7 +35,7 @@ public interface KObservable extends KSemantics {
          */
         Only
     }
-    
+
     /**
      * Conditions stated in the observable that control the use of the default value. Only
      * meaningful if a default value is given.
@@ -41,9 +44,7 @@ public interface KObservable extends KSemantics {
      *
      */
     enum ResolutionException {
-        Missing,
-        Nodata,
-        Error
+        Missing, Nodata, Error
     }
 
     /**
@@ -363,14 +364,14 @@ public interface KObservable extends KSemantics {
          * @return
          */
         Builder withDefaultValue(Object defaultValue);
-        
+
         /**
          * 
          * @param resolutionException
          * @return
          */
         Builder withResolutionException(ResolutionException resolutionException);
-        
+
         /**
          * Add a numeric range (check that the artifact type is numeric at build)
          * 
@@ -429,15 +430,57 @@ public interface KObservable extends KSemantics {
         Builder withUrl(String uri);
 
     }
-    
+
     KConcept getSemantics();
-    
+
     KUnit getUnit();
-    
+
     KUnit getCurrency();
 
     Collection<Pair<ValueOperator, Object>> getValueOperators();
 
     Collection<KAnnotation> getAnnotations();
 
+    Collection<KConcept> abstractPredicates();
+
+    /**
+     * Each observable must be able to quickly assess the type of the description (observation
+     * activity) that will produce an IObservation of it. This is also used to instantiate storage
+     * for states. This is also a key in the equals() and hashcode functions, so that direct
+     * observables for instantiation and resolution are differentiated.
+     *
+     * @return the necessary observation type
+     */
+    KActivity.Description getDescriptionType();
+
+    /**
+     * Return the type of the artifact correspondent to an observation of this observable.
+     * 
+     * @return the artifact type.
+     */
+    KArtifact.Type getArtifactType();
+
+    /**
+     * The stated name is either null or whatever was given in the 'named' clause, and will never be
+     * modified or redefined. It is meant to preserve the original name to capture references in
+     * models that are derived from others.
+     * 
+     * @return the stated name of this observable.
+     */
+    String getStatedName();
+
+    /**
+     * Return any mediator in the state: unit, currency or range. These are also returned separately
+     * by other methods if we need to discriminate.
+     * 
+     * @return
+     */
+    KValueMediator mediator();
+
+    /**
+     * Not null if the (quality) observable has been given a pre-observed value.
+     * 
+     * @return
+     */
+    KLiteral getValue();
 }

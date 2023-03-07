@@ -36,8 +36,8 @@ public class ConceptRestrictionVisitor
 
     public ConceptRestrictionVisitor(KConcept concept, KConcept filler) {
         this.onts = OWL.INSTANCE.manager.getOntologies();
-        this.filler = ((Concept) filler)._owl;
-        ((Concept) concept)._owl.accept(this);
+        this.filler = OWL.INSTANCE.getOWLClass(filler);
+        OWL.INSTANCE.getOWLClass(concept).accept(this);
     }
 
     @Override

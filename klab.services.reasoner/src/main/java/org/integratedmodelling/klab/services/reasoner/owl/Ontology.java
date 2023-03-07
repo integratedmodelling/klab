@@ -33,10 +33,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.integratedmodelling.klab.api.collections.Metadata;
 import org.integratedmodelling.klab.api.exceptions.KIOException;
 import org.integratedmodelling.klab.api.exceptions.KInternalErrorException;
 import org.integratedmodelling.klab.api.exceptions.KValidationException;
+import org.integratedmodelling.klab.api.knowledge.KConcept;
 import org.integratedmodelling.klab.api.knowledge.SemanticType;
 import org.integratedmodelling.klab.api.lang.kim.KKimNamespace;
 import org.integratedmodelling.klab.api.utils.Utils;
@@ -68,18 +68,21 @@ import org.semanticweb.owlapi.model.OWLProperty;
  * and marshalled to a server for actual knowledge creation. Contains no instances, properties or
  * restrictions directly, just concepts for indexing and axioms for the actual stuff.
  * 
+ * TODO use the basic ConceptImpl from the API package; record a hash of Long->OWLClass to match
+ * with each.
+ * 
  * @author Ferd
  */
 public class Ontology /* implements IOntology */ {
 
     String id;
     private Set<String> imported = new HashSet<>();
-    private Map<String, Concept> delegates = new HashMap<>();
+    private Map<String, KConcept> delegates = new HashMap<>();
     OWLOntology ontology;
     private String prefix;
-    private Map<String, Concept> conceptIDs = new HashMap<>();
+    private Map<String, KConcept> conceptIDs = new HashMap<>();
     Map<String, Individual> individuals = new LinkedHashMap<>();
-
+    private Map<KConcept, OWLClass> owlClasses = new HashMap<>();
     /*
      * all properties
      */
@@ -128,7 +131,7 @@ public class Ontology /* implements IOntology */ {
 
         for (OWLClass c : this.ontology.getClassesInSignature(false)) {
             if (c.getIRI().toString().contains(this.prefix) && !this.conceptIDs.containsKey(c.getIRI().getFragment())) {
-                this.conceptIDs.put(c.getIRI().getFragment(), new Concept(c, this.id, OWL.emptyType));
+                this.conceptIDs.put(c.getIRI().getFragment(), OWL.INSTANCE.makeConcept(c, this.id, OWL.emptyType));
             }
         }
         for (OWLProperty<?, ?> p : this.ontology.getDataPropertiesInSignature(false)) {
@@ -157,24 +160,15 @@ public class Ontology /* implements IOntology */ {
         // }
     }
 
-    public void addDelegateConcept(String id, String namespace, Concept concept) {
-        this.delegates.put(id, wrapDelegate(concept, id));
-        concept.getOntology().define(Collections
+    public void addDelegateConcept(String id, String namespace, KConcept concept) {
+        this.delegates.put(id, concept);
+        OWL.INSTANCE.getOntology(concept.getNamespace()).define(Collections
                 .singleton(Axiom.AnnotationAssertion(concept.getName(), NS.LOCAL_ALIAS_PROPERTY, namespace + ":" + id)));
     }
+    
+    public Collection<KConcept> getConcepts() {
 
-    private Concept wrapDelegate(Concept concept, String id) {
-        Concept ret = new Concept(concept);
-        ret.setMetadata(new Metadata());
-        ret.getMetadata().putAll(concept.getMetadata());
-        ret.getMetadata().put(NS.REFERENCE_NAME_PROPERTY, Vocabulary.getCleanFullId(this.id, id));
-        return ret;
-    }
-
-    // @Override
-    public Collection<Concept> getConcepts() {
-
-        ArrayList<Concept> ret = new ArrayList<>(conceptIDs.values());
+        ArrayList<KConcept> ret = new ArrayList<>(conceptIDs.values());
         // for (String s : this.conceptIDs) {
         // ret.add(getConcept(s));
         // }
@@ -198,8 +192,8 @@ public class Ontology /* implements IOntology */ {
     }
 
     // @Override
-    public Concept getConcept(String ID) {
-        Concept ret = this.conceptIDs.get(ID);
+    public KConcept getConcept(String ID) {
+        KConcept ret = this.conceptIDs.get(ID);
         if (ret != null) {
             return ret;
         }
@@ -283,8 +277,8 @@ public class Ontology /* implements IOntology */ {
      */
     public Collection<Ontology> getDelegateOntologies() {
         Set<Ontology> ret = new HashSet<>();
-        for (Concept c : delegates.values()) {
-            ret.add(c.getOntology());
+        for (KConcept c : delegates.values()) {
+            ret.add(OWL.INSTANCE.getOntology(c.getNamespace()));
         }
         return ret;
     }
@@ -330,7 +324,7 @@ public class Ontology /* implements IOntology */ {
 
                     OWLClass newcl = factory.getOWLClass(IRI.create(this.prefix + "#" + axiom.getArgument(0)));
                     this.ontology.getOWLOntologyManager().addAxiom(this.ontology, factory.getOWLDeclarationAxiom(newcl));
-                    this.conceptIDs.put(axiom.getArgument(0).toString(), new Concept(newcl, id, ((Axiom) axiom).conceptType));
+                    this.conceptIDs.put(axiom.getArgument(0).toString(), OWL.INSTANCE.makeConcept(newcl, id, ((Axiom) axiom).conceptType));
 
                 } else if (axiom.is(IAxiom.SUBCLASS_OF)) {
 
@@ -617,6 +611,7 @@ public class Ontology /* implements IOntology */ {
         }
 
         scan();
+        
         return errors;
     }
 
@@ -640,14 +635,14 @@ public class Ontology /* implements IOntology */ {
         OWLClass ret = null;
 
         if (c.equals("owl:Nothing")) {
-            return ((Concept) OWL.INSTANCE.getNothing())._owl;
+            return OWL.INSTANCE.getOWLClass(OWL.INSTANCE.getNothing());
         } else if (c.equals("owl:Thing")) {
-            return ((Concept) OWL.INSTANCE.getRootConcept())._owl;
+            return OWL.INSTANCE.getOWLClass(OWL.INSTANCE.getRootConcept());
         }
 
         if (c.contains(":")) {
 
-            Concept cc = OWL.INSTANCE.getConcept(c);
+            KConcept cc = OWL.INSTANCE.getConcept(c);
             if (cc == null) {
                 errors.add("concept " + cc + " not found");
                 return null;
@@ -659,25 +654,25 @@ public class Ontology /* implements IOntology */ {
             if (!cc.getNamespace().equals(this.id) && !this.imported.contains(cc.getNamespace())) {
 
                 this.imported.add(cc.getNamespace());
-                IRI importIRI = ((Ontology) cc.getOntology()).ontology.getOntologyID().getOntologyIRI();
+                IRI importIRI = OWL.INSTANCE.getOntology(cc.getNamespace()).ontology.getOntologyID().getOntologyIRI();
                 OWLImportsDeclaration importDeclaraton = this.ontology.getOWLOntologyManager().getOWLDataFactory()
                         .getOWLImportsDeclaration(importIRI);
                 OWL.INSTANCE.manager.applyChange(new AddImport(this.ontology, importDeclaraton));
             }
 
-            ret = ((Concept) cc)._owl;
+            ret = OWL.INSTANCE.getOWLClass(cc);
 
         } else {
 
-            Concept cc = conceptIDs.get(c);
+            KConcept cc = conceptIDs.get(c);
 
             if (cc != null) {
-                ret = ((Concept) cc)._owl;
+                ret = owlClasses.get(cc);
             } else {
 
                 ret = this.ontology.getOWLOntologyManager().getOWLDataFactory().getOWLClass(IRI.create(this.prefix + "#" + c));
 
-                this.conceptIDs.put(c, new Concept(ret, c, OWL.emptyType));
+                this.conceptIDs.put(c, OWL.INSTANCE.makeConcept(ret, c, OWL.emptyType));
             }
         }
 
@@ -814,9 +809,9 @@ public class Ontology /* implements IOntology */ {
         return this.resourceUrl;
     }
 
-    public Concept createConcept(String newName, Set<SemanticType> type) {
+    public KConcept createConcept(String newName, Set<SemanticType> type) {
 
-        Concept ret = getConcept(newName);
+        KConcept ret = getConcept(newName);
         if (ret == null) {
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(newName, type));
@@ -944,12 +939,12 @@ public class Ontology /* implements IOntology */ {
         return true;
     }
 
-    // @Override
-    public Concept getIdentity(String authority, String authorityIdentity) {
-        // KAuthority.Identity identity = Authorities.INSTANCE.getIdentity(authority,
-        // authorityIdentity);
-        return null;
-    }
+//    // @Override
+//    public KConcept getIdentity(String authority, String authorityIdentity) {
+//        // KAuthority.Identity identity = Authorities.INSTANCE.getIdentity(authority,
+//        // authorityIdentity);
+//        return null;
+//    }
 
     // public IIndividual getSingletonIndividual(IConcept concept) {
     // String iName = "the" + concept.getLocalName();

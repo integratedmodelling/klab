@@ -38,4 +38,5 @@ public interface KConcept extends KSemantics {
     
     Collection<KConcept> closure();
 
+    
 }

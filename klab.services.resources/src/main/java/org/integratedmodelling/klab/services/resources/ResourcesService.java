@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.lang.kim.KKimObservable;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimNamespace;
 import org.integratedmodelling.klab.api.services.KResources;
 import org.integratedmodelling.klab.configuration.Configuration;
+import org.integratedmodelling.klab.configuration.Services;
 import org.integratedmodelling.klab.logging.Logging;
 import org.integratedmodelling.klab.services.resources.configuration.ResourcesConfiguration;
 import org.integratedmodelling.klab.services.resources.configuration.ResourcesConfiguration.ProjectConfiguration;
@@ -75,6 +76,7 @@ public class ResourcesService implements KResources, KResources.Admin {
     private long DEFAULT_GIT_SYNC_INTERVAL = 15l * 60l * 60l * 1000l;
 
     public ResourcesService() {
+        Services.INSTANCE.setResources(this);
         initializeLanguageServices();
         File config = new File(Configuration.INSTANCE.getDataPath() + File.separator + "resources.yaml");
         if (config.exists()) {

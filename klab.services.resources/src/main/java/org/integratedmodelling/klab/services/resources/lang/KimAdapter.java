@@ -103,15 +103,25 @@ public class KimAdapter {
 
     public static KimStatement makeStatement(IKimScope statement) {
 
+        KimStatement ret = null;
+        
         if (statement instanceof IKimConceptStatement) {
-            return adaptConceptStatement((IKimConceptStatement) statement);
+            ret = adaptConceptStatement((IKimConceptStatement) statement);
         } else if (statement instanceof IKimModel) {
-            return adaptModelStatement((IKimModel) statement);
+            ret = adaptModelStatement((IKimModel) statement);
         } else if (statement instanceof IKimSymbolDefinition) {
-            return adaptSymbolDefinition((IKimSymbolDefinition) statement);
+            ret = adaptSymbolDefinition((IKimSymbolDefinition) statement);
         } else if (statement instanceof IKimAcknowledgement) {
-            return adaptAcknowledgementStatement((IKimAcknowledgement) statement);
+            ret = adaptAcknowledgementStatement((IKimAcknowledgement) statement);
         }
+        
+        if (ret != null) {
+            for (IKimScope child : statement.getChildren()) {
+                ret.getChildren().add(makeStatement(child));
+            }
+            return ret;
+        }
+        
         throw new KIllegalArgumentException("statement " + statement + " cannot be understood");
     }
 

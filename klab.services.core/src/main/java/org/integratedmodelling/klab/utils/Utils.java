@@ -22,12 +22,16 @@ import org.integratedmodelling.klab.api.collections.Annotation;
 import org.integratedmodelling.klab.api.collections.Metadata;
 import org.integratedmodelling.klab.api.data.KMetadata;
 import org.integratedmodelling.klab.api.exceptions.KIOException;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.lang.KAnnotation;
 import org.integratedmodelling.klab.api.lang.kim.impl.KimStatement;
 import org.integratedmodelling.klab.data.encoding.JacksonConfiguration;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.logging.Logging;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,20 +46,118 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
 
+    public static class Classpath {
+
+        /**
+         * Extract the OWL assets in the classpath (under /knowledge/**) to the specified filesystem
+         * directory.
+         * 
+         * @param destinationDirectory
+         * @throws IOException
+         */
+        public static void extractKnowledgeFromClasspath(File destinationDirectory) {
+            try {
+                PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+                org.springframework.core.io.Resource[] resources = resolver.getResources("/knowledge/**");
+                for (org.springframework.core.io.Resource resource : resources) {
+
+                    String path = null;
+                    if (resource instanceof FileSystemResource) {
+                        path = ((FileSystemResource) resource).getPath();
+                    } else if (resource instanceof ClassPathResource) {
+                        path = ((ClassPathResource) resource).getPath();
+                    }
+                    if (path == null) {
+                        throw new KlabIOException("internal: cannot establish path for resource " + resource);
+                    }
+
+                    if (!path.endsWith("owl")) {
+                        continue;
+                    }
+
+                    String filePath = path.substring(path.indexOf("knowledge/") + "knowledge/".length());
+
+                    int pind = filePath.lastIndexOf('/');
+                    if (pind >= 0) {
+                        String fileDir = filePath.substring(0, pind);
+                        File destDir = new File(destinationDirectory + File.separator + fileDir);
+                        destDir.mkdirs();
+                    }
+                    File dest = new File(destinationDirectory + File.separator + filePath);
+                    InputStream is = resource.getInputStream();
+                    FileUtils.copyInputStreamToFile(is, dest);
+                    is.close();
+                }
+            } catch (IOException ex) {
+                throw new KlabIOException(ex);
+            }
+        }
+
+        /**
+         * Only works for a flat hierarchy!
+         * 
+         * @param resourcePattern
+         * @param destinationDirectory
+         */
+        public static void extractResourcesFromClasspath(String resourcePattern, File destinationDirectory) {
+
+            try {
+                PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+                org.springframework.core.io.Resource[] resources = resolver.getResources(resourcePattern);
+                for (org.springframework.core.io.Resource resource : resources) {
+
+                    String path = null;
+                    if (resource instanceof FileSystemResource) {
+                        path = ((FileSystemResource) resource).getPath();
+                    } else if (resource instanceof ClassPathResource) {
+                        path = ((ClassPathResource) resource).getPath();
+                    }
+                    if (path == null) {
+                        throw new KlabIOException("internal: cannot establish path for resource " + resource);
+                    }
+                    String fileName = MiscUtilities.getFileName(path);
+                    File dest = new File(destinationDirectory + File.separator + fileName);
+                    InputStream is = resource.getInputStream();
+                    FileUtils.copyInputStreamToFile(is, dest);
+                    is.close();
+                }
+            } catch (IOException ex) {
+                throw new KlabIOException(ex);
+            }
+        }
+    }
+
     public static class Kim {
+
+        /**
+         * Encode the value so that it can be understood in k.IM code.
+         * 
+         * @param value
+         * @return
+         */
+        public static String encodeValue(Object value) {
+            if (value instanceof String) {
+                return "'" + ((String) value).replace("'", "\\'") + "'";
+            } else if (value instanceof IConcept) {
+                return ((IConcept) value).getDefinition();
+            } else if (value instanceof Range) {
+                return ((Range) value).getKimCode();
+            }
+            return value == null ? "unknown" : value.toString();
+        }
 
         public static void copyStatementData(IKimStatement source, KimStatement destination) {
 
             destination.setUri(source.getURI());
             destination.setLocationDescriptor(source.getLocationDescriptor());
-            
+
             destination.setFirstLine(source.getFirstLine());
             destination.setLastLine(source.getLastLine());
             destination.setFirstCharOffset(source.getFirstCharOffset());
             destination.setLastCharOffset(source.getLastCharOffset());
             destination.setSourceCode(source.getSourceCode());
             destination.setNamespace(source.getNamespace());
-            
+
             for (IKimAnnotation annotation : source.getAnnotations()) {
                 KAnnotation newAnnotation = makeAnnotation(annotation);
                 if ("deprecated".equals(newAnnotation.getName())) {
@@ -67,7 +169,7 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
                 destination.getAnnotations().add(newAnnotation);
             }
         }
-        
+
         public static KAnnotation makeAnnotation(IKimAnnotation annotation) {
             Annotation ret = new Annotation();
             ret.setName(annotation.getName());
@@ -81,15 +183,15 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
             return ret;
         }
     }
-    
+
     public static class YAML {
-        
+
         static ObjectMapper defaultMapper;
-        
+
         static {
             defaultMapper = new ObjectMapper(new YAMLFactory());
         }
-        
+
         /**
          * Load an object from an input stream.
          * 
@@ -160,18 +262,16 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
                 throw new IllegalArgumentException("serialization failed: " + e.getMessage());
             }
         }
-        
+
     }
-    
+
     public static class Json {
 
         static ObjectMapper defaultMapper;
 
         static {
-            defaultMapper = new ObjectMapper()
-                    .enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS)
-                    .enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+            defaultMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                    .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
             defaultMapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
             JacksonConfiguration.configureObjectMapperForKlabTypes(defaultMapper);
         }
@@ -262,7 +362,7 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
         public static <T> T cloneObject(T object) {
             return (T) parseObject(printAsJson(object), object.getClass());
         }
-        
+
         /**
          * Load an object from an input stream.
          * 
@@ -354,12 +454,12 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
                 throw new IllegalArgumentException("serialization failed: " + e.getMessage());
             }
         }
-        
+
         /**
          * Serialize the passed object as JSON and pretty-print the resulting code.
          *
          * @param object the object
-         * @param file 
+         * @param file
          * @return the string
          */
         public static void printAsJson(Object object, File file) {
@@ -378,7 +478,8 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
         }
 
         /**
-         * Convert a map resulting from parsing generic JSON (or any other source) to the passed type.
+         * Convert a map resulting from parsing generic JSON (or any other source) to the passed
+         * type.
          * 
          * @param payload
          * @param cls
@@ -389,7 +490,7 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
         }
 
     }
-    
+
     public static class Files extends org.integratedmodelling.klab.api.utils.Utils.Files {
 
         public static void deleteDirectory(File pdir) {
@@ -399,33 +500,29 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
                 throw new KIOException(e);
             }
         }
-        
+
         public static boolean deleteQuietly(File pdir) {
             return FileUtils.deleteQuietly(pdir);
         }
-        
+
     }
-    
+
     public static class Markdown {
-        
+
     }
-    
+
     public static class Git {
 
-        public static final String MAIN_BRANCH = "master"; 
+        public static final String MAIN_BRANCH = "master";
 
         /**
          * Clone.
          *
-         * @param gitUrl
-         *            the git url
-         * @param directory
-         *            the directory
-         * @param removeIfExisting
-         *            the remove if existing
+         * @param gitUrl the git url
+         * @param directory the directory
+         * @param removeIfExisting the remove if existing
          * @return the string
-         * @throws KlabException
-         *             the klab exception
+         * @throws KlabException the klab exception
          */
         public static String clone(String gitUrl, File directory, boolean removeIfExisting) throws KlabException {
 
@@ -455,7 +552,8 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
 
             Logging.INSTANCE.info("cloning Git repository " + url + " branch " + branch + " ...");
 
-            try (org.eclipse.jgit.api.Git result = org.eclipse.jgit.api.Git.cloneRepository().setURI(url).setBranch(branch).setDirectory(pdir).call()) {
+            try (org.eclipse.jgit.api.Git result = org.eclipse.jgit.api.Git.cloneRepository().setURI(url).setBranch(branch)
+                    .setDirectory(pdir).call()) {
 
                 Logging.INSTANCE.info("cloned Git repository: " + result.getRepository());
 
@@ -476,10 +574,8 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
         /**
          * Pull local repository in passed directory.
          *
-         * @param localRepository
-         *            main directory (containing .git/)
-         * @throws KlabException
-         *             the klab exception
+         * @param localRepository main directory (containing .git/)
+         * @throws KlabException the klab exception
          */
         public static void pull(File localRepository) throws KlabException {
 
@@ -492,8 +588,7 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
                     pullCmd.call();
 
                 } catch (Throwable e) {
-                    throw new KlabIOException(
-                            "error pulling repository " + localRepository + ": " + e.getLocalizedMessage());
+                    throw new KlabIOException("error pulling repository " + localRepository + ": " + e.getLocalizedMessage());
                 }
             } catch (IOException e) {
                 throw new KlabIOException(e);
@@ -501,20 +596,16 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
         }
 
         /**
-         * If a Git repository with the repository name corresponding to the URL exists
-         * in gitDirectory, pull it from origin; otherwise clone it from the passed Git
-         * URL.
+         * If a Git repository with the repository name corresponding to the URL exists in
+         * gitDirectory, pull it from origin; otherwise clone it from the passed Git URL.
          * 
-         * TODO: Assumes branch is already set correctly if repo is pulled. Should check
-         * branch and checkout if necessary.
+         * TODO: Assumes branch is already set correctly if repo is pulled. Should check branch and
+         * checkout if necessary.
          *
-         * @param gitUrl
-         *            the git url
-         * @param gitDirectory
-         *            the git directory
+         * @param gitUrl the git url
+         * @param gitDirectory the git directory
          * @return the string
-         * @throws KlabException
-         *             the klab exception
+         * @throws KlabException the klab exception
          */
         public static String requireUpdatedRepository(String gitUrl, File gitDirectory) throws KlabException {
 
@@ -542,17 +633,17 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
         /**
          * Checks if is remote git URL.
          *
-         * @param string
-         *            the string
+         * @param string the string
          * @return a boolean.
          */
         public static boolean isRemoteGitURL(String string) {
             return string.startsWith("http:") || string.startsWith("git:") || string.startsWith("https:")
                     || string.startsWith("git@");
         }
-        
+
         /**
          * Check if remote branch exists
+         * 
          * @param gitUrl the remote repository
          * @param branch the branch (without refs/heads/)
          * @return true if branch exists
@@ -561,28 +652,28 @@ public class Utils extends org.integratedmodelling.klab.api.utils.Utils {
             final LsRemoteCommand lsCmd = new LsRemoteCommand(null);
             lsCmd.setRemote(gitUrl);
             try {
-                return lsCmd.call().stream().filter(ref -> ref.getName().equals("refs/heads/"+branch)).count() == 1;
+                return lsCmd.call().stream().filter(ref -> ref.getName().equals("refs/heads/" + branch)).count() == 1;
             } catch (GitAPIException e) {
                 e.printStackTrace();
                 return false;
             }
         }
     }
-    
+
     public static class Maps {
-                
+
     }
-    
+
     public static class Templates {
-        
+
     }
-    
+
     public static class Wildcards {
-        
+
     }
-    
+
     public static class Network {
-        
+
     }
-    
+
 }
