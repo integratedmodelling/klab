@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
+import org.integratedmodelling.klab.hub.exception.NoValidAgreementException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -93,20 +94,20 @@ public class EngineAuthResponeFactory {
 		return null;
 	}
 	
-    private void validateProfileAccountStatus(ProfileResource profile) {
+    private void validateProfileAccountStatus(ProfileResource profile) throws AuthenticationFailedException {
         switch(profile.accountStatus) {
         case active:
             return;
         case locked:
-            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' is locked.");
+            throw new AuthenticationFailedException(String.format("User '%s' is locked.", profile.getUsername()));
         case deleted:
-            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' is deleted.");
+            throw new AuthenticationFailedException(String.format("User '%s' is deleted.", profile.getUsername()));
         case pendingActivation:
         case verified:
-            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' has not completed the activation process.");
+            throw new AuthenticationFailedException(String.format("User '%s' has not completed the activation process.", profile.getUsername()));
         case expired:
         default:
-            throw new AuthenticationFailedException("User '" + profile.getUsername() + "' is not active.");
+            throw new AuthenticationFailedException(String.format("User '%s' is not active.", profile.getUsername()));
         }
     }
 
@@ -118,12 +119,12 @@ public class EngineAuthResponeFactory {
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
 
         validateProfileAccountStatus(profile);
-        
+
+        // TODO for now, we just assume that there is a single agreement per profile.
         List<Agreement> validAgreements = profile.getAgreements().stream()
                 .filter(a -> !a.isRevoked() && !a.isExpired()).collect(Collectors.toList());
-        // TODO for now, we just assume that there is a single agreement per profile.
         if (validAgreements.isEmpty()) {
-            throw new AuthenticationFailedException("User has no valid agreement.");
+            throw new NoValidAgreementException(profile.getUsername());
         }
 
         final DateTime nowPlus30Days = DateTime.now().plusDays(30);
@@ -131,7 +132,7 @@ public class EngineAuthResponeFactory {
             .filter(a -> a.hasExpirationDate() && !new DateTime(a.getExpiredDate()).isAfter(nowPlus30Days))
             .forEach(a -> {
                 HubNotificationMessage msg = HubNotificationMessage.MessageClass
-                        .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpiredDate().toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                        .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpiredDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
                                 new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, a.getExpiredDate())
                               })));
                 messages.add(msg);

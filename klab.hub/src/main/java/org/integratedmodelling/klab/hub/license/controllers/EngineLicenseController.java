@@ -107,9 +107,6 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 			throw new LicenseGenerationError("Issue in authenticating certificate.");
 		} catch (LicenseExpiredException e) {
             emailManager.expiredLicenseEmail(request.getEmail());
-        } catch (AuthenticationFailedException e) {
-            // TODO create a HubNotificationMessage for this kind of exception
-            return new ResponseEntity<>(null, HttpStatus.PRECONDITION_FAILED);
         }
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
