@@ -102,13 +102,6 @@
 			<dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-jsp</artifactId>
 			<version>9.3.0.M1</version> </dependency> -->
 
-		<!-- for SafeUrl to help sanitize imported resource names -->
-		<dependency>
-			<groupId>com.google.common.html.types</groupId>
-			<artifactId>types</artifactId>
-			<version>1.0.8</version>
-		</dependency>
-
 		<!-- unzip uploaded resources -->
 		<dependency>
 			<groupId>net.lingala.zip4j</groupId>
