@@ -60,11 +60,6 @@
         	<version>0.2.1.RELEASE</version>
     	</dependency>
 
-    	<dependency>
-    		<groupId>io.dekorate</groupId>
-    		<artifactId>kubernetes-annotations</artifactId>
-    		<version>1.0.1</version>
-    	</dependency>
  -->
 
 		<!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
