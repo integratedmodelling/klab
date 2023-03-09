@@ -26,29 +26,29 @@ export number owa
 	import number obs5
 		"Fifth observable."				
 
-	optional parameter number relevance1
+	parameter number relevance1
 		"Relevance weight of first observable."
 		default = 1.0
 	
-	optional parameter number relevance2
+	parameter number relevance2
 		"Relevance weight of first observable."
 		default = 1.0
 		
-	optional parameter number relevance3
+	parameter number relevance3
 		"Relevance weight of first observable."
 		default = 1.0
 		
-	optional parameter number relevance4
+	parameter number relevance4
 		"Relevance weight of first observable."
 		default = 1.0
 		
-	optional parameter number relevance5
+	parameter number relevance5
 		"Relevance weight of first observable."		
 		default = 1.0	
 	
-	optional parameter number risk_profile
+	parameter number risk_profile
 		"The observer's risk profile from -1 to 1, where negative numbers represent risk aversion."
-		default = 0.0		
+		default = 1.0		
 
 	class org.integratedmodelling.owa.OWAResolver
 }
