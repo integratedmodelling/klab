@@ -360,7 +360,13 @@ public class EngineViewController {
         if (!done && format == GeometryType.RAW) {
 
             // should have a format field
-            File out = File.createTempFile("klab", "." + outputFormat);
+            File out;
+            if(outputFormat.equals("tiff")){
+                // for visualization we export also with the style files, so we need to change to zip
+                out = File.createTempFile("klab", ".zip");
+            }else {
+                out = File.createTempFile("klab", "." + outputFormat);
+            }
             // TODO support explicit adapter
             out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null, session.getMonitor());
             if (out != null) {	
