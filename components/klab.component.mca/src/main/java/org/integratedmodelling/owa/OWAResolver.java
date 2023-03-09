@@ -102,7 +102,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		resolver.relevanceWeights = rw;
 		
 		Double riskProfile = parameters.get("risk_profile", Double.class);
-		resolver.setOrdinalWeights(relevanceWeights.size(),riskProfile);
+//		resolver.setOrdinalWeights(relevanceWeights.size(),riskProfile);
+		resolver.setOrdinalWeights(rw.size(),riskProfile);
+
 		
 		return resolver;
 	}
