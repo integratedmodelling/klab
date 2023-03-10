@@ -51,3 +51,35 @@ filter object ranking
 
 	class org.integratedmodelling.mca.services.RankingInstantiator
 }
+
+export number owa
+	"Calculates the Ordered Weighted Average of a set of observables contextualized in the scope. Takes the observables' relevance weights
+	and the observer's risk profile as input parameters. The ordinal weights are determined according to the observer's risk profile. Currently
+	the function is built for a specific case-study of coastal zones' vulnerability. To be generalized."
+	label 'Ordered Weighted Average'
+{
+	import number elevation
+		"First observable."
+	
+	import number slope
+		"Second observable."
+	
+	import number aspect
+		"Third observable."
+	
+	import number ndvi
+		"Fourth observable."
+	
+	import number lai
+		"Fifth observable."				
+
+	parameter value weights
+		"Map of relevance weights for each observation."
+		default = {elevation: 1.0, slope: 1.0, aspect: 1.0, ndvi: 1.0, lai: 1.0 }
+	
+	parameter number risk_profile
+		"The observer's risk profile from -1 to 1, where negative numbers represent risk aversion."
+		default = 1.0		
+
+	class org.integratedmodelling.owa.OWAResolver
+}
