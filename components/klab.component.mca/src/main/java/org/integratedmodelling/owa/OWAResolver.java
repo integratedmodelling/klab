@@ -67,6 +67,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		
 		// OWA is a quantitative metric thus we force values to be double, an exception should be 
 		// thrown if the observable cannot be forced to a double.
+		// TODO: handle the case where the key has not an associated State.
 		for (String key : relevanceWeights.keySet()) {
 			values.put(key, scope.get(key, IState.class).get(locator, Double.class)); 
 		} 
