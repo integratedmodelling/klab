@@ -352,6 +352,14 @@ public interface API {
          * Base URL path for locked users.
          */
         public static final String LOCKED_USERS = USER_BASE + "/locked-users";
+        /**
+         *URL path for get agreement template.
+         */
+        public static final String GET_AGREEMENT = API_BASE + "/agreement";
+        /**
+         *URL path for get agreement template.
+         */
+        public static final String GET_AGREEMENT_TEMPLATE = API_BASE + "/agreement-template";
 
 
         public static interface PARAMETERS {
