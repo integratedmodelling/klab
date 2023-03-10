@@ -9,7 +9,6 @@ import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
-import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -62,16 +61,16 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		}
 	}
 
-	public static class ParentConcept {
+	public static class ParentConceptImpl implements ParentConcept {
 
-		private List<KimConcept> concepts = new ArrayList<>();
+		private List<IKimConcept> concepts = new ArrayList<>();
 		private BinarySemanticOperator connector = BinarySemanticOperator.NONE;
 
-		public List<KimConcept> getConcepts() {
+		public List<IKimConcept> getConcepts() {
 			return concepts;
 		}
 
-		public void setConcepts(List<KimConcept> concepts) {
+		public void setConcepts(List<IKimConcept> concepts) {
 			this.concepts = concepts;
 		}
 
@@ -364,29 +363,6 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		this.traitsConferred = traitsConferred;
 	}
 
-//	@Override
-//	public List<IKimConcept> getPartParticipants() {
-//		return partParticipants;
-//	}
-//
-//	@Override
-//	public List<IKimConcept> getConfigurationParticipants() {
-//		return configurationParticipants;
-//	}
-//
-//	public void setPartParticipants(List<IKimConcept> partParticipants) {
-//		this.partParticipants = partParticipants;
-//	}
-//
-//	@Override
-//	public List<IKimConcept> getConstituentParticipants() {
-//		return constituentParticipants;
-//	}
-//
-//	public void setConstituentParticipants(List<IKimConcept> constituentParticipants) {
-//		this.constituentParticipants = constituentParticipants;
-//	}
-
 	@Override
 	public List<IKimConcept> getObservablesCreated() {
 		return observablesCreated;
@@ -420,27 +396,17 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		for (ApplicableConcept applicable : appliesTo) {
 			((ApplicableConceptImpl) applicable).visit(visitor);
 		}
-
-//		for (IKimConcept c : constituentParticipants) {
-//			c.visit(visitor);
-//		}
 		for (IKimConcept c : observablesCreated) {
 			c.visit(visitor);
 		}
-//		for (IKimConcept c : exposedTraits) {
-//			c.visit(visitor);
-//		}
 		for (Pair<IKimConcept, DescriptionType> c : observablesDescribed) {
 			c.getFirst().visit(visitor);
 		}
 		for (ParentConcept parent : parents) {
-			for (IKimConcept concept : parent.concepts) {
+			for (IKimConcept concept : parent.getConcepts()) {
 				concept.visit(visitor);
 			}
 		}
-//		for (IKimConcept c : partParticipants) {
-//			c.visit(visitor);
-//		}
 		for (IKimConcept c : emergenceTriggers) {
 			c.visit(visitor);
 		}
@@ -459,9 +425,6 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 		for (IKimConcept c : requiredRealms) {
 			c.visit(visitor);
 		}
-//		for (IKimRestriction c : restrictions) {
-//			((KimRestriction) c).visit(visitor);
-//		}
 		for (ApplicableConcept a : subjectsLinked) {
 			((ApplicableConceptImpl) a).visit(visitor);
 		}
@@ -493,25 +456,6 @@ public class KimConceptStatement extends KimStatement implements IKimConceptStat
 	public void setAuthorityTerm(String string) {
 		this.authorityTerm = string;
 	}
-
-//	@Override
-//	public List<IKimObservable> getTraitsExposed() {
-//		return traitsExposed;
-//	}
-//
-//	public void setTraitsExposed(List<IKimObservable> traitsExposed) {
-//		this.traitsExposed = traitsExposed;
-//	}
-
-//	@Override
-//	public boolean isDefiningExposedTraits() {
-//		return definingExposedTraits;
-//	}
-//
-//	public void setDefiningExposedTraits(boolean definingExposedTraits) {
-//		this.definingExposedTraits = definingExposedTraits;
-//	}
-
 	public void addRole(IKimConcept role, IKimConcept target, IKimConcept restricted) {
 		RoleDescriptor rd = new RoleDescriptor();
 		rd.role = role;

@@ -1,13 +1,20 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -21,6 +28,7 @@ import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * Helper class to facilitate access to the contextualizer declaration and units management in
@@ -53,6 +61,59 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
     public void setScope(RuntimeScope scope) {
         this.scope = scope;
+    }
+
+    public IParameters<String> getAnnotatedInputs(String annotation) {
+        return getAnnotatedInputs(annotation, null);
+    }
+
+    public Map<String, IAnnotation> getAnnotations(String annotation) {
+
+        Map<String, IAnnotation> ret = new HashMap<>();
+        Argument input = null;
+        for (Argument iarg : prototype.listImportAnnotations()) {
+            if (iarg.getName().equals(annotation)) {
+                input = iarg;
+                break;
+            }
+        }
+        
+        if (input != null) {
+            for (IObservation obs : scope.getCatalog().values()) {
+                IAnnotation ann = Annotations.INSTANCE.getAnnotation(obs.getObservable(), annotation);
+                if (ann != null) {
+                    ret.put(obs.getObservable().getName(), ann);
+                }
+            }
+        }
+        
+        return ret;
+    }
+
+    public IParameters<String> getAnnotatedInputs(String annotation, ILocator locator) {
+
+        IParameters<String> ret = Parameters.create();
+        Argument input = null;
+        for (Argument iarg : prototype.listImportAnnotations()) {
+            if (iarg.getName().equals(annotation)) {
+                input = iarg;
+                break;
+            }
+        }
+
+        if (input != null) {
+            for (IObservation obs : scope.getCatalog().values()) {
+                if (Annotations.INSTANCE.hasAnnotation(obs.getObservable(), annotation)) {
+                    if (obs instanceof IState && locator != null) {
+                        ret.put(obs.getObservable().getName(), ((IState) obs).get(locator));
+                    } else {
+                        ret.put(obs.getObservable().getName(), obs);
+                    }
+                }
+            }
+        }
+
+        return ret;
     }
 
     /**

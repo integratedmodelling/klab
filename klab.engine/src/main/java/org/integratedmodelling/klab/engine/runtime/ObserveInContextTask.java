@@ -234,6 +234,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 
                     } else {
                         monitor.warn("could not build dataflow: observation unsuccessful");
+                        notifyEnd();
                         ret = Observation.empty(observable, context.getScope());
                     }
 

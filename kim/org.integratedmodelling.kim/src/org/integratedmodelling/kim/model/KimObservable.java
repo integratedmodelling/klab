@@ -84,8 +84,8 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
         KimObservable ret = new KimObservable(declaration, parent);
         for (Annotation annotation : declaration.getAnnotations()) {
-            ret.getAnnotations().add(new KimAnnotation(annotation,
-                    Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)), ret));
+            ret.getAnnotations()
+                    .add(new KimAnnotation(annotation, Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)), ret));
         }
 
         ret.main = concept;
@@ -94,37 +94,37 @@ public class KimObservable extends KimStatement implements IKimObservable {
         ret.formalName = declaration.getName();
         ret.optional = declaration.isOptional();
         ret.exclusive = declaration.isExclusive();
-        
-//        if (declaration.isDefault()) {
-//            
-//            if (declaration.getDefaultLiteral() != null) {
-//                ret.defaultValue = Kim.INSTANCE.parseLiteral(declaration.getDefaultLiteral(),
-//                        Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)));
-//            } else if (declaration.getDefaultConcept() != null) {
-//                ret.defaultValue = Kim.INSTANCE.declareConcept(declaration.getDefaultConcept());
-//            }
-//
-//            if (declaration.getCauses() != null) {
-//                for (String resEx : declaration.getCauses()) {
-//                    switch(resEx) {
-//                    case "error":
-//                        ret.resolutionExceptions.add(ResolutionException.Error);
-//                        break;
-//                    case "missing":
-//                        ret.resolutionExceptions.add(ResolutionException.Missing);
-//                        break;
-//                    case "nodata":
-//                        ret.resolutionExceptions.add(ResolutionException.Nodata);
-//                        break;
-//                    }
-//                }
-//            }
-//            
-//            if (ret.resolutionExceptions.contains(ResolutionException.Missing)) {
-//                ret.optional = true;
-//            }
-//        }
-        
+
+        // if (declaration.isDefault()) {
+        //
+        // if (declaration.getDefaultLiteral() != null) {
+        // ret.defaultValue = Kim.INSTANCE.parseLiteral(declaration.getDefaultLiteral(),
+        // Kim.INSTANCE.getNamespace(KimValidator.getNamespace(declaration)));
+        // } else if (declaration.getDefaultConcept() != null) {
+        // ret.defaultValue = Kim.INSTANCE.declareConcept(declaration.getDefaultConcept());
+        // }
+        //
+        // if (declaration.getCauses() != null) {
+        // for (String resEx : declaration.getCauses()) {
+        // switch(resEx) {
+        // case "error":
+        // ret.resolutionExceptions.add(ResolutionException.Error);
+        // break;
+        // case "missing":
+        // ret.resolutionExceptions.add(ResolutionException.Missing);
+        // break;
+        // case "nodata":
+        // ret.resolutionExceptions.add(ResolutionException.Nodata);
+        // break;
+        // }
+        // }
+        // }
+        //
+        // if (ret.resolutionExceptions.contains(ResolutionException.Missing)) {
+        // ret.optional = true;
+        // }
+        // }
+
         if (declaration.getValue() != null) {
             String id = declaration.getValue().getId();
             ret.value = Kim.INSTANCE.parseValue(declaration.getValue(),
@@ -216,7 +216,25 @@ public class KimObservable extends KimStatement implements IKimObservable {
             return nonSemanticType + " " + modelReference;
         }
 
-        String ret = main.getDefinition();
+        String ret = "";
+        
+        if (this.generic) {
+            ret += "any ";
+        } else if (this.exclusive) {
+            ret += "only ";
+        } else if (this.global) {
+            ret += "all ";
+        } 
+        
+        ret += main.getDefinition();
+
+        if (this.unit != null) {
+            ret += " in " + this.unit;
+        } else if (this.currency != null) {
+            ret += " in " + this.currency;
+        } else if (this.range != null) {
+            ret += this.range.getKimCode();
+        }
 
         for (Pair<ValueOperator, Object> operator : valueOperators) {
 
@@ -231,6 +249,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
                         + (operator.getSecond() != null ? operator.getSecond().toString() : "")
                         + (operator.getSecond() instanceof String ? "'" : "");
             }
+        }
+        
+        if (this.optional) {
+            ret += " optional";
         }
 
         if (formalName != null && !formalName.isEmpty()) {
@@ -356,11 +378,10 @@ public class KimObservable extends KimStatement implements IKimObservable {
         if (value instanceof String) {
             return "A string is not an acceptable value for any observable";
         }
-        if (value instanceof IKimConcept && !(main.is(Type.CLASS) || main.is(Type.TRAIT) /*
-                                                                                          * ||
-                                                                                          * classifier
-                                                                                          * != null
-                                                                                          */)) {
+        if (value instanceof IKimConcept
+                && !(main.is(Type.CLASS) || main.is(Type.TRAIT) /*
+                                                                 * || classifier != null
+                                                                 */)) {
             return "A concept is not an acceptable value for this observable";
         }
         if (value instanceof IKimConcept && !main.is(((IKimConcept) value).getFundamentalType())) {
