@@ -53,13 +53,15 @@ filter object ranking
 }
 
 export number owa
-	"Calculates the Ordered Weighted Average of a set of observables contextualized in the scope. Takes the observables' relevance weights
+	"Calculates the Ordered Weighted Average of a set of observations in the scope. Takes the observables' relevance weights
 	and the observer's risk profile as input parameters. The ordinal weights are determined according to the observer's risk profile. Currently
 	the function is built for a specific case-study of coastal zones' vulnerability. To be generalized."
 	label 'Ordered Weighted Average'
 {
 			
-	parameter map weights
+	import number @criterion
+	
+	optional parameter map weights
 		"Map of relevance weights for each observation."
 	
 	parameter number risk_profile
@@ -67,20 +69,4 @@ export number owa
 		default = 1.0		
 
 	class org.integratedmodelling.owa.OWAResolver
-}
-
-export number annotated_owa
-	"Calculates the Ordered Weighted Average of a set of observables contextualized in the scope. Takes the observables' relevance weights
-	and the observer's risk profile as input parameters. The ordinal weights are determined according to the observer's risk profile. Currently
-	the function is built for a specific case-study of coastal zones' vulnerability. To be generalized."
-	label 'Ordered Weighted Average'
-{
-			
-	import number @relevance
-	
-	parameter number risk_profile
-		"The observer's risk profile from -1 to 1, where negative numbers represent risk aversion."
-		default = 1.0		
-
-	class org.integratedmodelling.owa.OWAAnnotatedResolver
 }
