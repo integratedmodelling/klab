@@ -59,7 +59,7 @@ export number owa
 	label 'Ordered Weighted Average'
 {
 			
-	parameter value weights
+	parameter map weights
 		"Map of relevance weights for each observation."
 	
 	parameter number risk_profile
