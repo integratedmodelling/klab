@@ -100,12 +100,13 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		// If weights were not explicitly specified as parameters try to get them from annotations.
 		if (rw == null) {
 			
+			rw = new HashMap<>(); 
 			IParameters<String> annotatedInputs = getAnnotatedInputs("criterion");
 			Map<String, IAnnotation> annotations = getAnnotations("criterion");
 			
 			// Create map of relevance weights iterating over annotated inputs and extracting the
 			// annotation weight value.
-			// TODO: think of multiple parameters for the annotation and how to handle them.
+			// TODO: design a better way to handle multiple parameters of the annotation.
 			for(String observable: annotatedInputs.keySet()) {
 				
 				Boolean containsWeight = annotations.get(observable).contains("weight");
