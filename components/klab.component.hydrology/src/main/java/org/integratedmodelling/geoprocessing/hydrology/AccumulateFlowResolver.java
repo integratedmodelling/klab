@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.components.geospace.processing.ContributingC
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Point;
 
@@ -107,25 +108,29 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
         IExpression downstreamExpression = null;
         IExpression upstreamExpression = null;
 
+        for (Pair<String, IState> a : context.getArtifacts(IState.class)) {
+            states.put(a.getFirst(), a.getSecond());
+        }
+        
         if (accumulateDescriptor != null) {
             // check inputs and see if the expr is worth anything in this context
-            for (String input : accumulateDescriptor.getIdentifiers()) {
-                if (accumulateDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
-                    IState state = context.getArtifact(input, IState.class);
-                    states.put(input, state);
-                }
-            }
+//            for (String input : accumulateDescriptor.getIdentifiers()) {
+//                if (accumulateDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
+//                    IState state = context.getArtifact(input, IState.class);
+//                    states.put(input, state);
+//                }
+//            }
             downstreamExpression = accumulateDescriptor.compile();
         }
 
         if (distributeDescriptor != null) {
             // check inputs and see if the expr is worth anything in this context
-            for (String input : distributeDescriptor.getIdentifiers()) {
-                if (distributeDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
-                    IState state = context.getArtifact(input, IState.class);
-                    states.put(input, state);
-                }
-            }
+//            for (String input : distributeDescriptor.getIdentifiers()) {
+//                if (distributeDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
+//                    IState state = context.getArtifact(input, IState.class);
+//                    states.put(input, state);
+//                }
+//            }
             upstreamExpression = distributeDescriptor.compile();
         }
 
