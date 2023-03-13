@@ -22,11 +22,11 @@ import org.integratedmodelling.klab.utils.Parameters;
 public class OWAResolver extends AbstractContextualizer implements IStateResolver, IExpression {
 
 	private Map<String,Number> relevanceWeights;
-	private Map<Integer,Double> ordinalWeights;
+	private Map<Integer, Number> ordinalWeights;
     private Double riskProfile;
 	
-	private Map<Integer,Double> buildOrdinalWeights(Integer nObservations, Double riskProfile){
-		Map<Integer,Double> w = new HashMap<Integer,Double>();
+	private Map<Integer,Number> buildOrdinalWeights(Integer nObservations, Double riskProfile){
+		Map<Integer,Number> w = new HashMap<>();
 		for(int i=0;i<nObservations;i++){
 			// TODO: here a proper function that calculates ordinal weights from risk profile.
 			w.put(i,riskProfile); 
@@ -38,7 +38,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		this.ordinalWeights = buildOrdinalWeights(nObservations,riskProfile);
 	}
 		
-	private Double calculateOWA(Map<String,Number> relevanceWeights, Map<Integer,Double> ordinalWeights, Map<String,Double> values) {
+	private Double calculateOWA(Map<String,Number> relevanceWeights, Map<Integer, Number> ordinalWeights, Map<String,Double> values) {
 		
 		// Sort the values' map by ascending order.
 		LinkedHashMap<String, Double> sortedValues = values.entrySet()
@@ -57,7 +57,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		for (String key : sortedValues.keySet()) {
 	        Double sv = sortedValues.get(key);
             double rw = relevanceWeights.get(key).doubleValue();
-            Double ow = ordinalWeights.get(i);
+            Double ow = ordinalWeights.get(i).doubleValue();
             acc += sv.doubleValue() * rw * ow.doubleValue();
 	        i++;
 		}
@@ -116,7 +116,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
                 }
             }
             
-            setOrdinalWeights(relevanceWeights.size(), riskProfile);
+            if (ordinalWeights == null) {
+            	setOrdinalWeights(relevanceWeights.size(), riskProfile);
+            }	
 
         }
     }
@@ -131,10 +133,19 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		@SuppressWarnings("unchecked")
 		Map<String,Number> rw = parameters.get("weights", Map.class);
 		resolver.relevanceWeights = rw;
+		
 		resolver.riskProfile = parameters.get("risk_profile", Double.class);
-        if (rw != null) {
-            resolver.setOrdinalWeights(rw.size(), riskProfile);
-        }
+		
+		// Try to import the ordinal weights.
+		@SuppressWarnings("unchecked")
+		Map<Integer,Number> ow = parameters.get("ordinal_weights", Map.class);
+		resolver.ordinalWeights = ow;
+			
+		if (ow == null) {
+			if (rw != null) {
+				resolver.setOrdinalWeights(rw.size(), riskProfile);
+			}
+		}	
 
 		return resolver;
 	}
