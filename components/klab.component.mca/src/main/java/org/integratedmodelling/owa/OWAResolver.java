@@ -95,7 +95,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		HashMap<String,Double> rw = parameters.get("weights", HashMap.class);
 		
 		// If weights were not explicitly specified as parameters try to get them from annotations.
-		if (rw.isEmpty()) {
+		if (rw == null) {
 			
 			IParameters<String> annotatedInputs = getAnnotatedInputs("criterion");
 			Map<String, IAnnotation> annotations = getAnnotations("criterion");
