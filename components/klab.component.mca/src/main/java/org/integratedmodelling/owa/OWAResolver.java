@@ -1,7 +1,9 @@
 package org.integratedmodelling.owa;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,23 +24,26 @@ import org.integratedmodelling.klab.utils.Parameters;
 public class OWAResolver extends AbstractContextualizer implements IStateResolver, IExpression {
 
 	private Map<String,Number> relevanceWeights;
-	private Map<Integer, Number> ordinalWeights;
-    private Double riskProfile;
+	private List<Number> ordinalWeights;
 	
-	private Map<Integer,Number> buildOrdinalWeights(Integer nObservations, Double riskProfile){
-		Map<Integer,Number> w = new HashMap<>();
+	// Used only in the case that  relevance weights are specified with annotations and 
+	// ordinal weights are not passed explicitly. 
+	private Double riskProfileParameter;
+	
+	private List<Number> buildOrdinalWeights(Integer nObservations, Double riskProfile){
+		List<Number> ow = new ArrayList<>();
 		for(int i=0;i<nObservations;i++){
 			// TODO: here a proper function that calculates ordinal weights from risk profile.
-			w.put(i,riskProfile); 
+			ow.add(riskProfile); 
 		}
-		return w;
+		return ow;
 	} 
 	
 	private void setOrdinalWeights(Integer nObservations, Double riskProfile) {
 		this.ordinalWeights = buildOrdinalWeights(nObservations,riskProfile);
 	}
 		
-	private Double calculateOWA(Map<String,Number> relevanceWeights, Map<Integer, Number> ordinalWeights, Map<String,Double> values) {
+	private Double calculateOWA(Map<String,Number> relevanceWeights, List<Number> ordinalWeights, Map<String,Double> values) {
 		
 		// Sort the values' map by ascending order.
 		LinkedHashMap<String, Double> sortedValues = values.entrySet()
@@ -117,12 +122,13 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
             }
             
             if (ordinalWeights == null) {
-            	setOrdinalWeights(relevanceWeights.size(), riskProfile);
+            	setOrdinalWeights(relevanceWeights.size(), riskProfileParameter);
             }	
 
         }
     }
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object eval(IContextualizationScope scope, Object...params) throws KlabException{
 		Parameters<String> parameters = Parameters.create(params);		
@@ -130,22 +136,22 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		OWAResolver resolver = new OWAResolver();		
 		
 		// First try to import the weights from the resolver's parameters.
-		@SuppressWarnings("unchecked")
 		Map<String,Number> rw = parameters.get("weights", Map.class);
 		resolver.relevanceWeights = rw;
+				
+		// Import the ordinal weights.
+		Object rp = parameters.get("risk_profile");
 		
-		resolver.riskProfile = parameters.get("risk_profile", Double.class);
-		
-		// Try to import the ordinal weights.
-		@SuppressWarnings("unchecked")
-		Map<Integer,Number> ow = parameters.get("ordinal_weights", Map.class);
-		resolver.ordinalWeights = ow;
-			
-		if (ow == null) {
+		if (rp instanceof List) {
+			resolver.ordinalWeights = (List<Number>) rp;
+		} else if(rp instanceof Number) {
+			resolver.riskProfileParameter = (Double) rp;
 			if (rw != null) {
-				resolver.setOrdinalWeights(rw.size(), riskProfile);
+				resolver.setOrdinalWeights(rw.size(), (Double) rp);
+			} else {
+				resolver.ordinalWeights = null;
 			}
-		}	
+		}
 
 		return resolver;
 	}

@@ -63,11 +63,8 @@ export number owa
 	
 	optional parameter map weights
 		"Map of relevance weights for each observation."
-	
-	optional parameter map ordinal_weights
-		"Map of ordinal weights."	
-	
-	optional parameter number risk_profile
+		
+	parameter value risk_profile
 		"The observer's risk profile from -1 to 1, where negative numbers represent risk aversion."
 		default = 1.0		
 
