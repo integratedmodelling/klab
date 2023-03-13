@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.ContributingCell;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
+import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -111,41 +112,48 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
         for (Pair<String, IState> a : context.getArtifacts(IState.class)) {
             states.put(a.getFirst(), a.getSecond());
         }
-        
         if (accumulateDescriptor != null) {
-            // check inputs and see if the expr is worth anything in this context
-//            for (String input : accumulateDescriptor.getIdentifiers()) {
-//                if (accumulateDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
-//                    IState state = context.getArtifact(input, IState.class);
-//                    states.put(input, state);
-//                }
-//            }
+            // // check inputs and see if the expr is worth anything in this context
+            // for (String input : accumulateDescriptor.getIdentifiers()) {
+            // if (accumulateDescriptor.isScalar(input) && context.getArtifact(input,
+            // IState.class)
+            // != null) {
+            // IState state = context.getArtifact(input, IState.class);
+            // states.put(input, state);
+            // }
+            // }
             downstreamExpression = accumulateDescriptor.compile();
         }
 
         if (distributeDescriptor != null) {
             // check inputs and see if the expr is worth anything in this context
-//            for (String input : distributeDescriptor.getIdentifiers()) {
-//                if (distributeDescriptor.isScalar(input) && context.getArtifact(input, IState.class) != null) {
-//                    IState state = context.getArtifact(input, IState.class);
-//                    states.put(input, state);
-//                }
-//            }
+            // for (String input : distributeDescriptor.getIdentifiers()) {
+            // if (distributeDescriptor.isScalar(input) && context.getArtifact(input,
+            // IState.class)
+            // != null) {
+            // IState state = context.getArtifact(input, IState.class);
+            // states.put(input, state);
+            // }
+            // }
             upstreamExpression = distributeDescriptor.compile();
         }
 
-        for (IArtifact artifact : context.getArtifact("stream_outlet")) {
+        try (BasicFileMappedStorage<Boolean> positionCache = new BasicFileMappedStorage<>(Boolean.class, grid.getCellCount())) {
 
-            ISpace space = ((IObservation) artifact).getSpace();
+            for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
-            if (space == null) {
-                continue;
+                ISpace space = ((IObservation) artifact).getSpace();
+
+                if (space == null) {
+                    continue;
+                }
+
+                Point point = ((Shape) space.getShape()).getJTSGeometry().getCentroid();
+                long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
+                Cell start = grid.getCell(xy);
+                compute(start, flowdirection, target, states, downstreamExpression, upstreamExpression, true, null,
+                        positionCache);
             }
-
-            Point point = ((Shape) space.getShape()).getJTSGeometry().getCentroid();
-            long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
-            Cell start = grid.getCell(xy);
-            compute(start, flowdirection, target, states, downstreamExpression, upstreamExpression, true, null);
         }
 
         return target;
@@ -156,9 +164,17 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
      * function is called with the outlet cell as parameter.
      */
     private Object compute(Cell cell, IState flowdirection, IState result, Map<String, IState> states,
-            IExpression downstreamExpression, IExpression upstreamExpression, boolean isOutlet, Object previousValue) {
+            IExpression downstreamExpression, IExpression upstreamExpression, boolean isOutlet, Object previousValue,
+            BasicFileMappedStorage<Boolean> positionCache) {
 
         Object ret = previousValue;
+
+        if (positionCache.get(cell.getOffsetInGrid())) {
+            return ret;
+        }
+
+        positionCache.set(Boolean.TRUE, cell.getOffsetInGrid());
+
         Parameters<String> parameters = Parameters.create();
         parameters.put("current", previousValue);
 
@@ -182,7 +198,7 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
 
         List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirection, null);
         for (Cell upstream : upstreamCells) {
-            compute(upstream, flowdirection, result, states, downstreamExpression, upstreamExpression, false, ret);
+            compute(upstream, flowdirection, result, states, downstreamExpression, upstreamExpression, false, ret, positionCache);
         }
 
         /*
