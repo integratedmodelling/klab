@@ -1,16 +1,19 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
-import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
+import java.util.Date;
 
 import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
+import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
 import org.integratedmodelling.klab.hub.api.TokenLostPasswordClickback;
+import org.integratedmodelling.klab.hub.api.TokenNewUserClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
-import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.exception.ResponseEntityAdapter;
@@ -42,6 +45,7 @@ public class UserRegistrationController {
 	private UserProfileService profileService;
 	private RegistrationTokenService tokenService;
 	private EmailManager emailManager;
+	private AgreementService agreementService;
 	
 	@Autowired
 	UserRegistrationController(UserRegistrationService userService,
@@ -56,7 +60,8 @@ public class UserRegistrationController {
 	
 	@PostMapping(value= API.HUB.USER_BASE, produces = "application/json")
 	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) throws UserExistsException, UserEmailExistsException {
-		User user = userService.registerNewUser(request.getUsername(), request.getEmail());
+	    Agreement agreement = agreementService.createAgreement(request.getAgreementType(), request.getAgreementLevel());
+		User user = userService.registerNewUser(request.getUsername(), request.getEmail(), agreement);		
 		TokenVerifyAccountClickback token = (TokenVerifyAccountClickback)
 				tokenService.createToken(user.getUsername()
 						, TokenType.verify);
@@ -73,7 +78,11 @@ public class UserRegistrationController {
 		}
 		User user = userService.verifyNewUser(id);
 		// user cannot be null, verifyNewUser throw exception if this
+		
+		agreementService.updateAgreementValidDate(user.getAgreements(), new Date())
+		;
 		ProfileResource profile = profileService.getUserSafeProfile(user);
+		
 		TokenNewUserClickback token = 
 				(TokenNewUserClickback) tokenService
 					.createChildToken(id, verify, TokenType.newUser);

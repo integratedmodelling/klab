@@ -17,6 +17,7 @@ public class AgreementTemplateServiceImpl implements AgreementTemplateService{
     public AgreementTemplate getAgreementTemplate(AgreementType agreementType, AgreementLevel agreementLevel) {
         return agreementTemplateRepository.findByAgreementTypeAndAgreementLevel(agreementType, agreementLevel).get();
     }
+      
  
 
     
