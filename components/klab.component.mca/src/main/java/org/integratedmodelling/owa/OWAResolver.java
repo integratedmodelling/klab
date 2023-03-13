@@ -23,6 +23,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 
 	private Map<String,Number> relevanceWeights;
 	private Map<Integer,Double> ordinalWeights;
+    private Double riskProfile;
 	
 	private Map<Integer,Double> buildOrdinalWeights(Integer nObservations, Double riskProfile){
 		Map<Integer,Double> w = new HashMap<Integer,Double>();
@@ -66,26 +67,59 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	}
 
 	@Override	
-	public Object resolve(IObservable observable, IContextualizationScope scope, ILocator locator) throws KlabValidationException{
-		
-		Map<String,Double> values = new HashMap<String,Double>();
-				
-		// OWA is a quantitative metric thus we force values to be double, an exception should be 
-		// thrown if the observable cannot be forced to a double.
-		for (String key : relevanceWeights.keySet()) {
-			values.put(key, scope.get(key, IState.class).get(locator, Double.class)); 
-		} 
-		
-		Double owa = calculateOWA(relevanceWeights,ordinalWeights,values);
-		
-		return owa;
-	}
+    public Object resolve(IObservable observable, IContextualizationScope scope, ILocator locator)
+            throws KlabValidationException {
+
+        Map<String, Double> values = new HashMap<String, Double>();
+
+        // OWA is a quantitative metric thus we force values to be double, an exception should be
+        // thrown if the observable cannot be forced to a double.
+        for(String key : relevanceWeights.keySet()) {
+            values.put(key, scope.get(key, IState.class).get(locator, Double.class));
+        }
+
+        Double owa = calculateOWA(relevanceWeights, ordinalWeights, values);
+
+        return owa;
+    }
 
 	@Override
 	public Type getType() {
 		return Type.NUMBER;
 	}
 
+    /**
+     * Override this to provide initial configuration after prototype and scope have been assigned.
+     */
+    public void initializeContextualizer() {
+        if (relevanceWeights == null) {
+
+            // If weights were not explicitly specified as parameters try to get them from
+            // annotations.
+
+            relevanceWeights = new HashMap<>();
+            IParameters<String> annotatedInputs = getAnnotatedInputs("criterion");
+            Map<String, IAnnotation> annotations = getAnnotations("criterion");
+
+            // Create map of relevance weights iterating over annotated inputs and extracting the
+            // annotation weight value.
+            // TODO: design a better way to handle multiple parameters of the annotation.
+            for(String observable : annotatedInputs.keySet()) {
+
+                Boolean containsWeight = annotations.get(observable).contains("weight");
+                if (containsWeight) {
+                    relevanceWeights.put(observable, annotations.get(observable).get("weight", Double.class));
+                } else {
+                    // If no parameter name is supplied with the annotation, the value is assumed to
+                    // be the weight.
+                    relevanceWeights.put(observable, annotations.get(observable).get("value", Double.class));
+                }
+            }
+            
+            setOrdinalWeights(relevanceWeights.size(), riskProfile);
+
+        }
+    }
 	
 	@Override
 	public Object eval(IContextualizationScope scope, Object...params) throws KlabException{
@@ -96,33 +130,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		// First try to import the weights from the resolver's parameters.
 		@SuppressWarnings("unchecked")
 		Map<String,Number> rw = parameters.get("weights", Map.class);
-		
-		// If weights were not explicitly specified as parameters try to get them from annotations.
-		if (rw == null) {
-			
-			rw = new HashMap<>(); 
-			IParameters<String> annotatedInputs = getAnnotatedInputs("criterion");
-			Map<String, IAnnotation> annotations = getAnnotations("criterion");
-			
-			// Create map of relevance weights iterating over annotated inputs and extracting the
-			// annotation weight value.
-			// TODO: design a better way to handle multiple parameters of the annotation.
-			for(String observable: annotatedInputs.keySet()) {
-				
-				Boolean containsWeight = annotations.get(observable).contains("weight");
-				if (containsWeight) {
-					rw.put(observable, annotations.get(observable).get("weight", Double.class));
-				}	
-				else { 
-					// If no parameter name is supplied with the annotation, the value is assumed to be the weight.
-					rw.put(observable, annotations.get(observable).get("value", Double.class));
-				}	
-			}  
-		}
-		
 		resolver.relevanceWeights = rw;
-		Double riskProfile = parameters.get("risk_profile", Double.class);
-		resolver.setOrdinalWeights(rw.size(),riskProfile);
+		resolver.riskProfile = parameters.get("risk_profile", Double.class);
+        if (rw != null) {
+            resolver.setOrdinalWeights(rw.size(), riskProfile);
+        }
 
 		return resolver;
 	}
