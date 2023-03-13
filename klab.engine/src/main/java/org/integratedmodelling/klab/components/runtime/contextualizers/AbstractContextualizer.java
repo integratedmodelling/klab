@@ -77,7 +77,7 @@ public abstract class AbstractContextualizer implements IContextualizer {
                 break;
             }
         }
-        
+
         if (input != null) {
             for (IObservation obs : scope.getCatalog().values()) {
                 IAnnotation ann = Annotations.INSTANCE.getAnnotation(obs.getObservable(), annotation);
@@ -86,7 +86,7 @@ public abstract class AbstractContextualizer implements IContextualizer {
                 }
             }
         }
-        
+
         return ret;
     }
 
@@ -240,6 +240,12 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
     public void setStatistics(ActivityBuilder stats) {
         this.statistics = stats;
+    }
+
+    /**
+     * Override this to provide initial configuration after prototype and scope have been assigned.
+     */
+    public void initializeContextualizer() {
     }
 
 }

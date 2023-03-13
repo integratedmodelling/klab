@@ -1333,7 +1333,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
     public String getCodeName() {
 
         String name = getName();
-        if (name.startsWith("$")) {
+        if (name.startsWith("$") || name.startsWith("#")) {
             // only happens with macros; this preserves the $ in them
             name = "macro:" + toString().substring(1);
         }
