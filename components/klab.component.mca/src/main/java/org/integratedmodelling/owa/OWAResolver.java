@@ -21,11 +21,11 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 public class OWAResolver extends AbstractContextualizer implements IStateResolver, IExpression {
 
-	private HashMap<String,Double> relevanceWeights;
-	private HashMap<Integer,Double> ordinalWeights;
+	private Map<String,Number> relevanceWeights;
+	private Map<Integer,Double> ordinalWeights;
 	
-	private HashMap<Integer,Double> buildOrdinalWeights(Integer nObservations, Double riskProfile){
-		HashMap<Integer,Double> w = new HashMap<Integer,Double>();
+	private Map<Integer,Double> buildOrdinalWeights(Integer nObservations, Double riskProfile){
+		Map<Integer,Double> w = new HashMap<Integer,Double>();
 		for(int i=0;i<nObservations;i++){
 			// TODO: here a proper function that calculates ordinal weights from risk profile.
 			w.put(i,riskProfile); 
@@ -37,7 +37,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		this.ordinalWeights = buildOrdinalWeights(nObservations,riskProfile);
 	}
 		
-	private Double calculateOWA(HashMap<String,Double> relevanceWeights, HashMap<Integer,Double> ordinalWeights, HashMap<String,Double> values) {
+	private Double calculateOWA(Map<String,Number> relevanceWeights, Map<Integer,Double> ordinalWeights, Map<String,Double> values) {
 		
 		// Sort the values' map by ascending order.
 		LinkedHashMap<String, Double> sortedValues = values.entrySet()
@@ -46,18 +46,21 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 			    .collect(Collectors.toMap(
 			        Map.Entry::getKey,
 			        Map.Entry::getValue,
-			        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+			        (oldValue, newValue) -> oldValue, LinkedHashMap<String, Double>::new));
 		
 		// Calculate the weighted average: 
 		// Keys on the ordinal weights map correspond to the passage order while iterating over the values' map. 
 		// Keys on the relevance weights map correspond to the values' keys, as they are associated with the observables irrespective of their values.
 		int i=0;
-		Double acc = 0.0;
+		double acc = 0.0;
 		for (String key : sortedValues.keySet()) {
-	        acc += sortedValues.get(key) * relevanceWeights.get(key) * ordinalWeights.get(i);
+	        Double sv = sortedValues.get(key);
+            double rw = relevanceWeights.get(key).doubleValue();
+            Double ow = ordinalWeights.get(i);
+            acc += sv.doubleValue() * rw * ow.doubleValue();
 	        i++;
 		}
-		acc /= Double.valueOf(values.size());
+		acc /= values.size();
 		
 		return acc;
 	}
@@ -65,7 +68,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	@Override	
 	public Object resolve(IObservable observable, IContextualizationScope scope, ILocator locator) throws KlabValidationException{
 		
-		HashMap<String,Double> values = new HashMap<String,Double>();
+		Map<String,Double> values = new HashMap<String,Double>();
 				
 		// OWA is a quantitative metric thus we force values to be double, an exception should be 
 		// thrown if the observable cannot be forced to a double.
@@ -92,7 +95,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		
 		// First try to import the weights from the resolver's parameters.
 		@SuppressWarnings("unchecked")
-		HashMap<String,Double> rw = parameters.get("weights", HashMap.class);
+		Map<String,Number> rw = parameters.get("weights", Map.class);
 		
 		// If weights were not explicitly specified as parameters try to get them from annotations.
 		if (rw == null) {
