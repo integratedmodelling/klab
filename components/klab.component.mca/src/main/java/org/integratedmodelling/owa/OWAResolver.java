@@ -1,11 +1,10 @@
 package org.integratedmodelling.owa;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -45,30 +44,23 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		
 	private Double calculateOWA(Map<String,Number> relevanceWeights, List<Number> ordinalWeights, Map<String,Double> values) {
 		
-		// Sort the values' map by ascending order.
-		LinkedHashMap<String, Double> sortedValues = values.entrySet()
-			    .stream()
-			    .sorted(Map.Entry.comparingByValue())
-			    .collect(Collectors.toMap(
-			        Map.Entry::getKey,
-			        Map.Entry::getValue,
-			        (oldValue, newValue) -> oldValue, LinkedHashMap<String, Double>::new));
-		
-		// Calculate the weighted average: 
-		// Keys on the ordinal weights map correspond to the passage order while iterating over the values' map. 
-		// Keys on the relevance weights map correspond to the values' keys, as they are associated with the observables irrespective of their values.
-		int i=0;
-		double acc = 0.0;
-		for (String key : sortedValues.keySet()) {
-	        Double sv = sortedValues.get(key);
-            double rw = relevanceWeights.get(key).doubleValue();
-            Double ow = ordinalWeights.get(i).doubleValue();
-            acc += sv.doubleValue() * rw * ow.doubleValue();
-	        i++;
+		// Weight the values according to their relevance.
+		List<Double> weightedValues = new ArrayList<>();
+		for (String key : values.keySet()) {
+            Double weightedValue = relevanceWeights.get(key).doubleValue() * values.get(key);
+            weightedValues.add(weightedValue);
 		}
-		acc /= values.size();
 		
-		return acc;
+		// Sort the weighted values' map by descending order.
+		Collections.sort(weightedValues, Collections.reverseOrder());
+		
+		// Calculate the OWA: by summing the element-wise product of ordinal weights with the sorted weighted values. 
+		double owa = 0.0;
+		for (Integer i=0; i<weightedValues.size(); i++) {
+            owa += ordinalWeights.get(i).doubleValue()*weightedValues.get(i);
+		}
+		
+		return owa;
 	}
 
 	@Override	
