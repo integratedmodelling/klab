@@ -3,8 +3,13 @@ package org.integratedmodelling.owa;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
+import java.lang.Math;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -24,23 +29,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 
 	private Map<String,Double> relevanceWeights;
 	private List<Double> ordinalWeights;
-	
-	// Used only in the case that  relevance weights are specified with annotations and 
-	// ordinal weights are not passed explicitly. 
-	private Double riskProfileParameter;
-	
-	
-	
-	private List<Double> buildOrdinalWeights(Integer nObservations, Double riskProfile){
-		List<Number> ow = new ArrayList<>();
-		for(int i=0;i<nObservations;i++){
-			// TODO: here a proper function that calculates ordinal weights from risk profile.
-			ow.add(riskProfile); 
-		}
-		List<Double> ordinalWeights = normalizeOrdinalWeights(ow);
-		return ordinalWeights;
-	} 
-	
+	private Double alpha;
+		
+	/*
+	 * Weights normalization.
+	 * */
 	private List<Double> normalizeOrdinalWeights(List<Number> weights){
 		Double sum = 0.0; 
 		for(Number val : weights){
@@ -63,15 +56,75 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 			 normalizedWeights.put(key, weights.get(key).doubleValue()/sum);
 		} 
 		return normalizedWeights;
+	}	
+	
+	
+	/*
+	 * Sort weights by observable value.
+	 * */
+	private LinkedHashMap<String,Double> sortWeights(Map<String,Double> relevanceWeights, Map<String,Double> values){
+		
+		// Sort the values' map by descending order.
+		LinkedHashMap<String, Double> sortedValues = values.entrySet()
+			    .stream()
+			    .sorted(Map.Entry.comparingByValue(Collections.reverseOrder()))
+			    .collect(Collectors.toMap(
+			        Map.Entry::getKey,
+			        Map.Entry::getValue,
+			        (oldValue, newValue) -> oldValue, LinkedHashMap<String, Double>::new));
+		
+		// Fill the sorted RW by reading the keys of sortedValues.
+		LinkedHashMap<String,Double> sortedRW = new LinkedHashMap<>();
+		
+        // Iterator for the sorted values.
+        Iterator<Entry<String,Double>> it = sortedValues.entrySet().iterator();
+  
+        String key;
+        Double w;
+        while (it.hasNext()) {
+        	key = it.next().getKey();
+        	w = relevanceWeights.get(key);
+        	sortedRW.put(key, w);
+        }
+        
+        return sortedRW;
 	}
 	
-	private void setOrdinalWeights(Integer nObservations, Double riskProfile) {
-		this.ordinalWeights = buildOrdinalWeights(nObservations,riskProfile);
-	}
+	
+	/*
+	 * Ordinal weights for linguistic quantifier OWA.
+	 * */
+	private Map<String,Double> exponentialOrdinalWeights(Map<String,Double> sortedRelevanceWeights){
 		
+		Map<String,Double> cummulativeRW = new LinkedHashMap<>();
+		
+		Iterator<Entry<String,Double>> it = sortedRelevanceWeights.entrySet().iterator();
+		String key;
+		Double sum = 0.0;
+		while(it.hasNext()) {
+			key = it.next().getKey();
+        	sum += sortedRelevanceWeights.get(key);
+        	cummulativeRW.put(key, sum);
+		}
+
+		Map<String,Double> finalWeights = new HashMap<>();
+		Double val;
+		Double previous = 0.0;
+		for(String k : cummulativeRW.keySet()){
+			val = Math.pow(cummulativeRW.get(k),alpha);
+			finalWeights.put(k,val - previous);
+			previous = val; 
+		}
+		return finalWeights;
+	} 
+	
+	
+	/*
+	 * Calculation of aggregate indices.
+	 * */
 	private Double calculateOWA(Map<String,Double> relevanceWeights, List<Double> ordinalWeights, Map<String,Double> values) {
 		
-		// Weight the values according to their relevance.
+		// Weight the values according to their relevance before sorting.
 		List<Double> weightedValues = new ArrayList<>();
 		for (String key : values.keySet()) {
             Double weightedValue = relevanceWeights.get(key) * values.get(key);
@@ -90,6 +143,19 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		return owa;
 	}
 
+	private Double calculateLinguisticQuantifierOWA(Map<String,Double> values) {
+		LinkedHashMap<String,Double> sortedWeights = sortWeights(relevanceWeights,values);
+		Map<String,Double> finalWeights = exponentialOrdinalWeights(sortedWeights);
+		Double owa = 0.0;
+		for (String key : values.keySet()) {
+			owa += finalWeights.get(key)*values.get(key);
+		}
+		return owa;
+	}
+	
+	/*
+	 * Resolver.
+	 * */
 	@Override	
     public Object resolve(IObservable observable, IContextualizationScope scope, ILocator locator)
             throws KlabValidationException {
@@ -102,7 +168,12 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
             values.put(key, scope.get(key, IState.class).get(locator, Double.class));
         }
 
-        Double owa = calculateOWA(relevanceWeights, ordinalWeights, values);
+        Double owa = 0.0;
+        if (ordinalWeights!=null) {
+        	owa = calculateOWA(relevanceWeights, ordinalWeights, values);
+        } else {
+        	owa = calculateLinguisticQuantifierOWA(values);
+        }	
 
         return owa;
     }
@@ -141,11 +212,6 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
             }
             
             relevanceWeights = normalizeRelevanceWeights(rw);
-            
-            if (ordinalWeights == null) {
-            	setOrdinalWeights(relevanceWeights.size(), riskProfileParameter);
-            }	
-
         }
     }
 	
@@ -162,28 +228,29 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		// Import the ordinal weights.
 		Object rp = parameters.get("risk_profile");
 		
-		if (rp instanceof List) {
+		
+		if (rp instanceof List) { // Ordinal weights explicitly specified. 
 			
 			resolver.ordinalWeights = normalizeOrdinalWeights( (List<Number>) rp);
 			
-			if (rw != null) {
+			if (rw != null) { // Relevance weights provided as parameter.
 				
 				resolver.relevanceWeights = normalizeRelevanceWeights(rw);
 			
-			} else {
+			} else { // Provided with annotations.
 				
 				resolver.relevanceWeights = null;
 			
 			}
 		
-		} else if(rp instanceof Number) {
+		} else if(rp instanceof Number) { // Ordinal weights built with risk profile parameter alpha.
 			
-			resolver.riskProfileParameter = (Double) rp;
+			resolver.alpha = (Double) rp;
 			
 			if (rw != null) { // Weights provided as parameter. 	
 			
 				resolver.relevanceWeights = normalizeRelevanceWeights(rw);
-				resolver.setOrdinalWeights(rw.size(), (Double) rp);
+				resolver.ordinalWeights = null;
 			
 			} else { // Weights provided by annotations: this is dealt with in initialization method.
 				
