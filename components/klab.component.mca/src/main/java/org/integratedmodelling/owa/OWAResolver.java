@@ -30,6 +30,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	private Map<String,Double> relevanceWeights;
 	private List<Double> ordinalWeights;
 	private Double alpha;
+	private Boolean interpolateWeights;
+	
+	private Boolean combinationsComputed;
 		
 	/*
 	 * Weights normalization.
@@ -159,22 +162,37 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	@Override	
     public Object resolve(IObservable observable, IContextualizationScope scope, ILocator locator)
             throws KlabValidationException {
+		
+		Double owa = 0.0;
+		
+		if (!combinationsComputed){
+			
+			
+			
+			combinationsComputed = true;
+		} else {
+			
+			Map<String, Double> values = new HashMap<String, Double>();
 
-        Map<String, Double> values = new HashMap<String, Double>();
+	        // OWA is a quantitative metric thus we force values to be double, an exception should be
+	        // thrown if the observable cannot be forced to a double.
+	        for(String key : relevanceWeights.keySet()) {
+	            values.put(key, scope.get(key, IState.class).get(locator, Double.class));
+	        }
 
-        // OWA is a quantitative metric thus we force values to be double, an exception should be
-        // thrown if the observable cannot be forced to a double.
-        for(String key : relevanceWeights.keySet()) {
-            values.put(key, scope.get(key, IState.class).get(locator, Double.class));
-        }
-
-        Double owa = 0.0;
-        if (ordinalWeights!=null) {
-        	owa = calculateOWA(relevanceWeights, ordinalWeights, values);
-        } else {
-        	owa = calculateLinguisticQuantifierOWA(values);
-        }	
-
+	        if (!interpolateWeights) {
+	        	if (ordinalWeights!=null) {
+		        	owa = calculateOWA(relevanceWeights, ordinalWeights, values);
+		        } else {
+		        	owa = calculateLinguisticQuantifierOWA(values);
+		        }
+	        } else {
+	        
+	        	
+	        }
+	        
+		}
+		
         return owa;
     }
 
@@ -228,6 +246,13 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		// Import the ordinal weights.
 		Object rp = parameters.get("risk_profile");
 		
+		interpolateWeights = parameters.get("interpolate_weights", Boolean.class);
+		
+		if (interpolateWeights) {
+			combinationsComputed = false;
+		} else {
+			combinationsComputed = true;
+		}
 		
 		if (rp instanceof List) { // Ordinal weights explicitly specified. 
 			
