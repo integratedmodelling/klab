@@ -1,0 +1,175 @@
+package org.integratedmodelling.owa;
+
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+/*
+ * Interpolation with Bernstein polynomials.
+ */
+
+public class BernsteinInterpolator {
+	
+	private List<Point2D> values;
+	private List<Point2D> vPoints;
+	private List<Point2D> wPoints;
+	private List<Point2D> skPoints;
+	
+	private Double sSlope(Point2D p0, Point2D p1) {
+		return (p1.getY()-p0.getY())/(p1.getX()-p0.getX());
+	};
+	
+	private Double mSlopeCaseOne(Point2D p1, Point2D p2, Double s1) {
+		Double deltax = (p2.getY() - p1.getY() )/s1;
+		Double cx = 0.5*(p1.getX() + deltax + p1.getX());
+		
+		return (p2.getY()-p1.getY())/(cx-p1.getX());
+	}
+	
+	private Double mSlopeCaseTwo(Point2D p0, Point2D p1, Double m2) {
+		Double deltax = (p1.getY() - p0.getY())/m2;
+		Double cx = 0.5*(p1.getX() - deltax + p0.getX());
+				
+		return (p1.getY()-p0.getY())/(p1.getX()-cx);
+	}
+	
+	private Point2D getZ(Point2D p0, Point2D p1, Double m0, Double m1) {
+		Double xZ = (p1.getY() - m1 * p1.getX() - p0.getY() + m0 * p0.getX())/(m0-m1);
+		Double yZ = p0.getY()- m0 * p0.getX() + m0*xZ;
+		return new Point2D.Double(xZ,yZ);
+				
+	}
+		
+	private Boolean zInBoundingBox(Point2D p0, Point2D p1, Point2D z) {
+		Boolean bool;
+		if (z.getX() < p1.getX() && z.getX() > p0.getX() && z.getY() < p1.getY() && z.getY() > p0.getY()) {
+			bool = true;
+		} else {
+			bool = false;
+		}
+		return bool;
+	}
+	
+	private Point2D getV(Point2D p0, Point2D pZ, Double m0){
+		Double vX = p0.getX() + 0.5*(p0.getX()+pZ.getX());
+		Double vY = p0.getY() + m0*0.5*(p0.getX()+pZ.getX());
+		return new Point2D.Double(vX,vY);
+	}
+	
+	private Point2D getW(Point2D p1, Point2D z, Double m1) {
+		Double wX = p1.getX() - 0.5*(p1.getX()+z.getX());
+		Double wY = p1.getY() - m1*0.5*(p1.getX()+z.getX());
+		return new Point2D.Double(wX,wY);
+	}
+	
+	private Point2D getSplineKnot(Point2D v, Point2D w, Point2D z) {
+		Double alpha = (w.getY()-v.getY())/(w.getX()-v.getX());
+		Double beta = alpha*v.getY() - v.getX();
+		Double splineY = beta + alpha*z.getX();
+		return new Point2D.Double(z.getX(),splineY);
+	}
+		
+	private Double secondOrderBernsteinPolynomial(Point2D p0, Point2D p1, Point2D p2, Double x) {
+		return ( p0.getY()*(p2.getX()-x)*(p2.getX()-x) + 2*p1.getY()*(x-p0.getX())*(p2.getX()-x) + p2.getY()*(x-p2.getX())*(x-p2.getX()) ) / ((p2.getX()-p0.getX())*(p2.getX()-p0.getX())); 
+	}
+	
+	public void setVWSKPoints(List<Point2D> values){
+		
+		// Calculate slopes S.
+		List<Double> sSlopes = new ArrayList<>();
+		
+		Double slope;
+		for (Integer i=1;i<values.size();i++) {
+			slope = sSlope( values.get(i), values.get(i-1) );
+			sSlopes.add( slope );
+		}
+		
+		// Calculate slopes M.
+		List<Double> mSlopes = new ArrayList<>();
+		Double s1, s2, m;
+		Point2D p0, p1, p2;
+		for (Integer i=0; i<values.size() ; i++) { 
+			
+			// Check if values i+1 exists.
+			p1 = values.get(i);
+			s1 = sSlopes.get(i);
+			p2 = values.get(i+1);
+			s2 = sSlopes.get(i+1);
+						
+			if (s1*s2 <= 0.0) {
+				m = 0.0;
+			} else if(s1 > s2 && s2 > 0.0) {
+				m = mSlopeCaseOne(p1,p2,s1);
+			} else if(s2 > s1 && s1 > 0.0) {
+				p0 = values.get(i-1);
+				m = mSlopeCaseTwo(p0,p1,m2); // This function needs to be re-written, prbably need to do some recursion.
+			}
+			mSlopes.add(m);
+			
+		}
+		
+		// Calculate Z,V,W,SK points.
+		vPoints = new ArrayList<>();
+		wPoints = new ArrayList<>();
+		skPoints = new ArrayList<>();
+		Point2D v,w,z,zOut;
+		Double xZOut;
+		for (Integer i=0; i<values.size() ; i++) {
+			z = getZ(values.get(i), values.get(i+1), mSlopes.get(i), mSlopes.get(i+1));
+			
+			if (zInBoundingBox(values.get(i),values.get(i+1),z)) {
+				v = getV(values.get(i),z,mSlopes.get(i));
+				vPoints.add(v);
+				w = getW(values.get(i+1),z,mSlopes.get(i+1));
+				wPoints.add(w);
+				skPoints.add(getSplineKnot(v,w,z));
+			} else {
+				xZOut = values.get(i).getX() + values.get(i+1).getX();
+				zOut = new Point2D.Double(xZOut,0.0); // Y coordinate of Z is useless at this point.
+				v = getV(values.get(i),zOut,mSlopes.get(i));
+				vPoints.add(v);
+				w = getW(values.get(i+1),zOut,mSlopes.get(i+1));
+				wPoints.add(w);
+				skPoints.add(getSplineKnot(v,w,zOut));
+			}
+		}
+	}
+	
+	private Integer findInterval(Double x, List<Double> values) {
+		Integer i=0;
+		while ( i<values.get(i)) {
+			i++;
+		}
+		return i;
+	}
+	
+	public Double getInterpolatedValue(Double x) {
+		// get interval of x with respect to the initial values.
+		// then get subinterval between to define the points of interest.
+		Integer interval = findInterval(x, values);
+		
+		Double interp;
+		Point2D p0,p1,p2;
+		
+		if (x < skPoints.get(interval).getX()) {
+			p0 = values.get(interval);
+			p1 = vPoints.get(interval);
+			p2 = skPoints.get(interval);
+			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
+		} else {
+			p0 = skPoints.get(interval);
+			p1 = wPoints.get(interval);
+			p2 = values.get(interval+1);
+			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
+		}
+		return interp;
+	}
+	
+	
+	
+}
