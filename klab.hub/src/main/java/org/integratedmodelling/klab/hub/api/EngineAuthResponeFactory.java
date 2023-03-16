@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.io.IOException;
 import java.security.NoSuchProviderException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -127,9 +129,9 @@ public class EngineAuthResponeFactory {
             throw new NoValidAgreementException(profile.getUsername());
         }
 
-        final DateTime nowPlus30Days = DateTime.now().plusDays(30);
+        final Instant nowPlus30Days = Instant.now().plus(30, ChronoUnit.DAYS);
         validAgreements.stream()
-            .filter(a -> a.hasExpirationDate() && !new DateTime(a.getExpiredDate()).isAfter(nowPlus30Days))
+            .filter(a -> a.hasExpirationDate() && a.getExpiredDate().toInstant().isBefore(nowPlus30Days))
             .forEach(a -> {
                 HubNotificationMessage msg = HubNotificationMessage.MessageClass
                         .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpiredDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
