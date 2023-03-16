@@ -125,10 +125,24 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 		return ret;
 	}
 
+	/**
+	 * Deletes the temporary files used in observations. The file name must match the pattern:
+	 * `geo*.tiff`, `ktmp*.dat`, `wcs*.xml`. Files older than `lastModified` are deleted.
+	 * 
+	 * @param lastModified the date used as threshold
+	 */
+	public static void deleteTempFiles(long lastModified) {
+		String fileNamePattern = "(^geo.*tiff$|^ktmp.*dat$|^wcs.*xml$)";
+
+		listFiles(getTempDirectory(), null, false).stream().filter(f -> {
+			return isFileOlder(f, lastModified) && f.getName().matches(fileNamePattern);
+		}).forEach(f -> {
+			deleteQuietly(f);
+		});
+	}
+
 	public static void main(String[] args) {
-		for (String dio : tailFile(new File("C:\\setup.log"), 5)) {
-			System.out.println(dio);
-		}
+		deleteTempFiles(1678968628350L);
 	}
 
 	public static final List<String> tailFile(File file, final int noOfLines) {
