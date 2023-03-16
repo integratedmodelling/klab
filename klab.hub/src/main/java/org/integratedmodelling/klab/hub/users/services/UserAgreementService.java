@@ -12,4 +12,5 @@ public interface UserAgreementService {
 
     abstract void revokeAgreementFromUser(String username, String agreementId);
 
+    abstract void patchAgreementOfUser(String username, Agreement agreement);
 }

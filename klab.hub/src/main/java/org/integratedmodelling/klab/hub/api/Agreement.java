@@ -48,6 +48,9 @@ public class Agreement {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public AgreementLevel getAgreementLevel() {
         return agreementLevel;
