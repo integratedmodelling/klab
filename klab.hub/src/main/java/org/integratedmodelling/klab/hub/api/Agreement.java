@@ -184,4 +184,9 @@ public class Agreement {
         }
         return expiredDate.toInstant().isAfter(Instant.now());
     }
+
+
+    public boolean isValid() {
+        return !isRevoked() && !isExpired();
+    }
 }

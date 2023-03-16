@@ -124,7 +124,7 @@ public class EngineAuthResponeFactory {
 
         // TODO for now, we just assume that there is a single agreement per profile.
         List<Agreement> validAgreements = profile.getAgreements().stream()
-                .filter(a -> !a.isRevoked() && !a.isExpired()).collect(Collectors.toList());
+                .filter(a -> a.isValid()).collect(Collectors.toList());
         if (validAgreements.isEmpty()) {
             throw new NoValidAgreementException(profile.getUsername());
         }
