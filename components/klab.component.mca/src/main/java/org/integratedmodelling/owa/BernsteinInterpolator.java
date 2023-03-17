@@ -100,7 +100,10 @@ public class BernsteinInterpolator {
 			s1 = sSlopes.get(i);
 			p2 = values.get(i+1);
 			s2 = sSlopes.get(i+1);
-						
+			
+			// TODO: proper estimation of m2 in a recursive function.
+			Double m2 = 0.0;
+			m = 0.0;
 			if (s1*s2 <= 0.0) {
 				m = 0.0;
 			} else if(s1 > s2 && s2 > 0.0) {
@@ -140,9 +143,9 @@ public class BernsteinInterpolator {
 		}
 	}
 	
-	private Integer findInterval(Double x, List<Double> values) {
+	private Integer findInterval(Double x, List<Point2D> values) {
 		Integer i=0;
-		while ( i<values.get(i)) {
+		while ( i<values.get(i).getX()) {
 			i++;
 		}
 		return i;
