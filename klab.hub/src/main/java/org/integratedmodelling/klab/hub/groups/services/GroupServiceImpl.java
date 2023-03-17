@@ -98,5 +98,7 @@ public class GroupServiceImpl implements GroupService {
 			throw new GroupDoesNotExistException("No group by the id: " + id + " was found.");
 		}
 	}
+	
+	
 
 }

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 import java.util.Date;
+import java.util.stream.Collectors;
 
 import javax.mail.MessagingException;
 
@@ -51,11 +52,13 @@ public class UserRegistrationController {
 	UserRegistrationController(UserRegistrationService userService,
 			UserProfileService profileService,
 			RegistrationTokenService tokenService,
-			EmailManager emailManager) {
+			EmailManager emailManager,
+			AgreementService agreementService) {
 		this.userService = userService;
 		this.profileService = profileService;
 		this.tokenService = tokenService;
 		this.emailManager = emailManager;
+		this.agreementService = agreementService;
 	}
 	
 	@PostMapping(value= API.HUB.USER_BASE, produces = "application/json")
@@ -79,8 +82,7 @@ public class UserRegistrationController {
 		User user = userService.verifyNewUser(id);
 		// user cannot be null, verifyNewUser throw exception if this
 		
-		agreementService.updateAgreementValidDate(user.getAgreements(), new Date())
-		;
+		agreementService.updateAgreementValidDate(user.getAgreements().stream().map(a -> a.getAgreement()).collect(Collectors.toSet()), new Date());
 		ProfileResource profile = profileService.getUserSafeProfile(user);
 		
 		TokenNewUserClickback token = 

@@ -1,15 +1,16 @@
 package org.integratedmodelling.klab.hub.agreements.services;
 
-import java.time.Instant;
 import java.util.Date;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.AgreementTemplate;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.commands.CreateAgreement;
 import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
+import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,14 @@ public class AgreementServiceImpl implements AgreementService{
     
     AgreementRepository agreementRepository;
     AgreementTemplateService agreementTemplateService;
+    GroupService groupService;
     
     @Autowired
-    public AgreementServiceImpl(AgreementRepository agreementRepository, AgreementTemplateService agreementTemplateService) {
+    public AgreementServiceImpl(AgreementRepository agreementRepository, AgreementTemplateService agreementTemplateService, GroupService groupService) {
         super();
         this.agreementRepository = agreementRepository;
         this.agreementTemplateService = agreementTemplateService;
+        this.groupService = groupService;
     }
 
     @Override
@@ -45,11 +48,22 @@ public class AgreementServiceImpl implements AgreementService{
         Agreement agreement = new Agreement();
         agreement.setAgreementLevel(agreementTemplate.getAgreementLevel());
         agreement.setAgreementType(agreementTemplate.getAgreementType());
-        agreement.addGroupEntries(agreementTemplate.getDefaultGroups());
+        
+        agreement.addGroupEntries(getAgreementDefault(agreementTemplate));
         agreement.setTransactionDate(new Date());        
         return new CreateAgreement(agreement, agreementRepository).execute();
     }
     
+    private Set<GroupEntry> getAgreementDefault(AgreementTemplate agreementTemplate) {
+        Set<GroupEntry> groups = null;
+        Set<GroupEntry> groupsAgreementTemplate = agreementTemplate.getDefaultGroups();
+        //groupService.get
+        
+        return groups;
+        // TODO Auto-generated method stub
+        
+    }
+
     @Override
     public Set<Agreement> updateAgreementValidDate(Set<Agreement> agreements, Date validDate) {
         agreements.stream().forEach(agreement -> {

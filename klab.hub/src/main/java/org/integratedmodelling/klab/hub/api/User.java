@@ -71,7 +71,7 @@ public class User extends IdentityModel implements UserDetails{
     private Set<Role> roles = new HashSet<>();;
 
     @Reference
-    private Set<Agreement> agreements = new HashSet<>();
+    private Set<AgreementEntry> agreements = new HashSet<>();
 
     private Set<String> applications = new HashSet<>();
 
@@ -363,16 +363,15 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
-
-    public Set<Agreement> getAgreements() {
+    
+    public Set<AgreementEntry> getAgreements() {
         return agreements;
     }
 
-    public void setAgreements(Set<Agreement> agreements) {
+    public void setAgreements(Set<AgreementEntry> agreements) {
         this.agreements = agreements;
     }
-	
-	
+
     public Set<CustomProperty> getCustomProperties() {
         return customProperties;
     }

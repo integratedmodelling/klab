@@ -12,6 +12,7 @@ import javax.naming.directory.Attributes;
 
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.CreateLdapUser;
@@ -65,7 +66,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			User newUser = new User();			
 			newUser.setUsername(username);
 			newUser.setEmail(email);
-			newUser.getAgreements().add(agreement);
+			AgreementEntry agreementEntry = new AgreementEntry(agreement);
+			newUser.getAgreements().add(agreementEntry);
 			newUser = new CreatePendingUser(userRepository, newUser).execute();			
 			publisher.publish(new NewUserAdded(new Object(), newUser));
 			return newUser;

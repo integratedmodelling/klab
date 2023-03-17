@@ -355,11 +355,15 @@ public interface API {
         /**
          *URL path for get agreement template.
          */
-        public static final String GET_AGREEMENT = API_BASE + "/agreement";
+        public static final String GET_AGREEMENT = API_BASE + "/agreements";
         /**
          *URL path for get agreement template.
          */
-        public static final String GET_AGREEMENT_TEMPLATE = API_BASE + "/agreement-template";
+        public static final String AGREEMENT_TEMPLATE = API_BASE + "/agreement-templates";
+        /**
+         *URL path for get agreement template by type and level.
+         */
+        public static final String AGREEMENT_TEMPLATE_TYPE_LEVEL = AGREEMENT_TEMPLATE + "/type-level";
 
 
         public static interface PARAMETERS {
@@ -443,7 +447,7 @@ public interface API {
             /**
              * URL PARAMETER for user role entry service, lists all the users with a particular role
              */
-            public static final String HAS_ROLES = "has-roles";
+            public static final String HAS_ROLES = "has-roles";            
         }
 
     }

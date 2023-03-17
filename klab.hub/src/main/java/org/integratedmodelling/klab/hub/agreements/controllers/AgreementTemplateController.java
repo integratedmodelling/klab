@@ -20,7 +20,7 @@ public class AgreementTemplateController {
     @Autowired
     private AgreementTemplateService agreementTemplateService;
     
-    @GetMapping(API.HUB.GET_AGREEMENT_TEMPLATE)
+    @GetMapping(API.HUB.AGREEMENT_TEMPLATE_TYPE_LEVEL)
     public ResponseEntity<?> getAgreementTemplate(@RequestParam(required=false) String agreementType, @RequestParam(required=false) String agreementLevel) {
         JSONObject agreementTemplate = new JSONObject().appendField("agreementTemplate", agreementTemplateService.getAgreementTemplate(AgreementType.valueOf(agreementType), AgreementLevel.valueOf(agreementLevel)));
         return new ResponseEntity<>(agreementTemplate, HttpStatus.OK);        

@@ -42,7 +42,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 				userRepository
 					.findByNameIgnoreCase(username)
 					.map(user -> {
-						user.getAgreements().stream().findFirst().get().setGroupEntries(groupEntries);
+						user.getAgreements().stream().findFirst().get().getAgreement().setGroupEntries(groupEntries);
 						return user;
 						})
 					.orElseThrow(() ->
@@ -64,7 +64,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 				userRepository
 					.findByNameIgnoreCase(username)
 					.map(user -> {
-						user.getAgreements().stream().findFirst().get().addGroupEntries(groupEntries);
+						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
 						return user;
 						})
 					.orElseThrow(() ->
@@ -84,7 +84,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 			userRepository
 				.findByNameIgnoreCase(username)
 				.ifPresent(user -> {
-					user.getAgreements().stream().findFirst().get().removeGroupEntries(groupEntries);
+					user.getAgreements().stream().findFirst().get().getAgreement().removeGroupEntries(groupEntries);
 					users.add(user);
 				});		
 		}
@@ -95,7 +95,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	@Override
 	public void addPrelimenaryUserGroups(User user, DateTime experiation) {
 		Set<GroupEntry> groupEntries = createPrelimGroupEntries(experiation);
-		user.getAgreements().stream().findFirst().get().addGroupEntries(groupEntries);
+		user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
 		new UpdateUser(user, userRepository).execute();
 		
 	}
