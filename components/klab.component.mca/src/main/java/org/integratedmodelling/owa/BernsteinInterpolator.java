@@ -2,12 +2,7 @@ package org.integratedmodelling.owa;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /*
  * Interpolation with Bernstein polynomials.
@@ -78,8 +73,7 @@ public class BernsteinInterpolator {
 		return ( p0.getY()*(p2.getX()-x)*(p2.getX()-x) + 2*p1.getY()*(x-p0.getX())*(p2.getX()-x) + p2.getY()*(x-p2.getX())*(x-p2.getX()) ) / ((p2.getX()-p0.getX())*(p2.getX()-p0.getX())); 
 	}
 	
-	public void setVWSKPoints(List<Point2D> values){
-		
+	private List<Double> calculateSSlopes(List<Point2D> values) {
 		// Calculate slopes S.
 		List<Double> sSlopes = new ArrayList<>();
 		
@@ -88,33 +82,54 @@ public class BernsteinInterpolator {
 			slope = sSlope( values.get(i), values.get(i-1) );
 			sSlopes.add( slope );
 		}
-		
+		return sSlopes;
+	}
+	
+	private List<Double> calculateMSlopes(List<Point2D> values, List<Double> sSlopes){
 		// Calculate slopes M.
+		Double m;
 		List<Double> mSlopes = new ArrayList<>();
-		Double s1, s2, m;
-		Point2D p0, p1, p2;
 		for (Integer i=0; i<values.size() ; i++) { 
 			
-			// Check if values i+1 exists.
-			p1 = values.get(i);
-			s1 = sSlopes.get(i);
-			p2 = values.get(i+1);
-			s2 = sSlopes.get(i+1);
-			
-			// TODO: proper estimation of m2 in a recursive function.
-			Double m2 = 0.0;
-			m = 0.0;
-			if (s1*s2 <= 0.0) {
-				m = 0.0;
-			} else if(s1 > s2 && s2 > 0.0) {
-				m = mSlopeCaseOne(p1,p2,s1);
-			} else if(s2 > s1 && s1 > 0.0) {
-				p0 = values.get(i-1);
-				m = mSlopeCaseTwo(p0,p1,m2); // This function needs to be re-written, prbably need to do some recursion.
-			}
+			// TODO: check the effect of the inefficient recursion on running speed. See comment below for info.  
+			m = calculateMSlopeAtPoint(values,sSlopes,i);
 			mSlopes.add(m);
-			
 		}
+		return mSlopes;
+	}
+	
+	/*
+	 * Recursive function for m calculation. It's inefficient if condition 2 is the most normal and if values is big. 
+	 * Could be made more efficient by adding a calculatedMSlope cache to avoid multiple calculations of the same slope. 
+	 * However, calculating slopes are basically a couple of sums and multiplications, thus if there are not lots of
+	 * observations overhead shouldn't be large. 
+	 * */
+	private Double calculateMSlopeAtPoint(List<Point2D> values, List<Double> sSlopes, Integer index) {
+		Double s1, s2, m=0.0;
+		Point2D p0, p1, p2;
+		p1 = values.get(index);
+		s1 = sSlopes.get(index);
+		p2 = values.get(index+1);
+		s2 = sSlopes.get(index+1);
+		
+		if (s1*s2 <= 0.0) {
+			m = 0.0;
+		} else if(s1 > s2 && s2 > 0.0) {
+			m = mSlopeCaseOne(p1,p2,s1);
+		} else if(s2 > s1 && s1 > 0.0) {
+			p0 = values.get(index-1);
+			m = mSlopeCaseTwo(p0,p1, calculateMSlopeAtPoint(values,sSlopes,index+1) ); // This function needs to be re-written, prbably need to do some recursion.
+		}
+		
+		return m;
+	}
+	
+	public void setVWSKPoints(List<Point2D> values){
+		
+		// Calculate slopes S.
+		List<Double> sSlopes = calculateSSlopes(values);
+		// Calculate slopes M.
+		List<Double> mSlopes = calculateMSlopes(values,sSlopes);
 		
 		// Calculate Z,V,W,SK points.
 		vPoints = new ArrayList<>();
