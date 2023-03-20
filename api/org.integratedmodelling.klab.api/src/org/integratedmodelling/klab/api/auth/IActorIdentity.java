@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.auth;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +25,7 @@ public interface IActorIdentity<T> extends IRuntimeIdentity {
 	 * 
 	 * @author Ferd
 	 */
-	public interface KlabMessage {
+	public interface KlabMessage extends Serializable {
 
 		/**
 		 * Message may contain one or more of these, which trigger messages at the

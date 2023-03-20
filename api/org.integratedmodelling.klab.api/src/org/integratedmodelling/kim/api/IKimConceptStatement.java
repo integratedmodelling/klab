@@ -21,6 +21,17 @@ public interface IKimConceptStatement extends IKimStatement {
         CLASSIFIES,
         DISCRETIZES
     }
+    
+    /**
+     * Parent concept(s) could be a single concept or > 1
+     * 
+     * @author Ferd
+     *
+     */
+    public interface ParentConcept {
+        List<IKimConcept> getConcepts();
+        BinarySemanticOperator getConnector();
+    }
 
     /**
      * Anything that "applies to" (including subject linked by relationships) gets
@@ -67,6 +78,12 @@ public interface IKimConceptStatement extends IKimStatement {
      * @return the authority ID
      */
     String getAuthority();
+    
+    /**
+     * Declared parents.
+     * @return
+     */
+    List<ParentConcept> getParents();
 
     /**
      * Authority term adopted as a trait. When this is not null, {@link #getAuthority} also returns a non-null
@@ -84,10 +101,6 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<IKimConcept> getObservablesCreated();
 
-//    List<IKimConcept> getConstituentParticipants();
-//
-//    List<IKimConcept> getPartParticipants();
-
     List<IKimConcept> getTraitsConferred();
 
     List<IKimConcept> getTraitsInherited();
@@ -102,8 +115,6 @@ public interface IKimConceptStatement extends IKimStatement {
 
     List<IKimConcept> getEmergenceTriggers();
 
-//    List<IKimConcept> getExposedTraits();
-
     List<IKimRestriction> getRestrictions();
 
     boolean isAlias();
@@ -117,17 +128,6 @@ public interface IKimConceptStatement extends IKimStatement {
     boolean isMacro();
 
     List<Pair<IKimConcept, DescriptionType>> getObservablesDescribed();
-
-//    List<IKimObservable> getTraitsExposed();
-//
-//    boolean isDefiningExposedTraits();
-
-//    /**
-//     * Whatever concept this configuration 'consists of'.
-//     * 
-//     * @return consists of
-//     */
-//    List<IKimConcept> getConfigurationParticipants();
 
 	List<ApplicableConcept> getSubjectsLinked();
 

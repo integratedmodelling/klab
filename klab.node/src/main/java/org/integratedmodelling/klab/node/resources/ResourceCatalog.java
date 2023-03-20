@@ -45,9 +45,6 @@ import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 
-import com.google.common.html.types.SafeUrl;
-import com.google.common.html.types.SafeUrls;
-
 /**
  * The node resource catalog is very similar to the local resource catalog,
  * except it uses the datadir/resource path for all resources, removes project
@@ -100,8 +97,8 @@ public class ResourceCatalog implements IResourceCatalog {
 		id = id.replaceAll("\\s+", ".");
 		// all .N become _N
 		id = id.replaceAll("\\.([0-9])", "_$1");
-		SafeUrl url = SafeUrls.sanitize(id);
-		String ret = url.getSafeUrlString();
+		
+		String ret = Utils.sanitizeUrl(id);
 		return ret;
 	}
 

@@ -129,7 +129,7 @@ public class RasterImporter extends AbstractFilesetImporter {
 
     @Override
     public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
-        
+
         boolean addStyle = file.getName().endsWith(".zip");
 
         boolean samefolder = options.get(OPTION_DO_NOT_CREATE_INDIVIDUAL_FOLDERS, Boolean.FALSE);
@@ -207,7 +207,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                                 file = dir;
                             }
                         } else {
-                          file = rasterFile;  
+                          file = rasterFile;
                         }
                         return file;
                     } catch (IOException e) {
@@ -361,7 +361,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         sb.append("</qgis>\n");
         
         FileUtils.writeStringToFile(qmlFile, sb.toString());
-        
+
     }
 
     private boolean writeAuxDbf(File auxDbfFile, IDataKey dataKey) throws Exception {

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,8 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 			RemoveGroupTask rgt = (RemoveGroupTask)task;
 			User user = userRepository.findByNameIgnoreCase(rgt.getUsername()).get();
 			
-			Set<GroupEntry> currentGroupEntries = user.getGroupEntries();
+			Set<GroupEntry> currentGroupEntries = user.getAgreements().stream().findFirst().get().getGroupEntries();
+			
 			Set<GroupEntry> toRemoveGroupEntries = rgt.getRequestGroups();
 			
 			// check dependencies
@@ -70,7 +72,8 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 				}
 			}
 			if (removed) {
-				user.setGroupEntries(currentGroupEntries);
+			    user.getAgreements().stream().findFirst().get().setGroupEntries(currentGroupEntries);
+				//user.setGroupEntries(currentGroupEntries);
 				userRepository.save(user);
 				task.setStatus(TaskStatus.accepted);
 			} else {

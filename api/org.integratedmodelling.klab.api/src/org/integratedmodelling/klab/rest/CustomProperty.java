@@ -33,7 +33,7 @@ public class CustomProperty {
     }
     @Override
     public int hashCode() {
-        return Objects.hash(key, onlyAdmin, value);
+        return Objects.hash(key);
     }
     @Override
     public boolean equals(Object obj) {

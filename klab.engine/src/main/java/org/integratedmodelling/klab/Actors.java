@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -51,9 +52,9 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Call;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.ILocalWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
@@ -391,7 +392,7 @@ public enum Actors implements IActorsService {
     public IKActorsBehavior declare(InputStream file) throws KlabValidationException {
         IKActorsBehavior ret = null;
         try {
-            String definition = IOUtils.toString(file);
+            String definition = IOUtils.toString(file, StandardCharsets.UTF_8);
             Model model = kActorsParser.parse(definition);
             ret = KActors.INSTANCE.declare(model);
         } catch (Exception e) {
@@ -1579,7 +1580,7 @@ public enum Actors implements IActorsService {
             // turn string into project, if existing call runAllTests on it and sum up the return
             // value.
             if (GitUtils.isRemoteGitURL(projectUrl)) {
-                IWorkspace tempWs = Resources.INSTANCE.getServiceWorkspace();
+                ILocalWorkspace tempWs = Resources.INSTANCE.getServiceWorkspace();
                 String projectName = GitUtils.clone(projectUrl, tempWs.getRoot(), true);
                 project = tempWs.loadProject(projectName, Klab.INSTANCE.getRootMonitor());
             } else {

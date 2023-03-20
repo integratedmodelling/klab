@@ -3,7 +3,6 @@ package org.integratedmodelling.kim.api;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 

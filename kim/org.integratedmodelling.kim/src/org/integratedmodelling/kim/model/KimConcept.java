@@ -1332,7 +1332,13 @@ public class KimConcept extends KimStatement implements IKimConcept {
     @Override
     public String getCodeName() {
 
-        String ret = CamelCase.toLowerCase(new SemanticType(getName()).getName(), '-');
+        String name = getName();
+        if (name.startsWith("$") || name.startsWith("#")) {
+            // only happens with macros; this preserves the $ in them
+            name = "macro:" + toString().substring(1);
+        }
+        
+        String ret = CamelCase.toLowerCase(new SemanticType(name).getName(), '-');
         if (observable != null) {
             ret = observable.getCodeName();
         }

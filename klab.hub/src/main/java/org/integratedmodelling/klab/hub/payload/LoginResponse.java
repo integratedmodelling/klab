@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.payload;
 
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
