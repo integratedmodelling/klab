@@ -1,15 +1,17 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.rest.CustomProperty;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
@@ -63,7 +65,7 @@ public class User extends IdentityModel implements UserDetails{
 
     String serverUrl;
 
-    DateTime lastLogin;
+    LocalDateTime lastLogin;
 
 
     boolean sendUpdates = true;
@@ -72,6 +74,8 @@ public class User extends IdentityModel implements UserDetails{
 
     @Reference
     private Set<AgreementEntry> agreements = new HashSet<>();
+
+    private List<TagEntry> tags = new ArrayList<>();
 
     private Set<String> applications = new HashSet<>();
 
@@ -338,14 +342,14 @@ public class User extends IdentityModel implements UserDetails{
 	
 
     public void setLastLogin() {
-        lastLogin = DateTime.now();
+        lastLogin = LocalDateTime.now();
     }
     
-    public void setLastLogin(DateTime date) {
+    public void setLastLogin(LocalDateTime date) {
         lastLogin = date;
     }
 
-    public DateTime getLastLogin() {
+    public LocalDateTime getLastLogin() {
     	return lastLogin;
     }
 
@@ -363,6 +367,7 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
     
     public Set<AgreementEntry> getAgreements() {
         return agreements;
@@ -370,6 +375,32 @@ public class User extends IdentityModel implements UserDetails{
 
     public void setAgreements(Set<AgreementEntry> agreements) {
         this.agreements = agreements;
+    }
+
+    public boolean hasTag(String tagName) {
+        return tags.stream()
+        .anyMatch(t -> t.getTag().getName().equals(tagName));
+    }
+	
+    public void addTag(MongoTag mongoTag) {
+        TagEntry tagEntry = new TagEntry(mongoTag);
+        this.tags.add(tagEntry);
+    }
+
+    public void addTags(Collection<MongoTag> tags) {
+        for(MongoTag t : tags) {
+            addTag(t);
+        }
+    }
+
+    public List<TagEntry> getTags() {
+        return tags;
+    }
+
+    public List<TagEntry> getUnsentTags() {
+        return tags.stream()
+                .filter(t -> !t.isSent())
+                .collect(Collectors.toList());
     }
 
     public Set<CustomProperty> getCustomProperties() {

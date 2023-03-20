@@ -45,12 +45,13 @@ import org.integratedmodelling.kim.model.ComputableResource
 import org.integratedmodelling.kim.model.Kim
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor
 import org.integratedmodelling.kim.model.Kim.UrnDescriptor
+import org.integratedmodelling.kim.model.KimAcknowledgement
 import org.integratedmodelling.kim.model.KimAnnotation
 import org.integratedmodelling.kim.model.KimBehavior
 import org.integratedmodelling.kim.model.KimConcept
 import org.integratedmodelling.kim.model.KimConceptStatement
 import org.integratedmodelling.kim.model.KimConceptStatement.ApplicableConceptImpl
-import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept
+import org.integratedmodelling.kim.model.KimConceptStatement.ParentConceptImpl
 import org.integratedmodelling.kim.model.KimDate
 import org.integratedmodelling.kim.model.KimLookupTable
 import org.integratedmodelling.kim.model.KimMacro
@@ -65,7 +66,6 @@ import org.integratedmodelling.kim.model.KimWorkspace
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode
 import org.integratedmodelling.klab.rest.CompileNotificationReference
 import org.integratedmodelling.klab.utils.Pair
-import org.integratedmodelling.kim.model.KimAcknowledgement
 
 /**
  * This class contains custom validation rules. 
@@ -1837,7 +1837,7 @@ class KimValidator extends AbstractKimValidator {
 		var KimConceptStatement ret = new KimConceptStatement(concept, if(parent === null) namespace else parent)
 		var ok = true
 		var isAlias = concept.alias
-		var List<ParentConcept> declaredParents = Lists.newArrayList();
+		var List<ParentConceptImpl> declaredParents = Lists.newArrayList();
 		var template = false
 		ret.alias = isAlias
 
@@ -1933,7 +1933,7 @@ class KimValidator extends AbstractKimValidator {
 						if (declaration !== null && !declaration.type.isEmpty) {
 
 							if (i == 0 || concept.connectors.get(i - 1) == ',') {
-								var group = new ParentConcept();
+								var group = new ParentConceptImpl();
 								group.concepts.add(declaration)
 								declaredParents.add(group)
 							} else {

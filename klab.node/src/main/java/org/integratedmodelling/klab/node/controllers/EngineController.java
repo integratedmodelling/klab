@@ -52,7 +52,7 @@ public class EngineController {
 			roles.add(role.name());
 		}
 		for (Group group : u.getGroups()) {
-			groups.add(group.getId());
+			groups.add(group.getName());
 		}
 
 		ret.put("roles", roles);
@@ -137,7 +137,7 @@ public class EngineController {
 		} else {
 			KlabPermissions perms = KlabPermissions.create(permissions);
 			Collection<String> groups = new ArrayList<>();
-			user.getGroups().forEach(g -> groups.add(g.getId()));
+			user.getGroups().forEach(g -> groups.add(g.getName()));
 			return perms.isAuthorized(user.getUsername(), groups);
 		}
 	}

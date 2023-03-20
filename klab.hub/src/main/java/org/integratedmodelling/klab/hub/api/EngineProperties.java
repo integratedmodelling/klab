@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
 import java.util.Properties;
 
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.joda.time.DateTime;
 
 public class EngineProperties implements IProperties {
 	
@@ -19,7 +19,7 @@ public class EngineProperties implements IProperties {
 	}
 	
 	private void LegacyEngineProperties(ProfileResource profile, LegacyConfiguration config) {
-		DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS);
+		LocalDateTime expires = LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS);
 		this.properties = new Properties();
 		this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		this.properties.setProperty(KlabCertificate.KEY_USERNAME, profile.getUsername());
@@ -34,7 +34,7 @@ public class EngineProperties implements IProperties {
 	}
 
 	private void BouncyEngineProperties(ProfileResource profile, BouncyConfiguration config) {
-		DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS);
+		LocalDateTime expires =LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS);
 		this.properties = new Properties();
 		this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		this.properties.setProperty(KlabCertificate.KEY_USERNAME, profile.getUsername());

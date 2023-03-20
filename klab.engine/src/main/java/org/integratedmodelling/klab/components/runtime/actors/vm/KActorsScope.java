@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Ref;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior.ActionMatch;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphore;
+import org.integratedmodelling.klab.api.engine.IScope;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -28,8 +30,6 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
 
-import akka.actor.typed.ActorRef;
-
 /**
  * Runtime scope for all k.Actors statements. Root scopes are for each action. Local class so that
  * the identity is accessible.
@@ -40,6 +40,10 @@ public class KActorsScope implements IKActorsBehavior.Scope {
 
     boolean synchronous = false;
     KActorsScope parent = null;
+    
+    IScope mainScope;
+    
+    @Deprecated
     IRuntimeScope runtimeScope;
     Long listenerId;
     IActorIdentity<KlabMessage> identity;
@@ -55,7 +59,7 @@ public class KActorsScope implements IKActorsBehavior.Scope {
     public Map<String, Object> globalSymbols;
 
     ViewScope viewScope;
-    ActorRef<KlabMessage> sender;
+    Ref sender;
     private boolean initializing;
     Semaphore semaphore = null;
     // metadata come with the actor specification if created through instantiation
@@ -202,7 +206,7 @@ public class KActorsScope implements IKActorsBehavior.Scope {
         return this.runtimeScope == null ? null : this.runtimeScope.getMonitor();
     }
 
-    public KActorsScope withSender(ActorRef<KlabMessage> sender, String appId) {
+    public KActorsScope withSender(Ref sender, String appId) {
         KActorsScope ret = new KActorsScope(this);
         ret.sender = sender;
         ret.appId = appId;
@@ -523,7 +527,7 @@ public class KActorsScope implements IKActorsBehavior.Scope {
         this.localizedSymbols = localization;
     }
 
-    public ActorRef<KlabMessage> getSender() {
+    public Ref getSender() {
         return sender;
     }
 

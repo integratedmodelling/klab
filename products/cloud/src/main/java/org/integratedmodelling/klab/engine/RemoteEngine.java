@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.engine;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -19,6 +21,7 @@ import org.integratedmodelling.klab.engine.services.AgentServiceCheck;
 import org.integratedmodelling.klab.engine.services.ConsulDnsService;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.FileUtils;
 
 public class RemoteEngine extends Engine {
 
@@ -73,8 +76,9 @@ public class RemoteEngine extends Engine {
     @Override
     protected void closeExpiredSessions() {
         if (!Authentication.INSTANCE.getSessions().isEmpty()) {
+            long current = System.currentTimeMillis();
+            long yesterday = Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli();
             try {
-                long current = System.currentTimeMillis();
                 activeSessions().forEach(sesh -> {
                     long last = sesh.getLastActivity() + (sessionDeadBand * 60000);
                     if (last < (current)) {
@@ -90,6 +94,7 @@ public class RemoteEngine extends Engine {
             } catch (Exception e) {
                 Logging.INSTANCE.info(e.toString());
             }
+            FileUtils.deleteTempFiles(yesterday);
         }
     }
 

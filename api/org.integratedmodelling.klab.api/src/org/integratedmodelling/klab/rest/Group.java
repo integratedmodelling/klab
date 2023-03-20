@@ -1,23 +1,27 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 public class Group {
 
 	private String id;
+	private String name;
 	private String description;
-	private String sshKey;
 	private String iconUrl;
-	private List<String> projectUrls = new ArrayList<>();
-	private List<ObservableReference> observables = new ArrayList<>();
+	private String sshKey;
+	private long defaultExpirationTime;
 	private boolean worldview;
+	private boolean optIn;
+	private boolean complimentary;
 	private long maxUpload;
-	private Map<String, String> groupData = new HashMap<>();
-	
-	// TODO add owner and possibly more authentication
+	private List<String> projectUrls = new ArrayList<String>();
+	private List<ObservableReference> observables = new ArrayList<ObservableReference>();
+	private Set<CustomProperty> customProperties= new HashSet<CustomProperty>();
+	private List<String> dependsOn = new ArrayList<String>();
 
 	public Group() {
 	}
@@ -27,11 +31,18 @@ public class Group {
 	}
 
 	public String getId() {
-		return id;
+	    return id;
 	}
-
+	
 	public void setId(String id) {
-		this.id = id;
+	    this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getDescription() {
@@ -40,36 +51,6 @@ public class Group {
 
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Group other = (Group) obj;
-		if (id == null) {
-			if (other.id != null)
-				return false;
-		} else if (!id.equals(other.id))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Group [id=" + id + ", description=" + description + "]";
 	}
 
 	/**
@@ -129,6 +110,11 @@ public class Group {
 		this.worldview = worldview;
 	}
 
+	/**
+	 * The public icon url for the group
+	 * 
+	 * @return
+	 */
 	public String getIconUrl() {
 		return iconUrl;
 	}
@@ -141,16 +127,103 @@ public class Group {
 		this.maxUpload = maxUpload;
 	}
 
+	/**
+	 * The max upload permitted for that group
+	 * @return
+	 */
 	public long getMaxUpload() {
 		return maxUpload;
 	}
 
-    public Map<String, String> getGroupData() {
-        return groupData;
+	/**
+	 * Custom properties for the group
+	 * @return
+	 */
+    public Set<CustomProperty> getCustomProperties() {
+        return customProperties;
     }
 
-    public void setGroupData(Map<String, String> groupData) {
-        this.groupData = groupData;
+    public void setCustomProperties(Set<CustomProperty> customProperties) {
+        this.customProperties = customProperties;
     }
+    
+    /**
+     * Default expiration time for the group
+     * The time will be add to the date of group/user assignment
+     * @return
+     */
+    public long getDefaultExpirationTime() {
+		return defaultExpirationTime;
+	}
+
+	public void setDefaultExpirationTime(long defaultExpirationTime) {
+		this.defaultExpirationTime = defaultExpirationTime;
+	}
+
+	/**
+	 * If true the group is automatic added on user request
+	 * @return
+	 */
+	public boolean isOptIn() {
+		return optIn;
+	}
+
+	public void setOptIn(boolean optIn) {
+		this.optIn = optIn;
+	}
+
+	/**
+	 * If true the group will be assigned automatically on user creation
+	 * @return
+	 */
+	public boolean isComplimentary() {
+		return complimentary;
+	}
+
+	public void setComplimentary(boolean complimentary) {
+		this.complimentary = complimentary;
+	}
+
+	/**
+	 * List of group IDs that are need
+	 * @return
+	 */
+	public List<String> getDependsOn() {
+		return dependsOn;
+	}
+
+	public void setDependsOn(List<String> dependsOn) {
+		this.dependsOn = dependsOn;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(complimentary, customProperties, defaultExpirationTime, description, iconUrl, id, maxUpload,
+				observables, optIn, projectUrls, sshKey, worldview, dependsOn);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Group other = (Group) obj;
+		return complimentary == other.complimentary && Objects.equals(customProperties, other.customProperties)
+				&& defaultExpirationTime == other.defaultExpirationTime
+				&& Objects.equals(description, other.description) && Objects.equals(iconUrl, other.iconUrl)
+				&& Objects.equals(id, other.id) && maxUpload == other.maxUpload
+				&& Objects.equals(observables, other.observables) && optIn == other.optIn
+				&& Objects.equals(projectUrls, other.projectUrls) && Objects.equals(sshKey, other.sshKey)
+				&& worldview == other.worldview && Objects.equals(dependsOn, other.dependsOn);
+	}
+
+	@Override
+	public String toString() {
+		return "Group [id=" + id + ", description=" + description + "]";
+	}
+
 
 }

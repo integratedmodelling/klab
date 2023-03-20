@@ -81,7 +81,7 @@ public enum NodeAuthenticationManager {
 				ret.getRoles().add(role.name());
 			}
 			for (Group group : u.getGroups()) {
-				ret.getGroups().add(new Group(group.getId()));
+				ret.getGroups().add(new Group(group.getName()));
 			}
 			return ret;
 		});
@@ -150,7 +150,7 @@ public enum NodeAuthenticationManager {
 		}
 
 		for (Group group : response.getGroups()) {
-			this.groups.put(group.getId(), group);
+			this.groups.put(group.getName(), group);
 		}
 
 		/*

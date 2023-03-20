@@ -5,12 +5,14 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.MongoNode;
-import org.integratedmodelling.klab.hub.api.adapters.MongoGroupAdapter;
 import org.integratedmodelling.klab.rest.Group;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class GetNodesGroups {
 	
 	private MongoNode node;
+	private ObjectMapper objectMapper;
 	
 	public GetNodesGroups(MongoNode node) {
 		super();
@@ -22,7 +24,7 @@ public class GetNodesGroups {
 		Set<Group> groups = new HashSet<>();
 		
 		mongoGroups.forEach(
-				mongoGroup -> groups.add(new MongoGroupAdapter(mongoGroup).convertGroup()));
+				mongoGroup -> groups.add(objectMapper.convertValue(mongoGroup, Group.class)));
 		
 		return groups;
 	}
