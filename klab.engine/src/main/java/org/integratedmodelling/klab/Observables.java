@@ -4,23 +4,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Nullable;
 
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
-import org.integratedmodelling.kim.api.BinarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.ValueOperator;
@@ -37,7 +32,6 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IAcknowledgement;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -75,22 +69,6 @@ import com.google.inject.Injector;
 public enum Observables implements IObservableService {
 
     INSTANCE;
-
-//    ConfigurationDetector configurationDetector = new ConfigurationDetector();
-
-    /**
-     * Describes a configuration for the configuration detector.
-     * 
-     * @author Ferd
-     *
-     */
-    static class Configuration {
-        Set<IConcept> targets = new HashSet<>();
-        IConcept configuration;
-        BinarySemanticOperator connector = BinarySemanticOperator.NONE;
-    }
-
-    private Map<String, Configuration> configurations = Collections.synchronizedMap(new LinkedHashMap<String, Configuration>());
 
     @Inject
     ParseHelper<Model> observableParser;
@@ -633,215 +611,6 @@ public enum Observables implements IObservableService {
         OWL.INSTANCE.restrictSome(relationship, hasTarget, LogicalConnector.UNION, Collections.singleton(target), ontology);
     }
 
-    // /**
-    // * Copy all the observation logical context (inherent, context, caused, ...
-    // * including traits and roles) from a concept to another. Assumes that the
-    // * target concept has none of these.
-    // *
-    // * @param type
-    // * @param target
-    // */
-    // public void copyContext(IConcept type, IConcept target, Ontology ontology) {
-    //
-    // IConcept inherent = getInherentType(type);
-    // IConcept context = getContextType(type);
-    // IConcept goal = getGoalType(type);
-    // IConcept causant = getCausantType(type);
-    // IConcept caused = getCausedType(type);
-    // IConcept compresent = getCompresentType(type);
-    // IConcept adjacent = getAdjacentType(type);
-    // IConcept described = getDescribedType(type);
-    //
-    // if (inherent != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_INHERENT_TO_PROPERTY),
-    // inherent,
-    // ontology);
-    // }
-    // if (context != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CONTEXT_PROPERTY),
-    // context, ontology);
-    // }
-    // if (caused != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSED_PROPERTY), caused,
-    // ontology);
-    // }
-    // if (causant != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_CAUSANT_PROPERTY),
-    // causant, ontology);
-    // }
-    // if (compresent != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_COMPRESENT_PROPERTY),
-    // compresent,
-    // ontology);
-    // }
-    // if (goal != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_PURPOSE_PROPERTY), goal,
-    // ontology);
-    // }
-    // if (adjacent != null) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.IS_ADJACENT_TO_PROPERTY),
-    // adjacent,
-    // ontology);
-    // }
-    // if (described != null) {
-    // OWL.INSTANCE.restrictSome(target,
-    // Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), described,
-    // ontology);
-    // }
-    //
-    // Collection<IConcept> identities = Traits.INSTANCE.getIdentities(type);
-    // Collection<IConcept> realms = Traits.INSTANCE.getRealms(type);
-    // Collection<IConcept> attributes = Traits.INSTANCE.getAttributes(type);
-    // Collection<IConcept> acceptedRoles = Roles.INSTANCE.getRoles(type);
-    //
-    // if (identities.size() > 0) {
-    // Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_IDENTITY_PROPERTY),
-    // LogicalConnector.UNION, identities,
-    // ontology);
-    // }
-    // if (realms.size() > 0) {
-    // Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_REALM_PROPERTY),
-    // LogicalConnector.UNION,
-    // realms,
-    // ontology);
-    // }
-    // if (attributes.size() > 0) {
-    // Traits.INSTANCE.restrict(target, Concepts.p(NS.HAS_ATTRIBUTE_PROPERTY),
-    // LogicalConnector.UNION, attributes,
-    // ontology);
-    // }
-    // if (acceptedRoles.size() > 0) {
-    // OWL.INSTANCE.restrictSome(target, Concepts.p(NS.HAS_ROLE_PROPERTY),
-    // LogicalConnector.UNION,
-    // acceptedRoles,
-    // ontology);
-    // }
-    // }
-
-    /**
-     * Register any configuration directly or through inherency.
-     * 
-     * @param concept
-     * @deprecated
-     */
-    public void registerConfigurations(IConcept concept) {
-
-        if (concept.is(Type.CONFIGURATION)) {
-            registerConfiguration(concept);
-        } else {
-            IConcept inherent = getInherentType(concept);
-            if (inherent != null && inherent.is(Type.CONFIGURATION)) {
-                Configuration descriptor = configurations.get(inherent.getDefinition());
-                if (descriptor == null) {
-                    registerConfiguration(inherent);
-                    descriptor = configurations.get(inherent.getDefinition());
-                }
-                boolean found = false;
-                if (descriptor != null) {
-                    for (IConcept target : descriptor.targets) {
-                        if (concept.equals(target)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                }
-                if (!found && descriptor != null) {
-                    descriptor.targets.add(concept);
-                }
-            }
-        }
-    }
-
-    @Deprecated
-    private void registerConfiguration(IConcept concept) {
-        // register the configuration with the configuration detector
-        if (!concept.isAbstract()) {
-            IConcept inherent = getInherentType(concept);
-            if (inherent != null) {
-                // TODO separate out operands if it's a union or intersection
-                Configuration descriptor = new Configuration();
-                descriptor.targets.add(inherent);
-                descriptor.configuration = concept;
-                configurations.put(concept.getDefinition(), descriptor);
-            }
-        }
-        for (IConcept child : concept.getChildren()) {
-            registerConfiguration(child);
-        }
-    }
-
-    class ConfigurationMatch {
-        public ConfigurationMatch(IConcept configuration, int nt, int sd) {
-            this.configuration = configuration;
-            this.nTargets = nt;
-            this.totalDistance = sd;
-        }
-
-        int nTargets;
-        int totalDistance;
-        IConcept configuration;
-    }
-
-//    /**
-//     * Configuration detector. Called after each instantiation to examine the known configurations
-//     * and allow the instantiation of a configuration observation for any that matches.
-//     * 
-//     * Configurations are detected using decreasing specificity for the target concepts.
-//     * 
-//     * @param instances
-//     * @param context
-//     * @return the matching configuration info, including the configuration concept and the
-//     *         observation targets in the context, or null.
-//     */
-//    public Pair<IConcept, Set<IObservation>> detectConfigurations(IObservation instances, IDirectObservation context) {
-//
-//        List<ConfigurationMatch> matches = new ArrayList<>();
-//        for (Configuration configuration : configurations.values()) {
-//            int nt = 0;
-//            int sd = 0;
-//            for (IConcept target : configuration.targets) {
-//                if (instances.getObservable().getType().is(target)) {
-//                    nt++;
-//                    sd += Concepts.INSTANCE.getAssertedDistance(instances.getObservable().getType(), target);
-//                }
-//            }
-//            if (nt > 0) {
-//                matches.add(new ConfigurationMatch(configuration.configuration, nt, sd));
-//            }
-//        }
-//
-//        if (matches.size() > 0) {
-//            // Sort matches by decreasing ntargets and increasing distance; return first in
-//            // list
-//            matches.sort(new Comparator<ConfigurationMatch>(){
-//
-//                @Override
-//                public int compare(ConfigurationMatch o1, ConfigurationMatch o2) {
-//                    if (o1.nTargets == o2.nTargets) {
-//                        return Integer.compare(o1.totalDistance, o2.totalDistance);
-//                    }
-//                    return Integer.compare(o2.nTargets, o1.nTargets);
-//                }
-//            });
-//
-//            ConfigurationMatch first = matches.iterator().next();
-//
-//            Set<IObservation> targets = new HashSet<>();
-//            targets.add(instances);
-//            Configuration configuration = configurations.get(first.configuration.getDefinition());
-//            for (IConcept c : configuration.targets) {
-//                for (IObservation o : context.getChildren(IObservation.class)) {
-//                    if (o.getObservable().is(c)) {
-//                        targets.add(o);
-//                    }
-//                }
-//            }
-//            return new Pair<>(first.configuration, targets);
-//        }
-//
-//        return null;
-//    }
-
     @Override
     public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor) {
 
@@ -1372,10 +1141,10 @@ public enum Observables implements IObservableService {
         return ret;
 
     }
-//
-//    public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
-//        Reasoner.INSTANCE.registerConfiguration(statement, concept);
-//    }
+    //
+    // public void registerConfiguration(IKimConceptStatement statement, IConcept concept) {
+    // Reasoner.INSTANCE.registerConfiguration(statement, concept);
+    // }
 
     /**
      * Convert any legitimate statement or object into an observed concept.

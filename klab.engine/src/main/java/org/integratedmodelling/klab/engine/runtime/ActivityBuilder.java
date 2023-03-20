@@ -276,11 +276,13 @@ public class ActivityBuilder {
                 ISpace space = ((IScale) geometry).getSpace();
 
                 // complexity of spatial shape = number of coordinates
-                this.scaleStatistics.setSpaceComplexity(space.getShape().getComplexity());
+                this.scaleStatistics.setSpaceComplexity(space.getShape() == null ? -1 : space.getShape().getComplexity());
                 this.scaleStatistics.setSpaceSize(space.size());
-                this.scaleStatistics.setBboxWkt(((Shape) space.getShape()).getStandardizedEnvelopeWKT());
-                this.scaleStatistics.setSpaceCoverage(
-                        space.getShape().getStandardizedArea() / space.getBoundingExtent().getStandardizedArea());
+                this.scaleStatistics
+                        .setBboxWkt(space.getShape() == null ? null : ((Shape) space.getShape()).getStandardizedEnvelopeWKT());
+                this.scaleStatistics.setSpaceCoverage(space.getShape() == null
+                        ? 1
+                        : (space.getShape().getStandardizedArea() / space.getBoundingExtent().getStandardizedArea()));
             }
 
             // time statistics

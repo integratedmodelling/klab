@@ -115,13 +115,8 @@
 		</dependency>
 		<dependency>
 			<groupId>org.eclipse.jetty</groupId>
-			<artifactId>jetty-server</artifactId>
-			<version>9.4.8.v20171121</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-annotations</artifactId>
-			<version>9.4.8.v20171121</version>
+			<version>9.4.14.v20181114</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>

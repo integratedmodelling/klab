@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.ILocalWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
@@ -197,7 +198,7 @@ public enum Resources implements IResourceService {
 
     Map<String, Map<String, Project>> projectCatalog = new HashMap<>();
     Map<String, IWorkspace> workspaces = new HashMap<>();
-    Map<File, IWorkspace> workspacesByRoot = new HashMap<>();
+    Map<File, ILocalWorkspace> workspacesByRoot = new HashMap<>();
 
     /**
      * The core workspace, only containing the OWL knowledge distributed with the software, and no
@@ -215,13 +216,13 @@ public enum Resources implements IResourceService {
      * The workspace containing components from the network (or local components if so configured),
      * loaded on demand.
      */
-    private IWorkspace components;
+    private ILocalWorkspace components;
 
     /**
      * Workspace containing the k.LAB assets installed on the running instance. The files in this
      * workspace are monitored and reloaded incrementally at each change.
      */
-    private IWorkspace local;
+    private ILocalWorkspace local;
 
     /**
      * The service workspace contains one project per session user where to define uploads, learned
@@ -252,7 +253,7 @@ public enum Resources implements IResourceService {
     }
 
     @Override
-    public IWorkspace getLocalWorkspace() {
+    public ILocalWorkspace getLocalWorkspace() {
         return local;
     }
 
@@ -272,7 +273,7 @@ public enum Resources implements IResourceService {
     }
 
     @Override
-    public IWorkspace getComponentsWorkspace() {
+    public ILocalWorkspace getComponentsWorkspace() {
         return components;
     }
 
@@ -345,7 +346,7 @@ public enum Resources implements IResourceService {
         try {
             worldview = new Worldview(certificate.getWorldview(), Configuration.INSTANCE.getDataPath("worldview"),
                     certificate.getWorldviewRepositories());
-            this.loader = worldview.load(this.loader, monitor);
+            this.loader = ((ILocalWorkspace)worldview).load(this.loader, monitor);
             workspaces.put(worldview.getName(), worldview);
             return true;
         } catch (Throwable e) {
@@ -440,7 +441,7 @@ public enum Resources implements IResourceService {
     }
 
     public IProject loadSingleton(String projectId, File dataPath) {
-        IWorkspace workspace = workspacesByRoot.get(dataPath);
+        ILocalWorkspace workspace = workspacesByRoot.get(dataPath);
         if (workspace == null) {
             workspace = new Workspace(dataPath);
             workspacesByRoot.put(dataPath, workspace);
@@ -1827,7 +1828,7 @@ public enum Resources implements IResourceService {
         // physically delete project
         IProject project = getProject(projectId);
         if (project != null) {
-            project.getWorkspace().deleteProject(project);
+            ((ILocalWorkspace) project.getWorkspace()).deleteProject(project);
         }
         // reload
         getLoader().rescan(true);

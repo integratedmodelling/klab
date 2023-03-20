@@ -20,7 +20,6 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.data.Metadata;
 
 public class Behavior implements IBehavior {
@@ -41,7 +40,7 @@ public class Behavior implements IBehavior {
      * @author Ferd
      *
      */
-    public static class Match {
+    public static class Match implements ActionMatch {
 
         KActorsValue value;
         String matchName;
@@ -83,12 +82,12 @@ public class Behavior implements IBehavior {
          * @param scope
          * @return
          */
-        public boolean isIdentifier(Scope scope) {
+        public boolean isIdentifier(IKActorsBehavior.Scope scope) {
             return this.value.getType() == IKActorsValue.Type.IDENTIFIER
                     && !scope.getSymbolTable().containsKey(this.value.getStatedValue());
         }
 
-        public boolean matches(Object value, Scope scope) {
+        public boolean matches(Object value, IKActorsBehavior.Scope scope) {
             return Actors.INSTANCE.matches(this.value, value, scope);
         }
     }

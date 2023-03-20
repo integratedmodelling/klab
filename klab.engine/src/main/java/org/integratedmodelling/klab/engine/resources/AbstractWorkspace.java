@@ -12,14 +12,14 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.KimWorkspace;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.knowledge.ILocalWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.FileUtils;
 
-public abstract class AbstractWorkspace implements IWorkspace {
+public abstract class AbstractWorkspace implements ILocalWorkspace {
 
     protected KimWorkspace delegate;
 

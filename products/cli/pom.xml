@@ -8,11 +8,6 @@
 	<artifactId>cli</artifactId>
 	<build>
 		<plugins>
-			<!-- <plugin> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-maven-plugin</artifactId> 
-				<version>${spring-boot-version}</version> <configuration> <fork>true</fork> 
-				<mainClass>org.integratedmodelling.klab.k.Main</mainClass> </configuration> 
-				<executions> <execution> <goals> <goal>repackage</goal> </goals> </execution> 
-				</executions> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
@@ -151,6 +146,17 @@
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>org.eclipse.xtext.testing</artifactId>
+			<version>${xtextVersion}</version>
+			<exclusions>
+			  <exclusion>
+			    <groupId>org.eclipse.platform</groupId>
+			    <artifactId>org.eclipse.equinox.common</artifactId>
+			  </exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.emf</groupId>
+			<artifactId>org.eclipse.emf.ecore</artifactId>
 			<version>${xtextVersion}</version>
 		</dependency>
 	</dependencies>

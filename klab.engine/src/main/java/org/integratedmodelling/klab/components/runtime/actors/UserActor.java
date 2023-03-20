@@ -1,42 +1,107 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import javax.annotation.processing.Messager;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
+import org.integratedmodelling.klab.api.engine.IScope;
+import org.integratedmodelling.klab.api.engine.ISessionScope;
+import org.integratedmodelling.klab.components.runtime.actors.EmptyKlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 
+import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.ReceiveBuilder;
 
 public class UserActor extends KlabActor {
 
-	public static Behavior<KlabMessage> create(EngineUser session) {
-		return Behaviors.setup(ctx -> new UserActor(ctx, session, null));
-	}
+    /*
+     * --------- messages --------------------
+     */
 
-	public UserActor(ActorContext<KlabMessage> context, EngineUser identity, String appId) {
-		super(context, identity, appId);
-	}
+    public static class CreateSession extends EmptyKlabMessage {
 
-	@Override
-	protected ReceiveBuilder<KlabMessage> configure() {
-		// TODO add all view messages and runtime messages
-		return super.configure().onMessage(UnknownMessage.class, this::onUnknownMessage);
-	}
+        String id;
+        ActorRef<SessionCreated> replyTo;
 
-	private Behavior<KlabMessage> onUnknownMessage(UnknownMessage message) {
-	    if (Configuration.INSTANCE.isEchoEnabled()) {
-	        System.out.println("UNKNOWN MESSAGE " + message);
-	    }
-		return Behaviors.same();
-	}
-	
-	@Override
-	protected UserActor onPostStop() {
-		// TODO do something
-		return this;
-	}
+        public CreateSession(String id, ISessionScope scope, ActorRef<SessionCreated> replyTo) {
+            this.id = id;
+            this.replyTo = replyTo;
+        }
+    }
+
+    public static class CreateApplication extends EmptyKlabMessage {
+        String behavior;
+        ActorRef<SessionCreated> replyTo;
+        public CreateApplication(String behavior, ISessionScope scope, ActorRef<SessionCreated> replyTo) {
+            this.behavior = behavior;
+            this.replyTo = replyTo;
+        }
+    }
+
+    public static class SessionCreated extends EmptyKlabMessage {
+        public ActorRef<KlabMessage> sessionAgent;
+        public SessionCreated(ActorRef<KlabMessage> agent) {
+            this.sessionAgent = agent;
+        }
+    }
+
+    /*
+     * --------- methods --------------------
+     */
+
+    public static Behavior<KlabMessage> create(IEngineUserIdentity user) {
+        return Behaviors.setup(ctx -> new UserActor(ctx, user, user.getUsername()));
+    }
+
+//    public static Behavior<KlabMessage> create(IScope scope) {
+//        return Behaviors.setup(ctx -> new UserActor(ctx, scope, scope.getUser().getUsername()));
+//    }
+
+    public UserActor(ActorContext<KlabMessage> context, IEngineUserIdentity user, String id) {
+        super(context, user, id);
+    }
+
+//    public UserActor(ActorContext<KlabMessage> context, IScope scope, String id) {
+//        super(context, scope.getUser(), id);
+//    }
+
+    @Override
+    protected ReceiveBuilder<KlabMessage> configure() {
+        return super.configure().onMessage(UnknownMessage.class, this::onUnknownMessage)
+                .onMessage(CreateApplication.class, this::handleCreateApplication)
+                .onMessage(CreateSession.class, this::handleCreateSession);
+    }
+
+    private Behavior<KlabMessage> onUnknownMessage(UnknownMessage message) {
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.out.println("UNKNOWN MESSAGE " + message);
+        }
+        return Behaviors.same();
+    }
+
+    private Behavior<KlabMessage> handleCreateApplication(CreateApplication message) {
+        message.replyTo.tell(new SessionCreated(null /* TODO */));
+        return Behaviors.same();
+    }
+
+    private Behavior<KlabMessage> handleCreateSession(CreateSession message) {
+
+//        ActorRef<KlabMessage> actor = getContext().spawn(Behaviors.supervise(SessionActor.create(message.id))
+//                .onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
+        message.replyTo.tell(new SessionCreated(null /* TODO */));
+        return Behaviors.same();
+    }
+
+    @Override
+    protected UserActor onPostStop() {
+        // TODO do something
+        return this;
+    }
 
 }

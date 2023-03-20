@@ -18,6 +18,10 @@ import org.integratedmodelling.klab.api.data.TemplateValue;
  * An order-preserving map with improved get() methods to enable simpler and more flexible use
  * idioms. Also enables accounting of unnamed inputs (mapped to _p<n> keys, from k.IM/k.Actors code)
  * and metadata keys.
+ * <p>
+ * This serializes and deserializes properly to JSON as long as the object mapper is instrumented
+ * with the corresponding serializers and deserializers. See JacksonConfiguration in the
+ * klab.services.core package.
  * 
  * @author ferdinando.villa
  *

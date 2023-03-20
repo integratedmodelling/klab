@@ -599,7 +599,7 @@ You should also get your employer (if you work as a programmer) or school, if an
       <feature id="org.eclipse.jdt"/>
       <feature id="org.eclipse.jgit.http.apache" installMode="root"/>
       <feature id="org.eclipse.jgit.ssh.apache" installMode="root"/>
-      <feature id="org.eclipse.ecf.filetransfer.httpclient45.feature" installMode="root"/>
+      <feature id="org.eclipse.ecf.filetransfer.httpclient5.feature" installMode="root"/>
       <feature id="org.eclipse.jgit.gpg.bc" installMode="root"/>
       <feature id="org.eclipse.e4.rcp" installMode="root"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature" installMode="root"/>

@@ -246,9 +246,9 @@ public enum Authentication implements IAuthenticationService {
     }
 
     @Override
-    public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
+    public IUserIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 
-        IIdentity ret = null;
+        IUserIdentity ret = null;
         EngineAuthenticationResponse authentication = null;
 
         if (certificate instanceof AnonymousEngineCertificate) {
@@ -256,6 +256,15 @@ public enum Authentication implements IAuthenticationService {
             // the
             // anonymous user when secured as Roles.PUBLIC.
             Logging.INSTANCE.info("No user certificate: continuing in anonymous offline mode");
+
+            return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
+        }
+
+        if (!certificate.isValid()) {
+            /*
+             * expired or invalid certificate: throw away the identity, continue as anonymous.
+             */
+            Logging.INSTANCE.info("Certificate is invalid or expired: continuing in anonymous offline mode");
 
             return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
         }

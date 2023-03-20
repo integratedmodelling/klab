@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.engine.IContextScope;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -123,6 +124,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * 
      * TODO refocus to IActivity and move to IProvenance
      * 
+     * @implNote remove in favor of {@link IContextScope}
      * @param observable
      * @param resolutionMode TODO
      * @return
@@ -134,6 +136,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * getEventBus.
      * </p>
      *
+     * @deprecated
      * @return the event bus. Null in an empty context.
      */
     IEventBus getEventBus();
@@ -152,6 +155,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * computed, based on the documentation templates associated with models and their parts. The
      * report can be compiled and rendered at any time.
      * 
+     * @implNote remove in favor of {@link IContextScope}
      * @return
      */
     IReport getReport();
@@ -161,6 +165,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * only in special situations, e.g. when expressions are passed a convenience context in order
      * to be evaluated outside of contextualization.
      * 
+     * @implNote remove in favor of {@link IContextScope}
      * @return
      */
     IDataflow<?> getDataflow();
@@ -169,6 +174,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * Inspect the network graph of the current context, returning all relationships that have the
      * passed subject as target.
      *
+     * @implNote remove in favor of {@link IContextScope}
      * @param observation a {@link org.integratedmodelling.klab.api.observations.IDirectObservation}
      *        object.
      * @return a {@link java.util.Collection} object.
@@ -179,6 +185,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * Inspect the network graph of the current context, returning all relationships that have the
      * passed subject as target.
      *
+     * @implNote remove in favor of {@link IContextScope}
      * @param observation a {@link org.integratedmodelling.klab.api.observations.IDirectObservation}
      *        object.
      * @return a {@link java.util.Collection} object.
@@ -188,7 +195,7 @@ public interface IContextualizationScope extends IParameters<String> {
     /**
      * Even computations that have more than one output have a single target artifact, which
      * corresponds to the primary observable of the model that has defined the computation. If the
-     * computation is an instantiation, the target artifact is null. FIXME should be a folder
+     * computation is an instantiation, the target artifact is an {@link IObservationGroup}.
      *
      * @return the target artifact, an {@link IObservationGroup} when the computation is an
      *         instantiations.
@@ -349,8 +356,10 @@ public interface IContextualizationScope extends IParameters<String> {
      * Return the geometry for the computation (in k.LAB typically a
      * {@link org.integratedmodelling.klab.api.observations.scale.IScale}). The scale is for the
      * CURRENT computation, which may be different from the scale of the full resolution. To
-     * retrieve the latter, use {@link #getResolutionScale()}.
-     *
+     * retrieve the latter, use {@link #getResolutionScale()}. 
+     * 
+     * @implNote remove in favor of {@link IContextScope#getGeometry()}
+     * 
      * @return the current geometry. Should never be null.
      */
     IScale getScale();
@@ -390,6 +399,8 @@ public interface IContextualizationScope extends IParameters<String> {
      * where it can control the type and features of any new object created.
      * <p>
      *
+     * @implNote remove in favor of {@link IContextScope#observe(Object...)}
+     * 
      * @param observable observable of the new direct observation. OK to pass any direct observable
      *        except a relationship.
      * @param name the name for the new direct observation.
@@ -410,7 +421,9 @@ public interface IContextualizationScope extends IParameters<String> {
      * <p>
      * See {@link #newObservation(IObservable, String, IScale)} for API design choices.
      * <p>
-     *
+     * 
+     * @implNote remove in favor of {@link IContextScope#observe(Object...)}
+     * 
      * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
      * @param name as direct observations, all relationships have a name
      * @param scale a {@link org.integratedmodelling.klab.api.observations.scale.IScale} object.
@@ -471,6 +484,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * 
      * @param observation
      * @return the parent, or null if root subject
+     * @implNote remove in favor of {@link IContextScope}
      */
     IDirectObservation getParentOf(IObservation observation);
 
@@ -487,6 +501,7 @@ public interface IContextualizationScope extends IParameters<String> {
      * Return all children of the passed observation, using the logical structure (i.e. skipping
      * observation groups). The runtime context maintains the structure graph.
      * 
+     * @implNote remove in favor of {@link IContextScope}
      * @param observation an observation. {@link IState States} have no children but no error should
      *        be raised.
      * @return the parent, or an empty collection if no children

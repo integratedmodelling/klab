@@ -864,18 +864,6 @@ public class Engine extends Server implements IEngine, UserDetails {
     }
 
     @Override
-    public String load(IBehavior behavior, IContextualizationScope scope) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public boolean stop(String behaviorId) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
     public IParameters<String> getState() {
         return globalState;
     }
