@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.authentication;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -16,12 +17,11 @@ import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.joda.time.DateTime;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-import org.reflections.util.ClasspathHelper;
 
 public enum HubAuthenticationManager {
 	
@@ -82,7 +82,7 @@ public enum HubAuthenticationManager {
 		IdentityReference partnerIdentity = new IdentityReference();
 		partnerIdentity.setId(certificate.getProperty(ICertificate.KEY_PARTNER_NAME));
 		partnerIdentity.setEmail(certificate.getProperty(ICertificate.KEY_PARTNER_EMAIL));
-		partnerIdentity.setLastLogin(DateTime.now().toString());
+		partnerIdentity.setLastLogin(LocalDateTime.now().toString());
 		IPartnerIdentity rootIdentity = new Partner(partnerIdentity);
 		
 		Authentication.INSTANCE.registerIdentity(rootIdentity);

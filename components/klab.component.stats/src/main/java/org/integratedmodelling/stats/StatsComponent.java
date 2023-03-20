@@ -99,7 +99,7 @@ public class StatsComponent {
 
 		Klab.INSTANCE.setStatisticsLocalHandler((obs, user) -> {
 			submit(obs, session.getUser().getUsername(),
-					StringUtil.join(session.getUser().getGroups().stream().map((d) -> d.getId()).toList(), ","));
+					StringUtil.join(session.getUser().getGroups().stream().map((d) -> d.getName()).toList(), ","));
 		});
 	}
 

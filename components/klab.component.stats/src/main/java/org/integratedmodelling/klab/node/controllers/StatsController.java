@@ -53,7 +53,7 @@ public class StatsController {
                             + activities[0].getEngineName());
             for (ObservationResultStatistics activity : activities) {
                 stc.getImplementation(StatsComponent.class).submit(activity, user.getUsername(),
-                        StringUtil.join(user.getGroups().stream().map((d) -> d.getId()).toList(), ","));
+                        StringUtil.join(user.getGroups().stream().map((d) -> d.getName()).toList(), ","));
             }
         }
     }
