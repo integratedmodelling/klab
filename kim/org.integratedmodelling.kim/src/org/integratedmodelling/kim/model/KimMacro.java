@@ -13,14 +13,12 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
-import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
-import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -363,8 +361,8 @@ public class KimMacro implements IKimMacro {
 
 			List<ConceptDeclaration> declarations = new ArrayList<>();
 			BinarySemanticOperator operator = parent.getConnector();
-			for (KimConcept c : parent.getConcepts()) {
-				declarations.add((ConceptDeclaration) c.getEObject());
+			for (IKimConcept c : parent.getConcepts()) {
+				declarations.add((ConceptDeclaration) ((KimConcept)c).getEObject());
 			}
 			return new Pair<>(declarations, operator);
 		}

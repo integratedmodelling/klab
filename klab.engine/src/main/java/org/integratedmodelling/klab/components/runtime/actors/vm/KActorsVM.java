@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Ref;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assert;
@@ -54,16 +55,11 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
 import org.integratedmodelling.klab.components.runtime.actors.ObservationActor;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.ComponentFire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.TestBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.UserActor;
-import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.GroupHandler;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -82,7 +78,7 @@ import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
-import akka.actor.typed.ActorRef;
+//import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 
 /**
@@ -90,8 +86,8 @@ import akka.actor.typed.Behavior;
  * actor should own a VM but components will be routines, not actors, thereby saving the whole mess
  * of forward IDs. The VM must be fully reentrant w.r.t. behaviors, actions and state.
  * 
- * VM should be usable without an actor as long as no actor-specific calls are made. These should 
- * be aware that the actor can be null and terminate gracefully or warn and move on.
+ * VM should be usable without an actor as long as no actor-specific calls are made. These should be
+ * aware that the actor can be null and terminate gracefully or warn and move on.
  * 
  * All deprecated state should either be eliminated or moved to the scope.
  * 
@@ -108,7 +104,7 @@ public class KActorsVM {
      */
     class MatchActions {
 
-        ActorRef<KlabMessage> caller;
+        Ref caller;
         List<Pair<Match, IKActorsStatement>> matches = new ArrayList<>();
         IBehavior behavior;
         // this is the original calling scope, to use when the listening action is
@@ -145,15 +141,14 @@ public class KActorsVM {
         }
     }
 
-    public KActorsVM(ActorRef<KlabMessage> actor, IScope scope, Map<String, Object> globalState) {
+    public KActorsVM(Ref actor, IScope scope, Map<String, Object> globalState) {
         this.receiver = actor;
         this.globalState = globalState;
         this.observationScope = scope;
     }
 
     // protected IBehavior behavior;
-    protected ActorRef<KlabMessage> receiver;
-    @Deprecated
+    protected Ref receiver;
     IScope observationScope;
 
     /*
@@ -171,18 +166,17 @@ public class KActorsVM {
     protected Map<String, MatchActions> componentFireListeners = Collections.synchronizedMap(new HashMap<>());
     private AtomicLong nextId = new AtomicLong(0);
     private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, Ref> receivers = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, List<Ref>> childInstances = Collections.synchronizedMap(new HashMap<>());
     // set to the environment that comes in with the Load message and never reset
-    @Deprecated
-    private Map<String, Object> globalState = null; // should be in the scope
+    private Map<String, Object> globalState = null;
     /*
      * Java objects created by calling a constructor in set statements. Messages will be sent using
      * reflection.
      */
     private Map<String, Object> javaReactors = Collections.synchronizedMap(new HashMap<>());
     @Deprecated
-    private List<ActorRef<KlabMessage>> componentActors = Collections.synchronizedList(new ArrayList<>());
+    private List<Ref> componentActors = Collections.synchronizedList(new ArrayList<>());
     private Layout layout;
     private Map<String, Library> libraries = new HashMap<>();
     private Map<String, Object> nativeLibraryInstances = new HashMap<>();
@@ -192,7 +186,7 @@ public class KActorsVM {
      * the scope
      */
     @Deprecated
-    private ActorRef<KlabMessage> parentActor = null;
+    private Ref parentActor = null;
 
     /*
      * if we pre-build actions or we run repeatedly we cache them here. Important that their run()
@@ -233,20 +227,23 @@ public class KActorsVM {
                      * the interpreter.
                      */
                     if (!receivers.containsKey("user")) {
-                        ActorRef<KlabMessage> sact = null;
-                        ActorRef<KlabMessage> eact = null;
-                        if ((ActorReference) identity.getParentIdentity(Session.class).getActor() != null) {
-                            sact = ((ActorReference) identity.getParentIdentity(Session.class).getActor()).actor;
-                        }
-                        if (identity.getParentIdentity(EngineUser.class).getActor() != null) {
-                            eact = ((ActorReference) identity.getParentIdentity(EngineUser.class).getActor()).actor;
-                        }
-                        // these three are the same. TODO check
-                        receivers.put("session", sact);
-                        receivers.put("view", sact);
-                        receivers.put("system", sact);
-                        // user actor
-                        receivers.put("user", eact);
+                        Ref sact = null;
+                        Ref eact = null;
+                        // if ((ActorReference) identity.getParentIdentity(Session.class).getActor()
+                        // != null) {
+                        // sact = ((ActorReference)
+                        // identity.getParentIdentity(Session.class).getActor()).actor;
+                        // }
+                        // if (identity.getParentIdentity(EngineUser.class).getActor() != null) {
+                        // eact = ((ActorReference)
+                        // identity.getParentIdentity(EngineUser.class).getActor()).actor;
+                        // }
+                        // // these three are the same. TODO check
+                        // receivers.put("session", sact);
+                        // receivers.put("view", sact);
+                        // receivers.put("system", sact);
+                        // // user actor
+                        // receivers.put("user", eact);
                         // TODO modeler actor - which can create and modify projects and code
                     }
 
@@ -437,7 +434,7 @@ public class KActorsVM {
                  * with a message carrying the name it knows us by, so that the value can be matched
                  * to what is caught after the 'new' verb. Listener ID is the actor's name.
                  */
-                parentActor.tell(new ComponentFire(receiver.path().name(), t, receiver));
+                // parentActor.tell(new ComponentFire(receiver.path().name(), t, receiver));
 
             } else {
 
@@ -540,13 +537,13 @@ public class KActorsVM {
         }
 
         // existing actors for this behavior
-        List<ActorRef<KlabMessage>> actors = this.childInstances.get(code.getActorBaseName());
+        List<Ref> actors = this.childInstances.get(code.getActorBaseName());
         String actorName = code.getActorBaseName() + (actors == null ? "" : ("_" + (actors.size() + 1)));
 
         /**
          * TODO substitute with specialized message with ask pattern
          */
-        ActorRef<KlabMessage> actor = null; // getContext().spawn(child, actorName);
+        Ref actor = null; // getContext().spawn(child, actorName);
 
         /*
          * use the actor name to install a listener for any actions that may be connected to this
@@ -604,26 +601,28 @@ public class KActorsVM {
              * AppID in message is null because this is run by the newly spawned actor; we
              * communicate the overall appID through the specific field below.
              */
-            Load loadMessage = new Load(this.identity, code.getBehavior(), null, scope.forComponent())
-                    .withChildActorPath(this.childActorPath == null ? actorName : (this.childActorPath + "." + actorName))
-                    .withActorBaseName(code.getActorBaseName()).withMainArguments(arguments).withMetadata(metadata)
-                    .withApplicationId(this.appId).withParent(receiver);
-
-            Semaphore semaphore = null;
-            if (actorBehavior.getDestination() == Type.COMPONENT) {
-                /*
-                 * synchronize by default
-                 */
-                semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.LOAD);
-                loadMessage.withSemaphore(semaphore);
-                componentActors.add(actor);
-            }
-
-            actor.tell(loadMessage);
-
-            if (semaphore != null) {
-                waitForGreen(semaphore);
-            }
+            // Load loadMessage = new Load(this.identity, code.getBehavior(), null,
+            // scope.forComponent())
+            // .withChildActorPath(this.childActorPath == null ? actorName : (this.childActorPath +
+            // "." + actorName))
+            // .withActorBaseName(code.getActorBaseName()).withMainArguments(arguments).withMetadata(metadata)
+            // .withApplicationId(this.appId).withParent(receiver);
+            //
+            // Semaphore semaphore = null;
+            // if (actorBehavior.getDestination() == Type.COMPONENT) {
+            // /*
+            // * synchronize by default
+            // */
+            // semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.LOAD);
+            // loadMessage.withSemaphore(semaphore);
+            // componentActors.add(actor);
+            // }
+            //
+            // actor.tell(loadMessage);
+            //
+            // if (semaphore != null) {
+            // waitForGreen(semaphore);
+            // }
 
             receivers.put(actorName, actor);
 
@@ -675,7 +674,8 @@ public class KActorsVM {
             /*
              * install executor for group actions
              */
-            this.localActionExecutors.put(code.getTag(), new GroupHandler(this.identity, appId, groupScope, receiver, null));
+            // this.localActionExecutors.put(code.getTag(), new GroupHandler(this.identity, appId,
+            // groupScope, receiver, null));
         }
         for (IKActorsStatement statement : code.getStatements()) {
             if (!execute(statement, behavior, groupScope) || scope.getMonitor().isInterrupted()) {
@@ -820,8 +820,9 @@ public class KActorsVM {
              * message carrying the name it knows us by, so that the value can be matched to what is
              * caught after the 'new' verb. Listener ID is the actor's name.
              */
-            parentActor
-                    .tell(new ComponentFire(receiver.path().name(), code.getValue().evaluate(scope, identity, false), receiver));
+            // parentActor
+            // .tell(new ComponentFire(receiver.path().name(), code.getValue().evaluate(scope,
+            // identity, false), receiver));
 
         } else {
 
@@ -1085,10 +1086,11 @@ public class KActorsVM {
              * variable containing an actor.
              */
             if (this.localActionExecutors.containsKey(receiverName)) {
-                KActorsMessage m = new KActorsMessage(receiver, messageName, code.getCallId(), code.getArguments(),
-                        ((KActorsScope) scope).withNotifyId(notifyId), appId);
-                this.localActionExecutors.get(receiverName).onMessage(m, scope);
-                ((KActorsScope) scope).waitForGreen(code.getFirstLine());
+                // KActorsMessage m = new KActorsMessage(receiver, messageName, code.getCallId(),
+                // code.getArguments(),
+                // ((KActorsScope) scope).withNotifyId(notifyId), appId);
+                // this.localActionExecutors.get(receiverName).onMessage(m, scope);
+                // ((KActorsScope) scope).waitForGreen(code.getFirstLine());
                 return;
             }
 
@@ -1096,14 +1098,14 @@ public class KActorsVM {
              * Otherwise, an actor reference with this local name may have been passed as a
              * parameter or otherwise set in the symbol table as a variable.
              */
-            ActorRef<KlabMessage> recipient = null;
+            Ref recipient = null;
             Object potentialRecipient = scope.getFrameSymbols().get(receiverName);
             if (!(potentialRecipient instanceof IActorIdentity)) {
                 potentialRecipient = scope.getSymbolTable().get(receiverName);
             }
             if (potentialRecipient instanceof IActorIdentity) {
                 try {
-                    recipient = ((ActorReference) ((IActorIdentity<KlabMessage>) potentialRecipient).getActor()).actor;
+//                    recipient = ((ActorReference) ((IActorIdentity<KlabMessage>) potentialRecipient).getActor()).actor;
                 } catch (Throwable t) {
                     // TODO do something with the failed call, the actor should probably remember
                     if (this.identity instanceof IRuntimeIdentity) {
@@ -1125,7 +1127,7 @@ public class KActorsVM {
                  * whatever is set for unknown messages. This not returning null guarantees that the
                  * message will arrive.
                  */
-                recipient = ((ActorReference) (identity.getParentIdentity(EngineUser.class).getActor())).actor;
+//                recipient = ((ActorReference) (identity.getParentIdentity(EngineUser.class).getActor())).actor;
             }
 
             if (synchronize) {
@@ -1134,8 +1136,9 @@ public class KActorsVM {
                                 + " never happen. The synchronization is being ignored.");
             }
 
-            recipient.tell(new KActorsMessage(receiver, messageName, code.getCallId(), code.getArguments(),
-                    ((KActorsScope) scope).withNotifyId(notifyId), appId));
+            // recipient.tell(new KActorsMessage(receiver, messageName, code.getCallId(),
+            // code.getArguments(),
+            // ((KActorsScope) scope).withNotifyId(notifyId), appId));
 
             return;
 
@@ -1240,8 +1243,10 @@ public class KActorsVM {
             Class<? extends KlabActionExecutor> actionClass = Actors.INSTANCE.getActionClass(messageName);
             if (actionClass != null) {
 
-                executor = Actors.INSTANCE.getSystemAction(messageName, (IActorIdentity<KlabMessage>) scope.getIdentity(),
-                        code.getArguments(), ((KActorsScope) scope).withNotifyId(notifyId), receiver, executorId);
+                // executor = Actors.INSTANCE.getSystemAction(messageName,
+                // (IActorIdentity<KlabMessage>) scope.getIdentity(),
+                // code.getArguments(), ((KActorsScope) scope).withNotifyId(notifyId), receiver,
+                // executorId);
 
                 if (executor != null) {
 

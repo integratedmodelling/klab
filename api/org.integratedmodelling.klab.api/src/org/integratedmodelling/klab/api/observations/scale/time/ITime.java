@@ -104,7 +104,7 @@ public interface ITime extends IExtent {
                 case WEEK:
                     return 1000l * 60l * 60l * 24l * 7l;
                 case MONTH:
-                    return 1000l * 60l * 60l * 24l * 30;
+                    return 1000l * 60l * 60l * 24l * 30l;
                 case YEAR:
                     return 1000l * 60l * 60l * 24l * 365l;
                 case DECADE:

@@ -175,4 +175,9 @@ public class EConcept extends EKimObject implements IKimConceptStatement {
 		return delegate.getEmergenceTriggers();
 	}
 
+    @Override
+    public List<ParentConcept> getParents() {
+        return delegate.getParents();
+    }
+
 }
