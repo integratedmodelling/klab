@@ -20,4 +20,6 @@ public interface MongoGroupRepository extends MongoRepository<MongoGroup, Object
 	@Query("{'preliminary' : true }")
 	List<MongoGroup> findPrelimGroups(); 
 	
+    List<MongoGroup> findByOptInIsTrue(); 
+	
 }

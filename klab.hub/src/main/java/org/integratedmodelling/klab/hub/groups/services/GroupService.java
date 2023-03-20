@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.groups.services;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.service.GenericHubService;
@@ -15,4 +16,6 @@ public interface GroupService extends GenericHubService<MongoGroup>{
 //	public abstract void deleteGroup(MongoGroup group);
 //  public abstract Collection<MongoGroup> getGroups();
 //  public abstract MongoGroup getGroupByName(String groupName);
+
+    List<MongoGroup> getGroupsDefault();
 }

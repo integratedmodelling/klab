@@ -5,7 +5,9 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 public class AgreementEntry {
     
     @DBRef
-    private Agreement agreement;    
+    private Agreement agreement;
+    
+    public AgreementEntry() {}
 
     public AgreementEntry(Agreement agreement) {
         super();

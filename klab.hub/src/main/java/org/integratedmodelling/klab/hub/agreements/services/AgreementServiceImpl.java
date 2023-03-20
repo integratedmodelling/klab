@@ -6,6 +6,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.AgreementTemplate;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.commands.CreateAgreement;
 import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
@@ -55,20 +56,21 @@ public class AgreementServiceImpl implements AgreementService{
     }
     
     private Set<GroupEntry> getAgreementDefault(AgreementTemplate agreementTemplate) {
-        Set<GroupEntry> groups = null;
-        Set<GroupEntry> groupsAgreementTemplate = agreementTemplate.getDefaultGroups();
-        //groupService.get
-        
+        Set<GroupEntry> groups = agreementTemplate.getDefaultGroups();
+        groupService.getGroupsDefault().forEach((group) -> extracted(groups, group));
+
         return groups;
-        // TODO Auto-generated method stub
-        
+    }
+
+    private void extracted(Set<GroupEntry> groups, MongoGroup group) {
+        if (!groups.contains(group)) groups.add(new GroupEntry(group));
     }
 
     @Override
     public Set<Agreement> updateAgreementValidDate(Set<Agreement> agreements, Date validDate) {
         agreements.stream().forEach(agreement -> {
             agreement.setValidDate(validDate);
-            new UpdateAgreement(agreement, agreementRepository);
+            new UpdateAgreement(agreement, agreementRepository).execute();
         });
         
         return agreements;
