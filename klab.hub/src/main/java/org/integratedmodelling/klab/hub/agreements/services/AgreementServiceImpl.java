@@ -45,13 +45,16 @@ public class AgreementServiceImpl implements AgreementService{
     
     
     
-    private Agreement createAgreementByAgreementTemplate(AgreementTemplate agreementTemplate) {        
+    private Agreement createAgreementByAgreementTemplate(AgreementTemplate agreementTemplate) {   
+        Date now = new Date();
         Agreement agreement = new Agreement();
         agreement.setAgreementLevel(agreementTemplate.getAgreementLevel());
         agreement.setAgreementType(agreementTemplate.getAgreementType());
         
         agreement.addGroupEntries(getAgreementDefault(agreementTemplate));
-        agreement.setTransactionDate(new Date());        
+        agreement.setValidDate(null);        
+        agreement.setTransactionDate(now);  
+        agreement.setRevokedDate(agreementTemplate.getDefaultDuration() == null ? null : Date.from(now.toInstant().plus(agreementTemplate.getDefaultDuration())));
         return new CreateAgreement(agreement, agreementRepository).execute();
     }
     

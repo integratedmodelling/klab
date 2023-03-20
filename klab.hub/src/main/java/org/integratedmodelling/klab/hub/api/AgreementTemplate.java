@@ -15,26 +15,24 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 
-@Document(collection="AgreementTemplates")
+@Document(collection = "AgreementTemplates")
 @TypeAlias("MongoAgreementTemplate")
 public class AgreementTemplate {
     @Id
-    private String id;    
-    
+    private String id;
+
     @Enumerated(EnumType.STRING)
     private AgreementLevel agreementLevel;
-    
+
     @Enumerated(EnumType.STRING)
     private AgreementType agreementType;
-    
+
     private String text;
-    
+
     private Boolean defaultTemplate;
-    
-    private Date validDate;
-    
+
     private Duration defaultDuration;
-    
+
     @Reference
     private Set<GroupEntry> defaultGroups = new HashSet<GroupEntry>();
 
@@ -78,14 +76,6 @@ public class AgreementTemplate {
         this.defaultTemplate = defaultTemplate;
     }
 
-    public Date getValidDate() {
-        return validDate;
-    }
-
-    public void setValidDate(Date validDate) {
-        this.validDate = validDate;
-    }
-
     public Duration getDefaultDuration() {
         return defaultDuration;
     }
@@ -101,6 +91,5 @@ public class AgreementTemplate {
     public void setDefaultGroups(Set<GroupEntry> defaultGroups) {
         this.defaultGroups = defaultGroups;
     }
-    
-    
+
 }
