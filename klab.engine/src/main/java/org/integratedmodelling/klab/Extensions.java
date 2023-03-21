@@ -200,6 +200,7 @@ public enum Extensions implements IExtensionService {
             if (ret instanceof AbstractContextualizer && scope instanceof RuntimeScope) {
                 ((AbstractContextualizer) ret).setPrototype(prototype);
                 ((AbstractContextualizer) ret).setScope((RuntimeScope) scope);
+                ((AbstractContextualizer) ret).initializeContextualizer();
             }
 
         }

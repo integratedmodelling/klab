@@ -1,12 +1,12 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.UUID;
 
 import org.integratedmodelling.klab.auth.Role;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -30,7 +30,7 @@ public class TokenAuthentication {
     
     private String paretToken;
 
-	protected DateTime expiration;
+	protected LocalDateTime expiration;
 	
 	boolean authenticated;
 
@@ -47,7 +47,7 @@ public class TokenAuthentication {
     public TokenAuthentication(String username) {
         this.username = username;
         this.tokenString = UUID.randomUUID().toString();
-        this.expiration = DateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
+        this.expiration = LocalDateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
     }
 
 	/**
@@ -82,12 +82,12 @@ public class TokenAuthentication {
         this.username = username;
     }
 
-    public DateTime getExpiration() {
+    public LocalDateTime getExpiration() {
         return expiration;
     }
 
     public boolean isExpired() {
-        DateTime now = new DateTime();
+        LocalDateTime now = LocalDateTime.now();
         return now.isAfter(expiration);
     }
 

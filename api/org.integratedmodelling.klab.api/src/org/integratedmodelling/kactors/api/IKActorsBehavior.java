@@ -1,6 +1,8 @@
 package org.integratedmodelling.kactors.api;
 
 import java.io.File;
+import java.io.Serializable;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -96,6 +98,59 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
     }
 
     /**
+     * A serializable reference to an actor, to which we can send a message or ask a question that
+     * expects a response. Generalizes interaction with an actor using the common frameworks.
+     * 
+     * @author Ferd
+     *
+     */
+    interface Ref extends Serializable {
+
+        /**
+         * Empty may mean that the response is null or that some agreed no-op value was set,
+         * according to implementation.
+         * 
+         * @return
+         */
+        boolean isEmpty();
+
+        /**
+         * Send a message asynchronously.
+         * 
+         * @param <T>
+         * @param message
+         */
+        <T extends Serializable> void tell(T message);
+
+        /**
+         * Ask a question and wait for the response. Assumes a fast response or no response;
+         * implementations should use a sensible timeout and behave as needed (null return or
+         * unchecked exception) if it's exceeded.
+         * 
+         * @param <T>
+         * @param <R>
+         * @param message
+         * @param responseClass
+         * @return
+         */
+        <T extends Serializable, R extends Serializable> R ask(T message, Class<? extends R> responseClass);
+
+        /**
+         * Ask a question and wait for the response for at most the passed duration. In case of
+         * timeout, this method should behave the same way as {@link #ask(Object, Class)}.
+         * 
+         * @param <T>
+         * @param <R>
+         * @param message
+         * @param responseClass
+         * @param timeout
+         * @return
+         */
+        <T extends Serializable, R extends Serializable> R ask(T message, Class<? extends R> responseClass, Duration timeout);
+
+    }
+
+    /**
      * The scope for evaluating k.Actors statements. Not used in the API except for passing to
      * 
      * @author Ferd
@@ -162,9 +217,9 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         Scope getChild(IBehavior testcase);
 
         Scope getChild(ConcurrentGroup group);
-        
+
         Scope getChild(String applicationId, Action action);
-        
+
         Scope withMatch(ActionMatch first, Object value, Scope withValues);
 
         Scope withValue(String variable, Object o);
@@ -176,7 +231,6 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         void onException(Throwable e, String message);
 
         Map<String, String> getLocalizedSymbols();
-
 
     }
 
