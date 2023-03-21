@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.io.IOException;
 import java.security.NoSuchProviderException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -34,7 +36,6 @@ import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.HubNotificationMessage.Parameters;
 import org.integratedmodelling.klab.utils.Pair;
-import org.joda.time.DateTime;
 
 public class EngineAuthResponeFactory {
     
@@ -123,14 +124,14 @@ public class EngineAuthResponeFactory {
 
         // TODO for now, we just assume that there is a single agreement per profile.
         List<Agreement> validAgreements = profile.getAgreements().stream()
-                .filter(a -> !a.isRevoked() && !a.isExpired()).collect(Collectors.toList());
+                .filter(Agreement::isValid).collect(Collectors.toList());
         if (validAgreements.isEmpty()) {
             throw new NoValidAgreementException(profile.getUsername());
         }
 
-        final DateTime nowPlus30Days = DateTime.now().plusDays(30);
+        final Instant nowPlus30Days = Instant.now().plus(30, ChronoUnit.DAYS);
         validAgreements.stream()
-            .filter(a -> a.hasExpirationDate() && !new DateTime(a.getExpiredDate()).isAfter(nowPlus30Days))
+            .filter(a -> a.hasExpirationDate() && a.getExpiredDate().toInstant().isBefore(nowPlus30Days))
             .forEach(a -> {
                 HubNotificationMessage msg = HubNotificationMessage.MessageClass
                         .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpiredDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
@@ -143,7 +144,6 @@ public class EngineAuthResponeFactory {
                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
 		
 		if(!expires.isAfter(LocalDateTime.now().plusDays(30))) {
-		    
 		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
 		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 		                    new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, expires)

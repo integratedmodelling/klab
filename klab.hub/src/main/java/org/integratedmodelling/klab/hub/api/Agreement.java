@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -7,7 +8,6 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -182,6 +182,11 @@ public class Agreement {
         if(!hasExpirationDate()) {
             return false;
         }
-        return !(new DateTime(expiredDate).isAfterNow());
+        return !expiredDate.toInstant().isAfter(Instant.now());
     }
+
+    public boolean isValid() {
+        return !isRevoked() && !isExpired();
+    }
+
 }
