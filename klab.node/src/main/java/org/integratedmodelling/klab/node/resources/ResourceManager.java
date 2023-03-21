@@ -343,7 +343,7 @@ public class ResourceManager {
             }
             List<String> groups = new ArrayList<>();
             for (Group group : user.getGroups()) {
-                groups.add(group.getId());
+                groups.add(group.getName());
             }
             return permissions.isAuthorized(user.getUsername(), groups);
         }

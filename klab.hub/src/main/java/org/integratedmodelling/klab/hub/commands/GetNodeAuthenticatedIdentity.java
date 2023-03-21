@@ -1,12 +1,12 @@
 package org.integratedmodelling.klab.hub.commands;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.joda.time.DateTime;
 
 public class GetNodeAuthenticatedIdentity {
 	
@@ -21,8 +21,8 @@ public class GetNodeAuthenticatedIdentity {
 	
 	public AuthenticatedIdentity execute() {
 		
-		DateTime now = DateTime.now();
-		DateTime expires = now.plusDays(90);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime expires = now.plusDays(90);
 		
 		IdentityReference nodeReference = new IdentityReference(nodeIdentity.getName(),
 				nodeIdentity.getParentIdentity().getEmailAddress(), now.toString());

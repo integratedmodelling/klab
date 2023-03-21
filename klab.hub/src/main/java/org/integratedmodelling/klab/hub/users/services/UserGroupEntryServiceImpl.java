@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,7 +17,6 @@ import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,7 +34,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	@Override
 	public void setUsersGroupsByNames(UpdateUsersGroups updateRequest) {
 		
-		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupnames(), updateRequest.getExperation());
+		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
@@ -56,7 +56,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	@Override
 	public void addUsersGroupsByNames(UpdateUsersGroups updateRequest) {
 		
-		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupnames(), updateRequest.getExperation());
+		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
@@ -77,7 +77,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
 	@Override
 	public void removeUsersGroupsByNames(UpdateUsersGroups updateRequest) {
-		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupnames(), updateRequest.getExperation());
+		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
@@ -93,33 +93,33 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	}
 	
 	@Override
-	public void addPrelimenaryUserGroups(User user, DateTime experiation) {
-		Set<GroupEntry> groupEntries = createPrelimGroupEntries(experiation);
+	public void addComplimentaryUserGroups(User user, LocalDateTime expiration) {
+		Set<GroupEntry> groupEntries = createComplimentaryGroupEntries(expiration);
 		user.getAgreements().stream().findFirst().get().addGroupEntries(groupEntries);
 		new UpdateUser(user, userRepository).execute();
 		
 	}
 	
-	private Set<GroupEntry> createGroupEntries(Set<String> groupnames, DateTime experiation) {
+	private Set<GroupEntry> createGroupEntries(Set<String> groupnames, LocalDateTime expiration) {
 		Set<GroupEntry> groupEntries = new HashSet<>();
 		for (String groupname : groupnames) {
 			groupRepository
 				.findByNameIgnoreCase(groupname)
 				.ifPresent(grp -> {
-					GroupEntry entry = new GroupEntry(grp, experiation);
+					GroupEntry entry = new GroupEntry(grp, expiration);
 					groupEntries.add(entry);
 				});
 		}
 		return groupEntries;
 	}
 	
-	private Set<GroupEntry> createPrelimGroupEntries(DateTime experiation) {
+	private Set<GroupEntry> createComplimentaryGroupEntries(LocalDateTime expiration) {
 		Set<GroupEntry> groupEntries = new HashSet<>();
 		groupRepository
-			.findPrelimGroups()
+			.findComplimentaryGroups()
 			.forEach(grp ->
 				groupEntries.add(
-					new GroupEntry(grp, experiation)
+					new GroupEntry(grp, expiration)
 				)
 			);
 		return groupEntries;
@@ -132,7 +132,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		userRepository.findAll().forEach(user -> username.add(user.getUsername()));
 		groupname.add(groupName);
 		//on the remove function the expiration is not used, but called for create, group entry.
-		UpdateUsersGroups updateRequest = new UpdateUsersGroups(username, groupname, DateTime.now());
+		UpdateUsersGroups updateRequest = new UpdateUsersGroups(username, groupname, LocalDateTime.now());
 		removeUsersGroupsByNames(updateRequest);
 	}
 
@@ -145,7 +145,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		userRepository.findAll().forEach(u -> usernames.add(u.getUsername()));
 		groupNames.add(group.getName());
 		
-		UpdateUsersGroups request = new UpdateUsersGroups(usernames, groupNames, DateTime.now());		
+		UpdateUsersGroups request = new UpdateUsersGroups(usernames, groupNames, LocalDateTime.now());		
 		removeUsersGroupsByNames(request);
 	}
 	

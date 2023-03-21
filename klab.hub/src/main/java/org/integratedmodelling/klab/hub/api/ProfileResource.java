@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +16,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.rest.Group;
-import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -58,11 +58,11 @@ public class ProfileResource implements OAuth2User{
 
     public String comments;
 
-    public DateTime registrationDate;
+    public LocalDateTime registrationDate;
 
-    public DateTime lastLogin;
+    public LocalDateTime lastLogin;
 
-	public DateTime lastConnection;
+	public LocalDateTime lastConnection;
 
     public AccountStatus accountStatus;
     
@@ -172,19 +172,19 @@ public class ProfileResource implements OAuth2User{
 		this.email = email;
 	}
 	
-    public DateTime getLastLogin() {
+    public LocalDateTime getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(DateTime lastLogin) {
+	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
-	public DateTime getLastConnection() {
+	public LocalDateTime getLastConnection() {
 		return lastConnection;
 	}
 
-	public void setLastConnection(DateTime lastConnection) {
+	public void setLastConnection(LocalDateTime lastConnection) {
 		this.lastConnection = lastConnection;
 	}
 
@@ -192,7 +192,7 @@ public class ProfileResource implements OAuth2User{
 	    List<String> groupsIds = new ArrayList<>();
 	    //TODO Agreement list	    
 	    for (GroupEntry grp : this.getAgreements().get(0).getGroupEntries()) {
-            if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+            if(grp != null && grp.getExpiration() != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
                 groupsIds.add(grp.getGroup().getName());
             }
         }
@@ -203,10 +203,10 @@ public class ProfileResource implements OAuth2User{
 		List<Group> listOfGroups = new ArrayList<>();
 		//TODO Agreement list 
 		for (GroupEntry grp : this.getAgreements().get(0).getGroupEntries()) {
-			if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+			if(grp != null && grp.getExpiration() != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
-				group.setId(mGroup.getName());
+				group.setName(mGroup.getName());
 				group.setDescription(mGroup.getDescription());
 				group.setIconUrl(mGroup.getIconUrl());
 				group.setMaxUpload(mGroup.getMaxUpload());
@@ -272,7 +272,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<GroupEntry> expiredGroupEntries() {
         ArrayList<GroupEntry> expired = new ArrayList<GroupEntry>();
         for (GroupEntry e : getAgreements().get(0).getGroupEntries()) {
-            if(e.getExperation().isBeforeNow()) {
+            if(e.getExpiration() != null && e.getExpiration().isBefore(LocalDateTime.now())) {
                 expired.add(e);
             }
         }
@@ -282,7 +282,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<GroupEntry> expiringGroupEntries() {
         ArrayList<GroupEntry> expiring = new ArrayList<GroupEntry>();
         for (GroupEntry e : getAgreements().get(0).getGroupEntries()) {
-            if(!e.getExperation().isBeforeNow() && !e.getExperation().isAfter(DateTime.now().plusDays(30))) {
+            if(e.getExpiration() != null && !e.getExpiration().isBefore(LocalDateTime.now()) && !e.getExpiration().isAfter(LocalDateTime.now().plusDays(30))) {
                 expiring.add(e);
             }
         }

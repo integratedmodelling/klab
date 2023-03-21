@@ -2,11 +2,10 @@ package org.integratedmodelling.klab.engine.services;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.rest.ObservableReference;
+import org.integratedmodelling.klab.rest.GroupEntry;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 
@@ -61,96 +60,6 @@ public class HubUserProfile {
 
 	public void setGroupEntries(List<GroupEntry> groupEntries) {
 		this.groupEntries = groupEntries;
-	}
-	
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	static class GroupEntry {
-
-		private Group group;
-		
-		@JsonIgnoreProperties(ignoreUnknown = true)
-		static class Group {
-			
-			@JsonProperty("name")
-			private String id;
-			
-			private String description;
-			
-			private String iconUrl;
-			
-			private List<String> projectUrls;
-			
-			private List<ObservableReference> observables;
-			
-			private boolean worldview;
-			
-			private long maxUpload;
-
-			public String getId() {
-				return id;
-			}
-
-			public void setId(String id) {
-				this.id = id;
-			}
-
-			public String getDescription() {
-				return description;
-			}
-
-			public void setDescription(String description) {
-				this.description = description;
-			}
-
-			public String getIconUrl() {
-				return iconUrl;
-			}
-
-			public void setIconUrl(String iconUrl) {
-				this.iconUrl = iconUrl;
-			}
-
-			public List<String> getProjectUrls() {
-				return projectUrls;
-			}
-
-			public void setProjectUrls(List<String> projectUrls) {
-				this.projectUrls = projectUrls;
-			}
-
-			public List<ObservableReference> getObservables() {
-				return observables;
-			}
-
-			public void setObservables(List<ObservableReference> observables) {
-				this.observables = observables;
-			}
-
-			public boolean isWorldview() {
-				return worldview;
-			}
-
-			public void setWorldview(boolean worldview) {
-				this.worldview = worldview;
-			}
-
-			public long getMaxUpload() {
-				return maxUpload;
-			}
-
-			public void setMaxUpload(long maxUpload) {
-				this.maxUpload = maxUpload;
-			}
-		}
-		
-
-		public Group getGroup() {
-			return group;
-		}
-
-		public void setGroup(Group group) {
-			this.group = group;
-		}
 	}
 
     public String getJwtToken() {

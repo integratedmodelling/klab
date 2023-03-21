@@ -268,7 +268,7 @@ public class ResourceController {
 		} else {
 			KlabPermissions perms = KlabPermissions.create(submitting);
 			Collection<String> groups = new ArrayList<String>();
-			user.getGroups().forEach(g -> groups.add(g.getId()));
+			user.getGroups().forEach(g -> groups.add(g.getName()));
 			if (perms.isAuthorized(user.getUsername(), groups)) {
 				return checkUploadLimit(user, fileSize);
 			} else {

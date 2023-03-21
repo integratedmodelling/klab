@@ -8,6 +8,7 @@ import java.io.Writer;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.SignatureException;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Properties;
 import org.apache.commons.codec.DecoderException;
@@ -19,7 +20,6 @@ import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.service.LicenseServiceLegacy;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -80,7 +80,7 @@ public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
 	@Override
 	public Properties getPropertiesString(User user) {
         Properties properties = new Properties();   
-        DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS/2);
+        LocalDateTime expires = LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS/2);
 		properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		properties.setProperty(KlabCertificate.KEY_USERNAME, user.getUsername());
 		properties.setProperty(KlabCertificate.KEY_EMAIL, user.getEmail());
@@ -97,7 +97,7 @@ public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
     @Override
 	public Properties getPropertiesString(MongoNode node) throws IOException {
         Properties properties = new Properties();   
-        DateTime expires = new DateTime().plusDays(CERT_FILE_TTL_DAYS/2);
+        LocalDateTime expires = LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS/2);
 		properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		properties.setProperty(KlabCertificate.KEY_NODENAME, node.getName());
 		properties.setProperty(KlabCertificate.KEY_EMAIL, node.getEmail());

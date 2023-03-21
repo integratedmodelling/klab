@@ -28,7 +28,6 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * A Model is a statement that produces a computed observation. It has at least one observable. The

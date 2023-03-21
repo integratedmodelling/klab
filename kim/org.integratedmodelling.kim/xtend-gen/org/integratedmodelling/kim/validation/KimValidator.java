@@ -2317,7 +2317,7 @@ public class KimValidator extends AbstractKimValidator {
     KimConceptStatement ret = new KimConceptStatement(concept, _xifexpression);
     boolean ok = true;
     boolean isAlias = concept.isAlias();
-    java.util.List<KimConceptStatement.ParentConcept> declaredParents = Lists.<KimConceptStatement.ParentConcept>newArrayList();
+    java.util.List<KimConceptStatement.ParentConceptImpl> declaredParents = Lists.<KimConceptStatement.ParentConceptImpl>newArrayList();
     boolean template = false;
     ret.setAlias(isAlias);
     int ai = 0;
@@ -2429,13 +2429,13 @@ public class KimValidator extends AbstractKimValidator {
                     KimConcept declaration = Kim.INSTANCE.declareConcept(p);
                     if (((declaration != null) && (!declaration.getType().isEmpty()))) {
                       if (((i == 0) || Objects.equal(concept.getConnectors().get((i - 1)), ","))) {
-                        KimConceptStatement.ParentConcept group = new KimConceptStatement.ParentConcept();
+                        KimConceptStatement.ParentConceptImpl group = new KimConceptStatement.ParentConceptImpl();
                         group.getConcepts().add(declaration);
                         declaredParents.add(group);
                       } else {
                         int _size_2 = declaredParents.size();
                         int _minus = (_size_2 - 1);
-                        KimConceptStatement.ParentConcept group_1 = declaredParents.get(_minus);
+                        KimConceptStatement.ParentConceptImpl group_1 = declaredParents.get(_minus);
                         group_1.getConcepts().add(declaration);
                         String statedConnector = concept.getConnectors().get((i - 1));
                         BinarySemanticOperator _xifexpression_1 = null;

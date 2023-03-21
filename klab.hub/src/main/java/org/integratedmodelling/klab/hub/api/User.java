@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,7 +12,6 @@ import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.rest.CustomProperty;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
@@ -65,7 +65,7 @@ public class User extends IdentityModel implements UserDetails{
 
     String serverUrl;
 
-    DateTime lastLogin;
+    LocalDateTime lastLogin;
 
 
     boolean sendUpdates = true;
@@ -343,14 +343,14 @@ public class User extends IdentityModel implements UserDetails{
 	
 
     public void setLastLogin() {
-        lastLogin = DateTime.now();
+        lastLogin = LocalDateTime.now();
     }
     
-    public void setLastLogin(DateTime date) {
+    public void setLastLogin(LocalDateTime date) {
         lastLogin = date;
     }
 
-    public DateTime getLastLogin() {
+    public LocalDateTime getLastLogin() {
     	return lastLogin;
     }
 
