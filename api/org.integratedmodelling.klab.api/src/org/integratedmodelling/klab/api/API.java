@@ -384,13 +384,24 @@ public interface API {
          * Base URL path for tag notifications by user.
          */
         public static final String TAG_NOTIFICATION_OF_USER = USER_BASE + "/tag-notifications/{name}";
+        /**
+         * Base URL path for managing all the agreements of a user.
+         */
+        public static final String USER_AGREEMENTS = USER_BASE_ID + "/agreements";
+        /**
+         * Base URL path for getting an agreement of a user by id.
+         */
+        public static final String USER_AGREEMENT_ID = USER_BASE_ID + "/agreement/{agreement-id}";
+        /**
+         * Base URL path for revoking an agreement of a user by id.
+         */
+        public static final String USER_REVOKE_AGREEMENT_ID = USER_BASE_ID + "/revoke-agreement/{agreement-id}";
 
         public static interface PARAMETERS {
             /**
              * URL PARAMETER for user activation tokens.
              */
 			public static final String USER_ACTIVATION = "activate";
-
             /**
              * URL PARAMETER for user requesting a lost password email.
              */
