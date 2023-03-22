@@ -392,6 +392,10 @@ public interface API {
          * Base URL path for getting an agreement of a user by id.
          */
         public static final String USER_AGREEMENT_ID = USER_BASE_ID + "/agreement/{agreement-id}";
+        /**
+         * Base URL path for revoking an agreement of a user by id.
+         */
+        public static final String USER_REVOKE_AGREEMENT_ID = USER_BASE_ID + "/revoke-agreement/{agreement-id}";
 
         public static interface PARAMETERS {
             /**

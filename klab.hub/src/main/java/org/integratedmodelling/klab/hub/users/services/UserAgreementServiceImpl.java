@@ -29,15 +29,15 @@ public class UserAgreementServiceImpl implements UserAgreementService {
     }
 
     @Override
-    public void revokeAgreementFromUser(String username, String agreementId) {
+    public void revokeAgreement(String username, String agreementId) {
         User user = getUserByUsername(username);
 
-        user.getAgreements().stream()
-            .filter(a -> a.getId().equals(agreementId))
-            .forEach(a -> {
-                a.setExpiredDate(new Date());
-                agreementRepository.save(a);
-            });
+        Agreement agreement = user.getAgreements().stream()
+            .filter(a -> a.getId().equals(agreementId)).findFirst()
+            .orElseThrow(() -> new BadRequestException(String.format("User %s does not have an agreement with id %s", username, agreementId)));
+        
+        agreement.setRevokedDate(new Date());
+        agreementRepository.save(agreement);
     }
 
     private boolean checkIfUserHasThatAgreementId(String agreementId, User user) {
@@ -45,7 +45,7 @@ public class UserAgreementServiceImpl implements UserAgreementService {
     }
 
     @Override
-    public void patchAgreementOfUser(String username, Agreement agreement) throws BadRequestException {
+    public void updateAgreement(String username, Agreement agreement) throws BadRequestException {
         User user = getUserByUsername(username);
 
         if(!checkIfUserHasThatAgreementId(agreement.getId(), user)) {

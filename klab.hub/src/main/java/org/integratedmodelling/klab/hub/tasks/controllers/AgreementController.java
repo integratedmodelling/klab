@@ -9,10 +9,10 @@ import org.integratedmodelling.klab.hub.users.services.UserAgreementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +24,7 @@ public class AgreementController {
 
     @GetMapping(value = API.HUB.USER_AGREEMENTS)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > revokeAgreementOfUser(
+    public ResponseEntity< ? > getAgreementsOfUser(
             @PathVariable("id") String username) {
         Collection<Agreement> agreements;
         try {
@@ -39,13 +39,13 @@ public class AgreementController {
                 .body(agreements);
     }
 
-    @DeleteMapping(value = API.HUB.USER_AGREEMENT_ID)
+    @PostMapping(value = API.HUB.USER_REVOKE_AGREEMENT_ID)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > revokeAgreementOfUser(
             @PathVariable("id") String username,
             @PathVariable("agreement-id") String agreementId) {
         try {
-            service.revokeAgreementFromUser(username, agreementId);
+            service.revokeAgreement(username, agreementId);
         } catch (BadRequestException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)
@@ -61,12 +61,12 @@ public class AgreementController {
             agreement.setId(agreementId);
             return true;
         }
-        return agreement.getId() == agreementId;
+        return agreement.getId().equals(agreementId);
     }
     
-    @PatchMapping(value = API.HUB.USER_AGREEMENT_ID, consumes = "application/json")
+    @PutMapping(value = API.HUB.USER_AGREEMENT_ID, consumes = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > patchAgreementOfUser(
+    public ResponseEntity< ? > updateAgreementOfUser(
             @PathVariable("id") String username,
             @PathVariable("agreement-id") String agreementId,
             @RequestBody Agreement agreement) {
@@ -75,7 +75,7 @@ public class AgreementController {
                     .body("Cannot modify agreement. Unclear id reference.");
         }
         try {
-            service.patchAgreementOfUser(username, agreement);
+            service.updateAgreement(username, agreement);
         } catch (BadRequestException e) {
             return ResponseEntity
                     .status(HttpStatus.BAD_REQUEST)

@@ -10,7 +10,7 @@ public interface UserAgreementService {
 
     abstract Collection<Agreement> getAgreementsFromUser(String username);
 
-    abstract void revokeAgreementFromUser(String username, String agreementId);
+    abstract void revokeAgreement(String username, String agreementId);
 
-    abstract void patchAgreementOfUser(String username, Agreement agreement);
+    abstract void updateAgreement(String username, Agreement agreement);
 }
