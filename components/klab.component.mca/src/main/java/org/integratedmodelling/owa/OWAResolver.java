@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
+import java.awt.geom.Point2D;
 import java.lang.Math;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -33,6 +34,8 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	private Boolean interpolateWeights;
 	
 	private Boolean combinationsComputed;
+	
+	private BernsteinInterpolator interpolator;
 		
 	/*
 	 * Weights normalization.
@@ -60,6 +63,42 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		} 
 		return normalizedWeights;
 	}	
+	
+	/*
+	 * Cumulative weights for WOWA.
+	 * */
+	private List<Point2D> cumulativeOrdinalWeights(List<Double> normalizedOrdinalWeights) {
+		List<Point2D> cumulativeOW = new ArrayList<Point2D>();
+		
+		cumulativeOW.add(new Point2D.Double(0.0,0.0));
+		
+		Double xStep = 1.0/(double)normalizedOrdinalWeights.size(); 
+		
+		Double acc = 0.0;
+		Double x;
+		for(Integer i=0; i<normalizedOrdinalWeights.size(); i++) {
+			acc += normalizedOrdinalWeights.get(i);
+			x = (double) (i+1)*xStep;
+			cumulativeOW.add(new Point2D.Double(x,acc));
+		}
+		
+		return cumulativeOW;
+	}
+	
+	private Map<String,Double> cumulativeRelevanceWeights(Map<String,Double> sortedRelevanceWeights){
+		Map<String,Double> cumulativeRW = new LinkedHashMap<>();
+		
+		Iterator<Entry<String,Double>> it = sortedRelevanceWeights.entrySet().iterator();
+		String key;
+		Double sum = 0.0;
+		while(it.hasNext()) {
+			key = it.next().getKey();
+        	sum += sortedRelevanceWeights.get(key);
+        	cumulativeRW.put(key, sum);
+		}
+		
+		return cumulativeRW;
+	}
 	
 	
 	/*
@@ -94,28 +133,42 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	}
 	
 	
+	
 	/*
-	 * Ordinal weights for linguistic quantifier OWA.
+	 * Final weights for interpolated WOWA. TODO: weight map should be linked as order matters.
+	 * */
+	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights){
+		
+		Map<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights);
+		
+		Map<String,Double> finalWeights = new HashMap<>();
+		
+		Double val;
+		Double previous = 0.0;
+		for(String key : cumulativeRW.keySet()){
+			val = interpolator.getInterpolatedValue(cumulativeRW.get(key));
+			finalWeights.put(key,val - previous);
+			previous = val;
+		}
+		return finalWeights;
+	}
+	
+	
+	
+	
+	/*
+	 * Ordinal weights for linguistic quantifier OWA. TODO: weight map should be linked as order matters.
 	 * */
 	private Map<String,Double> exponentialOrdinalWeights(Map<String,Double> sortedRelevanceWeights){
 		
-		Map<String,Double> cummulativeRW = new LinkedHashMap<>();
-		
-		Iterator<Entry<String,Double>> it = sortedRelevanceWeights.entrySet().iterator();
-		String key;
-		Double sum = 0.0;
-		while(it.hasNext()) {
-			key = it.next().getKey();
-        	sum += sortedRelevanceWeights.get(key);
-        	cummulativeRW.put(key, sum);
-		}
+		Map<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights); 
 
 		Map<String,Double> finalWeights = new HashMap<>();
 		Double val;
 		Double previous = 0.0;
-		for(String k : cummulativeRW.keySet()){
-			val = Math.pow(cummulativeRW.get(k),alpha);
-			finalWeights.put(k,val - previous);
+		for(String key : cumulativeRW.keySet()){
+			val = Math.pow(cumulativeRW.get(key),alpha);
+			finalWeights.put(key,val - previous);
 			previous = val; 
 		}
 		return finalWeights;
@@ -156,6 +209,19 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		return owa;
 	}
 	
+	private Double calculateWOWA(BernsteinInterpolator interpolator, Map<String,Double> values) {
+		LinkedHashMap<String,Double> sortedWeights = sortWeights(relevanceWeights,values);
+		Map<String,Double> finalWeights = finalWeightsWOWA(interpolator, sortedWeights);
+		Double wowa = 0.0;
+		for (String key : values.keySet()) {
+			wowa += finalWeights.get(key)*values.get(key);
+		}
+		return wowa;
+	}
+	
+
+
+	
 	/*
 	 * Resolver.
 	 * */
@@ -166,9 +232,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Double owa = 0.0;
 		
 		if (!combinationsComputed){
-			
-			
-			
+					
 			combinationsComputed = true;
 		} else {
 			
@@ -187,7 +251,8 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		        	owa = calculateLinguisticQuantifierOWA(values);
 		        }
 	        } else {
-	        
+	        	
+	        	owa = calculateWOWA(interpolator, values);
 	        	
 	        }
 	        
@@ -248,12 +313,6 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		
 		interpolateWeights = parameters.get("interpolate_weights", Boolean.class);
 		
-		if (interpolateWeights) {
-			combinationsComputed = false;
-		} else {
-			combinationsComputed = true;
-		}
-		
 		if (rp instanceof List) { // Ordinal weights explicitly specified. 
 			
 			resolver.ordinalWeights = normalizeOrdinalWeights( (List<Number>) rp);
@@ -283,6 +342,19 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 				resolver.relevanceWeights = null;
 				
 			}
+		}
+		if (interpolateWeights) {
+			combinationsComputed = false;
+			
+			if (ordinalWeights!=null) {
+				interpolator = new BernsteinInterpolator( cumulativeOrdinalWeights(ordinalWeights) );
+			}	else {
+				interpolator = null;
+			}
+			
+		} else {
+			interpolator = null;
+			combinationsComputed = true;
 		}
 
 		return resolver;

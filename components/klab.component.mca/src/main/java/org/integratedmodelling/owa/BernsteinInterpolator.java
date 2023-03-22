@@ -15,6 +15,13 @@ public class BernsteinInterpolator {
 	private List<Point2D> wPoints;
 	private List<Point2D> skPoints;
 	
+	
+	public BernsteinInterpolator(List<Point2D> values) {
+		this.values = values;
+		setVWSKPoints(values);
+	}
+	
+	
 	private Double sSlope(Point2D p0, Point2D p1) {
 		return (p1.getY()-p0.getY())/(p1.getX()-p0.getX());
 	};
@@ -124,7 +131,7 @@ public class BernsteinInterpolator {
 		return m;
 	}
 	
-	public void setVWSKPoints(List<Point2D> values){
+	private void setVWSKPoints(List<Point2D> values){
 		
 		// Calculate slopes S.
 		List<Double> sSlopes = calculateSSlopes(values);
