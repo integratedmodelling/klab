@@ -73,10 +73,9 @@ public class User extends IdentityModel implements UserDetails{
     private Set<Role> roles = new HashSet<>();;
 
     @Reference
-    private List<TagEntry> tags = new ArrayList<>();
+    private Set<AgreementEntry> agreements = new HashSet<>();
 
-    @Reference
-    private Set<Agreement> agreements = new HashSet<>();
+    private List<TagEntry> tags = new ArrayList<>();
 
     private Set<String> applications = new HashSet<>();
 
@@ -369,6 +368,15 @@ public class User extends IdentityModel implements UserDetails{
 		this.email = email;
 	}
 
+    
+    public Set<AgreementEntry> getAgreements() {
+        return agreements;
+    }
+
+    public void setAgreements(Set<AgreementEntry> agreements) {
+        this.agreements = agreements;
+    }
+
     public boolean hasTag(String tagName) {
         return tags.stream()
         .anyMatch(t -> t.getTag().getName().equals(tagName));
@@ -394,15 +402,6 @@ public class User extends IdentityModel implements UserDetails{
                 .filter(t -> !t.isSent())
                 .collect(Collectors.toList());
     }
-
-    public Set<Agreement> getAgreements() {
-        return agreements;
-    }
-
-    public void setAgreements(Set<Agreement> agreements) {
-        this.agreements = agreements;
-    }
-    
 
     public Set<CustomProperty> getCustomProperties() {
         return customProperties;

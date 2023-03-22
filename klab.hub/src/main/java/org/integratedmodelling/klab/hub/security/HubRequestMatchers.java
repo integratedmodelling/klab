@@ -19,6 +19,10 @@ public final class HubRequestMatchers {
 			API.HUB.USER_BASE+".*" + API.HUB.PARAMETERS.USER_VERIFICATION + ".*",
 			API.HUB.USER_BASE+"$"
 	};
+	
+	private static final String[] agreements = new String[] {
+	        API.HUB.AGREEMENT_TEMPLATE_TYPE_LEVEL+"*"            
+    };
 
 	public static String[] getAuthentication() {
 		return authentication;
@@ -27,6 +31,10 @@ public final class HubRequestMatchers {
 	public static String[] getUsers() {
 		return users;
 	}
+	
+	public static String[] getAgreements() {
+        return agreements;
+    }
 
 	
 }
