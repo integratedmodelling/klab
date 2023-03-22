@@ -135,7 +135,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 	
 	/*
-	 * Final weights for interpolated WOWA. TODO: weight map should be linked as order matters.
+	 * Final weights for interpolated WOWA. The map of sorted relevance weights is linked, thus elements are traversed in order.
 	 * */
 	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights){
 		
@@ -146,7 +146,8 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Double val;
 		Double previous = 0.0;
 		for(String key : cumulativeRW.keySet()){
-			val = interpolator.getInterpolatedValue(cumulativeRW.get(key));
+			val = interpolator.getInterpolatedValue(0.5);
+			//val = interpolator.getInterpolatedValue(cumulativeRW.get(key));
 			finalWeights.put(key,val - previous);
 			previous = val;
 		}
@@ -154,10 +155,8 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	}
 	
 	
-	
-	
 	/*
-	 * Ordinal weights for linguistic quantifier OWA. TODO: weight map should be linked as order matters.
+	 * Ordinal weights for linguistic quantifier OWA. The map of sorted relevance weights is linked.
 	 * */
 	private Map<String,Double> exponentialOrdinalWeights(Map<String,Double> sortedRelevanceWeights){
 		
@@ -220,8 +219,6 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	}
 	
 
-
-	
 	/*
 	 * Resolver.
 	 * */
@@ -310,12 +307,16 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 				
 		// Import the ordinal weights.
 		Object rp = parameters.get("risk_profile");
+	
+		Boolean interpolate = parameters.get("interpolate_weights", Boolean.class);
 		
-		interpolateWeights = parameters.get("interpolate_weights", Boolean.class);
+		resolver.interpolateWeights = interpolate;
+		resolver.combinationsComputed = true;
 		
 		if (rp instanceof List) { // Ordinal weights explicitly specified. 
 			
-			resolver.ordinalWeights = normalizeOrdinalWeights( (List<Number>) rp);
+			List<Double>  normalizedOW = normalizeOrdinalWeights( (List<Number>) rp);
+			resolver.ordinalWeights = normalizedOW;
 			
 			if (rw != null) { // Relevance weights provided as parameter.
 				
@@ -326,9 +327,20 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 				resolver.relevanceWeights = null;
 			
 			}
+			
+			if (interpolate) {
+				//combinationsComputed = false;
+				//resolver.combinationsComputed = true;
+				resolver.interpolator = new BernsteinInterpolator( cumulativeOrdinalWeights(normalizedOW) );
+				
+			} else {
+				resolver.interpolator = null;
+				//resolver.combinationsComputed = true;
+			}
 		
 		} else if(rp instanceof Number) { // Ordinal weights built with risk profile parameter alpha.
 			
+			resolver.interpolator = null;
 			resolver.alpha = (Double) rp;
 			
 			if (rw != null) { // Weights provided as parameter. 	
@@ -343,19 +355,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 				
 			}
 		}
-		if (interpolateWeights) {
-			combinationsComputed = false;
-			
-			if (ordinalWeights!=null) {
-				interpolator = new BernsteinInterpolator( cumulativeOrdinalWeights(ordinalWeights) );
-			}	else {
-				interpolator = null;
-			}
-			
-		} else {
-			interpolator = null;
-			combinationsComputed = true;
-		}
+		
 
 		return resolver;
 	}

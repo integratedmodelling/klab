@@ -57,21 +57,21 @@ public class BernsteinInterpolator {
 		return bool;
 	}
 	
-	private Point2D getV(Point2D p0, Point2D pZ, Double m0){
-		Double vX = p0.getX() + 0.5*(p0.getX()+pZ.getX());
-		Double vY = p0.getY() + m0*0.5*(p0.getX()+pZ.getX());
+	private Point2D getV(Point2D p0, Point2D z, Double m0){
+		Double vX = p0.getX() + 0.5*(p0.getX()+z.getX());
+		Double vY = p0.getY() + ( p0.getY()-m0*p0.getX() ) + m0*0.5*(p0.getX()+z.getX());
 		return new Point2D.Double(vX,vY);
 	}
 	
 	private Point2D getW(Point2D p1, Point2D z, Double m1) {
 		Double wX = p1.getX() - 0.5*(p1.getX()+z.getX());
-		Double wY = p1.getY() - m1*0.5*(p1.getX()+z.getX());
+		Double wY = p1.getY() - ( ( p1.getY()-m1*p1.getX() ) +  m1*0.5*(p1.getX()+z.getX()) );
 		return new Point2D.Double(wX,wY);
 	}
 	
 	private Point2D getSplineKnot(Point2D v, Point2D w, Point2D z) {
 		Double alpha = (w.getY()-v.getY())/(w.getX()-v.getX());
-		Double beta = alpha*v.getY() - v.getX();
+		Double beta = v.getY() - alpha*v.getX();
 		Double splineY = beta + alpha*z.getX();
 		return new Point2D.Double(z.getX(),splineY);
 	}
@@ -83,6 +83,9 @@ public class BernsteinInterpolator {
 	private List<Double> calculateSSlopes(List<Point2D> values) {
 		// Calculate slopes S.
 		List<Double> sSlopes = new ArrayList<>();
+		
+		// The first s slope is actually not defined. Its value is irrelevant for future calculations but sSlopes must have the same size than values.
+		sSlopes.add(0.0);
 		
 		Double slope;
 		for (Integer i=1;i<values.size();i++) {
@@ -96,12 +99,20 @@ public class BernsteinInterpolator {
 		// Calculate slopes M.
 		Double m;
 		List<Double> mSlopes = new ArrayList<>();
-		for (Integer i=0; i<values.size() ; i++) { 
+		
+		// To ensure that in the case all weights are equal the function is linear, first slope must be equal to the last and set to 1.0.
+		mSlopes.add(1.0);
+		
+		// Calculation of the intermediate m slopes.
+		for (Integer i=1; i<values.size()-1 ; i++) { 
 			
 			// TODO: check the effect of the inefficient recursion on running speed. See comment below for info.  
 			m = calculateMSlopeAtPoint(values,sSlopes,i);
 			mSlopes.add(m);
 		}
+		
+		mSlopes.add(1.0);
+		
 		return mSlopes;
 	}
 	
@@ -112,21 +123,26 @@ public class BernsteinInterpolator {
 	 * observations overhead shouldn't be large. 
 	 * */
 	private Double calculateMSlopeAtPoint(List<Point2D> values, List<Double> sSlopes, Integer index) {
-		Double s1, s2, m=0.0;
-		Point2D p0, p1, p2;
-		p1 = values.get(index);
-		s1 = sSlopes.get(index);
-		p2 = values.get(index+1);
-		s2 = sSlopes.get(index+1);
+		Double m=1.0;
 		
-		if (s1*s2 <= 0.0) {
-			m = 0.0;
-		} else if(s1 > s2 && s2 > 0.0) {
-			m = mSlopeCaseOne(p1,p2,s1);
-		} else if(s2 > s1 && s1 > 0.0) {
-			p0 = values.get(index-1);
-			m = mSlopeCaseTwo(p0,p1, calculateMSlopeAtPoint(values,sSlopes,index+1) ); // This function needs to be re-written, prbably need to do some recursion.
-		}
+		if ((index+1) < values.size()) {
+			Double s1, s2;
+			Point2D p0, p1, p2;
+			p1 = values.get(index);
+			s1 = sSlopes.get(index);
+			p2 = values.get(index+1);
+			s2 = sSlopes.get(index+1);
+			
+			if (s1*s2 <= 0.0) {
+				m = 0.0;
+			} else if(s1 > s2 && s2 > 0.0) {
+				m = mSlopeCaseOne(p1,p2,s1);
+			} else if(s2 > s1 && s1 > 0.0) {
+				p0 = values.get(index-1);
+				m = mSlopeCaseTwo(p0,p1, calculateMSlopeAtPoint(values,sSlopes,index+1) ); 
+			}	
+		} 
+		// Else: the function returns 1.0 which is the border condition at the right.
 		
 		return m;
 	}
@@ -139,12 +155,12 @@ public class BernsteinInterpolator {
 		List<Double> mSlopes = calculateMSlopes(values,sSlopes);
 		
 		// Calculate Z,V,W,SK points.
-		vPoints = new ArrayList<>();
-		wPoints = new ArrayList<>();
-		skPoints = new ArrayList<>();
+		List<Point2D> vPoints = new ArrayList<>();
+		List<Point2D> wPoints = new ArrayList<>();
+		List<Point2D> skPoints = new ArrayList<>();
 		Point2D v,w,z,zOut;
 		Double xZOut;
-		for (Integer i=0; i<values.size() ; i++) {
+		for (Integer i=0; i<values.size()-1 ; i++) {
 			z = getZ(values.get(i), values.get(i+1), mSlopes.get(i), mSlopes.get(i+1));
 			
 			if (zInBoundingBox(values.get(i),values.get(i+1),z)) {
@@ -154,7 +170,7 @@ public class BernsteinInterpolator {
 				wPoints.add(w);
 				skPoints.add(getSplineKnot(v,w,z));
 			} else {
-				xZOut = values.get(i).getX() + values.get(i+1).getX();
+				xZOut = 0.5*(values.get(i).getX() + values.get(i+1).getX());
 				zOut = new Point2D.Double(xZOut,0.0); // Y coordinate of Z is useless at this point.
 				v = getV(values.get(i),zOut,mSlopes.get(i));
 				vPoints.add(v);
@@ -163,11 +179,15 @@ public class BernsteinInterpolator {
 				skPoints.add(getSplineKnot(v,w,zOut));
 			}
 		}
+		this.vPoints = vPoints;
+		this.wPoints = wPoints;
+		this.skPoints = skPoints;
 	}
 	
 	private Integer findInterval(Double x, List<Point2D> values) {
 		Integer i=0;
-		while ( i<values.get(i).getX()) {
+		
+		while ( x < values.get(i+1).getX() ) {
 			i++;
 		}
 		return i;
@@ -178,7 +198,7 @@ public class BernsteinInterpolator {
 		// then get subinterval between to define the points of interest.
 		Integer interval = findInterval(x, values);
 		
-		Double interp;
+		Double interp=0.0;
 		Point2D p0,p1,p2;
 		
 		if (x < skPoints.get(interval).getX()) {
@@ -186,12 +206,14 @@ public class BernsteinInterpolator {
 			p1 = vPoints.get(interval);
 			p2 = skPoints.get(interval);
 			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
-		} else {
+			
+		} else { // Always entering here.
 			p0 = skPoints.get(interval);
 			p1 = wPoints.get(interval);
 			p2 = values.get(interval+1);
 			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
 		}
+		
 		return interp;
 	}
 	

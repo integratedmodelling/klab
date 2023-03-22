@@ -69,7 +69,7 @@ export number owa
 		 should be provided as a parameter. Default is false."
 		default false	
 		
-	parameter value risk_profile
+	optional parameter value risk_profile
 		"The observer's risk profile. Can be a list specifying all the ordinal weights or a single number. If a single number is provided, every real 
 		number is accepted. Negative numbers represent risk aversion, 0 risk neutrality and positive numbers risk tolerance. Default is 0."
 		default = 0.0		
