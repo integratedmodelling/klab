@@ -22,13 +22,4 @@ public class AgreementController {
         JSONObject agreement = new JSONObject().appendField("agreement", agreementService.getAgreement(id));
         return new ResponseEntity<>(agreement, HttpStatus.OK);        
     }
-    
-//    @GetMapping(API.HUB.GET_AGREEMENT)
-//    public ResponseEntity<?> createAgreement(@RequestParam String id) {
-//        JSONObject agreement = new JSONObject().appendField("agreement", agreementService.getAgreement(id));
-//        return new ResponseEntity<>(agreement, HttpStatus.OK);        
-//    }
-    
-    
-
 }

@@ -193,11 +193,11 @@ public class EngineAuthResponeFactory {
         
         if(!expired.isEmpty()) {
             expired.forEach(grp -> {
-                HubNotificationMessage notification = HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
-                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExpiration()),
-                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
-                })));
-                messages.add(null);
+                messages.add(
+                        HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExpiration()),
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
+                        }))));
             });
         }
         

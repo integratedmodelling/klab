@@ -4,9 +4,6 @@ import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.integratedmodelling.klab.hub.api.Agreement;
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
-import org.integratedmodelling.klab.hub.enums.AgreementLevel;
-import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

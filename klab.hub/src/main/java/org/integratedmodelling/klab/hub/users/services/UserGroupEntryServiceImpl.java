@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.joda.time.DateTime;
 import org.springframework.stereotype.Service;
 
 @Service
