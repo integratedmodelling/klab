@@ -31,7 +31,7 @@ public class AgreementTemplate {
 
     private Boolean defaultTemplate;
 
-    private Duration defaultDuration;
+    private Long defaultDuration;
 
     @Reference
     private Set<GroupEntry> defaultGroups = new HashSet<GroupEntry>();
@@ -76,11 +76,12 @@ public class AgreementTemplate {
         this.defaultTemplate = defaultTemplate;
     }
 
-    public Duration getDefaultDuration() {
+
+    public Long getDefaultDuration() {
         return defaultDuration;
     }
 
-    public void setDefaultDuration(Duration defaultDuration) {
+    public void setDefaultDuration(Long defaultDuration) {
         this.defaultDuration = defaultDuration;
     }
 
