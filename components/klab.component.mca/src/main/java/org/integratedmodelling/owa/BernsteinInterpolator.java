@@ -4,6 +4,8 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+
 /*
  * Interpolation with Bernstein polynomials.
  */
@@ -24,7 +26,7 @@ public class BernsteinInterpolator {
 	
 	private Double sSlope(Point2D p0, Point2D p1) {
 		return (p1.getY()-p0.getY())/(p1.getX()-p0.getX());
-	};
+	}
 	
 	private Double mSlopeCaseOne(Point2D p1, Point2D p2, Double s1) {
 		Double deltax = (p2.getY() - p1.getY() )/s1;
@@ -184,19 +186,20 @@ public class BernsteinInterpolator {
 		this.skPoints = skPoints;
 	}
 	
-	private Integer findInterval(Double x, List<Point2D> values) {
+	private Integer findInterval(Double x, List<Point2D> values, IContextualizationScope scope) {
 		Integer i=0;
-		
-		while ( x < values.get(i+1).getX() ) {
+//		scope.getMonitor().info("xVal = " + x);
+		while ( x > values.get(i+1).getX() ) {
+//			scope.getMonitor().info("i = " + i + ", xOW = " + values.get(i+1).getX());
 			i++;
 		}
 		return i;
 	}
 	
-	public Double getInterpolatedValue(Double x) {
+	public Double getInterpolatedValue(Double x,  IContextualizationScope scope) {
 		// get interval of x with respect to the initial values.
 		// then get subinterval between to define the points of interest.
-		Integer interval = findInterval(x, values);
+		Integer interval = findInterval(x, values,scope);
 		
 		Double interp=0.0;
 		Point2D p0,p1,p2;

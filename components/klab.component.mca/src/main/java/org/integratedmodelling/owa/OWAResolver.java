@@ -137,7 +137,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	/*
 	 * Final weights for interpolated WOWA. The map of sorted relevance weights is linked, thus elements are traversed in order.
 	 * */
-	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights){
+	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights, IContextualizationScope scope){
 		
 		Map<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights);
 		
@@ -145,11 +145,15 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		
 		Double val;
 		Double previous = 0.0;
+//		String xVal;
 		for(String key : cumulativeRW.keySet()){
-			val = interpolator.getInterpolatedValue(0.5);
-			//val = interpolator.getInterpolatedValue(cumulativeRW.get(key));
+//			val = interpolator.getInterpolatedValue(2.0);
+//			xVal = Double.toString(cumulativeRW.get(key));
+//			scope.getMonitor().info("xVal = " + xVal);
+			val = interpolator.getInterpolatedValue(cumulativeRW.get(key),scope);
 			finalWeights.put(key,val - previous);
 			previous = val;
+			//finalWeights.put(key,cumulativeRW.get(key));
 		}
 		return finalWeights;
 	}
@@ -208,12 +212,13 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		return owa;
 	}
 	
-	private Double calculateWOWA(BernsteinInterpolator interpolator, Map<String,Double> values) {
+	private Double calculateWOWA(BernsteinInterpolator interpolator, Map<String,Double> values, IContextualizationScope scope) {
 		LinkedHashMap<String,Double> sortedWeights = sortWeights(relevanceWeights,values);
-		Map<String,Double> finalWeights = finalWeightsWOWA(interpolator, sortedWeights);
+		Map<String,Double> finalWeights = finalWeightsWOWA(interpolator, sortedWeights, scope);
 		Double wowa = 0.0;
 		for (String key : values.keySet()) {
 			wowa += finalWeights.get(key)*values.get(key);
+//			wowa = finalWeights.get(key);
 		}
 		return wowa;
 	}
@@ -249,7 +254,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		        }
 	        } else {
 	        	
-	        	owa = calculateWOWA(interpolator, values);
+	        	owa = calculateWOWA(interpolator, values, scope);
 	        	
 	        }
 	        
