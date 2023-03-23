@@ -32,9 +32,6 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	private List<Double> ordinalWeights;
 	private Double alpha;
 	private Boolean interpolateWeights;
-	
-	private Boolean combinationsComputed;
-	
 	private BernsteinInterpolator interpolator;
 		
 	/*
@@ -52,6 +49,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		return normalizedWeights;
 	}
 	
+	
 	private Map<String,Double> normalizeRelevanceWeights(Map<String,Number> weights){
 		Double sum = 0.0; 
 		for(Number val : weights.values()){
@@ -63,6 +61,8 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		} 
 		return normalizedWeights;
 	}	
+	
+	
 	
 	/*
 	 * Cumulative weights for WOWA.
@@ -102,9 +102,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	}
 	
 	
+	
 	/*
 	 * Sort weights by observable value.
 	 * */
+	
 	private LinkedHashMap<String,Double> sortWeights(Map<String,Double> relevanceWeights, Map<String,Double> values){
 		
 		// Sort the values' map by descending order.
@@ -138,7 +140,8 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	/*
 	 * Final weights for interpolated WOWA. The map of sorted relevance weights is linked, thus elements are traversed in order.
 	 * */
-	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights, IContextualizationScope scope){
+	
+	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights){
 		
 		LinkedHashMap<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights);
 		
@@ -151,15 +154,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Double val;
 		Double previous = 0.0;
 		while(it.hasNext()){
-//			scope.getMonitor().info("xVal = " + xVal);
 			key = it.next().getKey();
-			val = interpolator.getInterpolatedValue(cumulativeRW.get(key),scope);
+			val = interpolator.getInterpolatedValue(cumulativeRW.get(key));
 			finalWeights.put(key,val - previous);
-//			scope.getMonitor().info("key = " + key + ", x = " + cumulativeRW.get(key) + ", val = " + val + ", previous =" + previous + ", final = " + (val-previous));
 			previous = val;
 		}
-//		List<Double> list = new ArrayList<>();
-//		list.get(40);
 		
 		return finalWeights;
 	}
@@ -184,9 +183,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	} 
 	
 	
+	
 	/*
 	 * Calculation of aggregate indices.
 	 * */
+	
 	private Double calculateOWA(Map<String,Double> relevanceWeights, List<Double> ordinalWeights, Map<String,Double> values) {
 		
 		// Weight the values according to their relevance before sorting.
@@ -208,6 +209,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		return owa;
 	}
 
+	
 	private Double calculateLinguisticQuantifierOWA(Map<String,Double> values) {
 		LinkedHashMap<String,Double> sortedWeights = sortWeights(relevanceWeights,values);
 		Map<String,Double> finalWeights = exponentialOrdinalWeights(sortedWeights);
@@ -218,14 +220,13 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		return owa;
 	}
 	
-	private Double calculateWOWA(BernsteinInterpolator interpolator, Map<String,Double> values, IContextualizationScope scope) {
+	
+	private Double calculateWOWA(BernsteinInterpolator interpolator, Map<String,Double> values) {
 		LinkedHashMap<String,Double> sortedWeights = sortWeights(relevanceWeights,values);
-		Map<String,Double> finalWeights = finalWeightsWOWA(interpolator, sortedWeights, scope);
+		Map<String,Double> finalWeights = finalWeightsWOWA(interpolator, sortedWeights);
 		Double wowa = 0.0;
 		for (String key : values.keySet()) {
 			wowa += finalWeights.get(key)*values.get(key);
-//			scope.getMonitor().info("key :" + key +", interp = " + finalWeights.get(key) + ", val = " + values.get(key));
-//			wowa = finalWeights.get(key);
 		}
 		
 		return wowa;
@@ -235,39 +236,32 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	/*
 	 * Resolver.
 	 * */
+	
 	@Override	
     public Object resolve(IObservable observable, IContextualizationScope scope, ILocator locator)
             throws KlabValidationException {
 		
 		Double owa = 0.0;
-		
-		if (!combinationsComputed){
-					
-			combinationsComputed = true;
-		} else {
 			
-			Map<String, Double> values = new HashMap<String, Double>();
+		Map<String, Double> values = new HashMap<String, Double>();
 
-	        // OWA is a quantitative metric thus we force values to be double, an exception should be
-	        // thrown if the observable cannot be forced to a double.
-	        for(String key : relevanceWeights.keySet()) {
-	            values.put(key, scope.get(key, IState.class).get(locator, Double.class));
-	        }
+        // OWA is a quantitative metric thus we force values to be double, an exception should be
+        // thrown if the observable cannot be forced to a double.
+        for(String key : relevanceWeights.keySet()) {
+            values.put(key, scope.get(key, IState.class).get(locator, Double.class));
+        }
 
-	        if (!interpolateWeights) {
-	        	if (ordinalWeights!=null) {
-		        	owa = calculateOWA(relevanceWeights, ordinalWeights, values);
-		        } else {
-		        	owa = calculateLinguisticQuantifierOWA(values);
-		        }
+        if (!interpolateWeights) {
+        	if (ordinalWeights!=null) {
+	        	owa = calculateOWA(relevanceWeights, ordinalWeights, values);
 	        } else {
-	        	
-	        	owa = calculateWOWA(interpolator, values, scope);
-	        	
+	        	owa = calculateLinguisticQuantifierOWA(values);
 	        }
+        } else {
+        	
+        	owa = calculateWOWA(interpolator, values);
+        }
 	        
-		}
-		
         return owa;
     }
 
@@ -324,7 +318,6 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Boolean interpolate = parameters.get("interpolate_weights", Boolean.class);
 		
 		resolver.interpolateWeights = interpolate;
-		resolver.combinationsComputed = true;
 		
 		if (rp instanceof List) { // Ordinal weights explicitly specified. 
 			
@@ -342,13 +335,10 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 			}
 			
 			if (interpolate) {
-				//combinationsComputed = false;
-				//resolver.combinationsComputed = true;
-				resolver.interpolator = new BernsteinInterpolator( cumulativeOrdinalWeights(normalizedOW) , scope);
+				resolver.interpolator = new BernsteinInterpolator( cumulativeOrdinalWeights(normalizedOW));
 				
 			} else {
 				resolver.interpolator = null;
-				//resolver.combinationsComputed = true;
 			}
 		
 		} else if(rp instanceof Number) { // Ordinal weights built with risk profile parameter alpha.

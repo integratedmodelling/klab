@@ -4,8 +4,6 @@ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-
 /*
  * Interpolation with Bernstein polynomials.
  */
@@ -18,9 +16,9 @@ public class BernsteinInterpolator {
 	private List<Point2D> skPoints;
 	
 	
-	public BernsteinInterpolator(List<Point2D> values, IContextualizationScope scope) {
+	public BernsteinInterpolator(List<Point2D> values) {
 		this.values = values;
-		setVWSKPoints(values, scope);
+		setVWSKPoints(values);
 	}
 	
 	
@@ -112,7 +110,6 @@ public class BernsteinInterpolator {
 		// Calculation of the intermediate m slopes.
 		for (Integer i=1; i<values.size()-1 ; i++) { 
 			
-			// TODO: check the effect of the inefficient recursion on running speed. See comment below for info.  
 			m = calculateMSlopeAtPoint(values,sSlopes,i);
 			mSlopes.add(m);
 		}
@@ -153,15 +150,13 @@ public class BernsteinInterpolator {
 		return m;
 	}
 	
-	private void setVWSKPoints(List<Point2D> values, IContextualizationScope scope){
+	private void setVWSKPoints(List<Point2D> values){
 		
 		// Calculate slopes S.
 		List<Double> sSlopes = calculateSSlopes(values);
 		// Calculate slopes M.
 		List<Double> mSlopes = calculateMSlopes(values,sSlopes);
-//		for(Integer i=0; i<mSlopes.size()+2;i++) {
-//			scope.getMonitor().info("i = " + i + ", m = " + mSlopes.get(i) );
-//		}
+
 		
 		// Calculate Z,V,W,SK points.
 		List<Point2D> vPoints = new ArrayList<>();
@@ -171,14 +166,12 @@ public class BernsteinInterpolator {
 		Double xZOut;
 		for (Integer i=0; i<values.size()-1 ; i++) {
 			z = getZ(values.get(i), values.get(i+1), mSlopes.get(i), mSlopes.get(i+1));
-			//scope.getMonitor().info("i = " + i + ", z = " + z +", m0 = " + mSlopes.get(i) + ", m1 = " + mSlopes.get(i+1) + ", ow0 = " + values.get(i) + ", ow1 = " + values.get(i+1)   );
 			if (zInBoundingBox(values.get(i),values.get(i+1),z)) {
 				v = getV(values.get(i),z,mSlopes.get(i));
 				vPoints.add(v);
 				w = getW(values.get(i+1),z,mSlopes.get(i+1));
 				wPoints.add(w);
 				skPoints.add(getSplineKnot(v,w,z));
-//				scope.getMonitor().info("In bounding box:  z = " + z +", v = " + v + ", w = " + w + ", sk = " + getSplineKnot(v,w,z)  );
 			} else {
 				xZOut = 0.5*(values.get(i).getX() + values.get(i+1).getX());
 				zOut = new Point2D.Double(xZOut,0.0); // Y coordinate of Z is useless at this point.
@@ -187,16 +180,14 @@ public class BernsteinInterpolator {
 				w = getW(values.get(i+1),zOut,mSlopes.get(i+1));
 				wPoints.add(w);
 				skPoints.add(getSplineKnot(v,w,zOut));
-//				scope.getMonitor().info("Out of bounding box: z = " + z +", v = " + v + ", w = " + w + ", sk = " + getSplineKnot(v,w,zOut)  );
 			}
 		}
-//		values.get(20);
 		this.vPoints = vPoints;
 		this.wPoints = wPoints;
 		this.skPoints = skPoints;
 	}
 	
-	private Integer findInterval(Double x, List<Point2D> values, IContextualizationScope scope) {
+	private Integer findInterval(Double x, List<Point2D> values) {
 		Integer i=0;
 		while ( x > values.get(i+1).getX() ) {
 			i++;
@@ -204,27 +195,25 @@ public class BernsteinInterpolator {
 		return i;
 	}
 	
-	public Double getInterpolatedValue(Double x,  IContextualizationScope scope) {
-		// get interval of x with respect to the initial values.
-		// then get subinterval between to define the points of interest.
-		Integer interval = findInterval(x, values,scope);
+	public Double getInterpolatedValue(Double x) {
+		// Get interval of x with respect to the initial values.
+		Integer interval = findInterval(x, values);
 		
 		Double interp=0.0;
 		Point2D p0,p1,p2;
 		
+		// Then get subinterval between to define the points of interest.
 		if (x < skPoints.get(interval).getX()) {
 			p0 = values.get(interval);
 			p1 = vPoints.get(interval);
 			p2 = skPoints.get(interval);
 			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
-//			scope.getMonitor().info("Condition 1: xVal = " + x + ", sk = " + p2 + ", v = " + p1 + ", val = " + p0 + ", interp = " + interp);
 			
-		} else { // Always entering here.
+		} else { 
 			p0 = skPoints.get(interval);
 			p1 = wPoints.get(interval);
 			p2 = values.get(interval+1);
 			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
-//			scope.getMonitor().info("Condition2: xVal = " + x + ", sk = " + p0 + ", w = " + p1 + ", val = " + p2 + ", interp = " + interp);
 		}
 				
 		return interp;
