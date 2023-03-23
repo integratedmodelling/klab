@@ -85,8 +85,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		return cumulativeOW;
 	}
 	
-	private Map<String,Double> cumulativeRelevanceWeights(Map<String,Double> sortedRelevanceWeights){
-		Map<String,Double> cumulativeRW = new LinkedHashMap<>();
+	private LinkedHashMap<String,Double> cumulativeRelevanceWeights(Map<String,Double> sortedRelevanceWeights){
+		
+		LinkedHashMap<String,Double> cumulativeRW = new LinkedHashMap<>();
 		
 		Iterator<Entry<String,Double>> it = sortedRelevanceWeights.entrySet().iterator();
 		String key;
@@ -139,22 +140,27 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	 * */
 	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights, IContextualizationScope scope){
 		
-		Map<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights);
+		LinkedHashMap<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights);
 		
 		Map<String,Double> finalWeights = new HashMap<>();
 		
+		// Iterator for the cumulative and sorted weights.
+        Iterator<Entry<String,Double>> it = cumulativeRW.entrySet().iterator();
+		
+        String key;
 		Double val;
 		Double previous = 0.0;
-//		String xVal;
-		for(String key : cumulativeRW.keySet()){
-//			val = interpolator.getInterpolatedValue(2.0);
-//			xVal = Double.toString(cumulativeRW.get(key));
+		while(it.hasNext()){
 //			scope.getMonitor().info("xVal = " + xVal);
+			key = it.next().getKey();
 			val = interpolator.getInterpolatedValue(cumulativeRW.get(key),scope);
 			finalWeights.put(key,val - previous);
+//			scope.getMonitor().info("key = " + key + ", x = " + cumulativeRW.get(key) + ", val = " + val + ", previous =" + previous + ", final = " + (val-previous));
 			previous = val;
-			//finalWeights.put(key,cumulativeRW.get(key));
 		}
+//		List<Double> list = new ArrayList<>();
+//		list.get(40);
+		
 		return finalWeights;
 	}
 	
@@ -218,8 +224,10 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Double wowa = 0.0;
 		for (String key : values.keySet()) {
 			wowa += finalWeights.get(key)*values.get(key);
+//			scope.getMonitor().info("key :" + key +", interp = " + finalWeights.get(key) + ", val = " + values.get(key));
 //			wowa = finalWeights.get(key);
 		}
+		
 		return wowa;
 	}
 	
@@ -336,7 +344,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 			if (interpolate) {
 				//combinationsComputed = false;
 				//resolver.combinationsComputed = true;
-				resolver.interpolator = new BernsteinInterpolator( cumulativeOrdinalWeights(normalizedOW) );
+				resolver.interpolator = new BernsteinInterpolator( cumulativeOrdinalWeights(normalizedOW) , scope);
 				
 			} else {
 				resolver.interpolator = null;

@@ -18,9 +18,9 @@ public class BernsteinInterpolator {
 	private List<Point2D> skPoints;
 	
 	
-	public BernsteinInterpolator(List<Point2D> values) {
+	public BernsteinInterpolator(List<Point2D> values, IContextualizationScope scope) {
 		this.values = values;
-		setVWSKPoints(values);
+		setVWSKPoints(values, scope);
 	}
 	
 	
@@ -60,14 +60,14 @@ public class BernsteinInterpolator {
 	}
 	
 	private Point2D getV(Point2D p0, Point2D z, Double m0){
-		Double vX = p0.getX() + 0.5*(p0.getX()+z.getX());
-		Double vY = p0.getY() + ( p0.getY()-m0*p0.getX() ) + m0*0.5*(p0.getX()+z.getX());
+		Double vX = 0.5*(p0.getX() + z.getX());
+		Double vY = p0.getY() + m0*( vX - p0.getX() );
 		return new Point2D.Double(vX,vY);
 	}
 	
 	private Point2D getW(Point2D p1, Point2D z, Double m1) {
-		Double wX = p1.getX() - 0.5*(p1.getX()+z.getX());
-		Double wY = p1.getY() - ( ( p1.getY()-m1*p1.getX() ) +  m1*0.5*(p1.getX()+z.getX()) );
+		Double wX = 0.5*(p1.getX()+z.getX());
+		Double wY = p1.getY() +  m1*( wX - p1.getX() );
 		return new Point2D.Double(wX,wY);
 	}
 	
@@ -79,7 +79,11 @@ public class BernsteinInterpolator {
 	}
 		
 	private Double secondOrderBernsteinPolynomial(Point2D p0, Point2D p1, Point2D p2, Double x) {
-		return ( p0.getY()*(p2.getX()-x)*(p2.getX()-x) + 2*p1.getY()*(x-p0.getX())*(p2.getX()-x) + p2.getY()*(x-p2.getX())*(x-p2.getX()) ) / ((p2.getX()-p0.getX())*(p2.getX()-p0.getX())); 
+		Double leftMember = p0.getY()*(p2.getX()-x)*(p2.getX()-x);
+		Double centralMember = 2*p1.getY()*(x-p0.getX())*(p2.getX()-x);
+		Double rightMember = p2.getY()*(x-p0.getX())*(x-p0.getX());
+		Double denominator = ((p2.getX()-p0.getX())*(p2.getX()-p0.getX()));
+		return (leftMember + centralMember + rightMember)/denominator; 
 	}
 	
 	private List<Double> calculateSSlopes(List<Point2D> values) {
@@ -149,12 +153,15 @@ public class BernsteinInterpolator {
 		return m;
 	}
 	
-	private void setVWSKPoints(List<Point2D> values){
+	private void setVWSKPoints(List<Point2D> values, IContextualizationScope scope){
 		
 		// Calculate slopes S.
 		List<Double> sSlopes = calculateSSlopes(values);
 		// Calculate slopes M.
 		List<Double> mSlopes = calculateMSlopes(values,sSlopes);
+//		for(Integer i=0; i<mSlopes.size()+2;i++) {
+//			scope.getMonitor().info("i = " + i + ", m = " + mSlopes.get(i) );
+//		}
 		
 		// Calculate Z,V,W,SK points.
 		List<Point2D> vPoints = new ArrayList<>();
@@ -164,13 +171,14 @@ public class BernsteinInterpolator {
 		Double xZOut;
 		for (Integer i=0; i<values.size()-1 ; i++) {
 			z = getZ(values.get(i), values.get(i+1), mSlopes.get(i), mSlopes.get(i+1));
-			
+			//scope.getMonitor().info("i = " + i + ", z = " + z +", m0 = " + mSlopes.get(i) + ", m1 = " + mSlopes.get(i+1) + ", ow0 = " + values.get(i) + ", ow1 = " + values.get(i+1)   );
 			if (zInBoundingBox(values.get(i),values.get(i+1),z)) {
 				v = getV(values.get(i),z,mSlopes.get(i));
 				vPoints.add(v);
 				w = getW(values.get(i+1),z,mSlopes.get(i+1));
 				wPoints.add(w);
 				skPoints.add(getSplineKnot(v,w,z));
+//				scope.getMonitor().info("In bounding box:  z = " + z +", v = " + v + ", w = " + w + ", sk = " + getSplineKnot(v,w,z)  );
 			} else {
 				xZOut = 0.5*(values.get(i).getX() + values.get(i+1).getX());
 				zOut = new Point2D.Double(xZOut,0.0); // Y coordinate of Z is useless at this point.
@@ -179,8 +187,10 @@ public class BernsteinInterpolator {
 				w = getW(values.get(i+1),zOut,mSlopes.get(i+1));
 				wPoints.add(w);
 				skPoints.add(getSplineKnot(v,w,zOut));
+//				scope.getMonitor().info("Out of bounding box: z = " + z +", v = " + v + ", w = " + w + ", sk = " + getSplineKnot(v,w,zOut)  );
 			}
 		}
+//		values.get(20);
 		this.vPoints = vPoints;
 		this.wPoints = wPoints;
 		this.skPoints = skPoints;
@@ -188,9 +198,7 @@ public class BernsteinInterpolator {
 	
 	private Integer findInterval(Double x, List<Point2D> values, IContextualizationScope scope) {
 		Integer i=0;
-//		scope.getMonitor().info("xVal = " + x);
 		while ( x > values.get(i+1).getX() ) {
-//			scope.getMonitor().info("i = " + i + ", xOW = " + values.get(i+1).getX());
 			i++;
 		}
 		return i;
@@ -209,14 +217,16 @@ public class BernsteinInterpolator {
 			p1 = vPoints.get(interval);
 			p2 = skPoints.get(interval);
 			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
+//			scope.getMonitor().info("Condition 1: xVal = " + x + ", sk = " + p2 + ", v = " + p1 + ", val = " + p0 + ", interp = " + interp);
 			
 		} else { // Always entering here.
 			p0 = skPoints.get(interval);
 			p1 = wPoints.get(interval);
 			p2 = values.get(interval+1);
 			interp = secondOrderBernsteinPolynomial(p0,p1,p2,x);
+//			scope.getMonitor().info("Condition2: xVal = " + x + ", sk = " + p0 + ", w = " + p1 + ", val = " + p2 + ", interp = " + interp);
 		}
-		
+				
 		return interp;
 	}
 	
