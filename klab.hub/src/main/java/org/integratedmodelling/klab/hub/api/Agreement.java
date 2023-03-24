@@ -173,16 +173,16 @@ public class Agreement {
         return revokedDate != null;
     }
 
-    public boolean hasExpirationDate() {
+    public boolean isExpirable() {
         // Agreements with null expiration dates are the ones with no expiration date
         return expiredDate != null;
     }
 
     public boolean isExpired() {
-        if(!hasExpirationDate()) {
+        if(!isExpirable()) {
             return false;
         }
-        return !expiredDate.toInstant().isAfter(Instant.now());
+        return expiredDate.toInstant().isBefore(Instant.now());
     }
 
     public boolean isValid() {
