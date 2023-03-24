@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -175,8 +176,25 @@ public class Agreement {
     public void setOwnAgreement(String ownAgreement) {
         this.ownAgreement = ownAgreement;
     }
-    
-    
-        
+
+    public boolean isRevoked() {
+        return revokedDate != null;
+    }
+
+    public boolean isExpirable() {
+        // Agreements with null expiration dates are the ones with no expiration date
+        return expiredDate != null;
+    }
+
+    public boolean isExpired() {
+        if(!isExpirable()) {
+            return false;
+        }
+        return expiredDate.toInstant().isBefore(Instant.now());
+    }
+
+    public boolean isValid() {
+        return !isRevoked() && !isExpired();
+    }
 
 }

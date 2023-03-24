@@ -2,20 +2,24 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.io.IOException;
 import java.security.NoSuchProviderException;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
+import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
-import org.integratedmodelling.klab.hub.exception.LockedUserException;
+import org.integratedmodelling.klab.hub.exception.NoValidAgreementException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
@@ -30,9 +34,7 @@ import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
 import org.integratedmodelling.klab.rest.HubNotificationMessage.Parameters;
-import org.integratedmodelling.klab.hub.utils.IPUtils;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class EngineAuthResponeFactory {
@@ -94,21 +96,54 @@ public class EngineAuthResponeFactory {
 		return null;
 	}
 	
+    private void validateProfileAccountStatus(ProfileResource profile) throws AuthenticationFailedException {
+        switch(profile.accountStatus) {
+        case active:
+            return;
+        case locked:
+            throw new AuthenticationFailedException(String.format("User '%s' is locked.", profile.getUsername()));
+        case deleted:
+            throw new AuthenticationFailedException(String.format("User '%s' is deleted.", profile.getUsername()));
+        case pendingActivation:
+        case verified:
+            throw new AuthenticationFailedException(String.format("User '%s' has not completed the activation process.", profile.getUsername()));
+        case expired:
+        default:
+            throw new AuthenticationFailedException(String.format("User '%s' is not active.", profile.getUsername()));
+        }
+    }
+
 	@SuppressWarnings("unchecked")
     private EngineAuthenticationResponse remoteEngine(ProfileResource profile,
-			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException {
+			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException, AuthenticationFailedException {
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
 		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
-		
-		if(profile.accountStatus == AccountStatus.locked) {
-			throw new LockedUserException(profile.getUsername());
-		}
+
+        validateProfileAccountStatus(profile);
+
+        // TODO for now, we just assume that there is a single agreement per profile.
+        List<Agreement> validAgreements = profile.getAgreements().stream()
+                .filter(Agreement::isValid).collect(Collectors.toList());
+        if (validAgreements.isEmpty()) {
+            throw new NoValidAgreementException(profile.getUsername());
+        }
+
+        final Instant nowPlus30Days = Instant.now().plus(30, ChronoUnit.DAYS);
+        validAgreements.stream()
+            .filter(a -> a.isExpirable() && a.getExpiredDate().toInstant().isBefore(nowPlus30Days))
+            .forEach(a -> {
+                HubNotificationMessage msg = HubNotificationMessage.MessageClass
+                        .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpiredDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, a.getExpiredDate())
+                              })));
+                messages.add(msg);
+            });
+
 		LocalDateTime expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
 		
 		if(!expires.isAfter(LocalDateTime.now().plusDays(30))) {
-		    
 		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
 		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 		                    new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, expires)
@@ -173,7 +208,6 @@ public class EngineAuthResponeFactory {
 		}
 		return null;
 	}
-	
 
 	@SuppressWarnings("unchecked")
     private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request) {

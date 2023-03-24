@@ -41,8 +41,6 @@ public class HubNotificationMessage {
             public HubNotificationMessage build(String msg, NotificationParameters param) {
                 return new HubNotificationMessage(this, Type.ERROR, msg, param.info);
             }
-
-            
         },
         EXPIRED_GROUP {
             @Override
@@ -50,36 +48,35 @@ public class HubNotificationMessage {
                 return new HubNotificationMessage(this, Type.ERROR, msg, param.info);
             }
         },
+        EXPIRING_AGREEMENT {
+            @Override
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.WARNING, msg, param.info);
+            }
+        },
         EXPIRING_CERTIFICATE {
             @Override
             public HubNotificationMessage build(String msg, NotificationParameters param) {
                 return new HubNotificationMessage(this, Type.WARNING, msg, param.info);
             }
-
-            
         },
         EXPIRING_GROUP {
             @Override
             public HubNotificationMessage build(String msg, NotificationParameters param) {
                 return new HubNotificationMessage(this, Type.WARNING, msg, param.info);
             }
-
-
         },
         ADMINSTRATOR_MESSAGE {
             @Override
             public HubNotificationMessage build(String msg, NotificationParameters param) {
                 return new HubNotificationMessage(this, Type.INFO, msg, param.info);
             }
-
-            
         },
         GROUP_MESSAGE {
             @Override
             public HubNotificationMessage build(String msg, NotificationParameters param) {
                 return new HubNotificationMessage(this, Type.INFO, msg, param.info);
             }
-
         },
         TAG_NOTIFICATION {
             @Override
@@ -87,8 +84,7 @@ public class HubNotificationMessage {
                 Type type = param.type.isPresent() ? param.type.get() : Type.INFO;
                 return new HubNotificationMessage(this, type , msg, param.info);
             }
-        }
-        
+        },
     }
    
     
