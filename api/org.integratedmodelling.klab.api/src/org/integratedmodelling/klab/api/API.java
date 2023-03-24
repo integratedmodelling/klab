@@ -363,7 +363,7 @@ public interface API {
         /**
          * Base URL path for all tags referencing a user.
          */
-        public static final String TAG_OF_USER = TAG_BASE + "/{username}";
+        public static final String TAGS_OF_USER = USER_BASE_ID + "/tags";
         /**
          * Base URL path for every unsent tag.
          */
@@ -383,7 +383,7 @@ public interface API {
         /**
          * Base URL path for tag notifications by user.
          */
-        public static final String TAG_NOTIFICATION_OF_USER = USER_BASE + "/tag-notifications/{name}";
+        public static final String TAG_NOTIFICATION_OF_USER = USER_BASE_ID + "/tag-notifications";
 
         public static interface PARAMETERS {
             /**
