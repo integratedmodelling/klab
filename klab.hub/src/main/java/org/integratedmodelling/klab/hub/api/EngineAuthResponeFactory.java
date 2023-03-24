@@ -131,11 +131,11 @@ public class EngineAuthResponeFactory {
 
         final Instant nowPlus30Days = Instant.now().plus(30, ChronoUnit.DAYS);
         validAgreements.stream()
-            .filter(a -> a.isExpirable() && a.getExpiredDate().toInstant().isBefore(nowPlus30Days))
+            .filter(a -> a.isExpirable() && a.getExpirationDate().toInstant().isBefore(nowPlus30Days))
             .forEach(a -> {
                 HubNotificationMessage msg = HubNotificationMessage.MessageClass
-                        .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpiredDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
-                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, a.getExpiredDate())
+                        .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpirationDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, a.getExpirationDate())
                               })));
                 messages.add(msg);
             });

@@ -34,7 +34,7 @@ public class Agreement {
     
     private Date validDate;
     
-    private Date expiredDate;
+    private Date expirationDate;
     
     private Date revokedDate;   
     
@@ -85,13 +85,13 @@ public class Agreement {
     }
 
 
-    public Date getExpiredDate() {
-        return expiredDate;
+    public Date getExpirationDate() {
+        return expirationDate;
     }
 
 
-    public void setExpiredDate(Date expiredDate) {
-        this.expiredDate = expiredDate;
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
 
@@ -175,14 +175,14 @@ public class Agreement {
 
     public boolean isExpirable() {
         // Agreements with null expiration dates are the ones with no expiration date
-        return expiredDate != null;
+        return expirationDate != null;
     }
 
     public boolean isExpired() {
         if(!isExpirable()) {
             return false;
         }
-        return expiredDate.toInstant().isBefore(Instant.now());
+        return expirationDate.toInstant().isBefore(Instant.now());
     }
 
     public boolean isValid() {
