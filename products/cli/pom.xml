@@ -23,6 +23,7 @@
 							<overWriteReleases>false</overWriteReleases>
 							<overWriteSnapshots>false</overWriteSnapshots>
 							<overWriteIfNewer>true</overWriteIfNewer>
+							<excludeArtifactIds>javax.annotation</excludeArtifactIds>
 						</configuration>
 					</execution>
 				</executions>
