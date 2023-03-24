@@ -53,13 +53,7 @@ public class UserTaggingController {
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getAllTags() {
         List<MongoTag> tags;
-        try {
-            tags = userTagService.getAllTags();
-        } catch (BadRequestException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        tags = userTagService.getAllTags();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
