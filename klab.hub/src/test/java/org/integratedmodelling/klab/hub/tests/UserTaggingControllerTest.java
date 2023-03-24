@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.tests;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -43,12 +44,12 @@ public class UserTaggingControllerTest {
         headers = new HttpHeaders();
         ResponseEntity<JSONObject> response = loginResponse("system", "password");
         JSONObject body = response.getBody();//.toJSONString();//("Authentication");
-        token = ((Map) body.get("Authentication")).get("tokenString").toString();
+        token = ((Map<?,?>) body.get("Authentication")).get("tokenString").toString();
         headers.add("Authentication", token);
     }
 
     @Test
-    @DisplayName("Get all tags successfully")
+    @DisplayName("Get all tags")
     public void getAllTags_isOK() {
         url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE;
         HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
@@ -59,16 +60,115 @@ public class UserTaggingControllerTest {
     }
 
     @Test
-    @DisplayName("Create a new tag successfully")
+    @DisplayName("Create a new tag")
     public void createNewTag_createsANewTagSuccessfully() {
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE;
+        String tagName = String.format("new-tag%d", System.currentTimeMillis()/1000);
+        String tag = "{\n\"name\": \"" + tagName + "\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get all notification of tags")
+    public void getAllTagNotifications_isOK() {
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_NOTIFICATIONS;
+        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get all tags of a user")
+    public void getTagsOfUser_successfulUserExists() {
+        String existingUsername = "achilles";
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "/" + existingUsername + "/tags";
+        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get unsent tags of a user")
+    public void getUnsentTagsOfUser_successfulUserExists() {
+        String existingUsername = "achilles";
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_UNSENT + "/" + existingUsername;
+        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get an existing tag by name")
+    public void getTagByName_successfulExistingTag() {
+        String existingTagName = "testTag";
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE + "/" + existingTagName;
+        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Fail geting a non exisiting tag by name")
+    @Disabled("TODO responseEntity does not get values from @ExceptionHandler")
+    public void getTagByName_failNonExistingTag() {
+        String existingTagName = "nonExistingTag";
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE + "/" + existingTagName;
+        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+        assertEquals(HttpStatus.BAD_REQUEST, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Get tag notifications by username")
+    public void getTagNotificationsByUsername_succesful() {
+        String existingUsername = "achilles";
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "/" + existingUsername + "/tag-notifications";
+        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Create or update a tag")
+    public void createOrUpdateTag_successful() {
         url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE;
         String tagName = String.format("tag%d", System.currentTimeMillis()/1000);
         String tag = "{\n\"name\": \"" + tagName + "\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
         headers.setContentType(MediaType.APPLICATION_JSON);
         HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
-        assertEquals(tag, httpEntity.getBody());
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+
+        assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+    }
+
+    @Test
+    @DisplayName("Add a tag to a user")
+    public void addTagToUser_succesful() {
+        String existingUsername = "achilles";
+        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "/" + existingUsername + "/tags";
+        String tag = "{\n\"name\": \"tagName\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+
+        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
     }
