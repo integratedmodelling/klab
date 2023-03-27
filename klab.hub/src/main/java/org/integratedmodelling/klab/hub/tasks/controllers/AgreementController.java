@@ -4,6 +4,7 @@ import java.util.Collection;
 import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.users.services.UserAgreementService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class AgreementController {
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getAgreementsOfUser(
             @PathVariable("id") String username) {
-        Collection<Agreement> agreements;
+        Collection<AgreementEntry> agreements;
         try {
             agreements = service.getAgreementsFromUser(username);
         } catch (BadRequestException e) {

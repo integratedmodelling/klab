@@ -124,6 +124,7 @@ public class EngineAuthResponeFactory {
 
         // TODO for now, we just assume that there is a single agreement per profile.
         List<Agreement> validAgreements = profile.getAgreements().stream()
+                .map(AgreementEntry::getAgreement)
                 .filter(Agreement::isValid).collect(Collectors.toList());
         if (validAgreements.isEmpty()) {
             throw new NoValidAgreementException(profile.getUsername());
