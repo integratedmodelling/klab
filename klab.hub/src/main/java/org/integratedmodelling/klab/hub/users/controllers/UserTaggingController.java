@@ -84,7 +84,7 @@ public class UserTaggingController {
 
     @PutMapping(value = API.HUB.TAGS_OF_USER, consumes = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > createNewTag(
+    public ResponseEntity< ? > assignTagToUser(
             @PathVariable("id") String username,
             @RequestBody MongoTag tag) {
         final boolean isTagAdded;
@@ -96,7 +96,7 @@ public class UserTaggingController {
                     .body(e.getMessage());
         }
 
-        final String body = isTagAdded ? "Tag sucessfully created." : "Tag already exists for the user.";
+        final String body = isTagAdded ? "Tag sucessfully assigned to user." : "Tag already exists for the user.";
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(body);

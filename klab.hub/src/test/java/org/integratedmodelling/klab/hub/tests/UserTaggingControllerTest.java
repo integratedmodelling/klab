@@ -2,7 +2,10 @@ package org.integratedmodelling.klab.hub.tests;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.MongoTag;
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
+import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,6 +31,7 @@ import org.springframework.web.client.RestTemplate;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URISyntaxException;
+import java.util.Optional;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
@@ -63,7 +67,7 @@ public class UserTaggingControllerTest {
             tag.setName("testTag");
             tagRepository.save(tag);
         }
-        
+
         @Test
         @DisplayName("Get all tags")
         public void getAllTags_isOK() {
@@ -130,13 +134,34 @@ public class UserTaggingControllerTest {
     }
 
     @Nested
+    @TestInstance(Lifecycle.PER_CLASS)
     @DisplayName("Create, update, delete tags tests")
     public class InsertUpdateDeleteTags {
+        @Autowired
+        MongoTagRepository tagRepository;
+        @Autowired
+        UserRepository userRepository;
+
+        @BeforeAll
+        public void beforeAll() {
+            MongoTag tag1 = new MongoTag();
+            tag1.setName("testTag1");
+            tagRepository.save(tag1);
+
+            MongoTag tag2 = new MongoTag();
+            tag2.setName("testTag2");
+            tagRepository.save(tag2);
+
+            User user = userRepository.findByName("achilles").get();
+            user.addTag(tag1);
+            userRepository.save(user);
+        }
+
         @Test
         @DisplayName("Create a new tag")
         public void createNewTag_createsANewTagSuccessfully() {
             url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE;
-            String tagName = String.format("new-tag%d", System.currentTimeMillis()/1000);
+            String tagName = String.format("new-tag%d", System.currentTimeMillis());
             String tag = "{\n\"name\": \"" + tagName + "\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
@@ -147,17 +172,85 @@ public class UserTaggingControllerTest {
         }
 
         @Test
-        @DisplayName("Add a tag to a user")
-        public void addTagToUser_succesful() {
+        @DisplayName("Add a new tag to a user")
+        public void addTagToUser_succesfulAddANewTag() {
             String existingUsername = "achilles";
             url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "/" + existingUsername + "/tags";
-            String tag = "{\n\"name\": \"tagName\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
+            String tagName = String.format("new-tag%d", System.currentTimeMillis());
+            String tag = "{\n\"name\": \"" + tagName + "\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
             headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
             assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+            assertEquals("Tag sucessfully assigned to user.", responseEntity.getBody());
+        }
+
+        @Test
+        @DisplayName("Add an existing tag to a user")
+        public void addTagToUser_succesfulAddAnExistingTag() {
+            String existingUsername = "achilles";
+            url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "/" + existingUsername + "/tags";
+            String tag = "{\n\"name\": \"testTag2\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+
+            assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+            assertEquals("Tag sucessfully assigned to user.", responseEntity.getBody());
+        }
+
+        @Test
+        @DisplayName("Do not add an already assigned tag to a user")
+        public void addTagToUser_alreadyHasTag() {
+            String existingUsername = "achilles";
+            url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "/" + existingUsername + "/tags";
+            String tag = "{\n\"name\": \"testTag1\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+
+            assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+            assertEquals("Tag already exists for the user.", responseEntity.getBody());
+        }
+
+        @Test
+        @DisplayName("Do not add an already assigned tag to a user")
+        public void addTagToUser_failureUserDoesNotExist() {
+            String existingUsername = "non-existing";
+            url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "/" + existingUsername + "/tags";
+            String tag = "{\n\"name\": \"testTag\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+
+            Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
+                restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+            });
+        }
+
+        @Test
+        @DisplayName("Create or update a tag")
+        public void createOrUpdateTag_successful() {
+            url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE;
+            String tagName = String.format("tag%d", System.currentTimeMillis()/1000);
+            String tag = "{\n\"name\": \"" + tagName + "\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
+            headers.setContentType(MediaType.APPLICATION_JSON);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
+
+            assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
+        }
+
+        @AfterAll
+        public void afterAll() {
+            MongoTag tag = tagRepository.findByName("testTag1").get();
+            tagRepository.delete(tag);
+            tag = tagRepository.findByName("testTag2").get();
+            tagRepository.delete(tag);
         }
 
     }
@@ -175,20 +268,6 @@ public class UserTaggingControllerTest {
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
 
             assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
-        }
-
-        @Test
-        @DisplayName("Create or update a tag")
-        public void createOrUpdateTag_successful() {
-            url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE;
-            String tagName = String.format("tag%d", System.currentTimeMillis()/1000);
-            String tag = "{\n\"name\": \"" + tagName + "\",\n\"message\": \"Some stuff\",\n\"type\": \"ERROR\"\n}";
-            headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
-
-            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
-
-            assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
         }
 
         @Test
