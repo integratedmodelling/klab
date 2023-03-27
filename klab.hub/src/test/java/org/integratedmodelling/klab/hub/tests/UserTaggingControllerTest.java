@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.tests;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -18,12 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import net.minidev.json.JSONObject;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
@@ -42,9 +38,7 @@ public class UserTaggingControllerTest {
     void setUp() throws URISyntaxException {
         restTemplate = new RestTemplate();
         headers = new HttpHeaders();
-        ResponseEntity<JSONObject> response = loginResponse("system", "password");
-        JSONObject body = response.getBody();//.toJSONString();//("Authentication");
-        token = ((Map<?,?>) body.get("Authentication")).get("tokenString").toString();
+        token = AcceptanceTestUtils.getSessionTokenForDefaultAdministrator(randomServerPort);
         headers.add("Authentication", token);
     }
 
@@ -53,7 +47,7 @@ public class UserTaggingControllerTest {
     public void getAllTags_isOK() {
         url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.TAG_BASE;
         HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
-        
+
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
 
         assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
@@ -171,18 +165,6 @@ public class UserTaggingControllerTest {
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
         assertEquals(HttpStatus.ACCEPTED, responseEntity.getStatusCode());
-    }
-
-    private ResponseEntity<JSONObject> loginResponse(String username, String password) throws URISyntaxException {
-        final String baseUrl = "http://localhost:"+ randomServerPort + "/hub" + API.HUB.AUTHENTICATE_USER;
-        URI uri = new URI(baseUrl);
-        HttpHeaders headers = new HttpHeaders();
-        UserAuthenticationRequest auth= new UserAuthenticationRequest();
-        auth.setPassword(password);
-        auth.setUsername(username);
-        HttpEntity<?> request = new HttpEntity<>(auth, headers);
-        ResponseEntity<JSONObject> result = restTemplate.postForEntity(uri, request, JSONObject.class);
-        return result;
     }
 
 }

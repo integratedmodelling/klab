@@ -2,12 +2,8 @@ package org.integratedmodelling.klab.hub.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Map;
-
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,8 +20,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import net.minidev.json.JSONObject;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
@@ -44,9 +38,7 @@ public class UserRoleEntryControllerTest {
     void setUp() throws URISyntaxException {
         restTemplate = new RestTemplate();
         headers = new HttpHeaders();
-        ResponseEntity<JSONObject> response = loginResponse("system", "password");
-        JSONObject body = response.getBody();
-        token = ((Map<?,?>) body.get("Authentication")).get("tokenString").toString();
+        token = AcceptanceTestUtils.getSessionTokenForDefaultAdministrator(randomServerPort);
         headers.add("Authentication", token);
     }
 
@@ -72,18 +64,6 @@ public class UserRoleEntryControllerTest {
         Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
             restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
         });
-    }
-
-    private ResponseEntity<JSONObject> loginResponse(String username, String password) throws URISyntaxException {
-        final String baseUrl = "http://localhost:"+ randomServerPort + "/hub" + API.HUB.AUTHENTICATE_USER;
-        URI uri = new URI(baseUrl);
-        HttpHeaders headers = new HttpHeaders();
-        UserAuthenticationRequest auth= new UserAuthenticationRequest();
-        auth.setPassword(password);
-        auth.setUsername(username);
-        HttpEntity<?> request = new HttpEntity<>(auth, headers);
-        ResponseEntity<JSONObject> result = restTemplate.postForEntity(uri, request, JSONObject.class);
-        return result;
     }
 
 }
