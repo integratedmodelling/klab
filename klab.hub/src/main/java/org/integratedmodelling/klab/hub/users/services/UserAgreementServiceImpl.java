@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.Collection;
 import java.util.Date;
 import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
@@ -24,7 +25,7 @@ public class UserAgreementServiceImpl implements UserAgreementService {
     }
 
     @Override
-    public Collection<Agreement> getAgreementsFromUser(String username) {
+    public Collection<AgreementEntry> getAgreementsFromUser(String username) {
         return getUserByUsername(username).getAgreements();
     }
 
@@ -33,6 +34,7 @@ public class UserAgreementServiceImpl implements UserAgreementService {
         User user = getUserByUsername(username);
 
         Agreement agreement = user.getAgreements().stream()
+            .map(AgreementEntry::getAgreement)
             .filter(a -> a.getId().equals(agreementId)).findFirst()
             .orElseThrow(() -> new BadRequestException(String.format("User %s does not have an agreement with id %s", username, agreementId)));
         
@@ -41,7 +43,9 @@ public class UserAgreementServiceImpl implements UserAgreementService {
     }
 
     private boolean checkIfUserHasThatAgreementId(String agreementId, User user) {
-        return user.getAgreements().stream().anyMatch(a -> a.getId().equals(agreementId));
+        return user.getAgreements().stream()
+                .map(AgreementEntry::getAgreement)
+                .anyMatch(a -> a.getId().equals(agreementId));
     }
 
     @Override
