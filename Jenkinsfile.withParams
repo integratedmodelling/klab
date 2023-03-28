@@ -9,6 +9,42 @@ def kmodelers = [
 pipeline {
     agent { label "mvn-java-agent"}
     options { skipDefaultCheckout(true) }
+    parameters {
+        string(name: 'BRANCH',
+            defaultValue: '',
+            description :'Which branch should be used for the build?\n' +
+            'Empty is the default value and will generate build on the latest commit'
+        )
+
+        string(name: 'TAG',
+            defaultValue: '',
+            description: 'Variable used for tagging the container images or generating ' +
+            'a build based on a tagged commit.  Default is empty and the tag is determined ' +
+            'by the most recent commit.'
+        )
+
+        string(name: 'MINIO_HOST',
+            defaultValue: 'http://192.168.250.224:9000',
+            description: 'Minio host used to archive files'
+        )
+
+        string(name: 'MINIO_CREDENTIALS',
+            defaultValue: 'bc42afcf-7037-4d23-a7cb-6c66b8a0aa45',
+            description: 'Minio credentials used to be used by job'
+        )
+
+        string(name: 'REGISTRY_CREDENTIALS',
+            defaultValue: '83f9fb8b-e503-4566-9784-e80f2f2d7c64',
+            description: 'Docker registry credentials used to be used by job'
+        )
+
+        string(
+            name: 'GIT_CREDENTIALS',
+            defaultValue: '2f30d924-29e5-4235-b61f-a0dbe2bb7783',
+            description: 'Git Credentials'
+        )
+    }
+
     environment {
         VERSION_DATE = sh(
             script: "date '+%Y-%m-%dT%H:%M:%S'",
@@ -23,12 +59,6 @@ pipeline {
         MAIN = "master"
         DEVELOP = "develop"
         PRODUCTS_GEN = "yes"
-        BRANCH = ""
-        TAG = ""
-        MINIO_HOST = "http://192.168.250.224:9000"
-        MINIO_CREDENTIALS = "bc42afcf-7037-4d23-a7cb-6c66b8a0aa45"
-        REGISTRY_CREDENTIALS = "83f9fb8b-e503-4566-9784-e80f2f2d7c64"
-        GIT_CREDENTIALS = "2f30d924-29e5-4235-b61f-a0dbe2bb7783"
     }
 
     stages {
@@ -42,7 +72,7 @@ pipeline {
 
                 withCredentials(
                     [usernamePassword(
-                        credentialsId: "${env.MINIO_CREDENTIALS}",
+                        credentialsId: "${params.MINIO_CREDENTIALS}",
                         passwordVariable: 'SECRETKEY',
                         usernameVariable: 'ACCESSKEY'
                         )
@@ -128,7 +158,7 @@ pipeline {
 
         stage('Maven install with jib') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                withCredentials([usernamePassword(credentialsId: "${params.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                     sh 'export JAVA_HOME=/opt/java16/openjdk && mvn clean install -U -DskipTests jib:build -Djib.httpTimeout=60000'
                 }
             }
