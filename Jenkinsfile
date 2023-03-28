@@ -20,11 +20,8 @@ pipeline {
         HUB_CONTAINER = "hub-server-16"
         NODE_CONTAINER = "node-server-16"
         BASE_CONTAINER = "klab-base-16:bc344fa9a66e93edaa3a2b528a65e7efa2e55a6f"
-        MAIN = "master"
-        DEVELOP = "develop"
-        PRODUCTS_GEN = "yes"
-        BRANCH = "develop"
-        TAG = "develop"
+        PRODUCTS_GEN = shouldPushProducts(env.BRANCH_NAME)
+        TAG = tagName(env.BRANCH_NAME)
         MINIO_HOST = "http://192.168.250.224:9000"
         MINIO_CREDENTIALS = "bc42afcf-7037-4d23-a7cb-6c66b8a0aa45"
         REGISTRY_CREDENTIALS = "83f9fb8b-e503-4566-9784-e80f2f2d7c64"
@@ -38,7 +35,7 @@ pipeline {
         */
         stage ('Clone Repo') {
             steps {
-		checkout scm
+                checkout scm
 
                 withCredentials(
                     [usernamePassword(
@@ -49,23 +46,6 @@ pipeline {
                     ]){ sh 'mc alias set minio $MINIO_HOST $ACCESSKEY $SECRETKEY' }
 
                 script {
-                    BRANCH = sh(
-                        returnStdout: true,
-                        script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
-                    ).trim().replace("origin/", "")
-
-                    if (BRANCH == "master") {
-                        env.BRANCH = "master"
-                        env.TAG = "latest"
-                        echo "Latest"
-                    } else if (BRANCH == "develop") {
-                        env.BRANCH = "develop"
-                        env.TAG = "develop"
-                        echo "Develop"
-                    } else {
-                        env.PRODUCTS_GEN = "no"
-                        echo "Other: ${BRANCH}"
-                    }
 
               		env.SNAPSHOT = sh(
                         returnStdout: true,
@@ -86,15 +66,8 @@ pipeline {
                             script: 'git describe --tags `git rev-list --tags --max-count=1`',
                             returnStdout: true).trim()
 
-                    if (BRANCH.isEmpty() == true && env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
-                        echo "Tagged commit build ${LATEST_TAGGED_COMMIT} with tag ${LATEST_TAG}"
-                        env.TAG = env.LATEST_TAG
-                        env.PRODUCTS_GEN = "yes"
-                    }
-
-                    env.BRANCH = BRANCH
-                    currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
-                    echo "${BRANCH} build with container tag: ${env.TAG} and products generations is ${env.PRODUCTS_GEN}"
+                    currentBuild.description = "${env.BRANCH_NAME} build with container tag: ${env.TAG}"
+                    echo "${env.BRANCH_NAME} build with container tag: ${env.TAG} and products generations is ${env.PRODUCTS_GEN}"
                 }
 
             }
@@ -104,7 +77,7 @@ pipeline {
         stage ('Update Version.java') {
             steps {
                 sh "cd api/org.integratedmodelling.klab.api/src/org/integratedmodelling/klab && " +
-                        "sed -i 's;\"VERSION_BRANCH;\"${env.BRANCH};g' Version.java &&" +
+                        "sed -i 's;\"VERSION_BRANCH;\"${env.BRANCH_NAME};g' Version.java &&" +
                         "sed -i 's;\"VERSION_COMMIT;\"${env.CURRENT_COMMIT};g' Version.java &&" +
                         "sed -i 's;\"VERSION_BUILD;\"${env.BUILD_NUMBER};g' Version.java && " +
                         "sed -i 's;\"VERSION_DATE;\"${env.VERSION_DATE};g' Version.java"
@@ -129,6 +102,19 @@ pipeline {
             }
         }
     }
+}
+
+def shouldPushProducts(branchName) {
+    return branchName == 'master' || branchName == 'develop' ? 'yes' : 'no'
+}
+
+def tagName(branchName) {
+    if (branchName == 'master') {
+        return 'latest'
+    } else if (branchName == 'develop') {
+        return 'develop'
+    }
+    return branchName
 }
 
 def pushProducts(destination, kmodelers) {
