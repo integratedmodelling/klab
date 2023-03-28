@@ -55,12 +55,12 @@ pipeline {
                     ).trim().replace("origin/", "")
 
                     if (BRANCH == env.MAIN) {
-                        env.BRANCH = MAIN
+                        env.BRANCH = env.MAIN
                         env.TAG = "latest"
                         echo "Latest"
                     } else if (BRANCH == env.DEVELOP) {
-                        env.BRANCH = DEVELOP
-                        env.TAG = DEVELOP
+                        env.BRANCH = env.DEVELOP
+                        env.TAG = env.DEVELOP
                         echo "Develop"
                     } else {
                         env.PRODUCTS_GEN = "no"
