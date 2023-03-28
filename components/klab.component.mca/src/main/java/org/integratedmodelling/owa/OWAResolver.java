@@ -26,17 +26,70 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Parameters;
 
+
+/*
+ *  Resolver for Ordered Weighted Averages (OWA) of multiple observations. OWAs are used in multi-criteria analysis
+ *  to guide decision making in spatially distributed contexts by associating a degree of importance, risk or 
+ *  vulnerability to each location in a certain scope based on the relative relevance of a set of observables and the
+ *  risk profile of the decision-maker. Thus an OWA is commonly parameterized by a set of relevance weights, that 
+ *  represent the relative importance of each observable, and a set of ordinal weights, that represents the risk profile
+ *  of the decision.maker. OWAs can be calculated using slightly different methods, this resolver supports three: 
+ *  
+ *  1- Classic OWA: The calculation requires a set of ordinal weights and relevance weights. The latter are 
+ *  		associated with each observation. In each location of the scope, observables are ordered based on the
+ *  		value of the observation multiplied by the corresponding relevance weight, and in decreasing order. 
+ *  		The result of that multiplication for each observable is again multiplied by the ordinal weights in an
+ *  		ordered manner. The resulting number is the final weight and the sum of those weights in each location 
+ *  		of the scope is the OWA in that location.   
+ *  
+ *  2- WOWA with linguistic quantifier: WOWA stands for Weighted Ordered Weighted Average. The calculation requires
+ *  		a set of relevance weights and a parameter Alpha (real number) representing the risk profile. Ordinal 
+ *  		weights are represented by the function F(x) = x ^ Alpha. The final weights are determined by evaluating 
+ *  		F(x) at {x_i} i in [1, nObservables] where x_i is the value of the cumulative sum of the relevance weights
+ *  		ordered with respect to the value of the corresponding observables at the pixel. The final weights'
+ *  		expression is W_i = x_i ^ Alpha - x_(i-1) ^ Alpha for i in [1, nObservables]. The method has the practical 
+ *  		advantage of being more user-friendly by describing the risk profile with a single parameter. 
+ *  
+ *  3- WOWA with interpolated weights: The calculation requires a set of ordinal weights and relevance weights. Final
+ *  		weights are determined like in method 2. However instead of evaluating a predefined and simple "risk" function,
+ *  		a more complex and expressive function is determined from the full set of ordinal weights. The function is built
+ *  		by interpolating the cumulative sum of the ordinal weights using a piece-wise second-order Bernstein polynomial.
+ *  		This method gives most control and robustness than method 2 at the expense of being slightly harder to 
+ *  		parameterize.    
+ * 
+ * Notes: 
+ * 
+ * 	All methods use normalized weights and weight normalization is done within the resolver, leaving the user the freedom to 
+ * 	define the weights as preferred. 
+ * 
+ *  All methods require normalized and non-dimensional observations as inputs in order to produce meaningful results. 
+ *  DISCLAIMER: NORMALIZATION OF THE OBSERVATIONS IS NOT DONE WITHIN THE RESOLVER. AS A CONSEQUENCE OBSERVABLES' DATA MUST BE
+ *  NORMALIZED BEFORE CONTEXTUALIZATION.
+ *  
+ *  		   
+ * 
+ * 
+ * */
+
 public class OWAResolver extends AbstractContextualizer implements IStateResolver, IExpression {
 
 	private Map<String,Double> relevanceWeights;
+	// An ordered list is used for ordinal weights because weights are applied in order and not by key.
+	// Thus the input list must be ordered.
 	private List<Double> ordinalWeights;
+	// Risk profile parameter for WOWA with linguistic quantifier.
 	private Double alpha;
+	// Only used for WOWA with interpolated weights.
 	private Boolean interpolateWeights;
 	private BernsteinInterpolator interpolator;
 		
+	
 	/*
-	 * Weights normalization.
+	 *
+	 * Methods for weights' normalization.
+	 * 
 	 * */
+	
 	private List<Double> normalizeOrdinalWeights(List<Number> weights){
 		Double sum = 0.0; 
 		for(Number val : weights){
@@ -65,8 +118,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 	
 	/*
-	 * Cumulative weights for WOWA.
+	 * 
+	 * Calculation of cumulative weights for WOWA.
+	 * 
 	 * */
+	
 	private List<Point2D> cumulativeOrdinalWeights(List<Double> normalizedOrdinalWeights) {
 		List<Point2D> cumulativeOW = new ArrayList<Point2D>();
 		
@@ -104,7 +160,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 	
 	/*
-	 * Sort weights by observable value.
+	 * 
+	 * Relevance weights' sorting by observable value in descending order.
+	 * 
 	 * */
 	
 	private LinkedHashMap<String,Double> sortWeights(Map<String,Double> relevanceWeights, Map<String,Double> values){
@@ -138,7 +196,10 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 	
 	/*
+	 * 
 	 * Final weights for interpolated WOWA. The map of sorted relevance weights is linked, thus elements are traversed in order.
+	 * The interpolator is evaluated at each cumulative relevance weight.
+	 * 
 	 * */
 	
 	private Map<String,Double> finalWeightsWOWA(BernsteinInterpolator interpolator, Map<String,Double> sortedRelevanceWeights){
@@ -165,7 +226,10 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 	
 	/*
-	 * Ordinal weights for linguistic quantifier OWA. The map of sorted relevance weights is linked.
+	 * 
+	 * Final weights for linguistic quantifier WOWA. The map of sorted relevance weights is linked.
+	 * F(x) = x ^ alpha is evaluated at each cumulative relevance weight. 
+	 * 
 	 * */
 	private Map<String,Double> exponentialOrdinalWeights(Map<String,Double> sortedRelevanceWeights){
 		
@@ -185,8 +249,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 	
 	/*
-	 * Calculation of aggregate indices.
+	 * 
+	 * Calculation of OWA and WOWAs.
+	 * 
 	 * */
+	
 	
 	private Double calculateOWA(Map<String,Double> relevanceWeights, List<Double> ordinalWeights, Map<String,Double> values) {
 		
@@ -210,7 +277,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	}
 
 	
-	private Double calculateLinguisticQuantifierOWA(Map<String,Double> values) {
+	private Double calculateLinguisticQuantifierWOWA(Map<String,Double> values) {
 		LinkedHashMap<String,Double> sortedWeights = sortWeights(relevanceWeights,values);
 		Map<String,Double> finalWeights = exponentialOrdinalWeights(sortedWeights);
 		Double owa = 0.0;
@@ -234,7 +301,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 
 	/*
-	 * Resolver.
+	 * 
+	 * Resolver definition.
+	 * 
 	 * */
 	
 	@Override	
@@ -255,7 +324,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
         	if (ordinalWeights!=null) {
 	        	owa = calculateOWA(relevanceWeights, ordinalWeights, values);
 	        } else {
-	        	owa = calculateLinguisticQuantifierOWA(values);
+	        	owa = calculateLinguisticQuantifierWOWA(values);
 	        }
         } else {
         	
