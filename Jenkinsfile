@@ -23,8 +23,8 @@ pipeline {
         MAIN = "master"
         DEVELOP = "develop"
         PRODUCTS_GEN = "yes"
-        BRANCH = ""
-        TAG = ""
+        BRANCH = "develop"
+        TAG = "develop"
         MINIO_HOST = "http://192.168.250.224:9000"
         MINIO_CREDENTIALS = "bc42afcf-7037-4d23-a7cb-6c66b8a0aa45"
         REGISTRY_CREDENTIALS = "83f9fb8b-e503-4566-9784-e80f2f2d7c64"
@@ -54,13 +54,13 @@ pipeline {
                         script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
                     ).trim().replace("origin/", "")
 
-                    if (BRANCH == env.MAIN) {
-                        env.BRANCH = env.MAIN
+                    if (BRANCH == "master") {
+                        env.BRANCH = "master"
                         env.TAG = "latest"
                         echo "Latest"
-                    } else if (BRANCH == env.DEVELOP) {
-                        env.BRANCH = env.DEVELOP
-                        env.TAG = env.DEVELOP
+                    } else if (BRANCH == "develop") {
+                        env.BRANCH = "develop"
+                        env.TAG = "develop"
                         echo "Develop"
                     } else {
                         env.PRODUCTS_GEN = "no"
