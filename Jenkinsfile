@@ -49,37 +49,23 @@ pipeline {
                     ]){ sh 'mc alias set minio $MINIO_HOST $ACCESSKEY $SECRETKEY' }
 
                 script {
+                    BRANCH = sh(
+                        returnStdout: true,
+                        script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
+                    ).trim().replace("origin/", "")
 
-					if  (TAG.isEmpty() == false) {
-					    echo "Tag parameterize"
-					    sh "git checkout tags/${TAG} -b latest"
-					    BRANCH = MAIN
-					    env.TAG = TAG
-					} else {
-						if (BRANCH.isEmpty() == false) {
-					    	echo "Branch parameterize"
-					    } else {
-					    	echo "Unparameterize checkout of latest commit"
-					    	BRANCH = sh(
-					        	returnStdout: true,
-					        	script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
-					    	).trim().replace("origin/", "")
-					    }
-					    sh "git checkout ${BRANCH}"
-					    env.TAG = BRANCH.replace("/","-")
-					    if (BRANCH == MAIN) {
-					        env.BRANCH = MAIN
-					        env.TAG = "latest"
-					        echo "Latest"
-					    } else if (BRANCH == DEVELOP) {
-					        env.BRANCH = DEVELOP
-					        env.TAG = DEVELOP
-					        echo "Develop"
-					    } else {
-					        PRODUCTS_GEN = "no"
-					        echo "Other: ${BRANCH}"
-					    }
-					}
+                    if (BRANCH == MAIN) {
+                        env.BRANCH = MAIN
+                        env.TAG = "latest"
+                        echo "Latest"
+                    } else if (BRANCH == DEVELOP) {
+                        env.BRANCH = DEVELOP
+                        env.TAG = DEVELOP
+                        echo "Develop"
+                    } else {
+                        PRODUCTS_GEN = "no"
+                        echo "Other: ${BRANCH}"
+                    }
 
               		env.SNAPSHOT = sh(
                         returnStdout: true,
