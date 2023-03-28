@@ -54,16 +54,16 @@ pipeline {
                         script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
                     ).trim().replace("origin/", "")
 
-                    if (BRANCH == MAIN) {
+                    if (BRANCH == env.MAIN) {
                         env.BRANCH = MAIN
                         env.TAG = "latest"
                         echo "Latest"
-                    } else if (BRANCH == DEVELOP) {
+                    } else if (BRANCH == env.DEVELOP) {
                         env.BRANCH = DEVELOP
                         env.TAG = DEVELOP
                         echo "Develop"
                     } else {
-                        PRODUCTS_GEN = "no"
+                        env.PRODUCTS_GEN = "no"
                         echo "Other: ${BRANCH}"
                     }
 
@@ -89,12 +89,12 @@ pipeline {
                     if (BRANCH.isEmpty() == true && env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
                         echo "Tagged commit build ${LATEST_TAGGED_COMMIT} with tag ${LATEST_TAG}"
                         env.TAG = env.LATEST_TAG
-                        PRODUCTS_GEN = "yes"
+                        env.PRODUCTS_GEN = "yes"
                     }
 
                     env.BRANCH = BRANCH
                     currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
-                    echo "${BRANCH} build with container tag: ${env.TAG} and products generations is ${PRODUCTS_GEN}"
+                    echo "${BRANCH} build with container tag: ${env.TAG} and products generations is ${env.PRODUCTS_GEN}"
                 }
 
             }
@@ -122,7 +122,7 @@ pipeline {
 
         stage('Push products') {
             when {
-                expression { PRODUCTS_GEN == "yes" }
+                expression { env.PRODUCTS_GEN == "yes" }
             }
             steps {
                 pushProducts(env.TAG, kmodelers)
