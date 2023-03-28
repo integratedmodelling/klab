@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 public class FlowDirectionsResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
     boolean computeAngles = false;
+    double minElev = 0.0;
 
     @Override
     public Type getType() {
@@ -34,6 +35,7 @@ public class FlowDirectionsResolver extends AbstractContextualizer implements IR
         OmsFlowDirections algorithm = new OmsFlowDirections();
         algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
                 false);
+        algorithm.pMinElev = minElev;
         algorithm.pm = new TaskMonitor(context.getMonitor());
         algorithm.doProcess = true;
         algorithm.doReset = false;
@@ -69,6 +71,7 @@ public class FlowDirectionsResolver extends AbstractContextualizer implements IR
     public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
         FlowDirectionsResolver ret = new FlowDirectionsResolver();
         ret.computeAngles = Parameters.create(parameters).get("angles", Boolean.FALSE);
+        ret.minElev = Parameters.create(parameters).get("minelev", 0.0);
         return ret;
     }
 }
