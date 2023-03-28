@@ -156,7 +156,7 @@ public class UserTaggingController {
                 .body(tag);
     }
 
-    @PostMapping(value = API.HUB.TAG_ID)
+    @PostMapping(value = API.HUB.TAG_NOTIFICATION_OF_TAG, consumes = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > bindANotificationToATag(
             @PathVariable("name") String name,
