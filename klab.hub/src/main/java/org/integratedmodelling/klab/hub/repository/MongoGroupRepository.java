@@ -20,4 +20,6 @@ public interface MongoGroupRepository extends MongoRepository<MongoGroup, Object
 	@Query("{'complimentary' : true }")
 	List<MongoGroup> findComplimentaryGroups(); 
 	
+    List<MongoGroup> findByOptInIsTrue(); 
+	
 }

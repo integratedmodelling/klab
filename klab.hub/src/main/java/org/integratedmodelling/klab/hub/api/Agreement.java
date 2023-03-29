@@ -45,6 +45,14 @@ public class Agreement {
     private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
 
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public AgreementLevel getAgreementLevel() {
         return agreementLevel;
     }

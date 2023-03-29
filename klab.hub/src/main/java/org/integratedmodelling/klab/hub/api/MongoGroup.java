@@ -37,6 +37,7 @@ public class MongoGroup extends GenericModel {
     @Reference
     private List<Observable> observables;
     private Set<CustomProperty> customProperties;
+    /* Name of groups that depending on */
     private List<String> dependsOn;
 
     public MongoGroup() {

@@ -42,7 +42,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 				userRepository
 					.findByNameIgnoreCase(username)
 					.map(user -> {
-						user.getAgreements().stream().findFirst().get().setGroupEntries(groupEntries);
+						user.getAgreements().stream().findFirst().get().getAgreement().setGroupEntries(groupEntries);
 						return user;
 						})
 					.orElseThrow(() ->
@@ -64,7 +64,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 				userRepository
 					.findByNameIgnoreCase(username)
 					.map(user -> {
-						user.getAgreements().stream().findFirst().get().addGroupEntries(groupEntries);
+						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
 						return user;
 						})
 					.orElseThrow(() ->
@@ -84,7 +84,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 			userRepository
 				.findByNameIgnoreCase(username)
 				.ifPresent(user -> {
-					user.getAgreements().stream().findFirst().get().removeGroupEntries(groupEntries);
+					user.getAgreements().stream().findFirst().get().getAgreement().removeGroupEntries(groupEntries);
 					users.add(user);
 				});		
 		}
@@ -92,13 +92,12 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		new UpdateUsers(users, userRepository).execute();
 	}
 	
-	@Override
-	public void addComplimentaryUserGroups(User user, LocalDateTime expiration) {
-		Set<GroupEntry> groupEntries = createComplimentaryGroupEntries(expiration);
-		user.getAgreements().stream().findFirst().get().addGroupEntries(groupEntries);
-		new UpdateUser(user, userRepository).execute();
-		
-	}
+    @Override
+    public void addComplimentaryUserGroups(User user, LocalDateTime experiation) {
+        Set<GroupEntry> groupEntries = createComplimentaryGroupEntries(experiation);
+        user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
+        new UpdateUser(user, userRepository).execute();        
+    }
 	
 	private Set<GroupEntry> createGroupEntries(Set<String> groupnames, LocalDateTime expiration) {
 		Set<GroupEntry> groupEntries = new HashSet<>();
@@ -157,4 +156,6 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 			.map(User::getName)
 			.collect(Collectors.toList());
 	}
+
+
 }
