@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.hub.api.EngineAuthResponeFactory;
 import org.integratedmodelling.klab.hub.api.LicenseGenerator;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
+import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.exception.LicenseGenerationError;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
@@ -105,8 +106,8 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 		} catch (NoSuchProviderException | IOException | PGPException e) {
 			throw new LicenseGenerationError("Issue in authenticating certificate.");
 		} catch (LicenseExpiredException e) {
-			emailManager.expiredLicenseEmail(request.getEmail());
-		}
+            emailManager.expiredLicenseEmail(request.getEmail());
+        }
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

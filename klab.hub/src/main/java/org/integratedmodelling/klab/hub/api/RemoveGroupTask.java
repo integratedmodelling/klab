@@ -25,7 +25,7 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 			RemoveGroupTask rgt = (RemoveGroupTask)task;
 			User user = userRepository.findByNameIgnoreCase(rgt.getUsername()).get();
 			
-			Set<GroupEntry> currentGroupEntries = user.getAgreements().stream().findFirst().get().getGroupEntries();
+			Set<GroupEntry> currentGroupEntries = user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries();
 			
 			Set<GroupEntry> toRemoveGroupEntries = rgt.getRequestGroups();
 			
@@ -72,7 +72,7 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 				}
 			}
 			if (removed) {
-			    user.getAgreements().stream().findFirst().get().setGroupEntries(currentGroupEntries);
+			    user.getAgreements().stream().findFirst().get().getAgreement().setGroupEntries(currentGroupEntries);
 				//user.setGroupEntries(currentGroupEntries);
 				userRepository.save(user);
 				task.setStatus(TaskStatus.accepted);

@@ -4,14 +4,12 @@ import java.util.List;
 
 import java.util.Optional;
 
-import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
-import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.CreateUserAuthenticationToken;
 import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.commands.GetUserProfile;
@@ -108,10 +106,6 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
 
 		LoginResponse response;
-		// TODO check if needed
-		if (profile.accountStatus == AccountStatus.locked) {
-			return new LoginResponse(token, profile, remote);
-		}
 		if (remote) {
 		    profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
 		    response = new LoginResponse(token, profile, remote);

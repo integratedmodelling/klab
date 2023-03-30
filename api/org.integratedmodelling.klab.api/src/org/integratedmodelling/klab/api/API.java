@@ -353,6 +353,19 @@ public interface API {
          */
         public static final String LOCKED_USERS = USER_BASE + "/locked-users";
         /**
+
+         *URL path for get agreement template.
+         */
+        public static final String GET_AGREEMENT = API_BASE + "/agreements";
+        /**
+         *URL path for get agreement template.
+         */
+        public static final String AGREEMENT_TEMPLATE = API_BASE + "/agreement-templates";
+        /**
+         *URL path for get agreement template by type and level.
+         */
+        public static final String AGREEMENT_TEMPLATE_TYPE_LEVEL = AGREEMENT_TEMPLATE + "/type-level";
+        /**
          * Base URL path for tag resources on the hub.
          */
         public static final String TAG_BASE = API_BASE + "/tags";
@@ -384,13 +397,24 @@ public interface API {
          * Base URL path for tag notifications by user.
          */
         public static final String TAG_NOTIFICATION_OF_USER = USER_BASE_ID + "/tag-notifications";
+        /**
+         * Base URL path for managing all the agreements of a user.
+         */
+        public static final String USER_AGREEMENTS = USER_BASE_ID + "/agreements";
+        /**
+         * Base URL path for getting an agreement of a user by id.
+         */
+        public static final String USER_AGREEMENT_ID = USER_BASE_ID + "/agreement/{agreement-id}";
+        /**
+         * Base URL path for revoking an agreement of a user by id.
+         */
+        public static final String USER_REVOKE_AGREEMENT_ID = USER_BASE_ID + "/revoke-agreement/{agreement-id}";
 
         public static interface PARAMETERS {
             /**
              * URL PARAMETER for user activation tokens.
              */
 			public static final String USER_ACTIVATION = "activate";
-
             /**
              * URL PARAMETER for user requesting a lost password email.
              */
@@ -466,6 +490,7 @@ public interface API {
             /**
              * URL PARAMETER for user role entry service, lists all the users with a particular role
              */
+
             public static final String HAS_ROLES = "has-roles";
             /**
              * Base PARAMETER for the type of a tag

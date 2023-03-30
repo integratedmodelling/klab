@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import static org.springframework.ldap.query.LdapQueryBuilder.query;
+
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -7,8 +10,9 @@ import java.util.Optional;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import static org.springframework.ldap.query.LdapQueryBuilder.query;
-
+import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
+import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.commands.CreateLdapUser;
@@ -43,26 +47,28 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 			PasswordEncoder passwordEncoder, 
 			LdapTemplate ldapTemplate,
 			LdapUserDetailsManager ldapUserDetailsManager,
-			HubEventPublisher<NewUserAdded> publisher) {
+			HubEventPublisher<NewUserAdded> publisher, AgreementService agreementService) {
 		super();
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.ldapTemplate = ldapTemplate;
 		this.ldapUserDetailsManager = ldapUserDetailsManager;
-		this.publisher = publisher;
+		this.publisher = publisher;		
 	}
 
 
 	@Override
-	public User registerNewUser(String username, String email) {
+	public User registerNewUser(String username, String email, Agreement agreement) {
 		Optional<User> pendingUser = checkIfUserPending(username, email);
 		if (pendingUser.isPresent()) {
 			return pendingUser.get();
 		} else {
-			User newUser = new User();
+			User newUser = new User();			
 			newUser.setUsername(username);
 			newUser.setEmail(email);
-			newUser = new CreatePendingUser(userRepository, newUser).execute();
+			AgreementEntry agreementEntry = new AgreementEntry(agreement);
+			newUser.getAgreements().add(agreementEntry);
+			newUser = new CreatePendingUser(userRepository, newUser).execute();			
 			publisher.publish(new NewUserAdded(new Object(), newUser));
 			return newUser;
 		}
@@ -136,6 +142,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 				new BadRequestException("User is already Activated or does not exist"));
 		
 		pendingUser.setAccountStatus(AccountStatus.verified);
+		
 		pendingUser = new UpdateUser(pendingUser, userRepository).execute();
 		return pendingUser;
 	}

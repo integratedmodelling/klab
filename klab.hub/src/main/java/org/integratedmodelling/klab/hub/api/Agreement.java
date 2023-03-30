@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
@@ -33,7 +34,7 @@ public class Agreement {
     
     private Date validDate;
     
-    private Date expiredDate;
+    private Date expirationDate;
     
     private Date revokedDate;   
     
@@ -43,6 +44,14 @@ public class Agreement {
     @Reference
     private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
 
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public AgreementLevel getAgreementLevel() {
         return agreementLevel;
@@ -84,13 +93,13 @@ public class Agreement {
     }
 
 
-    public Date getExpiredDate() {
-        return expiredDate;
+    public Date getExpirationDate() {
+        return expirationDate;
     }
 
 
-    public void setExpiredDate(Date expiredDate) {
-        this.expiredDate = expiredDate;
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
     }
 
 
@@ -167,8 +176,25 @@ public class Agreement {
     public void setOwnAgreement(String ownAgreement) {
         this.ownAgreement = ownAgreement;
     }
-    
-    
-        
+
+    public boolean isRevoked() {
+        return revokedDate != null;
+    }
+
+    public boolean isExpirable() {
+        // Agreements with null expiration dates are the ones with no expiration date
+        return expirationDate != null;
+    }
+
+    public boolean isExpired() {
+        if(!isExpirable()) {
+            return false;
+        }
+        return expirationDate.toInstant().isBefore(Instant.now());
+    }
+
+    public boolean isValid() {
+        return !isRevoked() && !isExpired();
+    }
 
 }
