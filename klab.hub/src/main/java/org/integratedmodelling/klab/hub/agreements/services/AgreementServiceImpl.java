@@ -66,7 +66,7 @@ public class AgreementServiceImpl implements AgreementService {
         agreement.addGroupEntries(getAgreementDefault(agreementTemplate));
         agreement.setValidDate(null);
         agreement.setTransactionDate(now);
-        agreement.setExpiredDate(agreementTemplate.getDefaultDuration() == 0
+        agreement.setExpirationDate(agreementTemplate.getDefaultDuration() == 0
                 ? null
                 : new Date(System.currentTimeMillis() + agreementTemplate.getDefaultDuration()));
 
