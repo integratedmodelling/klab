@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.services;
+package org.integratedmodelling.klab.hub.agreements.services;
 
 import java.util.Collection;
 import java.util.Date;
