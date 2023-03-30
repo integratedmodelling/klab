@@ -1,12 +1,12 @@
-package org.integratedmodelling.klab.hub.tasks.controllers;
+package org.integratedmodelling.klab.hub.agreements.controllers;
 
 import java.util.Collection;
 import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.agreements.services.UserAgreementService;
 import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.AgreementEntry;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.users.services.UserAgreementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class AgreementController {
+public class UserAgreementController {
 
     @Autowired
     UserAgreementService service;
