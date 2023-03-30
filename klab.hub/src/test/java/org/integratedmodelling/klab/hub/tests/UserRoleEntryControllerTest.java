@@ -5,8 +5,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URISyntaxException;
 import org.integratedmodelling.klab.api.API;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -24,6 +27,7 @@ import org.springframework.web.client.RestTemplate;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
 @ActiveProfiles(profiles = "production")
+@TestInstance(Lifecycle.PER_CLASS)
 public class UserRoleEntryControllerTest {
 
     @LocalServerPort
@@ -34,11 +38,15 @@ public class UserRoleEntryControllerTest {
     private String token;
     private HttpHeaders headers;
 
+    @BeforeAll
+    public void beforeAll() throws URISyntaxException {
+        token = AcceptanceTestUtils.getSessionTokenForDefaultAdministrator(randomServerPort);
+    }
+
     @BeforeEach
-    void setUp() throws URISyntaxException {
+    void beforeEach() {
         restTemplate = new RestTemplate();
         headers = new HttpHeaders();
-        token = AcceptanceTestUtils.getSessionTokenForDefaultAdministrator(randomServerPort);
         headers.add("Authentication", token);
     }
 

@@ -4,9 +4,12 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.MongoTag;
 import org.integratedmodelling.klab.hub.api.TagNotification;
 import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.TagNotificationRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -39,6 +42,7 @@ import java.util.Optional;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @EnableAutoConfiguration
 @ActiveProfiles(profiles = "production")
+@TestInstance(Lifecycle.PER_CLASS)
 public class UserTaggingControllerTest {
     @Autowired
     MongoTagRepository tagRepository;
@@ -67,11 +71,15 @@ public class UserTaggingControllerTest {
         }
     }
 
+    @BeforeAll
+    public void beforeAll() throws URISyntaxException {
+        token = AcceptanceTestUtils.getSessionTokenForDefaultAdministrator(randomServerPort);
+    }
+
     @BeforeEach
-    void setUp() throws URISyntaxException {
+    void beforeEach() {
         restTemplate = new RestTemplate();
         headers = new HttpHeaders();
-        token = AcceptanceTestUtils.getSessionTokenForDefaultAdministrator(randomServerPort);
         headers.add("Authentication", token);
     }
 
@@ -137,6 +145,7 @@ public class UserTaggingControllerTest {
         final String tagToHaveNotification = "tag-to-have-notification";
         final String tagWithNotification = "tag-with-notification";
         final String nonExistingTag = "non-existing-tag";
+        JSONObject tagNotificationBody;
 
         private void createMongoTagWithNotification(String tagName) {
             MongoTag tag = createMongoTag(tagName);
@@ -155,10 +164,14 @@ public class UserTaggingControllerTest {
         }
 
         @BeforeAll
-        public void beforeAll() {
+        public void beforeAll() throws JSONException, URISyntaxException {
             createMongoTag(tagWithoutNotification);
             createMongoTag(tagToHaveNotification);
             createMongoTagWithNotification(tagWithNotification);
+
+            tagNotificationBody = new JSONObject();
+            tagNotificationBody.put("type", "ERROR");
+            tagNotificationBody.put("message", "lorem ipsum");
         }
 
         @Test
@@ -220,12 +233,8 @@ public class UserTaggingControllerTest {
         @DisplayName("Bind a notification to a tag")
         public void bindNotificationToATag_succesful() {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/tag-notifications/" + tagToHaveNotification;
-            String tagNotification = "{\n"
-                    + "    \"type\": \"ERROR\",\n"
-                    + "    \"message\": \"lorem ipsum\"\n"
-                    + "}";
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tagNotification, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagNotificationBody.toString(), headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
 
@@ -236,12 +245,8 @@ public class UserTaggingControllerTest {
         @DisplayName("Fild to bind a notification to a non existing tag")
         public void bindNotificationToATag_failTagDoesNotExist() {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/tag-notifications/" + nonExistingTag;
-            String tagNotification = "{\n"
-                    + "    \"type\": \"ERROR\",\n"
-                    + "    \"message\": \"lorem ipsum\"\n"
-                    + "}";
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tagNotification, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagNotificationBody.toString(), headers);
 
             Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
                 restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
@@ -268,27 +273,35 @@ public class UserTaggingControllerTest {
         final String nonAssignedTag = "non-assigned-tag";
         final String assignedTag = "assigned-tag";
         final String newTag = "new-tag";
+        JSONObject tagBody;
 
         @BeforeAll
-        public void beforeAll() {
+        public void beforeAll() throws URISyntaxException, JSONException {
             createMongoTag(nonAssignedTag);
             MongoTag tag = createMongoTag(assignedTag);
             User user = userRepository.findByName("achilles").get();
             user.addTag(tag);
             userRepository.save(user);
+
+            tagBody = new JSONObject();
+            tagBody.put("type", "ERROR");
+            tagBody.put("message", "lorem ipsum");
+        }
+        
+        @BeforeEach
+        public void beforeEach() {
+            restTemplate = new RestTemplate();
+            headers = new HttpHeaders();
+            headers.add("Authentication", token);
         }
 
         @Test
         @DisplayName("Create a new tag")
-        public void createNewTag_createsANewTagSuccessfully() {
+        public void createNewTag_createsANewTagSuccessfully() throws JSONException {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/tags";
-            String tag = "{\n"
-                    + "\"name\": \"" + newTag + "\",\n"
-                    + "\"message\": \"Some stuff\",\n"
-                    + "\"type\": \"ERROR\"\n"
-                    + "}";
+            tagBody.put("name", newTag);
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagBody.toString(), headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
 
@@ -297,15 +310,11 @@ public class UserTaggingControllerTest {
 
         @Test
         @DisplayName("Fail creating a duplicated tag")
-        public void createNewTag_failureCreatingADuplicatedTag() {
+        public void createNewTag_failureCreatingADuplicatedTag() throws JSONException {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/tags";
-            String tag = "{\n"
-                    + "\"name\": \""+ nonAssignedTag + "\",\n"
-                    + "\"message\": \"Some stuff\",\n"
-                    + "\"type\": \"ERROR\"\n"
-                    + "}";
+            tagBody.put("name", nonAssignedTag);
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagBody.toString(), headers);
 
             Assertions.assertThrows(HttpClientErrorException.Conflict.class, () -> {
                 restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
@@ -314,15 +323,11 @@ public class UserTaggingControllerTest {
 
         @Test
         @DisplayName("Add a new tag to a user")
-        public void addTagToUser_succesfulAddANewTag() {
+        public void addTagToUser_succesfulAddANewTag() throws JSONException {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/users/" + existingUsername + "/tags";
-            String tag = "{\n"
-                    + "\"name\": \"" + newTag + "\",\n"
-                    + "\"message\": \"Some stuff\",\n"
-                    + "\"type\": \"ERROR\"\n"
-                    + "}";
+            tagBody.put("name", newTag);
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagBody.toString(), headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
@@ -332,15 +337,11 @@ public class UserTaggingControllerTest {
 
         @Test
         @DisplayName("Add an existing tag to a user")
-        public void addTagToUser_succesfulAddAnExistingTag() {
+        public void addTagToUser_succesfulAddAnExistingTag() throws JSONException {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/users/" + existingUsername + "/tags";
-            String tag = "{\n"
-                    + "\"name\": \"" + nonAssignedTag + "\",\n"
-                    + "\"message\": \"Some stuff\",\n"
-                    + "\"type\": \"ERROR\"\n"
-                    + "}";
+            tagBody.put("name", nonAssignedTag);
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagBody.toString(), headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
@@ -349,15 +350,11 @@ public class UserTaggingControllerTest {
 
         @Test
         @DisplayName("Do not add an already assigned tag to a user")
-        public void addTagToUser_alreadyHasTag() {
+        public void addTagToUser_alreadyHasTag() throws JSONException {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/users/" + existingUsername + "/tags";
-            String tag = "{\n"
-                    + "\"name\": \"" + assignedTag + "\",\n"
-                    + "\"message\": \"Some stuff\",\n"
-                    + "\"type\": \"ERROR\"\n"
-                    + "}";
+            tagBody.put("name", assignedTag);
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagBody.toString(), headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
@@ -366,15 +363,11 @@ public class UserTaggingControllerTest {
 
         @Test
         @DisplayName("Fail adding a tag to a non existing user")
-        public void addTagToUser_failureUserDoesNotExist() {
+        public void addTagToUser_failureUserDoesNotExist() throws JSONException {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/users/" + nonExistingUsername+ "/tags";
-            String tag = "{\n"
-                    + "\"name\": \"" + newTag + "\",\n"
-                    + "\"message\": \"Some stuff\",\n"
-                    + "\"type\": \"ERROR\"\n"
-                    + "}";
+            tagBody.put("name", newTag);
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagBody.toString(), headers);
 
             Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
                 restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
@@ -383,15 +376,12 @@ public class UserTaggingControllerTest {
 
         @Test
         @DisplayName("Create or update a tag")
-        public void createOrUpdateTag_successful() {
+        public void createOrUpdateTag_successful() throws JSONException {
             url = "http://localhost:" + randomServerPort + "/hub/api/v2/tags";
-            String tag = "{\n"
-                    + "\"name\": \"" + newTag + "\",\n"
-                    + "\"message\": \"Some stuff\",\n"
-                    + "\"type\": \"ERROR\"\n"
-                    + "}";
+            tagBody.put("name", newTag);
             headers.setContentType(MediaType.APPLICATION_JSON);
-            HttpEntity<String> httpEntity = new HttpEntity<>(tag, headers);
+            String a = tagBody.toString();
+            HttpEntity<String> httpEntity = new HttpEntity<>(tagBody.toString(), headers);
 
             ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, httpEntity, String.class);
 
@@ -407,6 +397,7 @@ public class UserTaggingControllerTest {
         @AfterEach
         public void afterEach() {
             deleteMongoTag(newTag);
+            tagBody.remove("name");
         }
     }
 
