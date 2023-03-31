@@ -53,13 +53,7 @@ public class UserTaggingController {
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getAllTags() {
         List<MongoTag> tags;
-        try {
-            tags = userTagService.getAllTags();
-        } catch (BadRequestException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(e.getMessage());
-        }
+        tags = userTagService.getAllTags();
 
         return ResponseEntity
                 .status(HttpStatus.OK)
@@ -88,10 +82,10 @@ public class UserTaggingController {
                 .body("Tag sucessfully created.");
     }
 
-    @PutMapping(value = API.HUB.TAG_OF_USER, consumes = "application/json")
+    @PutMapping(value = API.HUB.TAGS_OF_USER, consumes = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > createNewTag(
-            @PathVariable String username,
+    public ResponseEntity< ? > assignTagToUser(
+            @PathVariable("id") String username,
             @RequestBody MongoTag tag) {
         final boolean isTagAdded;
         try {
@@ -102,16 +96,16 @@ public class UserTaggingController {
                     .body(e.getMessage());
         }
 
-        final String body = isTagAdded ? "Tag sucessfully created." : "Tag already exists for the user.";
+        final String body = isTagAdded ? "Tag sucessfully assigned to user." : "Tag already exists for the user.";
         return ResponseEntity
                 .status(HttpStatus.ACCEPTED)
                 .body(body);
     }
 
-    @GetMapping(value = API.HUB.TAG_OF_USER, produces = "application/json")
+    @GetMapping(value = API.HUB.TAGS_OF_USER, produces = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getTagsOfUser(
-            @PathVariable String username,
+            @PathVariable("id") String username,
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
         List<TagEntry> tags;
         try {
@@ -130,7 +124,7 @@ public class UserTaggingController {
     @GetMapping(value = API.HUB.TAG_UNSENT_OF_USER, produces = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getUnsentTagsOfUser(
-            @PathVariable String username,
+            @PathVariable("username") String username,
             @RequestParam(required = false, value = API.HUB.PARAMETERS.TYPE_OF_TAG) Optional<HubNotificationMessage.Type> type) {
         List<TagEntry> tags;
         try {
@@ -149,7 +143,7 @@ public class UserTaggingController {
     @GetMapping(value = API.HUB.TAG_ID)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getTagByName(
-            @PathVariable String name) {
+            @PathVariable("name") String name) {
         Optional<MongoTag> tag = userTagService.getTagByName(name);
         if(tag.isEmpty()) {
             return ResponseEntity
@@ -162,10 +156,10 @@ public class UserTaggingController {
                 .body(tag);
     }
 
-    @PostMapping(value = API.HUB.TAG_ID)
+    @PostMapping(value = API.HUB.TAG_NOTIFICATION_OF_TAG, consumes = "application/json")
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > bindANotificationToATag(
-            @PathVariable String name,
+            @PathVariable("name") String name,
             @RequestBody TagNotification tagNotification) {
         Optional<MongoTag> tag = userTagService.getTagByName(name);
         if(tag.isEmpty()) {
@@ -195,7 +189,7 @@ public class UserTaggingController {
     @GetMapping(value = API.HUB.TAG_NOTIFICATION_OF_TAG)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getTagNotificationByTagName(
-            @PathVariable String name) {
+            @PathVariable("name") String name) {
         Optional<MongoTag> tag = userTagService.getTagByName(name);
         if(tag.isEmpty()) {
             return ResponseEntity
@@ -218,8 +212,8 @@ public class UserTaggingController {
     @GetMapping(value = API.HUB.TAG_NOTIFICATION_OF_USER)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
     public ResponseEntity< ? > getTagNotificationByUserName(
-            @PathVariable String name) {
-        List<TagNotification> tagNotifications = userTagService.getTagNotificationsByUser(name);
+            @PathVariable("id") String username) {
+        List<TagNotification> tagNotifications = userTagService.getTagNotificationsByUser(username);
 
         return ResponseEntity
                 .status(HttpStatus.OK)

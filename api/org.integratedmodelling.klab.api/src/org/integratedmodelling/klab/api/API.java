@@ -376,7 +376,7 @@ public interface API {
         /**
          * Base URL path for all tags referencing a user.
          */
-        public static final String TAG_OF_USER = TAG_BASE + "/{username}";
+        public static final String TAGS_OF_USER = USER_BASE_ID + "/tags";
         /**
          * Base URL path for every unsent tag.
          */
@@ -396,7 +396,7 @@ public interface API {
         /**
          * Base URL path for tag notifications by user.
          */
-        public static final String TAG_NOTIFICATION_OF_USER = USER_BASE + "/tag-notifications/{name}";
+        public static final String TAG_NOTIFICATION_OF_USER = USER_BASE_ID + "/tag-notifications";
         /**
          * Base URL path for managing all the agreements of a user.
          */
@@ -409,7 +409,6 @@ public interface API {
          * Base URL path for revoking an agreement of a user by id.
          */
         public static final String USER_REVOKE_AGREEMENT_ID = USER_BASE_ID + "/revoke-agreement/{agreement-id}";
-
 
         public static interface PARAMETERS {
             /**

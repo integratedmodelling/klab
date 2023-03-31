@@ -379,7 +379,7 @@ public class User extends IdentityModel implements UserDetails{
 
     public boolean hasTag(String tagName) {
         return tags.stream()
-        .anyMatch(t -> t.getTag().getName().equals(tagName));
+        .anyMatch(t -> t.getTag() != null && t.getTag().getName().equals(tagName));
     }
 	
     public void addTag(MongoTag mongoTag) {
