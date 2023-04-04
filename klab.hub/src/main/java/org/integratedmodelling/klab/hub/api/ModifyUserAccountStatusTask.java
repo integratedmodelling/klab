@@ -11,8 +11,10 @@ import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.stereotype.Component;
 
+@TypeAlias("ModifyUserAccountStatusTask")
 public class ModifyUserAccountStatusTask extends Task {
 
 	private static TaskCommand command = CommandFactory.getCommand(ModifyUserAccountStatusTask.class);
