@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -200,4 +201,24 @@ public class TaskServiceImpl implements TaskService{
 	public Optional<Task> getTaskByToken(Class<? extends Task> clazz, TokenClickback token) {
 		return taskRepository.findByToken(clazz.getSimpleName(), token);
 	}
+
+    @Override
+    public List<Task> getTasksPaginated(PageRequest pageRequest) {
+        return taskRepository.findAll(pageRequest).toList();
+    }
+
+    @Override
+    public List<Task> getTasksPaginated(Class< ? extends Task> clazz, PageRequest pageRequest) {
+        return taskRepository.findByClass(clazz.getSimpleName(), pageRequest);
+    }
+
+    @Override
+    public List<Task> getTasksPaginated(TaskStatus status, PageRequest pageRequest) {
+        return taskRepository.findByStatus(status, pageRequest);
+    }
+
+    @Override
+    public List<Task> getTasksPaginated(Class< ? extends Task> clazz, TaskStatus status, PageRequest pageRequest) {
+        return taskRepository.findByClassAndStatus(clazz.getSimpleName(), status, pageRequest);
+    }
 }

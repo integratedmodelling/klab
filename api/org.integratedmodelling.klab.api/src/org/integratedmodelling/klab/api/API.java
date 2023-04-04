@@ -496,7 +496,14 @@ public interface API {
              * Base PARAMETER for the type of a tag
              */
             public static final String TYPE_OF_TAG = "type";
-
+            /**
+             * URL parameter used to indicate the index of the requested page within a paginated query
+             */
+            public static final String PAGE = "page";
+            /**
+             * URL parameter used to indicate the number of records retrieved in a paginated query
+             */
+            public static final String RECORDS = "records";
         }
 
     }
