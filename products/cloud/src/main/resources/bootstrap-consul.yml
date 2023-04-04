@@ -13,6 +13,9 @@ spring:
         health-check-timeout: 3s
         health-check-critical-timeout: 5s
         deregister: true
+        heartbeat:
+          enabled: true
+          reregister-service-on-failure: true
       host: ${CONSUL_SERVER:192.168.250.210}
       port: 8500
       config:
