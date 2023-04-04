@@ -1,15 +1,16 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.stereotype.Component;
 
+@TypeAlias("RemoveGroupTask")
 public class RemoveGroupTask extends ModifyGroupsTask{
 	
 	private static TaskCommand command = CommandFactory.getCommand(RemoveGroupTask.class);
