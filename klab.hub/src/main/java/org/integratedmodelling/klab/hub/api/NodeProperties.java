@@ -12,9 +12,6 @@ public class NodeProperties implements IProperties {
 		if(config.getClass().getName() == BouncyConfiguration.class.getName()) {
 			BouncyNodeProperties(node, (BouncyConfiguration) config);
 		}
-		if(config.getClass().getName() == LegacyConfiguration.class.getName()) {
-			LegacyNodeProperties(node, (LegacyConfiguration) config);
-		}
 	}
 	
 	private void BouncyNodeProperties(MongoNode node, BouncyConfiguration config) {
@@ -33,22 +30,6 @@ public class NodeProperties implements IProperties {
 		this.properties.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, KlabCertificate.Level.INSTITUTIONAL.toString());
 	}
 	
-	private void LegacyNodeProperties(MongoNode node, LegacyConfiguration config) {
-	    LocalDateTime expires = LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS);
-		this.properties = new Properties();
-		this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
-		this.properties.setProperty(KlabCertificate.KEY_NODENAME, node.getName());
-		this.properties.setProperty(KlabCertificate.KEY_SIGNATURE, config.getKeyString());
-		this.properties.setProperty(KlabCertificate.KEY_PARTNER_NAME, "integratedmodelling.org");
-		this.properties.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, "info@integratedmodelling.org");
-		this.properties.setProperty(KlabCertificate.KEY_PARTNER_HUB, config.getHubUrl());
-		this.properties.setProperty(KlabCertificate.KEY_EMAIL, node.getEmail());
-		this.properties.setProperty("klab.wordlview", "im");
-		this.properties.setProperty(KlabCertificate.KEY_URL, node.getUrl());
-		this.properties.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE, KlabCertificate.Type.NODE.toString());
-		this.properties.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, KlabCertificate.Level.INSTITUTIONAL.toString());
-	}
-
 	private Properties properties;
 
 	public Properties getProperties() {

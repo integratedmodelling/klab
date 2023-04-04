@@ -128,9 +128,6 @@ public class CreateInitialUsers {
     			u.setLastLogin(null);
     			u.setRegistrationDate(null);
     		}
-    		if (x >= 6 && x <= 8) { // not pending but no registration date (legacy problem)
-    			u.setRegistrationDate(null);
-    		}
     		if (u.getAccountStatus() != AccountStatus.pendingActivation) {
 	    		x = (int)(Math.random()*100+1);
 	    		if (x < 5) { // less than 5% with no last login 

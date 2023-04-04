@@ -9,7 +9,6 @@ public final class HubRequestMatchers {
 			API.HUB.AUTHENTICATE_LEVER,
 			API.HUB.AUTHENTICATE_NODE,
 			API.HUB.AUTHENTICATE_USER,
-			API.HUB.LEGACY_AUTHENTICATE_ENGINE
 	};
 	
 	private static final String[] users = new String[] {

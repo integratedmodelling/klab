@@ -32,9 +32,6 @@ public class LicenseGenerator {
 	    
 		if(config.getClass().getName().equals(BouncyConfiguration.class.getName())) {
 			return new BouncyLicense().generate(props, config);
-		}
-		if(config.getClass().getName().equals(LegacyConfiguration.class.getName())) {
-			return new LegacyLicense().generate(props, config);
 		} else {
 			throw new BadRequestException("Bad request");
 		}
@@ -55,9 +52,6 @@ public class LicenseGenerator {
         
         if(config.getClass().getName().equals(BouncyConfiguration.class.getName())) {
             return new BouncyLicense().generate(props, config);
-        }
-        if(config.getClass().getName().equals(LegacyConfiguration.class.getName())) {
-            return new LegacyLicense().generate(props, config);
         } else {
             throw new BadRequestException("Bad request");
         }
