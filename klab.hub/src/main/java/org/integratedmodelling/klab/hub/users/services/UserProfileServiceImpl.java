@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -10,6 +11,11 @@ import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class UserProfileServiceImpl implements UserProfileService {
 	
+    @Autowired
+    MongoTemplate mongoTemplate;
+
 	private UserRepository userRepository;
 	
 	private ObjectMapper objectMapper;
@@ -94,5 +103,13 @@ public class UserProfileServiceImpl implements UserProfileService {
 					new UserByEmailDoesNotExistException(email));
 		return getUserSafeProfile(user);
 	}
+
+    @Override
+    public List<User> getAllUsersByCriteria(List<Criteria> criteria) {
+        Query query = new Query();
+        query.with(PageRequest.of(0, 5)); // TODO remove hardcoded pagination
+        query.addCriteria(new Criteria().andOperator(criteria.toArray(new Criteria[criteria.size()])));
+        return mongoTemplate.find(query, User.class);
+    }
 
 }

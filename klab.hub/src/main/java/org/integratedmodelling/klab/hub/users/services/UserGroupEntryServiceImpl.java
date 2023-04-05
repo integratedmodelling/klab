@@ -147,15 +147,5 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		UpdateUsersGroups request = new UpdateUsersGroups(usernames, groupNames, LocalDateTime.now());		
 		removeUsersGroupsByNames(request);
 	}
-	
-	@Override
-	public List<String> getUsersWithGroup(String group) {
-		MongoGroup lookup = new GetMongoGroupByName(group, groupRepository).execute();
-		ObjectId id = new ObjectId(lookup.getId());
-		return userRepository.getUsersByGroupEntriesWithGroupId(id).stream()
-			.map(User::getName)
-			.collect(Collectors.toList());
-	}
-
 
 }
