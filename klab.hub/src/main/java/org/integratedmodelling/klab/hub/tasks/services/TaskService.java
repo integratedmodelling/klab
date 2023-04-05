@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.hub.api.TaskParameters;
 import org.integratedmodelling.klab.hub.api.TaskStatus;
 import org.integratedmodelling.klab.hub.api.TokenClickback;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 public interface TaskService {
 	/**
@@ -64,5 +63,5 @@ public interface TaskService {
     public abstract List<Task> getTasksPaginated(PageRequest pageRequest);
     public abstract List<Task> getTasksPaginated(Class<? extends Task> clazz, PageRequest pageRequest);
     public abstract List<Task> getTasksPaginated(TaskStatus status, PageRequest pageRequest);
-    public abstract List<Task> getTasksPaginated(Class<? extends Task> clazz, TaskStatus status, PageRequest pageRequest );
+    public abstract List<Task> getTasksPaginated(Class<? extends Task> clazz, TaskStatus status, PageRequest pageRequest);
 }

@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskStatus;
 import org.integratedmodelling.klab.hub.api.TaskType;
+import org.integratedmodelling.klab.hub.controllers.PaginationUtils;
 import org.integratedmodelling.klab.hub.tasks.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -46,15 +47,11 @@ public class TasksController {
             @RequestParam(name = "status") Optional<TaskStatus> status,
             @RequestParam(name = API.HUB.PARAMETERS.PAGE, required = false) Optional<Integer> page,
             @RequestParam(name = API.HUB.PARAMETERS.RECORDS, required = false) Optional<Integer> records) {
-        List<Task> tasks = hasValidPaginationParameters(page, records) ?
-                getRequestedTasks(type, status, page, records) :
+        List<Task> tasks = PaginationUtils.hasValidPaginationParameters(page, records) ?
+                getRequestedTasks(type, status, PageRequest.of(page.get(), records.get())) :
                 getRequestedTasks(type, status);
         ResponseEntity< ? > resp = new ResponseEntity<>(tasks, HttpStatus.OK);
         return resp;
-    }
-
-    private boolean hasValidPaginationParameters(Optional<Integer> page, Optional<Integer> records) {
-        return page.isPresent() && records.isPresent();
     }
 
     private List<Task> getRequestedTasks(Optional<TaskType> type, Optional<TaskStatus> status) {
@@ -68,15 +65,15 @@ public class TasksController {
                 service.getTasks();
     }
 
-    private List<Task> getRequestedTasks(Optional<TaskType> type, Optional<TaskStatus> status, Optional<Integer> page, Optional<Integer> records) {
+    private List<Task> getRequestedTasks(Optional<TaskType> type, Optional<TaskStatus> status, PageRequest pageRequest) {
         if (type.isPresent()) {
             return status.isPresent() ?
-                service.getTasksPaginated(type.get().getClazz(), status.get(), PageRequest.of(page.get(), records.get())) :
-                service.getTasksPaginated(type.get().getClazz(), PageRequest.of(page.get(), records.get()));
+                service.getTasksPaginated(type.get().getClazz(), status.get(), pageRequest) :
+                service.getTasksPaginated(type.get().getClazz(), pageRequest);
         }
         return status.isPresent() ?
-                service.getTasksPaginated(status.get(), PageRequest.of(page.get(), records.get())) :
-                service.getTasksPaginated(PageRequest.of(page.get(), records.get()));
+                service.getTasksPaginated(status.get(), pageRequest) :
+                service.getTasksPaginated(pageRequest);
     }
 
 }
