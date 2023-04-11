@@ -5,12 +5,12 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.User;
-import org.springframework.data.mongodb.core.query.Criteria;
+import org.integratedmodelling.klab.hub.users.controllers.criteria.UserProfileCriteria;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface UserProfileService {
-	
+
 	abstract ProfileResource updateUserByProfile(ProfileResource profile);
 	abstract ProfileResource getUserProfile(String username);
 	abstract ProfileResource getUserProfileByEmail(String emai);
@@ -19,5 +19,5 @@ public interface UserProfileService {
 	abstract ProfileResource getCurrentUserProfile(boolean remote);
 	abstract Set<ProfileResource> getAllUserProfiles();
 
-	abstract List<User> getAllUsersByCriteria(List<Criteria> criterias);
+	abstract List<ProfileResource> getAllUsersByCriteria(UserProfileCriteria criteria);
 }
