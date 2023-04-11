@@ -111,18 +111,5 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-	
-	@PostMapping(value= API.HUB.LEGACY_AUTHENTICATE_ENGINE)
-	public ResponseEntity<EngineAuthenticationResponse> processLegacyEndpoint(HttpServletRequest request) throws IOException, MessagingException {
-	    final String str = IOUtils.toString(request.getInputStream(), Charset.defaultCharset());
-	    JsonObject translate = new Gson().fromJson(str, JsonObject.class);
-	    EngineAuthenticationRequest newRequest = new EngineAuthenticationRequest();
-	    newRequest.setCertificate(translate.get("certificate").getAsString());
-	    newRequest.setName(translate.get("username").getAsString());
-	    newRequest.setKey(translate.get("userKey").getAsString());
-	    newRequest.setUserType(translate.get("userType").getAsString());
-	    newRequest.setLevel(ICertificate.Level.USER);
-	    return processCertificate(newRequest, request);
-	}
 
 }

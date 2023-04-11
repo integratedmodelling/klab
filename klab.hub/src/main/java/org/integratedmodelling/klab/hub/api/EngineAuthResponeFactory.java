@@ -63,8 +63,6 @@ public class EngineAuthResponeFactory {
 		case ANONYMOUS:
 		case INSTITUTIONAL:
 			break;
-		case LEGACY:
-			break;
 		case TEST:
 			if (IPUtils.isLocal(remoteAddr)) {
 				return localEngine(request);

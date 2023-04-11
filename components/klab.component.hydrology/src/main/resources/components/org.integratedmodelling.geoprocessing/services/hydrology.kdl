@@ -60,6 +60,10 @@ export number flowdirections
 		"If true, angles are computed as output instead of integer flow direction codes per D8 conventions."
 		default false
 
+    optional parameter number minelev
+        "The minimum elevation processed by the algorithm."
+        default 0.0
+
 	geometry S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.FlowDirectionsResolver
