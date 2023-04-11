@@ -44,24 +44,19 @@ public class UserProfileController {
             @RequestParam(value = API.HUB.PARAMETERS.PAGE, required = false) Optional<Integer> page,
             @RequestParam(value = API.HUB.PARAMETERS.RECORDS, required = false) Optional<Integer> records
             ) {
-        boolean hasPaginationParameters = PaginationUtils.hasValidPaginationParameters(page, records);
-        boolean hasGroupParameters = groupsParam != null && !groupsParam.isEmpty();
-        boolean hasRoleParameters = rolesParam != null && !rolesParam.isEmpty();
-        boolean hasAccountStatusParameters = accountStatusParam != null && !accountStatusParam.isEmpty();
-
         UserProfileCriteria criteria = new UserProfileCriteria();
-        if (hasPaginationParameters) {
+        if (PaginationUtils.hasValidPaginationParameters(page, records)) {
             criteria.pagination = Optional.of(PageRequest.of(page.get(), records.get()));
         }
-        if (hasGroupParameters) {
+        if (groupsParam != null && !groupsParam.isEmpty()) {
             // FIX org.springframework.data.mapping.MappingException: Invalid path reference agreements.agreement.groupEntries.group.name! Associations can only be pointed to directly or via their id property!
             // criterias.add(Criteria.where("agreements.agreement.groupEntries.group.name").in(group));
         }
-        if (hasRoleParameters) {
+        if (rolesParam != null && !rolesParam.isEmpty()) {
             List<Role> roles = rolesParam.stream().map(r -> Role.valueOf("ROLE_" + r)).toList();
             criteria.rolesCriteria = roles;
         }
-        if (hasAccountStatusParameters) {
+        if (accountStatusParam != null && !accountStatusParam.isEmpty()) {
             List<AccountStatus> accountStatus = accountStatusParam.stream().map(ac -> AccountStatus.valueOf(ac)).toList();
             criteria.accountStatusCriteria = accountStatus;
         }
