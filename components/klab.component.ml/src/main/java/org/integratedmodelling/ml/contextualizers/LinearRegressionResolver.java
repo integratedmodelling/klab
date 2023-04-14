@@ -28,7 +28,7 @@ Options specific to weka.classifiers.functions.Logistic:
  *
  *
  */
-public class LinearRegressionResolver extends AbstractWekaResolver<LinearRegression> implements IExpression {
+public class LinearRegressionResolver extends AbstractWekaResolverReg<LinearRegression> implements IExpression {
 
 //	private IContextualizationScope context;
 

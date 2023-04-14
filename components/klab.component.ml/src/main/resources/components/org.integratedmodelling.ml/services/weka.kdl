@@ -144,3 +144,10 @@ export value simplelogistic extends classifier
 		
 	class org.integratedmodelling.ml.contextualizers.SimpleLogisticResolver
 }
+
+export value linearregression extends classifier
+	""
+	label 'Linear Regression'
+{		
+	class org.integratedmodelling.ml.contextualizers.LinearRegressionResolver
+}
