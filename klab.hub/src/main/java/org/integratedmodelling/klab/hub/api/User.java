@@ -367,6 +367,14 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public void addAgreements(AgreementEntry agreements) {
+        this.agreements.addAll(Arrays.asList(agreements));
+    }
+
+    public void addAgreements(Set<AgreementEntry> agreements) {
+        this.agreements.addAll(agreements);
+    }
 
     
     public Set<AgreementEntry> getAgreements() {

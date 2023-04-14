@@ -11,10 +11,12 @@ import java.security.SignatureException;
 import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.Properties;
+
 import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
@@ -42,9 +44,9 @@ public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
 	private final String NODE_CERT_FILE_NAME = KlabCertificate.DEFAULT_NODE_CERTIFICATE_FILENAME;
 
 	@Override
-	public byte[] generateCert(User user) {
+	public byte[] generateCert(User user, Agreement agreement) {
 		try {
-			return generateCertFile(user);
+			return generateCertFile(user, agreement);
 		} catch (Exception e) {
 			throw new KlabException(e);
 		}
@@ -60,9 +62,9 @@ public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
 	}
 	
 	@Override
-	public byte[] generateCertFile(User user) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException {
+	public byte[] generateCertFile(User user, Agreement agreement) throws IOException, NoSuchAlgorithmException, NoSuchProviderException, SignatureException, PGPException {
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		Properties properties = getPropertiesString(user);
+		Properties properties = getPropertiesString(user, agreement);
 		properties.setProperty(KlabCertificate.KEY_CERTIFICATE, encodedLicenseString(properties));
 		properties.store(byteArrayOutputStream, "Engine Certificate Generated On " + new Date());
 		return byteArrayOutputStream.toByteArray();
@@ -78,11 +80,12 @@ public class LicenseServiceLegacyImpl implements LicenseServiceLegacy {
 	}
 
 	@Override
-	public Properties getPropertiesString(User user) {
+	public Properties getPropertiesString(User user, Agreement agreement) {
         Properties properties = new Properties();   
         LocalDateTime expires = LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS/2);
 		properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		properties.setProperty(KlabCertificate.KEY_USERNAME, user.getUsername());
+		properties.setProperty(KlabCertificate.KEY_AGREEMENT, agreement.getId());
 		properties.setProperty(KlabCertificate.KEY_EMAIL, user.getEmail());
 		properties.setProperty(KlabCertificate.KEY_SIGNATURE, licenseConfig.getKey());
 		properties.setProperty(KlabCertificate.KEY_PARTNER_NAME, "integratedmodelling.org");

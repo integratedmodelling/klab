@@ -302,7 +302,8 @@ public enum Authentication implements IAuthenticationService {
             EngineAuthenticationRequest request = new EngineAuthenticationRequest(
                     certificate.getProperty(KlabCertificate.KEY_USERNAME), certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
                     certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel());
+                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel(),
+                    certificate.getProperty(KlabCertificate.KEY_AGREEMENT));
 
             // add email if we have it, so the hub can notify in any case if so configured
             request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));

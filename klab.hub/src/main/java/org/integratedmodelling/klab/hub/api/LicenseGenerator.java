@@ -17,7 +17,7 @@ public class LicenseGenerator {
 	
     LicenseConfigService configService;
 
-	public byte[] generate(ProfileResource profile, String configId) {
+	public byte[] generate(ProfileResource profile, Agreement agreement, String configId) {
 	    LicenseConfiguration config;
 	    
 	    if(configId == null) {
@@ -26,7 +26,7 @@ public class LicenseGenerator {
 	        config = configService.getConfigByKey(configId);
 	    }
 	    
-	    Properties props = PropertiesFactory.fromProfile(profile, config).getProperties();
+	    Properties props = PropertiesFactory.fromProfile(profile, agreement, config).getProperties();
 	    
 	    //Properties engineProperties = PropertiesFactory.fromProfile(profile, c).getProperties();
 	    
