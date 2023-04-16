@@ -645,6 +645,11 @@ public class Scheduler implements IScheduler {
 
 	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations, IRuntimeScope scope) {
 
+		// TODO only happens in edge cases
+		if (actuator.getModel() == null) {
+			return;
+		}
+		
 		scope = scope.targetForChange();
 
 		/*
