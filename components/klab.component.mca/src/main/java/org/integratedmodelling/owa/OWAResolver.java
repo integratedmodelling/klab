@@ -236,9 +236,12 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Map<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights); 
 
 		Map<String,Double> finalWeights = new HashMap<>();
+		Double exp_par;
+		Double eps = 0.00000001;
 		Double val;
 		Double previous = 0.0;
 		for(String key : cumulativeRW.keySet()){
+			if (alpha == 0) {exp_par = (double) (1.0 - alpha)/alpha;} else {exp_par = (double) (1.0 - eps)/eps;}
 			val = Math.pow(cumulativeRW.get(key),alpha);
 			finalWeights.put(key,val - previous);
 			previous = val; 
