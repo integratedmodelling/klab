@@ -2,6 +2,16 @@
 @version 0.10.0
 @namespace klab.data
 
+export number recontextualize
+	"Produce final states at context level from aggregated observation of secondary objects within the context, bridging temporal and spatial mismatches."
+	label "Recontextualize"
+{
+	value target
+		"The type of the objects that contain the observations to recontextualize"
+
+	class org.integratedmodelling.klab.data.transformations.RecontextualizingResolver
+}
+
 filter number normalize 
 	"" 
 	label "Normalize"

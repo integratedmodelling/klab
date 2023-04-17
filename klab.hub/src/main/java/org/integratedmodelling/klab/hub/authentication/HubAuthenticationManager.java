@@ -13,12 +13,11 @@ import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.Partner;
 import org.integratedmodelling.klab.communication.client.Client;
-import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
 import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.Scanners;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
@@ -46,13 +45,11 @@ public enum HubAuthenticationManager {
 
 	Client client = Client.create();
 	
-	LegacyLicenseConfig licenseConfig;
-
 	private HubAuthenticationManager() {
 		ConfigurationBuilder config = new ConfigurationBuilder()
 	     .setUrls(ClasspathHelper.forPackage("org.integratedmodelling.klab.hub"))
-	     .setScanners(new ResourcesScanner())
-	     .filterInputsBy(new FilterBuilder().include((".*\\.cert")));
+	     .setScanners(Scanners.Resources)
+	     .filterInputsBy(new FilterBuilder().includePattern((".*\\.cert")));
 	     
 		for (String test : new Reflections(config).getResources(Pattern.compile(".*\\.cert"))) {
 			KlabCertificate certificate = KlabCertificate.createFromClasspath(test);
@@ -150,9 +147,5 @@ public enum HubAuthenticationManager {
 		return certificate;
 	}
 	
-	public LegacyLicenseConfig getLicenseConfig() {
-		return licenseConfig;
-	}
-
 
 }

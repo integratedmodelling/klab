@@ -13,10 +13,8 @@ import org.apache.commons.codec.DecoderException;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.hub.api.ArmoredKeyPair;
 import org.integratedmodelling.klab.hub.api.BouncyConfiguration;
-import org.integratedmodelling.klab.hub.api.LegacyConfiguration;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.commands.GenerateLicenseFactory;
-import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
@@ -31,8 +29,7 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
  * that require the user generation of pgp keys.  It also cuts down on the number of secret files that
  * are needed to deploy the hub.  
  * 
- * It also can read in the legacy configuration and add that to the database for licenses if it is 
- * not present.  ALso greatly reduces the complication in development of testing license generation 
+ * ALso greatly reduces the complication in development of testing license generation 
  * and verification.
  * 
  * Problem  is that during testing the framework firesoff an context refresh before the context has
@@ -44,15 +41,13 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
 @Profile("production")
 public class LicenseStartupEvent {
 	
-	public LicenseStartupEvent(LicenseConfigRepository repository, LegacyLicenseConfig legacy) {
+	public LicenseStartupEvent(LicenseConfigRepository repository) {
 		super();
 		this.repository = repository;
-		this.legacy = legacy;
 		BouncyGPG.registerProvider();
 		
 	}
 	private LicenseConfigRepository repository;
-	private LegacyLicenseConfig legacy;
 	
 	@Async
 	@EventListener
@@ -65,28 +60,6 @@ public class LicenseStartupEvent {
 			config.setDefaultConfig(true);
 			repository.insert(config);
 		}
-		
-		if(legacy.getKey() != null && !repository.findByKeyString(legacy.getKey()).isPresent()) {
-			LicenseConfiguration config =
-					new GenerateLicenseFactory()
-						.getConfiguration(LegacyConfiguration.class);
-			
-			config.setHubId(legacy.getHubId());
-			config.setKeyString(legacy.getKey());
-			config.setName(legacy.getName() + " legacy");
-			config.setEmail(legacy.getEmail());
-			config.setDigest(legacy.getPubRing().getDigest());
-			config.setPassphrase(legacy.getPassword());
-			config.setHubUrl(legacy.getHubUrl());
-			
-			String pub = new String(Files.readAllBytes(Paths.get(legacy.getPubRing().getFilename())), StandardCharsets.UTF_8);
-			String sec =new String(Files.readAllBytes(Paths.get(legacy.getSecRing().getFilename())), StandardCharsets.UTF_8);
-			
-			ArmoredKeyPair keys = ArmoredKeyPair.of(sec.getBytes(), pub.getBytes());
-			
-			config.setKeys(keys);
-			repository.insert(config);
-		}
 	}
 		
 	public void startup() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException {
@@ -96,28 +69,6 @@ public class LicenseStartupEvent {
 						new GenerateLicenseFactory()
 							.getConfiguration(BouncyConfiguration.class);
 				config.setDefaultConfig(true);
-				repository.insert(config);
-			}
-			
-			if(legacy.getKey() != null && !repository.findByKeyString(legacy.getKey()).isPresent()) {
-				LicenseConfiguration config =
-						new GenerateLicenseFactory()
-							.getConfiguration(LegacyConfiguration.class);
-				
-				config.setHubId(legacy.getHubId());
-				config.setKeyString(legacy.getKey());
-				config.setName(legacy.getName());
-				config.setEmail(legacy.getEmail());
-				config.setDigest(legacy.getPubRing().getDigest());
-				config.setPassphrase(legacy.getPassword());
-				config.setHubUrl(legacy.getHubUrl());
-				
-				String pub = new String(Files.readAllBytes(Paths.get(legacy.getPubRing().getFilename())), StandardCharsets.UTF_8);
-				String sec =new String(Files.readAllBytes(Paths.get(legacy.getSecRing().getFilename())), StandardCharsets.UTF_8);
-				
-				ArmoredKeyPair keys = ArmoredKeyPair.of(sec.getBytes(), pub.getBytes());
-				
-				config.setKeys(keys);
 				repository.insert(config);
 			}
 	} 

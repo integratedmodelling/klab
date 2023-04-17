@@ -50,6 +50,7 @@ public class KlabCertificate implements ICertificate {
 	private Map<String, Set<String>> worldview_repositories = new HashMap<>();
 	private Type type = Type.ENGINE;
 	private Level level = Level.USER;
+	
 
 	/**
 	 * Property key for username

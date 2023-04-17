@@ -101,13 +101,6 @@
 			<artifactId>jose4j</artifactId>
 			<version>0.6.3</version>
 		</dependency>
-		<!-- needed for legacy license support -->
-		<dependency>
-			<groupId>com.verhas</groupId>
-			<artifactId>license3j</artifactId>
-			<version>2.0.0-JVM8</version>
-		</dependency>
-		<!-- ////////////////////////////////////////////////////////////////// -->
 
 		<!-- This section is for K.Lab Dependencies -->
 		<dependency>
