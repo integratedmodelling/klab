@@ -61,10 +61,11 @@ engine:
 
 email:
    server:
-      hostname: localhost
-      port: 3025
-      username: system
-      password: password
+      hostname: mail.privateemail.com
+      port: 587
+      username: info@integratedmodelling.org
+      password: tinyhipposarefriend
+
    replyable:
       replyable:
       general:

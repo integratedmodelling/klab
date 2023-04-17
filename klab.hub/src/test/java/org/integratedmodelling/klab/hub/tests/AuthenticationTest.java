@@ -135,7 +135,8 @@ public class AuthenticationTest extends ApplicationCheck {
 				cert.getProperty(KlabCertificate.KEY_USERNAME),
 				cert.getProperty(KlabCertificate.KEY_SIGNATURE),
 				cert.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-				cert.getProperty(KlabCertificate.KEY_CERTIFICATE), cert.getLevel());
+				cert.getProperty(KlabCertificate.KEY_CERTIFICATE), cert.getLevel(),
+				cert.getProperty(KlabCertificate.KEY_AGREEMENT));
 		engineRequest.setEmail(cert.getProperty(KlabCertificate.KEY_USERNAME));
         headers.clear();
         headers.add("TEST", "false");

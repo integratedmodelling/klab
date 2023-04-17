@@ -44,7 +44,7 @@ public class NodeLicenseController extends LicenseController<NodeAuthenticationR
 	
 	@GetMapping(value= API.HUB.NODE_BASE_ID, params = "certificate")
 	@RolesAllowed({ "ROLE_SYSTEM" })
-	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
+	public void generateCertFile(@PathVariable("id") String id, @PathVariable("agreementId") String agreementId, HttpServletResponse response) throws IOException {
 		MongoNode node = nodeService.getByName(id);
 
 		byte[] certFileContent = licenseGenerator.generate(node, null);

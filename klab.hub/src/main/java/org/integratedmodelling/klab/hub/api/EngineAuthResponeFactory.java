@@ -15,6 +15,7 @@ import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
+import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
@@ -46,15 +47,19 @@ public class EngineAuthResponeFactory {
     private LicenseConfigService configService;
     
     private UserAuthTokenService tokenService;
+    
+    private AgreementService agreementService;
 	
     public EngineAuthResponeFactory(UserProfileService profileService,
             MongoGroupRepository groupRepository,
             LicenseConfigService configService,
-            UserAuthTokenService tokenService) {
+            UserAuthTokenService tokenService,
+            AgreementService agreementService) {
         this.profileService = profileService;
         this.groupRepository = groupRepository;
         this.configService = configService;
         this.tokenService = tokenService;
+        this.agreementService = agreementService;
     }
     
 	public EngineAuthenticationResponse getRespone(EngineAuthenticationRequest request, String remoteAddr) 
@@ -70,10 +75,10 @@ public class EngineAuthResponeFactory {
 				break;	
 			}
 		case USER:
-			if (IPUtils.isLocalhost(remoteAddr)) {
+			/*if (IPUtils.isLocalhost(remoteAddr)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return localEngine(request);
-			} else {
+			} else {*/
 				ProfileResource profile = profileService.getRawUserProfile(request.getName());
 		        LicenseConfiguration config;
 		        try {
@@ -81,13 +86,13 @@ public class EngineAuthResponeFactory {
 		        } catch (LicenseConfigDoestNotExists e) {
 		            config = null;
 		        }
-				EngineAuthenticationResponse response = remoteEngine(profile, request.getCertificate(), config);
+				EngineAuthenticationResponse response = remoteEngine(profile, request.getIdAgreement(), request.getCertificate(), config);
 				TokenAuthentication token = tokenService.createToken(profile.getUsername(), TokenType.auth);
 				response.setAuthentication(token.getTokenString());
 	    		profile.setLastConnection(LocalDateTime.now());
 	    		profileService.updateUserByProfile(profile);
 	    		return response;
-			}
+//	    		}
 		default:
 			break;
 		}
@@ -112,46 +117,72 @@ public class EngineAuthResponeFactory {
     }
 
 	@SuppressWarnings("unchecked")
-    private EngineAuthenticationResponse remoteEngine(ProfileResource profile,
+    private EngineAuthenticationResponse remoteEngine(ProfileResource profile, String idAgreement,
 			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException, AuthenticationFailedException {
-		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
-		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
-		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
+	    
+	    ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
+	    
+	    Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
+	    
+	    List<Agreement> validAgreements = null;
+	    Agreement agreement = null;
+	    
+	    
+	    //if agreement is null the certificate is old
+	    if (idAgreement == null) {
+	        HubNotificationMessage msg = HubNotificationMessage.MessageClass
+                    .CERTIFICATE_WITHOUT_AGREEMENT.build("Used certificate is old. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Certificate without agreement.")
+                          })));
+            messages.add(msg);
+	        validAgreements = profile.getAgreements().stream()
+	                .map(AgreementEntry::getAgreement)
+	                .filter(Agreement::isValid).collect(Collectors.toList());
+	        if (validAgreements.isEmpty()) {
+	            throw new NoValidAgreementException(profile.getUsername());
+	        }
+	    } else {
+	        try {
+	        agreement = agreementService.getAgreement(idAgreement);
+	        } catch (Exception e) {
+	            HubNotificationMessage msg = HubNotificationMessage.MessageClass
+	                    .AGREEMENT_NOT_EXIST.build("Certificate's agreement doesn't exist. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+	                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Agreement not exists.")
+	                          })));
+	            messages.add(msg);
+            }
+	    }
+	    
+	    
+		Properties engineProperties = PropertiesFactory.fromProfile(profile, agreement, config).getProperties();		
 
-        validateProfileAccountStatus(profile);
-
-        // TODO for now, we just assume that there is a single agreement per profile.
-        List<Agreement> validAgreements = profile.getAgreements().stream()
-                .map(AgreementEntry::getAgreement)
-                .filter(Agreement::isValid).collect(Collectors.toList());
-        if (validAgreements.isEmpty()) {
-            throw new NoValidAgreementException(profile.getUsername());
+        validateProfileAccountStatus(profile);        
+        
+        if (agreement == null) {
+            for (Agreement validAgreement: validAgreements) {
+                checkForExpiringAgreement(validAgreement, messages);
+            }            
+        } else {
+            checkForExpiringAgreement(agreement, messages);
         }
+        
+        LocalDateTime expires = null;
 
-        final Instant nowPlus30Days = Instant.now().plus(30, ChronoUnit.DAYS);
-        validAgreements.stream()
-            .filter(a -> a.isExpirable() && a.getExpirationDate().toInstant().isBefore(nowPlus30Days))
-            .forEach(a -> {
-                HubNotificationMessage msg = HubNotificationMessage.MessageClass
-                        .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + a.getExpirationDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
-                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, a.getExpirationDate())
-                              })));
-                messages.add(msg);
-            });
-
-		LocalDateTime expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
+        //The format time of expirationDate changes then taken account the 2 versions of it.
+        try {
+		expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
+        } catch (Exception e) {
+            expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"));
+        }
 		
-		if(!expires.isAfter(LocalDateTime.now().plusDays(30))) {
+		if(!expires.isAfter(LocalDateTime.now().plusDays(30))) { 
 		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
 		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 		                    new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, expires)
 		                  })));
-		    
-		            //EXPIRING_CERTIFICATE.get( "License set to expire on: " + expires.toString());
-//		    HubNotificationMessage msg = new HubNotificationMessage.
-//		            new HubNotificationMessage(HubNotificationMessage.WARNING.EXPIRING_CERTIFICATE, 
-//		           );
+
 		    messages.add(msg);
 		}
 		
@@ -209,6 +240,19 @@ public class EngineAuthResponeFactory {
 	}
 
 	@SuppressWarnings("unchecked")
+	private void checkForExpiringAgreement(Agreement agreement, ArrayList<HubNotificationMessage> messages) {
+	    final Instant nowPlus30Days = Instant.now().plus(30, ChronoUnit.DAYS);
+        if (agreement.isExpirable() && agreement.getExpirationDate().toInstant().isBefore(nowPlus30Days)) {
+            HubNotificationMessage msg = HubNotificationMessage.MessageClass
+                    .EXPIRING_AGREEMENT.build("Agreement set to expire on: " + agreement.getExpirationDate(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, agreement.getExpirationDate())
+                    })));
+            messages.add(msg);   
+        }        
+    }
+
+
+    @SuppressWarnings("unchecked")
     private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request) {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime tomorrow = now.plusDays(90);

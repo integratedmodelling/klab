@@ -9,18 +9,19 @@ public class EngineProperties implements IProperties {
 	
 	public static final int CERT_FILE_TTL_DAYS = 365/2;
 	
-	public EngineProperties(ProfileResource profile, LicenseConfiguration config) {
+	public EngineProperties(ProfileResource profile, Agreement agreement, LicenseConfiguration config) {
 		if(config.getClass().getName() == BouncyConfiguration.class.getName()) {
-			BouncyEngineProperties(profile, (BouncyConfiguration) config);
+			BouncyEngineProperties(profile, agreement, (BouncyConfiguration) config);
 		}
 	}
 	
-	private void BouncyEngineProperties(ProfileResource profile, BouncyConfiguration config) {
+	private void BouncyEngineProperties(ProfileResource profile, Agreement agreement, LicenseConfiguration config) {
 		LocalDateTime expires =LocalDateTime.now().plusDays(CERT_FILE_TTL_DAYS);
 		this.properties = new Properties();
 		this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expires.toString());	
 		this.properties.setProperty(KlabCertificate.KEY_USERNAME, profile.getUsername());
 		this.properties.setProperty(KlabCertificate.KEY_EMAIL, profile.getEmail());
+		this.properties.setProperty(KlabCertificate.KEY_AGREEMENT, agreement.getId());
 		this.properties.setProperty(KlabCertificate.KEY_SIGNATURE, config.getKeyString());
 		this.properties.setProperty(KlabCertificate.KEY_PARTNER_NAME, config.getName());
 		this.properties.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, config.getEmail());

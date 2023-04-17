@@ -305,7 +305,7 @@ public interface API {
          */
         public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
         /**
-         * Called by users to log into the hub and recieve an authentication token.
+         * Called by users to log into the hub and receive an authentication token.
          */
         public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
         /**
@@ -313,9 +313,17 @@ public interface API {
          */
         public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
         /**
+         * Base URL path for node resources on the hub.
+         */
+        public static final String NODE_AGREEMENT_BASE_ID = NODE_BASE_ID + "/{agreementId}";
+        /**
          * Base URL path for user resources on the hub.
          */
         public static final String USER_BASE_ID = USER_BASE + "/{id}";
+        /**
+         * Base URL path for user's agreements resources on the hub.
+         */
+        public static final String USER_AGREEMENT_BASE_ID = USER_BASE_ID + "/{agreementId}";
         /**
          * Base URL path for user resources on the hub.
          */
