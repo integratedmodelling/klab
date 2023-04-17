@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.User;
@@ -80,14 +78,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	@Override
-	public Set<ProfileResource> getAllUserProfiles() {
-		Set<ProfileResource> profiles = new HashSet<>();
-		userRepository.findAll().forEach(user -> profiles.add(
-				objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()));
-		return profiles;
-	}
-
-	@Override
 	public ProfileResource getRawUserProfile(String username) {
 		User user = userRepository.findByNameIgnoreCase(username)
 				.orElseThrow(() ->  
@@ -103,6 +93,11 @@ public class UserProfileServiceImpl implements UserProfileService {
 					new UserByEmailDoesNotExistException(email));
 		return getUserSafeProfile(user);
 	}
+
+    private List<ProfileResource> getAllUserProfiles() {
+        return userRepository.findAll().stream().map(
+                user -> objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()).toList();
+    }
 
     @Override
     public List<ProfileResource> getAllUsersByCriteria(UserProfileCriteria criteria) {
@@ -121,6 +116,9 @@ public class UserProfileServiceImpl implements UserProfileService {
             criteriaList.add(Criteria.where("accountStatus").in(criteria.accountStatusCriteria));
         }
 
+        if (criteriaList.isEmpty()) {
+            return getAllUserProfiles();
+        }
         query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()])));
         return mongoTemplate.find(query, User.class).stream().map(u -> getUserSafeProfile(u)).toList();
     }

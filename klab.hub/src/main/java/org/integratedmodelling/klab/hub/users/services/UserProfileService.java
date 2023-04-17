@@ -1,8 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.List;
-import java.util.Set;
-
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.users.controllers.criteria.UserProfileCriteria;
@@ -17,7 +15,6 @@ public interface UserProfileService {
 	abstract ProfileResource getUserSafeProfile(User user);
 	abstract ProfileResource getRawUserProfile(String username);
 	abstract ProfileResource getCurrentUserProfile(boolean remote);
-	abstract Set<ProfileResource> getAllUserProfiles();
 
 	abstract List<ProfileResource> getAllUsersByCriteria(UserProfileCriteria criteria);
 }
