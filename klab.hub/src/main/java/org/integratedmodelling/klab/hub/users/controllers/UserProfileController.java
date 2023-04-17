@@ -49,8 +49,7 @@ public class UserProfileController {
             criteria.pagination = Optional.of(PageRequest.of(page.get(), records.get()));
         }
         if (groupsParam != null && !groupsParam.isEmpty()) {
-            // FIX org.springframework.data.mapping.MappingException: Invalid path reference agreements.agreement.groupEntries.group.name! Associations can only be pointed to directly or via their id property!
-            // criterias.add(Criteria.where("agreements.agreement.groupEntries.group.name").in(group));
+            criteria.groupsCriteria = groupsParam;
         }
         if (rolesParam != null && !rolesParam.isEmpty()) {
             List<Role> roles = rolesParam.stream().map(r -> Role.valueOf("ROLE_" + r)).toList();

@@ -2,7 +2,10 @@ package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.bson.types.ObjectId;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.commands.UpdateUser;
@@ -107,7 +110,10 @@ public class UserProfileServiceImpl implements UserProfileService {
             query.with(criteria.pagination.get());
         }
         if (!criteria.groupsCriteria.isEmpty()) {
-            criteriaList.add(Criteria.where("agreements.agreement.groupEntries.group.name").in(criteria.groupsCriteria));
+            Query groupsQuery = new Query();
+            groupsQuery.addCriteria(Criteria.where("name").in(criteria.groupsCriteria));
+            List<MongoGroup> mg = mongoTemplate.find(groupsQuery, MongoGroup.class);
+            criteriaList.add(Criteria.where("groupEntries.group.$id").in(mg.stream().map(g -> new ObjectId(g.getId())).toList()));
         }
         if (!criteria.rolesCriteria.isEmpty()) {
             criteriaList.add(Criteria.where("roles").in(criteria.rolesCriteria));
