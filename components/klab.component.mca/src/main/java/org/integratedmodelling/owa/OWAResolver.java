@@ -241,7 +241,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Double val;
 		Double previous = 0.0;
 		for(String key : cumulativeRW.keySet()){
-			if (alpha == 0) {exp_par = (double) (1.0 - alpha)/alpha;} else {exp_par = (double) (1.0 - eps)/eps;}
+			if (alpha != 0.0) {exp_par = (double) ((1.0 - alpha)/alpha);} else {exp_par = (double) ((1.0 - eps)/eps);}
 			val = Math.pow(cumulativeRW.get(key),alpha);
 			finalWeights.put(key,val - previous);
 			previous = val; 
