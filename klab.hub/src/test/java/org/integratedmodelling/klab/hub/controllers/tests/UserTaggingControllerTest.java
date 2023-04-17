@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.tests;
+package org.integratedmodelling.klab.hub.controllers.tests;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.MongoTag;
