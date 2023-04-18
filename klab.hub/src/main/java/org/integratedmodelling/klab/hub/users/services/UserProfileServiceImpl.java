@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.controllers.criteria.UserProfileCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -102,6 +103,11 @@ public class UserProfileServiceImpl implements UserProfileService {
                 user -> objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()).toList();
     }
 
+    private List<ProfileResource> getAllUserProfilesPaginated(Pageable pagination) {
+        return userRepository.findAll(pagination).stream().map(
+                user -> objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()).toList();
+    }
+
     @Override
     public List<ProfileResource> getAllUsersByCriteria(UserProfileCriteria criteria) {
         Query query = new Query();
@@ -123,7 +129,8 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         if (criteriaList.isEmpty()) {
-            return getAllUserProfiles();
+            return criteria.pagination.isPresent() ?
+                    getAllUserProfilesPaginated(criteria.pagination.get()) : getAllUserProfiles();
         }
         query.addCriteria(new Criteria().andOperator(criteriaList.toArray(new Criteria[criteriaList.size()])));
         return mongoTemplate.find(query, User.class).stream().map(u -> getUserSafeProfile(u)).toList();
