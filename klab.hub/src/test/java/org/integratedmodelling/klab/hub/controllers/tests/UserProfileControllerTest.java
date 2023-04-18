@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,6 +40,8 @@ public class UserProfileControllerTest {
     private String token;
     private HttpHeaders headers;
 
+    final private String paginationParameters = API.HUB.PARAMETERS.PAGE + "=0&" + API.HUB.PARAMETERS.RECORDS + "=3";
+
     @BeforeAll
     public void beforeAll() throws URISyntaxException {
         token = AcceptanceTestUtils.getSessionTokenForDefaultAdministrator(randomServerPort);
@@ -50,28 +54,101 @@ public class UserProfileControllerTest {
         headers.add("Authentication", token);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"ADMINISTRATOR", "DATA_MANAGER", "MANAGER", "USER"})
-    @DisplayName("Get users with role")
-    public void usersWithRole_successExistingRoles(String role) {
-        url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
-        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+    @Nested
+    @DisplayName("No parameter tests")
+    public class NoParameterTest {
+        @Test
+        @DisplayName("Get all users")
+        public void getAllUsers_success() {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users";
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
 
-        ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
 
-        assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        }
+        
+        @Test
+        @DisplayName("Get all users paginated")
+        public void getAllUsersPaginated_success() {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + paginationParameters;
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        }
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"ROLE_ADMINISTRATOR", "INVALID"})
-    @DisplayName("Fail getting users with non existing roles")
-    public void usersWithRole_failNonExistingRoles(String role) {
-        url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
-        HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+    @Nested
+    @DisplayName("User group tests")
+    public class UserGroupTest {
+        @ParameterizedTest
+        @ValueSource(strings = {"IM", "ARIES", "IM,ARIES", "IM&" + paginationParameters})
+        @DisplayName("Get users with group")
+        public void usersWithGroup_success(String group) {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.HAS_GROUP + "=" + group;
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
 
-        Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
-            restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
-        });
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        }
     }
 
+    @Nested
+    @DisplayName("User role tests")
+    public class UserRoleTest {
+        @ParameterizedTest
+        @ValueSource(strings = {"ADMINISTRATOR", "MANAGER", "MANAGER,USER", "USER&" + paginationParameters})
+        @DisplayName("Get users with role")
+        public void usersWithRole_successExistingRoles(String role) {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"ROLE_ADMINISTRATOR", "INVALID"})
+        @DisplayName("Fail getting users with non existing roles")
+        public void usersWithRole_failNonExistingRoles(String role) {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+            Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
+                restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+            });
+        }
+    }
+
+    @Nested
+    @DisplayName("User account status tests")
+    public class UserAccountStatusTest {
+        @ParameterizedTest
+        @ValueSource(strings = {"active", "locked", "active,deleted", "deleted&" + paginationParameters})
+        @DisplayName("Get users with account status")
+        public void usersWithAccountStatus_successExistingAccountStatus(String status) {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.USER_SET_ACCOUNT_STATUS + "=" + status;
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        }
+
+        @ParameterizedTest
+        @ValueSource(strings = {"ACTIVE", "INVALID"})
+        @DisplayName("Fail getting users with non existing account status")
+        public void usersWithAccountStatus_failNonExistingAccountStatus(String status) {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.USER_SET_ACCOUNT_STATUS + "=" + status;
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+            Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
+                restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+            });
+        }
+    }
 }
