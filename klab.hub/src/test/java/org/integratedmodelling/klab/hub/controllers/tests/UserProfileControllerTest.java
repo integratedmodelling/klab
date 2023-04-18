@@ -28,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 @EnableAutoConfiguration
 @ActiveProfiles(profiles = "production")
 @TestInstance(Lifecycle.PER_CLASS)
-public class UserRoleEntryControllerTest {
+public class UserProfileControllerTest {
 
     @LocalServerPort
     int randomServerPort;
@@ -51,10 +51,10 @@ public class UserRoleEntryControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ROLE_ADMINISTRATOR", "ROLE_DATA_MANAGER", "ROLE_MANAGER", "ROLE_USER"})
+    @ValueSource(strings = {"ADMINISTRATOR", "DATA_MANAGER", "MANAGER", "USER"})
     @DisplayName("Get users with role")
     public void usersWithRole_successExistingRoles(String role) {
-        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
+        url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
         HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
 
         ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
@@ -63,10 +63,10 @@ public class UserRoleEntryControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"ADMINISTRATOR", "ROLE_INVALID", ""})
+    @ValueSource(strings = {"ROLE_ADMINISTRATOR", "INVALID"})
     @DisplayName("Fail getting users with non existing roles")
     public void usersWithRole_failNonExistingRoles(String role) {
-        url = "http://localhost:" + randomServerPort + "/hub" + API.HUB.USER_BASE + "?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
+        url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + API.HUB.PARAMETERS.HAS_ROLES + "=" + role;
         HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
 
         Assertions.assertThrows(HttpClientErrorException.BadRequest.class, () -> {
