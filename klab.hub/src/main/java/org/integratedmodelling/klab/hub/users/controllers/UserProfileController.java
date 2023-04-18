@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.minidev.json.JSONObject;
+
 @RestController
 public class UserProfileController {
 	
@@ -52,16 +54,32 @@ public class UserProfileController {
             criteria.groupsCriteria = groupsParam;
         }
         if (rolesParam != null && !rolesParam.isEmpty()) {
-            List<Role> roles = rolesParam.stream().map(r -> Role.valueOf("ROLE_" + r)).toList();
-            criteria.rolesCriteria = roles;
+            try {
+                criteria.rolesCriteria = parseRoleParameters(rolesParam);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(new JSONObject().appendField("error", "Unknown role in the request."),
+                        HttpStatus.BAD_REQUEST);
+            }
         }
         if (accountStatusParam != null && !accountStatusParam.isEmpty()) {
-            List<AccountStatus> accountStatus = accountStatusParam.stream().map(ac -> AccountStatus.valueOf(ac)).toList();
-            criteria.accountStatusCriteria = accountStatus;
+            try {
+                criteria.accountStatusCriteria = parseAccountStatusParameters(accountStatusParam);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(new JSONObject().appendField("error", "Unknown account status in the request."),
+                        HttpStatus.BAD_REQUEST);
+            }
         }
 
         List<ProfileResource> users = userService.getAllUsersByCriteria(criteria);
         return new ResponseEntity<>(users, HttpStatus.OK);
+    }
+
+    private List<Role> parseRoleParameters(List<String> rolesParam) {
+        return rolesParam.stream().map(r -> Role.valueOf("ROLE_" + r)).toList();
+    }
+
+    private List<AccountStatus> parseAccountStatusParameters(List<String> accountStatusParam) {
+        return accountStatusParam.stream().map(ac -> AccountStatus.valueOf(ac)).toList();
     }
 
 	@GetMapping(API.HUB.USER_BASE_ID)
