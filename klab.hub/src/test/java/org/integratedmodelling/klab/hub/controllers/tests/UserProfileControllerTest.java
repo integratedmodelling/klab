@@ -151,4 +151,29 @@ public class UserProfileControllerTest {
             });
         }
     }
+
+    @Nested
+    @DisplayName("User parameter combination tests")
+    public class UserParameterCombinationTests {
+        final String accountStatusParameter = API.HUB.PARAMETERS.USER_SET_ACCOUNT_STATUS + "=active";
+        final String roleParameter = API.HUB.PARAMETERS.HAS_ROLES + "=ADMINISTRATOR";
+        final String groupParameter = API.HUB.PARAMETERS.HAS_GROUP + "=IM";
+
+        @ParameterizedTest
+        @ValueSource(strings = {
+                accountStatusParameter + "&" + roleParameter,
+                accountStatusParameter + "&" + groupParameter + "&" + paginationParameters,
+                groupParameter + "&" + roleParameter,
+                paginationParameters + "&" + roleParameter + "&" + accountStatusParameter + "&" + groupParameter})
+        @DisplayName("Get users with parameter combination status")
+        public void usersWithAccountStatus_successExistingAccountStatus(String params) {
+            url = "http://localhost:" + randomServerPort + "/hub/api/v2/users?" + params;
+            HttpEntity<String> httpEntity = new HttpEntity<>("", headers);
+
+            ResponseEntity<String> responseEntity = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+
+            assertEquals(HttpStatus.OK, responseEntity.getStatusCode());
+        }
+
+    }
 }
