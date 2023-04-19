@@ -163,5 +163,5 @@ public interface ICertificate {
      * 
      * @return
      */
-    Map<String, Set<String>> getWorldviewRepositories();
+    Map<String, Set<String>> getWorldviewRepositories(String worldview);
 }

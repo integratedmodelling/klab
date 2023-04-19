@@ -347,7 +347,7 @@ public class CoreOntology extends AbstractWorkspace {
 	}
 
 	public CoreOntology(File directory) {
-		super("core", directory);
+		super("core", null, directory);
 	}
 
 	public void registerCoreConcept(String coreConcept, IConcept worldviewPeer) {
