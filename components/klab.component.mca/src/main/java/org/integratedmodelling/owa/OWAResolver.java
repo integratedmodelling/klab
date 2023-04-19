@@ -80,6 +80,10 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	// Risk profile parameter for WOWA with linguistic quantifier.
 	private Number alpha;
 	// Only used for WOWA with interpolated weights.
+	private Boolean balanced;
+	// Only used for WOWA with interpolated weights and risk_profile = 0.5 (balanced)
+	private Number ratio;
+	// Only used for WOWA with interpolated weights and risk_profile = 0.5 (balanced)
 	private Boolean interpolateWeights;
 	private BernsteinInterpolator interpolator;
 		
@@ -237,14 +241,32 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Map<String,Double> finalWeights = new HashMap<>();
 		Double exp_par;
 		Double eps = 0.00000001;
-		Double val;
+		Double val1;
+		Double val2;
 		Double previous = 0.0;
+		Double c_par = ratio.doubleValue();
+		Double b_par;
+		Double a_par;
+		Double par_int_sum;
 		Double alpha1 = alpha.doubleValue();
+		
+		if ((alpha1 == 0.5) && (balanced == false)) {				
 		for(String key : cumulativeRW.keySet()){
 			if (alpha1 != 0.0) {exp_par = (double) ((1.0 - alpha1)/alpha1);} else {exp_par = (double) ((1.0 - eps)/eps);}
-			val = Math.pow(cumulativeRW.get(key),exp_par);
-			finalWeights.put(key,val - previous);
-			previous = val; 
+			val1 = Math.pow(cumulativeRW.get(key),exp_par);
+			finalWeights.put(key,val1 - previous);
+			previous = val1;
+		}
+		
+		} else {
+		for(String key : cumulativeRW.keySet()){
+			a_par = 4*(c_par-1);
+			b_par = -a_par;
+			par_int_sum = (1.0/3.0)*a_par*1 + (1.0/2.0)*b_par*1 + c_par*1;
+			val2 = ((1.0/3.0)*a_par*Math.pow(cumulativeRW.get(key),3.0) + (1.0/2.0)*b_par*Math.pow(cumulativeRW.get(key),2.0) + c_par*(cumulativeRW.get(key)))/par_int_sum;
+			finalWeights.put(key,val2 - previous);
+			previous = val2;
+		}
 		}
 		return finalWeights;
 	} 
@@ -253,7 +275,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	
 	/*
 	 * 
-	 * Calculation of OWA and WOWAs.
+	 * Calculation of OWA and WOWAs.cv
 	 * 
 	 * */
 	
@@ -386,6 +408,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 				
 		// Import the ordinal weights.
 		Object rp = parameters.get("risk_profile");
+		
+        Boolean bal_prof = parameters.get("balanced_risk_prof", Boolean.class);
+		
+		//Import the ratio parameter
+		Number rat_bal = parameters.get("ratio_balance", Number.class);
 	
 		Boolean interpolate = parameters.get("interpolate_weights", Boolean.class);
 		
@@ -417,6 +444,8 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 			
 			resolver.interpolator = null;
 			resolver.alpha = (Number) rp;
+			resolver.ratio = (Number) rat_bal;
+			resolver.balanced = (Boolean) bal_prof;
 			
 			if (rw != null) { // Weights provided as parameter. 	
 			
@@ -429,6 +458,25 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 				resolver.relevanceWeights = null;
 				
 			}
+			
+		} else if((rp instanceof Number) && (bal_prof == true)) { // Ordinal weights built with risk profile parameter alpha.
+			
+			resolver.interpolator = null;
+			resolver.alpha = (Number) rp;
+			resolver.ratio = (Number) rat_bal;
+			resolver.balanced = (Boolean) bal_prof;
+			
+			if (rw != null) { // Weights provided as parameter. 	
+			
+				resolver.relevanceWeights = normalizeRelevanceWeights(rw);
+				resolver.ordinalWeights = null;
+			
+			} else { // Weights provided by annotations: this is dealt with in initialization method.
+				
+				resolver.ordinalWeights = null;
+				resolver.relevanceWeights = null;
+				
+			}			
 		}
 		
 
