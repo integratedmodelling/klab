@@ -244,14 +244,13 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		Double val1;
 		Double val2;
 		Double previous = 0.0;
-		Double c_par = ratio.doubleValue();
-		Double b_par;
-		Double a_par;
-		Double par_int_sum;
-		Double alpha1 = alpha.doubleValue();
+		Double bPar;
+		Double aPar;
+		Double ParIntSum;		
 		
-		if ((alpha1 == 0.5) && (balanced == false)) {				
+		if (balanced == false) {				
 		for(String key : cumulativeRW.keySet()){
+			Double alpha1 = alpha.doubleValue();
 			if (alpha1 != 0.0) {exp_par = (double) ((1.0 - alpha1)/alpha1);} else {exp_par = (double) ((1.0 - eps)/eps);}
 			val1 = Math.pow(cumulativeRW.get(key),exp_par);
 			finalWeights.put(key,val1 - previous);
@@ -260,10 +259,11 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		
 		} else {
 		for(String key : cumulativeRW.keySet()){
-			a_par = 4*(c_par-1);
-			b_par = -a_par;
-			par_int_sum = (1.0/3.0)*a_par*1 + (1.0/2.0)*b_par*1 + c_par*1;
-			val2 = ((1.0/3.0)*a_par*Math.pow(cumulativeRW.get(key),3.0) + (1.0/2.0)*b_par*Math.pow(cumulativeRW.get(key),2.0) + c_par*(cumulativeRW.get(key)))/par_int_sum;
+			Double cPar = ratio.doubleValue();
+			aPar = 4*(cPar-1);
+			bPar = -aPar;
+			ParIntSum = (1.0/3.0)*aPar*1 + (1.0/2.0)*bPar*1 + cPar*1;
+			val2 = ((1.0/3.0)*aPar*Math.pow(cumulativeRW.get(key),3.0) + (1.0/2.0)*bPar*Math.pow(cumulativeRW.get(key),2.0) + cPar*(cumulativeRW.get(key)))/ParIntSum;
 			finalWeights.put(key,val2 - previous);
 			previous = val2;
 		}
@@ -459,10 +459,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 				
 			}
 			
-		} else if((rp instanceof Number) && (bal_prof == true)) { // Ordinal weights built with risk profile parameter alpha.
+		} else if(bal_prof) { // Ordinal weights built with risk profile parameter alpha.
 			
 			resolver.interpolator = null;
-			resolver.alpha = (Number) rp;
 			resolver.ratio = (Number) rat_bal;
 			resolver.balanced = (Boolean) bal_prof;
 			
