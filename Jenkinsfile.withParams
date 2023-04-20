@@ -99,8 +99,8 @@ pipeline {
 					    env.TAG = BRANCH.replace("/","-")
 					    if (BRANCH == MAIN) {
 					        env.BRANCH = MAIN
-					        env.TAG = "latest"
-					        echo "Latest"
+					        env.TAG = MAIN
+					        echo "Master"
 					    } else if (BRANCH == DEVELOP) {
 					        env.BRANCH = DEVELOP
 					        env.TAG = DEVELOP
@@ -169,7 +169,7 @@ pipeline {
                 expression { PRODUCTS_GEN == "yes" }
             }
             steps {
-                pushProducts(env.TAG, kmodelers)
+                pushProducts(productsFolderName(env.TAG), kmodelers)
             }
         }
     }
@@ -181,6 +181,9 @@ def pushProducts(destination, kmodelers) {
     uploadProducts(destination)
 }
 
+def productsFolderName(branchName) {
+    return branchName == 'master'  ? 'latest' : branchName
+}
 
 def prepareCliUpload(destination) {
     sh """mkdir -p ${WORKSPACE}/minio/${destination}/cli
