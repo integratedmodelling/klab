@@ -78,7 +78,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	// Thus the input list must be ordered.
 	private List<Double> ordinalWeights;
 	// Risk profile parameter for WOWA with linguistic quantifier.
-	private Double alpha;
+	private Number alpha;
 	// Only used for WOWA with interpolated weights.
 	private Boolean interpolateWeights;
 	private BernsteinInterpolator interpolator;
@@ -234,12 +234,15 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	private Map<String,Double> exponentialOrdinalWeights(Map<String,Double> sortedRelevanceWeights){
 		
 		Map<String,Double> cumulativeRW = cumulativeRelevanceWeights(sortedRelevanceWeights); 
-
 		Map<String,Double> finalWeights = new HashMap<>();
+		Double exp_par;
+		Double eps = 0.00000001;
 		Double val;
 		Double previous = 0.0;
+		Double alpha1 = alpha.doubleValue();
 		for(String key : cumulativeRW.keySet()){
-			val = Math.pow(cumulativeRW.get(key),alpha);
+			if (alpha1 != 0.0) {exp_par = (double) ((1.0 - alpha1)/alpha1);} else {exp_par = (double) ((1.0 - eps)/eps);}
+			val = Math.pow(cumulativeRW.get(key),exp_par);
 			finalWeights.put(key,val - previous);
 			previous = val; 
 		}
@@ -413,7 +416,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		} else if(rp instanceof Number) { // Ordinal weights built with risk profile parameter alpha.
 			
 			resolver.interpolator = null;
-			resolver.alpha = (Double) rp;
+			resolver.alpha = (Number) rp;
 			
 			if (rw != null) { // Weights provided as parameter. 	
 			

@@ -303,7 +303,7 @@ public enum Resources implements IResourceService {
     /*
      * Create and load the components workspace; record group permissions for all projects
      */
-    public boolean loadComponents(Collection<File> localComponentPaths, IMonitor monitor) {
+    public boolean loadComponents(Collection<File> localComponentPaths, String worldview, IMonitor monitor) {
         try {
             Map<String, Set<String>> deployedComponents = new HashMap<>();
             IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
@@ -321,7 +321,7 @@ public enum Resources implements IResourceService {
                     }
                 }
             }
-            components = new ComponentsWorkspace("components", Configuration.INSTANCE.getDataPath("workspace/deploy"),
+            components = new ComponentsWorkspace("components", Configuration.INSTANCE.getDataPath("workspace/deploy"), worldview,
                     deployedComponents);
             workspaces.put(components.getName(), components);
 
@@ -342,11 +342,11 @@ public enum Resources implements IResourceService {
      * certificate. By design there is no permission checking in the worldview, semantic assets are
      * always shared universally.
      */
-    public boolean loadWorldview(ICertificate certificate, IMonitor monitor) {
+    public boolean loadWorldview(ICertificate certificate, String worldviewId, IMonitor monitor) {
         try {
-            worldview = new Worldview(certificate.getWorldview(), Configuration.INSTANCE.getDataPath("worldview"),
-                    certificate.getWorldviewRepositories());
-            this.loader = ((ILocalWorkspace)worldview).load(this.loader, monitor);
+            worldview = new Worldview(worldviewId, Configuration.INSTANCE.getDataPath("worldview"),
+                    certificate.getWorldviewRepositories(worldviewId));
+            this.loader = ((ILocalWorkspace) worldview).load(this.loader, monitor);
             workspaces.put(worldview.getName(), worldview);
             return true;
         } catch (Throwable e) {
@@ -358,9 +358,9 @@ public enum Resources implements IResourceService {
     /*
      * Initialize (index but do not load) the local workspace from the passed path.
      */
-    public void initializeLocalWorkspace(File workspaceRoot, IMonitor monitor) {
+    public void initializeLocalWorkspace(File workspaceRoot, String worldview, IMonitor monitor) {
         if (local == null) {
-            local = new MonitorableFileWorkspace("workspace", workspaceRoot);
+            local = new MonitorableFileWorkspace("workspace", worldview, workspaceRoot);
             workspaces.put("workspace", local);
         }
     }
@@ -378,7 +378,7 @@ public enum Resources implements IResourceService {
     /*
      * Create and load the local workspace.
      */
-    public boolean loadLocalWorkspace(IMonitor monitor) {
+    public boolean loadLocalWorkspace(String worldview, IMonitor monitor) {
         try {
             this.loader = getLocalWorkspace().load(this.loader, monitor);
             return true;
@@ -443,7 +443,7 @@ public enum Resources implements IResourceService {
     public IProject loadSingleton(String projectId, File dataPath) {
         ILocalWorkspace workspace = workspacesByRoot.get(dataPath);
         if (workspace == null) {
-            workspace = new Workspace(dataPath);
+            workspace = new Workspace(dataPath, null);
             workspacesByRoot.put(dataPath, workspace);
         }
         return workspace.loadProject(projectId, Klab.INSTANCE.getRootMonitor());
