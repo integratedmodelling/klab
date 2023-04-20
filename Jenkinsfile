@@ -21,7 +21,7 @@ pipeline {
         NODE_CONTAINER = "node-server-16"
         BASE_CONTAINER = "klab-base-16:bc344fa9a66e93edaa3a2b528a65e7efa2e55a6f"
         PRODUCTS_GEN = shouldPushProducts(env.BRANCH_NAME)
-        TAG = tagName(env.BRANCH_NAME)
+        TAG = env.BRANCH_NAME
         MINIO_HOST = "http://192.168.250.224:9000"
         MINIO_CREDENTIALS = "bc42afcf-7037-4d23-a7cb-6c66b8a0aa45"
         REGISTRY_CREDENTIALS = "83f9fb8b-e503-4566-9784-e80f2f2d7c64"
@@ -98,7 +98,7 @@ pipeline {
                 expression { env.PRODUCTS_GEN == "yes" }
             }
             steps {
-                pushProducts(env.TAG, kmodelers)
+                pushProducts(productsFolderName(env.BRANCH_NAME), kmodelers)
             }
         }
     }
@@ -108,13 +108,8 @@ def shouldPushProducts(branchName) {
     return branchName == 'master' || branchName == 'develop' ? 'yes' : 'no'
 }
 
-def tagName(branchName) {
-    if (branchName == 'master') {
-        return 'latest'
-    } else if (branchName == 'develop') {
-        return 'develop'
-    }
-    return branchName
+def productsFolderName(branchName) {
+    return branchName == 'master'  ? 'latest' : branchName
 }
 
 def pushProducts(destination, kmodelers) {
