@@ -3,29 +3,23 @@ package org.integratedmodelling.klab.auth;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.springframework.http.HttpEntity;
-import org.springframework.web.client.RestTemplate;
 
 /**
  * Wraps an IM certificate and checks for encryption and validity.
@@ -37,8 +31,6 @@ public class KlabCertificate implements ICertificate {
 
     // just for info
     public static final String KEY_EXPIRATION = "klab.validuntil";
-
-    private static final String LEGACY_AUTHENTICATION_ENDPOINT = "https://integratedmodelling.org/collaboration/authentication/cert-file";
 
     // TODO just store a URL and handle uniformly
     private File file = null;
@@ -185,10 +177,6 @@ public class KlabCertificate implements ICertificate {
                 return false;
             }
 
-            if (file != null && upgradeCertificate(file)) {
-                return true;
-            }
-
             properties = new Properties();
             try (InputStream inp = (resource == null
                     ? new FileInputStream(file)
@@ -213,76 +201,6 @@ public class KlabCertificate implements ICertificate {
         }
 
         return true;
-    }
-
-    /**
-     * Check if the certificate is an old version and try to upgrade it by authenticating to the
-     * collaboration server and writing a new one for a generic hub. If successful, finish
-     * authentication and return true to signal that everything is done.
-     * 
-     * @param file
-     * @return true if
-     */
-    public boolean upgradeCertificate(File file2) {
-        try {
-            String fileContent = FileUtils.readFileToString(file2);
-            if (fileContent.startsWith("-----BEGIN PGP MESSAGE-----")) {
-
-                // reauthenticate and produce a new format certificate
-                RestTemplate restTemplate = new RestTemplate();
-                HttpEntity<String> request = new HttpEntity<String>(fileContent);
-                Map<?, ?> response = restTemplate.postForObject(LEGACY_AUTHENTICATION_ENDPOINT, request, Map.class);
-
-                if (response != null) {
-
-                    Map<?, ?> profile = (Map<?, ?>) response.get("profile");
-
-                    Logging.INSTANCE.info("upgrading pre-0.10 certificate to new format: new certificate will be saved as "
-                            + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
-
-                    this.properties = new Properties();
-                    this.properties.setProperty(KEY_CERTIFICATE, fileContent);
-                    this.properties.setProperty(KEY_EXPIRATION, response.get("expiration").toString());
-                    this.properties.setProperty(KEY_USERNAME, response.get("username").toString());
-                    this.properties.setProperty(KEY_EMAIL, profile.get("email").toString());
-                    this.properties.setProperty(KEY_SIGNATURE, "legacy certificate");
-                    this.properties.setProperty(KEY_PARTNER_NAME, "integratedmodelling.org");
-                    this.properties.setProperty(KEY_PARTNER_EMAIL, "info@integratedmodelling.org");
-                    this.properties.setProperty(KEY_NODENAME, "im");
-                    this.properties.setProperty(KEY_CERTIFICATE_TYPE, Type.ENGINE.name());
-                    this.properties.setProperty(KEY_CERTIFICATE_LEVEL, ICertificate.Level.LEGACY.name());
-
-                    /*
-                     * Default hub address. TODO must be https. Blank or no response will try a
-                     * local test hub before going offline.
-                     */
-                    this.properties.setProperty(KlabCertificate.KEY_PARTNER_HUB, "http://www.integratedmodelling.org/klab");
-
-                    File out = new File(Configuration.INSTANCE.getDataPath() + File.separator
-                            + ICertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
-                    try (FileOutputStream o = new FileOutputStream(out)) {
-                        this.properties.store(o, "Automatically upgraded on " + new Date());
-                    }
-
-                    this.expiry = DateTime.parse(response.get("expiration").toString());
-                    if (expiry == null) {
-                        cause = "certificate has no expiration date. Please obtain a new certificate.";
-                        return false;
-                    } else if (expiry.isBeforeNow()) {
-                        cause = "certificate expired on " + expiry + ". Please obtain a new certificate.";
-                        return false;
-                    }
-
-                    return true;
-
-                } else {
-                    Logging.INSTANCE.error("legacy certificate could not be authenticated");
-                }
-            }
-        } catch (IOException e) {
-            // just return false
-        }
-        return false;
     }
 
     public DateTime getExpiryDate() {
