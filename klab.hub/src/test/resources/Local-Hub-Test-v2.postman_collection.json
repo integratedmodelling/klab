@@ -1,0 +1,499 @@
+{
+	"info": {
+		"_postman_id": "a4110937-28c5-4fbe-8d7b-deb0ae234d03",
+		"name": "Local Hub Test v2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"{{admin_name}}\",\n\t\"password\": \"{{password}}\" \n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users/log-in",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users",
+								"log-in"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User Profiles",
+			"item": [
+				{
+					"name": "Get users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is OK\", function () {",
+									"    pm.response.to.be.ok;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "{{api_key}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users?page=0&records=5&has-roles=ADMINISTRATOR&has-group=IM,ARIES&account-status=active",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "records",
+									"value": "5"
+								},
+								{
+									"key": "has-roles",
+									"value": "ADMINISTRATOR"
+								},
+								{
+									"key": "has-group",
+									"value": "IM,ARIES"
+								},
+								{
+									"key": "account-status",
+									"value": "active"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users (error, invalid Role)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is BadRequest\", function () {",
+									"    pm.response.to.be.badRequest;",
+									"});",
+									"",
+									"pm.test(\"Error is Unknown role in the request\", function () {",
+									"    pm.response.to.have.jsonBody(\"error\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "{{api_key}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users?page=0&records=5&has-roles=INVALID-ROLE&has-group=IM,ARIES&account-status=active",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "records",
+									"value": "5"
+								},
+								{
+									"key": "has-roles",
+									"value": "INVALID-ROLE"
+								},
+								{
+									"key": "has-group",
+									"value": "IM,ARIES"
+								},
+								{
+									"key": "account-status",
+									"value": "active"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users (return nothing, unknown group)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is Ok\", function () {",
+									"    pm.response.to.be.ok;",
+									"});",
+									"",
+									"pm.test(\"Error is Unknown role in the request\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.eql([]);",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "{{api_key}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users?page=0&records=5&has-roles=ADMINISTRATOR&has-group=Groupless&account-status=active",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "records",
+									"value": "5"
+								},
+								{
+									"key": "has-roles",
+									"value": "ADMINISTRATOR"
+								},
+								{
+									"key": "has-group",
+									"value": "Groupless"
+								},
+								{
+									"key": "account-status",
+									"value": "active"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get users (error, invalid account status)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is BadRequest\", function () {",
+									"    pm.response.to.be.badRequest;",
+									"});",
+									"",
+									"pm.test(\"Error is Unknown role in the request\", function () {",
+									"    pm.response.to.have.jsonBody(\"error\");",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "{{api_key}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users?page=0&records=5&has-roles=ADMINISTRATOR&has-group=IM,ARIES&account-status=unknown",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "0"
+								},
+								{
+									"key": "records",
+									"value": "5"
+								},
+								{
+									"key": "has-roles",
+									"value": "ADMINISTRATOR"
+								},
+								{
+									"key": "has-group",
+									"value": "IM,ARIES"
+								},
+								{
+									"key": "account-status",
+									"value": "unknown"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by username",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is Accepted\", function () {",
+									"    pm.response.to.be.accepted;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "{{api_key}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users/{{user_name}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users",
+								"{{user_name}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get user by username (error, unknown username)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is Not Found\", function () {",
+									"    pm.response.to.be.notFound;",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "{{api_key}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users/{{non_existing_user}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users",
+								"{{non_existing_user}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get current user",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is Accepted\", function () {",
+									"    pm.response.to.be.accepted;",
+									"});",
+									"",
+									"pm.test(\"Error is Unknown role in the request\", function () {",
+									"  var jsonData = pm.response.json();",
+									"  pm.expect(jsonData.name).to.eql(pm.variables.get(\"admin_name\"));});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authentication",
+								"value": "{{api_key}}",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/hub/api/v2/users/me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"hub",
+								"api",
+								"v2",
+								"users",
+								"me"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "admin_name",
+			"value": "hades",
+			"type": "default"
+		},
+		{
+			"key": "user_name",
+			"value": "achilles",
+			"type": "default"
+		},
+		{
+			"key": "non_existing_user",
+			"value": "inor",
+			"type": "default"
+		},
+		{
+			"key": "password",
+			"value": "password",
+			"type": "default"
+		},
+		{
+			"key": "base_url",
+			"value": "http://localhost:8284",
+			"type": "default"
+		}
+	]
+}
