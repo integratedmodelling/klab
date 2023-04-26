@@ -1,12 +1,10 @@
 package org.integratedmodelling.klab.auth;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.utils.StringUtil;
 
 public class AnonymousEngineCertificate implements ICertificate {
 
@@ -14,10 +12,10 @@ public class AnonymousEngineCertificate implements ICertificate {
     private Map<String, Set<String>> worldview_repositories = new HashMap<>();
 
     public AnonymousEngineCertificate() {
-        for (String w : StringUtil
-                .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES)) {
-            worldview_repositories.put(w, new HashSet<>());
-        }
+//        for (String w : StringUtil
+//                .splitOnCommas(KlabCertificate.DEFAULT_WORLDVIEW_REPOSITORIES)) {
+//            worldview_repositories.put(w, new HashSet<>());
+//        }
     }
 
     @Override
@@ -26,7 +24,7 @@ public class AnonymousEngineCertificate implements ICertificate {
     }
 
     @Override
-    public Map<String, Set<String>> getWorldviewRepositories() {
+    public Map<String, Set<String>> getWorldviewRepositories(String worldview) {
         return worldview_repositories;
     }
 

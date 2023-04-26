@@ -15,9 +15,9 @@ public class Workspace extends MonitorableFileWorkspace {
 
 	private String name;
 
-	public Workspace(File root) {
+	public Workspace(File root, String worldview) {
 		this.name = MiscUtilities.getFileBaseName(root.toString());
-		delegate = new KimWorkspace(root, name);
+		delegate = new KimWorkspace(root, worldview, name);
 	}
 
 }
