@@ -372,7 +372,6 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 
             // If weights were not explicitly specified as parameters try to get them from
             // annotations.
-
             Map<String,Number> rw = new HashMap<>();
             IParameters<String> annotatedInputs = getAnnotatedInputs("criterion");
             Map<String, IAnnotation> annotations = getAnnotations("criterion");
@@ -382,9 +381,9 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
             // TODO: design a better way to handle multiple parameters of the annotation.
             for(String observable : annotatedInputs.keySet()) {
 
-                Boolean containsWeight = annotations.get(observable).contains("weight");
+                Boolean containsWeight = annotations.get(observable).contains("rel_weight");
                 if (containsWeight) {
-                	rw.put(observable, annotations.get(observable).get("weight", Double.class));
+                	rw.put(observable, annotations.get(observable).get("rel_weight", Double.class));
                 } else {
                     // If no parameter name is supplied with the annotation, the value is assumed to
                     // be the weight.
