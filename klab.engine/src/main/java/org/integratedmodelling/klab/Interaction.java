@@ -210,7 +210,7 @@ public enum Interaction implements IInteractionService {
 			Argument argument = prototype == null ? null : prototype.getArgument(key);
 			if (argument != null) {
 				found = true;
-				value = TypeUtils.convert(value, Utils.getClassForType(argument.getType()));
+				value = argument.getType() == Type.VALUE ? value : TypeUtils.convert(value, Utils.getClassForType(argument.getType()));
 			}
 		}
 		if (!found) {
