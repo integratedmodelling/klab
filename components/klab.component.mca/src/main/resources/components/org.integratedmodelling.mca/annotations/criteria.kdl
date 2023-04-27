@@ -47,7 +47,7 @@ annotation benefit for dependencies
 annotation criterion for dependencies
 	"Spatial layer representing one variable included in the OWA indicator"
 {
-	optional number rel_weight
+	optional number 'relweight'
 		"The weight of the criterion, represents the importance of the variable compared to the others, and could
 		be set to 0 in case it is not wanted to include the variable in the analysis"
 		label 'rel_weight'
