@@ -116,6 +116,19 @@ public class EngineAuthResponeFactory {
         }
     }
 
+    private LocalDateTime formatExpirationDate(Properties cipherProperties) {
+        LocalDateTime expires;
+        //The format time of expirationDate changes then taken account the 2 versions of it.
+        try {
+        expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
+                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
+        } catch (Exception e) {
+            expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"));
+        }
+        return expires;
+    }
+
 	@SuppressWarnings("unchecked")
     private EngineAuthenticationResponse remoteEngine(ProfileResource profile, String idAgreement,
 			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException, AuthenticationFailedException {
@@ -166,27 +179,21 @@ public class EngineAuthResponeFactory {
             checkForExpiringAgreement(agreement, messages);
         }
         
-        LocalDateTime expires = null;
-
-        //The format time of expirationDate changes then taken account the 2 versions of it.
-        try {
-		expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
-                DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
-        } catch (Exception e) {
-            expires = LocalDateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
-                    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS"));
-        }
+        // An agreement with no value at the expiration time is an agreement that does not expire.
+        // TODO find a more legible alternative to a null value.
+        LocalDateTime expirationTime = cipherProperties.contains(KlabCertificate.KEY_EXPIRATION) ?
+                formatExpirationDate(cipherProperties) : null;
 		
-		if(!expires.isAfter(LocalDateTime.now().plusDays(30))) { 
+		if(expirationTime != null && !expirationTime.isAfter(LocalDateTime.now().plusDays(30))) { 
 		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
-		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
-		                    new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, expires)
+		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expirationTime.toString(), new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+		                    new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, expirationTime)
 		                  })));
 
 		    messages.add(msg);
 		}
 		
-		if (expires.isAfter(LocalDateTime.now())) {
+		if (expirationTime == null || expirationTime.isAfter(LocalDateTime.now())) {
 			engineProperties.remove(KlabCertificate.KEY_EXPIRATION);
 	        cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
 	        engineProperties.remove(KlabCertificate.KEY_PARTNER_HUB);
