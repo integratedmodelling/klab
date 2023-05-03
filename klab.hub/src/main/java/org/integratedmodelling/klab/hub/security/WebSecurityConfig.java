@@ -188,7 +188,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		config.setAllowCredentials(false);
 		config.setAllowedOrigins(ImmutableList.of(
 				"https://integratedmodelling.org",
-				"https://testing.integratedmodelling.org",
+				"https://test.integratedmodelling.org",
 				"http://localhost:8080",
 				"https://localhost:8080",
 				"http://localhost:8081",
