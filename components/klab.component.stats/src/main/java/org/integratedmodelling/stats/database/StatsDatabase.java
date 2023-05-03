@@ -269,7 +269,7 @@ public class StatsDatabase extends Postgis {
 
 		String query = GEOJSON_OBSERVATION_COLLECTION.replace("{RESTRICTIONS}", restrictions);
 		if (polygons) {
-			query.replace("ST_Centroid(contexts.geom)", "contexts.geom");
+			query = query.replace("ST_Centroid(contexts.geom)", "contexts.geom");
 		}
 
 		AtomicReference<String> ret = new AtomicReference<>(null);

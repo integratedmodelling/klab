@@ -1,20 +1,16 @@
 package org.integratedmodelling.stats.api;
 
-import java.time.LocalDate;
-
-import org.springframework.format.annotation.DateTimeFormat;
-
 public class StatsQueryRequest {
 
         private int top = 10;
-        private String query_type = "asset";
+        private String queryType = "asset";
         private String outcome;
         
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-        private LocalDate from;
+        private int resolutionTimeMin = -1;
+        private int resolutionTimeMax = -1;
         
-        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-        private LocalDate to;
+        private long from = 0;  //in milliseconds
+        private long to = 0;    //in milliseconds
         
         private String db;
         private String where;      
@@ -46,11 +42,11 @@ public class StatsQueryRequest {
         public void setTop(int top) {
             this.top = top;
         }
-        public String getQuery_type() {
-            return query_type;
+        public String getQueryType() {
+            return queryType;
         }
-        public void setQuery_type(String query_type) {
-            this.query_type = query_type;
+        public void setQueryType(String queryType) {
+            this.queryType = queryType;
         }
         public String getOutcome() {
             return outcome;
@@ -58,24 +54,37 @@ public class StatsQueryRequest {
         public void setOutcome(String outcome) {
             this.outcome = outcome;
         }
-        public LocalDate getFrom() {
+        public int getResolutionTimeMin() {
+            return resolutionTimeMin;
+        }
+        public void setResolutionTimeMin(int resolutionTimeMin) {
+            this.resolutionTimeMin = resolutionTimeMin;
+        }
+        public int getResolutionTimeMax() {
+            return resolutionTimeMax;
+        }
+        public void setResolutionTimeMax(int resolutionTimeMax) {
+            this.resolutionTimeMax = resolutionTimeMax;
+        }
+        public long getFrom() {
             return from;
         }
-        public void setFrom(LocalDate from) {
+        public void setFrom(long from) {
             this.from = from;
         }
-        public LocalDate getTo() {
+        public long getTo() {
             return to;
         }
-        public void setTo(LocalDate to) {
+        public void setTo(long to) {
             this.to = to;
         }
 
         public StatsQueryRequest() {}
         @Override
         public String toString() {
-            return "StatsQueryRequest [top=" + top + ", query_type=" + query_type + ", outcome=" + outcome + ", from=" + from
-                    + ", to=" + to + "]";
+            return "StatsQueryRequest [top=" + top + ", queryType=" + queryType + ", outcome=" + outcome + ", resolutionTimeMin="
+                    + resolutionTimeMin + ", resolutionTimeMax=" + resolutionTimeMax + ", from=" + from + ", to=" + to + ", db="
+                    + db + ", where=" + where + ", select=" + select + "]";
         }
         
         

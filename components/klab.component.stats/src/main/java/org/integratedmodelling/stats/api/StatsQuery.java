@@ -32,14 +32,14 @@ public class StatsQuery {
     private String outcome;
     private long count;
     private long start_time;
-    private double resolutionTime;
-    private boolean succesful;
+    private double resolution_time;
+    private boolean successful;
     private long startTime;
-    private int dataflowComplexity;
+    private int dataflow_complexity;
     private long success_count;
     private long exception_count;
     private long error_count;
-    private double resolutionTime_total;
+    private double resolution_time_total;
     private String asset_name;
     private String asset_type;
     private String start_date;
@@ -150,27 +150,27 @@ public class StatsQuery {
     }
 
     public int getDataflowComplexity() {
-        return dataflowComplexity;
+        return dataflow_complexity;
     }
 
     public void setDataflowComplexity(int dataflowComplexity) {
-        this.dataflowComplexity = dataflowComplexity;
+        this.dataflow_complexity = dataflowComplexity;
     }
     
-    public boolean isSuccesful() {
-        return succesful;
+    public boolean isSuccessful() {
+        return successful;
     }
 
-    public void setSuccesful(boolean succesful) {
-        this.succesful = succesful;
+    public void setSuccessful(boolean successful) {
+        this.successful = successful;
     }
 
-    public double getResolutionTime() {
-        return resolutionTime;
+    public double getResolution_time() {
+        return resolution_time;
     }
     
-    public void setResolutionTime(double resolutionTime) {
-        this.resolutionTime = resolutionTime;
+    public void setResolution_time(double resolution_time) {
+        this.resolution_time = resolution_time;
     }
     
     public int getId() {
@@ -205,12 +205,12 @@ public class StatsQuery {
         this.outcome = outcome;
     }
 
-    public double getResolutionTime_total() {
-        return resolutionTime_total;
+    public double getResolution_time_total() {
+        return resolution_time_total;
     }
 
-    public void setResolutionTime_total(double resolutionTime_total) {
-        this.resolutionTime_total = resolutionTime_total;
+    public void setResolution_time_total(double resolution_time_total) {
+        this.resolution_time_total = resolution_time_total;
     }
     
     public StatsQuery() {
@@ -221,14 +221,10 @@ public class StatsQuery {
         
         switch(operation) {
         case "asset":
-            this.id = (int) queryParam.get("query_id");
             this.context_id = (String) queryParam.get("context_id");
             this.asset_name = (String) queryParam.get("name");
-            this.resolutionTime = (double) queryParam.get("total_time_sec");
-            
-            if(Objects.equals((String) queryParam.get("outcome"),"Success")) {
-                this.succesful = true;
-            }else this.succesful = false;  
+            this.resolution_time = (double) queryParam.get("total_time_sec");
+            this.outcome = (String) queryParam.get("outcome");  
             break;
         case "outcome_group_count":
             this.outcome = (String) queryParam.get("outcome");
@@ -238,8 +234,8 @@ public class StatsQuery {
             this.asset_name = (String) queryParam.get("name");
             this.count = (long) queryParam.get("count");
             if(queryParam.get("time_sum") == null) {
-                this.resolutionTime_total = 0.0;
-            }else this.resolutionTime_total = (double) queryParam.get("time_sum");      
+                this.resolution_time_total = 0.0;
+            }else this.resolution_time_total = (double) queryParam.get("time_sum");      
             break;
         case "outcome_aggregate":
             this.context_name = (String) queryParam.get("context_name");
@@ -254,7 +250,11 @@ public class StatsQuery {
             this.count = (long) queryParam.get("count");
             break;
         case "time_range":
+            this.context_id = (String) queryParam.get("context_id");
+            this.observable = (String) queryParam.get("observable");
             this.start_time = (long) queryParam.get("start_time");
+            this.resolution_time = (double) queryParam.get("total_time_sec");
+            this.outcome = (String) queryParam.get("outcome");
             SimpleDateFormat DateFormat = new SimpleDateFormat("dd.MM.yyyy 'at' HH:mm:ss z");
             this.start_date = DateFormat.format(this.start_time);
             break;
@@ -263,11 +263,11 @@ public class StatsQuery {
             this.id = (int) queryParam.get("query_id");
             this.context_id = (String) queryParam.get("context_id");
             this.asset_name = (String) queryParam.get("name");
-            this.resolutionTime = (double) queryParam.get("total_time_sec");
+            this.resolution_time = (double) queryParam.get("total_time_sec");
             
             if(Objects.equals((String) queryParam.get("outcome"),"Success")) {
-                this.succesful = true;
-            }else this.succesful = false;  
+                this.successful = true;
+            }else this.successful = false;  
             break;
         }
     }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.api.StatsQuery;
@@ -28,9 +29,27 @@ public class StatsQueryService {
         StatsComponent stats = stc.getImplementation(StatsComponent.class);
         ArrayList<StatsQuery> ret = new ArrayList<StatsQuery>();
         String query = null;
-        switch(request.getQuery_type()) {
+        switch(request.getQueryType()) {
         case "asset":
-            query = "SELECT * FROM assets;";
+            query = "SELECT * FROM assets";
+            if(request.getResolutionTimeMin() != -1 && request.getResolutionTimeMax() != -1) {
+                query = query + " WHERE total_time_sec > " + request.getResolutionTimeMin()
+                + " AND total_time_sec < " + request.getResolutionTimeMax(); 
+            }else if(request.getResolutionTimeMin() != -1) {
+                query = query + " WHERE total_time_sec > " + request.getResolutionTimeMin();
+            }else if(request.getResolutionTimeMax() != -1) {
+                query = query + " WHERE total_time_sec < " + request.getResolutionTimeMax();
+            }
+            String outcome = request.getOutcome();
+            if(Objects.equals(outcome,"Success") ||  Objects.equals(outcome,"Error") ||  Objects.equals(outcome,"Exception") ) {
+                if(request.getResolutionTimeMin() == -1 && request.getResolutionTimeMax() == -1)
+                    query = query + " WHERE ";
+                else
+                    query = query + " AND ";
+                query = query + "outcome='" + outcome +"'";
+            }
+            
+            query = query + ";";
             break;
         case "asset_name_group_count":
             query = "SELECT DISTINCT name, COUNT(name) OVER (PARTITION BY name) AS count, "
@@ -47,7 +66,7 @@ public class StatsQueryService {
                     + ",a.outcome,a.asset_type "
                     + "FROM assets a INNER JOIN queries q ON a.context_id=q.context_id and a.query_id = q.id "
                     + "INNER JOIN contexts c on c.id=q.context_id ";
-            String outcome = request.getOutcome();
+            outcome = request.getOutcome();
             if(Objects.equals(outcome,"Success") ||  Objects.equals(outcome,"Error") ||  Objects.equals(outcome,"Exception") ) {
                 query = query + "WHERE a.outcome='" + outcome +"'";
             }
@@ -58,26 +77,26 @@ public class StatsQueryService {
                     + "context_name FROM contexts  ORDER BY count DESC LIMIT " + request.getTop() + ";";
             break;
         case "time_range":
-            if(request.getFrom() == null) {
-                request.setFrom(LocalDate.of(2000, Month.JANUARY, 1));
+            if(request.getFrom() == 0) {
+                request.setFrom(946684800000L);
             }
-            if(request.getTo() == null) {
-                request.setTo(LocalDate.of(2099, Month.JANUARY, 1));
+            if(request.getTo() == 0) {
+                request.setTo(4070908800000L);
             }
-            LocalDateTime dateStartTime = request.getFrom().atStartOfDay();
-            LocalDateTime dateEndTime = request.getTo().atStartOfDay();
-            
-            long milliSecondsDateStart = Timestamp.valueOf(dateStartTime).getTime();          
-            long milliSecondsDateEnd = Timestamp.valueOf(dateEndTime).getTime();
+//            LocalDateTime dateStartTime = request.getFrom().atStartOfDay();
+//            LocalDateTime dateEndTime = request.getTo().atStartOfDay();
+//            
+//            long milliSecondsDateStart = Timestamp.valueOf(dateStartTime).getTime();          
+//            long milliSecondsDateEnd = Timestamp.valueOf(dateEndTime).getTime();
 
-            query = "SELECT * FROM queries WHERE start_time > " + milliSecondsDateStart + 
-                    " AND start_time < " + milliSecondsDateEnd + ";";
+            query = "SELECT * FROM queries WHERE start_time > " + request.getFrom() + 
+                    " AND start_time < " + request.getTo() + ";";
             break;
             default:
             query = "SELECT * FROM assets;";
         }
         long n = stats.getDatabase().scan(query, (result) -> {
-            StatsQuery queryStats = new StatsQuery(result, request.getQuery_type());
+            StatsQuery queryStats = new StatsQuery(result, request.getQueryType());
             ret.add(queryStats);
         }); 
         

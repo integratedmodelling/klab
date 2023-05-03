@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
-import java.time.LocalDate;
 
 import javax.validation.Valid;
 
@@ -12,12 +11,12 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.node.services.StatsQueryService;
 import org.integratedmodelling.stats.api.StatsQueryRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 /**
@@ -26,6 +25,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
  *
  */
 @RestController
+@CrossOrigin(origins = "*")
 //@Secured(Role.USER)
 public class StatsQueryController {
 
@@ -43,7 +43,7 @@ public class StatsQueryController {
                                     throws JsonProcessingException {
             //throws UnsupportedEncodingException {
         
-        //IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
+       // IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
        // boolean adminOrAuditor = Authentication.INSTANCE.hasRole(principal, Role.ROLE_ADMINISTRATOR);
         
         if(request == null) {

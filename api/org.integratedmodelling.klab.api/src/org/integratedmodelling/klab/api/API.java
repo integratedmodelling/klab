@@ -1132,6 +1132,9 @@ public interface API {
 
         public static final String STATS_REPORT = STATS_BASE + "/report";
 
+        public static final String STATS_OUTPUT = STATS_BASE + "/output";
+
+        
         /*
          * public anonymous endpoints for web sites or quick monitoring
          */
