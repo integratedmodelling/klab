@@ -81,7 +81,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 	// Risk profile parameter for WOWA with linguistic quantifier.
 	private Number alpha;
 	// Only used for WOWA with interpolated weights.
-	private Object balanced;
+	private Boolean balanced;
 	// Only used for WOWA with interpolated weights and risk_profile = 0.5 (balanced)
 	private Number ratio;
 	// Only used for WOWA with interpolated weights and risk_profile = 0.5 (balanced)
@@ -406,7 +406,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		// Import the ordinal weights.
 		Object rp = parameters.get("risk_profile");
 		
-        Object bal_prof = parameters.get("balanced_risk_prof");
+        Boolean bal_prof = parameters.get("balanced_risk_prof", Boolean.class);
 		
 		//Import the ratio parameter
 		Number rat_bal = parameters.get("ratio_balance", Number.class);
