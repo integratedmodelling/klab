@@ -23,11 +23,13 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.storage.MediatingState;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -79,10 +81,11 @@ public abstract class AbstractContextualizer implements IContextualizer {
         }
 
         if (input != null) {
+            Dataflow dataflow = (Dataflow) scope.getDataflow();
             for (IObservation obs : scope.getCatalog().values()) {
                 IAnnotation ann = Annotations.INSTANCE.getAnnotation(obs.getObservable(), annotation);
                 if (ann != null) {
-                    ret.put(obs.getObservable().getName(), ann);
+                    ret.put(obs.getObservable().getName(), dataflow == null ? ann : dataflow.parameterizeAnnotation(ann));
                 }
             }
         }
