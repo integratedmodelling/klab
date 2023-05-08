@@ -381,7 +381,7 @@ public class User extends IdentityModel implements UserDetails{
         return agreements;
     }
 
-    public void setAgreements(Set<AgreementEntry> agreements) {
+    public void setAgreements(HashSet<AgreementEntry> agreements) {
         this.agreements = agreements;
     }
 

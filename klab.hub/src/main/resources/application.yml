@@ -46,6 +46,11 @@ ldap:
   
 logging:
   file: hub.log
+  #level:
+  #  org:
+  #    springframework:
+  #      data:
+  #       mongodb: DEBUG
   
 site:
   callback: http://localhost:8080/#/callback

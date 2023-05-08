@@ -9,8 +9,7 @@ public class AgreementEntry {
     
     public AgreementEntry() {}
 
-    public AgreementEntry(Agreement agreement) {
-        super();
+    public AgreementEntry(Agreement agreement) {        
         this.agreement = agreement;
     }
 

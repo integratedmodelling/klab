@@ -7,7 +7,6 @@ import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
-import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenChangePasswordClickback;
 import org.integratedmodelling.klab.hub.api.TokenLostPasswordClickback;
@@ -62,9 +61,9 @@ public class UserRegistrationController {
 	}
 	
 	@PostMapping(value= API.HUB.USER_BASE, produces = "application/json")
-	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) throws UserExistsException, UserEmailExistsException {
-	    Agreement agreement = agreementService.createAgreement(request.getAgreementType(), request.getAgreementLevel());
-		User user = userService.registerNewUser(request.getUsername(), request.getEmail(), agreement);		
+	public ResponseEntity<?> newUserRegistration(@RequestBody SignupRequest request) throws UserExistsException, UserEmailExistsException {	    
+		User user = userService.registerNewUser(request.getUsername(), request.getEmail());
+		user = userService.createAndAddAgreement(user, request.getAgreementType(), request.getAgreementLevel());
 		TokenVerifyAccountClickback token = (TokenVerifyAccountClickback)
 				tokenService.createToken(user.getUsername()
 						, TokenType.verify);
