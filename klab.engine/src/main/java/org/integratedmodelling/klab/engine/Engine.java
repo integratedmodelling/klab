@@ -536,6 +536,8 @@ public class Engine extends Server implements IEngine, UserDetails {
 
         this.monitor = new Monitor(this);
 
+        String worldview = Authentication.INSTANCE.getWorldview(this.owner);
+        
         /*
          * boot the actor system
          */
@@ -584,7 +586,7 @@ public class Engine extends Server implements IEngine, UserDetails {
              * initialize but do not load the local workspace, so that we can later override the
              * worldview if we have some worldview projects in the workspace.
              */
-            Resources.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), this.monitor);
+            Resources.INSTANCE.initializeLocalWorkspace(options.getWorkspaceLocation(), worldview, this.monitor);
 
             /*
              * initialize but do not load the service workspace.
@@ -598,7 +600,7 @@ public class Engine extends Server implements IEngine, UserDetails {
             /*
              * get worldview from certificate and sync it
              */
-            if (!Resources.INSTANCE.loadWorldview(certificate, this.monitor)) {
+            if (!Resources.INSTANCE.loadWorldview(certificate, worldview, this.monitor)) {
                 Logging.INSTANCE.error("could not load worldview");
                 return false;
             }
@@ -615,7 +617,7 @@ public class Engine extends Server implements IEngine, UserDetails {
             /*
              * sync components and load binary assets
              */
-            Resources.INSTANCE.loadComponents(options.getComponentPaths(), this.monitor);
+            Resources.INSTANCE.loadComponents(options.getComponentPaths(), worldview, this.monitor);
 
             /*
              * load component knowledge after all binary content is registered.
@@ -636,7 +638,7 @@ public class Engine extends Server implements IEngine, UserDetails {
             /*
              * now we can finally load the workspace
              */
-            if (!Resources.INSTANCE.loadLocalWorkspace(this.monitor)) {
+            if (!Resources.INSTANCE.loadLocalWorkspace(worldview, this.monitor)) {
                 Logging.INSTANCE.error("could not load local workspace");
                 return false;
             }

@@ -33,10 +33,10 @@ public class MonitorableGitWorkspace extends MonitorableFileWorkspace {
      * @param gitUrls URL for each project -> set of groups that have access to it
      * @param overridingProjects
      */
-    public MonitorableGitWorkspace(File root, String name, Map<String, Set<String>> gitUrls,
+    public MonitorableGitWorkspace(File root, String name, String worldview, Map<String, Set<String>> gitUrls,
             File... overridingProjects) {
 
-        delegate = new KimWorkspace(root, name){
+        delegate = new KimWorkspace(root, worldview, name){
 
             @Override
             public void readProjects() {

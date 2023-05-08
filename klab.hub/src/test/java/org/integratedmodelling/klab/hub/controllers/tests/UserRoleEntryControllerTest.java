@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.tests;
+package org.integratedmodelling.klab.hub.controllers.tests;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
