@@ -41,8 +41,5 @@ public interface UserRepository extends MongoRepository<User, ObjectId>{
 
     @Query("{'accountStatus' : ?0}")
 	List<User> getUsersByAccountStatus(AccountStatus accountStatus);
-
-    Optional<User> findByAgreementsAgreementAgreementTypeAndAgreementsAgreementAgreementLevel(AgreementType agreementType, AgreementLevel agreementLevel);
-    
     
 }

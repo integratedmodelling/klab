@@ -37,18 +37,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public User loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-	    //Sort sort = Sort.by("name");
-	    User user;
-	    try {
-	        user = userRepository.findByNameIgnoreCaseOrderByNameAsc(username).get();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        throw new UsernameNotFoundException("Unable to find user - " + username);
-	    }
-//		User user = userRepository.findByNameIgnoreCaseOrderByNameAsc(username)
-//			.orElseThrow(() -> new UsernameNotFoundException("Unable to find user - " + username));
-		
+			    
+	    User user = userRepository.findByNameIgnoreCaseOrderByNameAsc(username).get();
+	    
 		UserDetails ldapUser = ldapUserDetailsManager.loadUserByUsername(username);
 		
 		
@@ -58,7 +49,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		
 		user.setPasswordHash(ldapUser.getPassword());
 		if (!roles.isEmpty()) {
-			user.setRoles(roles);
+			user.setRoles(roles);    
 		}
 		
 		if(user.getRoles().isEmpty()) {
