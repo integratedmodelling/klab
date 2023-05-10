@@ -1,0 +1,48 @@
+= Observations
+
+Two perspectives (structural and functional) with three fundamental classes of observables each (independent, dependent and relational). The choice between representing the targets with structural or functional perspectives depends on the choice of description given of time - as a unchanging delimited duration or as an extent onto which notions of "change" and "currency" can be mapped. 
+
+|========
+|  |**Structural** |**Functional**
+|**Independent** |Subject |Event
+|**Dependent** |Quality |Process
+|**Relational** |Structural relationship |Functional relationship
+|========
+
+The two perspectives coexist happily, but the correspondent descriptions are incompatible. In both perspectives, independent and relational observables are _countable_ and can be both _instantiated_ and _resolved_; for dependents, instantiation is implicit and only _resolution_ descriptions can be given. The specific subclasses of description applicable to each observable, and their role in the scientific process, are described in the next sections.
+
+In addition to observables, _predicates_ can be linked to observations to further describe them when full description through observations is not possible or when the description is linked to the observation context/process/agent rather than directly to the observed entity. Specific classes of description attribute predicates to observations. The observations must have been made already, therefore such descriptions are to be considered dependent.
+
+== The context: worldview and scale
+
+
+
+== Structural description
+
+Structural perspective of description: time exists but its passing is not integral to the description. Under the structural perspective, the fundamental observables are:
+
+
+
+=== Subjects
+
+. instantiation
+. resolution
+
+=== Qualities
+
+=== Structural relationships and bonds
+
+== Functional description
+
+Time is integral
+
+=== Events
+
+. instantiation
+. resolution
+
+=== Processes
+
+=== Functional relationships
+
+== Predicates: characterization and classification
