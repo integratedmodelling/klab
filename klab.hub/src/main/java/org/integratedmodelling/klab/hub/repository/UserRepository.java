@@ -4,12 +4,19 @@ import java.util.List;
 import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.stats.controllers.GroupUsersByDate;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.mapreduce.GroupByResults;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, ObjectId>{	
+public interface UserRepository extends MongoRepository<User, ObjectId>{		
 	
 	Optional<User> findById(String id);
 	
@@ -25,6 +32,37 @@ public interface UserRepository extends MongoRepository<User, ObjectId>{
 
     Boolean existsByEmailIgnoreCase(String email);
     
+    
+    @Aggregation(pipeline = {
+    		"{\n"
+   		+ "    $group: {\n"
+   		+ "      _id: {\n"
+//		+ "      	month: {\n"
+//		+ "       	 $month: $registrationDate\n"
+//		+ "      	},\n"
+		+ "     	 year: {\n"
+		+ "      	  $year: $registrationDate\n"
+		+ "    	  	},\n"
+		+ "      },\n"
+   		+ "      count: {\n"
+   		+ "        $sum: 1\n"
+   		+ "      },"
+//   		+ "		month:{"
+//   		+ "			$first: {$month: $registrationDate}"
+//   		+ "		},\n"
+   		+ "		year:{"
+   		+ "			$first: {$year: $registrationDate}"
+   		+ "		}\n"
+   		+ "    }\n"
+   		+ "  },\n"
+	})
+    
+    public List<GroupUsersByDate> groupBy();
+    
     @Query("{'groupEntries.group.$id' : ?0}")
 	List<User> getUsersByGroupEntriesWithGroupId(ObjectId id);
+    
+    
+//    @Query("{ 'createdDateTime' : { $gt: ?0 } }")
+//    List<User> findAllCustomersByCreatedDate(Date date);
 }
