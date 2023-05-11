@@ -11,12 +11,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 public class GroupUsersByDate {
 
 	private String _id;
-	public String get_id() {
-		return _id;
-	}
-	public void set_id(String _id) {
-		this._id = _id;
-	}
 	
 	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 	private int day;
@@ -24,7 +18,15 @@ public class GroupUsersByDate {
 	private int month;
 	private int year;
 	private int count;
+	private String dateString = "NaN";
 	private DateTime registered;
+	
+	public String get_id() {
+		return _id;
+	}
+	public void set_id(String _id) {
+		this._id = _id;
+	}
 	
 	public int getDay() {
 		return day;
@@ -49,6 +51,12 @@ public class GroupUsersByDate {
 	}
 	public void setCount(int count) {
 		this.count = count;
+	}
+	public String getDateString() {
+		return dateString;
+	}
+	public void setDateString(String dateString) {
+		this.dateString = dateString;
 	}
 	public DateTime getRegistered() {
 		return registered;

@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.hub.stats.services;
 
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,7 +41,31 @@ public class HubStatsService {
 		this.objectMapper = objectMapper;
 	}	
 	
-	public List<GroupUsersByDate> groupBy() {
-		return userRepository.groupBy();
+	public List<GroupUsersByDate> registeredUsers(String groupBy) {
+		List<GroupUsersByDate> userList = null;
+		switch(groupBy) {
+		case "year":
+			userList = userRepository.groupByYear();
+			if (userList.size() > 0) {
+				  Collections.sort(userList, new Comparator<GroupUsersByDate>() {
+				      @Override
+				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
+				          return object1.getDateString().compareTo(object2.getDateString());
+				      }
+				  });
+			}
+			break;
+		default:
+			userList = userRepository.groupByMonthYear();
+			if (userList.size() > 0) {
+				  Collections.sort(userList, new Comparator<GroupUsersByDate>() {
+				      @Override
+				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
+				          return object1.getDateString().compareTo(object2.getDateString());
+				      }
+				  });
+				}
+		}
+		return userList;
 	}
 }
