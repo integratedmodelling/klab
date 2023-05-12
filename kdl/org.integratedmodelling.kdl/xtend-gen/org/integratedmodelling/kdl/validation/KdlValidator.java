@@ -24,7 +24,7 @@ public class KdlValidator extends AbstractKdlValidator {
   public Object checkDataflowBody(final DataflowBody body) {
     return null;
   }
-  
+
   @Check
   public void checkActorDefinition(final ActorDefinition actor) {
     if (((actor.getTargets().size() > 0) && (!Objects.equal(actor.getType(), "annotation")))) {
@@ -89,7 +89,7 @@ public class KdlValidator extends AbstractKdlValidator {
       }
     }
   }
-  
+
   public Model getDataflow(final EObject o) {
     EObject ob = o;
     while (((ob != null) && (!(ob.eContainer() instanceof Model)))) {

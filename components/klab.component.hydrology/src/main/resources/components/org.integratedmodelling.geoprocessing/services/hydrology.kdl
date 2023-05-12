@@ -490,3 +490,18 @@ export process scsrunoffcalc
 
 	class org.integratedmodelling.geoprocessing.hydrology.ScsRunoffResolver
 }
+
+export number floodlevels
+	"Expected level of marine flooding"
+	
+{
+	import number elevation
+		"The DEM to correct"
+		
+	import number seeds
+	    "The original water levels"
+
+	geometry S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.MarineFloodResolver
+}
