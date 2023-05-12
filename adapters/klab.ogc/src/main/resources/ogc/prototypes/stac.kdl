@@ -7,16 +7,15 @@
  {
 
  	final text 'catalogUrl'
- 		"The URL pointing to the catalog.json file that contains the resource dataset."
+ 		"The URL pointing to the STAC catalog file that contains the resource dataset."
 
  	final text 'collectionId'
  		"The ID of the annotated data collection."
  		
- 	optional number band
- 		"The band for a multi-band raster. Default is 0."
- 		default 0
-
+ 	optional text band
+ 		"The band for a multi-band raster. Default is the first in the catalog."
+ 	
 	optional number nodata
-		"The no-data value for this raster. If not specified, the nodata value communicated by the WCS server is used. This should only be modified if that is wrong or missing."
+		"The no-data value for this raster. If not specified, the nodata value communicated by the server is used. This should only be modified if that is wrong or missing."
 
  }

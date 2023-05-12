@@ -1,9 +1,10 @@
 package org.integratedmodelling.klab.stac;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.hortonmachine.gears.io.stac.HMStacCollection;
+import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 
 /**
@@ -14,13 +15,13 @@ import org.hortonmachine.gears.io.stac.HMStacManager;
  */
 public class STAC {
 
-    private Map<String, HMStacManager> clients = new HashMap<>();
+    private Map<String, HMStacManager> clients = new LinkedHashMap<>();
 
     public static void main(String[] args) throws Exception {
 
         STAC stac = new STAC();
         String[] catalogUrls = {"https://planetarycomputer.microsoft.com/api/stac/v1",
-                "https://s3.eu-central-1.wasabisys.com/stac/odse/lcv_landcover.231_lucas.corine.eml/collection.json"};
+                "https://openeo.vito.be/openeo/1.1.0"};
 
         for (String curl : catalogUrls) {
             HMStacManager catalog = new HMStacManager(curl, null);
@@ -32,6 +33,9 @@ public class STAC {
             System.out.println("COCK " + cock);
             for (HMStacCollection collection : stac.clients.get(cock).getCollections()) {
                 System.out.println("  " + collection.getId() + ": " + collection.getTemporalBounds());
+//                for (HMStacItem item : collection.searchItems()) {
+//                    System.out.println("  " + item.getId() + ": " + item.getGeometry() + ", " + item.getEpsg());
+//                }
             }
         }
 
