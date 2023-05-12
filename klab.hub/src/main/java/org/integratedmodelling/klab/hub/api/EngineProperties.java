@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 public class EngineProperties implements IProperties {
 
     public EngineProperties(ProfileResource profile, Agreement agreement, LicenseConfiguration config) {
-        if (config.getClass().getName() == BouncyConfiguration.class.getName()) {
+        if (config.getClass().getName().equals(BouncyConfiguration.class.getName())) {
             BouncyEngineProperties(profile, agreement, (BouncyConfiguration) config);
         }
     }
@@ -32,7 +32,7 @@ public class EngineProperties implements IProperties {
 
 		this.properties.setProperty(KlabCertificate.KEY_USERNAME, profile.getUsername());
 		this.properties.setProperty(KlabCertificate.KEY_EMAIL, profile.getEmail());
-		if (agreement != null) this.properties.setProperty(KlabCertificate.KEY_AGREEMENT, agreement.getId());
+		if (agreement != null) { this.properties.setProperty(KlabCertificate.KEY_AGREEMENT, agreement.getId()); }
 		this.properties.setProperty(KlabCertificate.KEY_SIGNATURE, config.getKeyString());
 		this.properties.setProperty(KlabCertificate.KEY_PARTNER_NAME, config.getName());
 		this.properties.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, config.getEmail());
