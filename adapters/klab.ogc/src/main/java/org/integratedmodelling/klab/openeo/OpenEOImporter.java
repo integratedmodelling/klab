@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.Writer;
 import java.net.URL;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -71,8 +71,7 @@ public class OpenEOImporter implements IResourceImporter {
 
     @Override
     public Map<String, String> getExportCapabilities(IResource resource) {
-        Map<String, String> ret = new HashMap<>();
-        return ret;
+        return Collections.emptyMap();
     }
 
     @Override
