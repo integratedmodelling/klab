@@ -143,6 +143,7 @@ public class EngineAuthResponeFactory {
 	    
 	    //if agreement is null the certificate is old
 	    if (idAgreement == null) {
+	        cipherProperties.remove(KlabCertificate.KEY_AGREEMENT);
 	        HubNotificationMessage msg = HubNotificationMessage.MessageClass
                     .CERTIFICATE_WITHOUT_AGREEMENT.build("Used certificate is old. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
                             new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Certificate without agreement.")
