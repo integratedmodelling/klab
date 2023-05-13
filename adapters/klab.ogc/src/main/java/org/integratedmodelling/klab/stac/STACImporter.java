@@ -60,7 +60,7 @@ public class STACImporter implements IResourceImporter {
     @Override
     public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         // TODO Auto-generated method stub
-        return null;
+        return Collections.emptyList();
     }
 
     @Override
