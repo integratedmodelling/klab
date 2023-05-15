@@ -249,7 +249,9 @@ public interface API {
          * Base URL path for user resources on the hub.
          */
         public static final String USER_BASE = API_BASE + "/users";
-        
+        /**
+         * Base URL path for user statistics resources on the hub.
+         */
         public static final String USER_STATS = API_BASE + "/userStats";
         /**
          * Base URL path for user resources on the hub.

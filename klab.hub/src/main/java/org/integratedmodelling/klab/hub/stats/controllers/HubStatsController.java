@@ -33,8 +33,12 @@ public class HubStatsController {
 	
 	@GetMapping(API.HUB.USER_STATS)
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<?> getUsersByRegistrationDate(@RequestParam(required = false) String groupBy) {
+	public ResponseEntity<?> getUsersByRegistrationDate(@RequestParam(defaultValue = "month", required = false) String groupBy) {
 		List<GroupUsersByDate> groupedUsers = statsService.registeredUsers(groupBy);
+		
+		/* get rid of entries where registrationDate is null */
+		groupedUsers.removeIf(o -> o.getDateString() == "NaN");
+		
 		return new ResponseEntity<>(groupedUsers,HttpStatus.OK);
 	}
 	

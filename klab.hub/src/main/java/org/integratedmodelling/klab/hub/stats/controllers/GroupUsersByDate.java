@@ -14,7 +14,8 @@ public class GroupUsersByDate {
 	
 	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 	private int day;
-	
+	@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+	private int week;
 	private int month;
 	private int year;
 	private int count;
@@ -33,6 +34,12 @@ public class GroupUsersByDate {
 	}
 	public void setDay(int day) {
 		this.day = day;
+	}
+	public int getWeek() {
+		return week;
+	}
+	public void setWeek(int week) {
+		this.week = week;
 	}
 	public int getMonth() {
 		return month;

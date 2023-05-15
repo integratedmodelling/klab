@@ -42,12 +42,15 @@ public class HubStatsService {
 	}	
 	
 	public List<GroupUsersByDate> registeredUsers(String groupBy) {
-		List<GroupUsersByDate> userList = null;
+		List<GroupUsersByDate> groupList = null;
+		
+		/* switch case, in case more options need to be added */
 		switch(groupBy) {
 		case "year":
-			userList = userRepository.groupByYear();
-			if (userList.size() > 0) {
-				  Collections.sort(userList, new Comparator<GroupUsersByDate>() {
+			groupList = userRepository.groupByYear();
+			if (groupList.size() > 0) {
+				  /* code to sort date strings */
+				  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
 				      @Override
 				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
 				          return object1.getDateString().compareTo(object2.getDateString());
@@ -55,10 +58,47 @@ public class HubStatsService {
 				  });
 			}
 			break;
+		case "monthAccumulation":
+			groupList = userRepository.groupByMonthYear();
+			if (groupList.size() > 0) {
+				  /* code to sort date strings */
+				  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
+				      @Override
+				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
+				          return object1.getDateString().compareTo(object2.getDateString());
+				      }
+				  });
+				 
+				int accumulatedCounter = 0;
+				for(GroupUsersByDate group : groupList) {
+					accumulatedCounter += group.getCount();
+					group.setCount(accumulatedCounter);
+				}
+			}
+			break;
+		case "yearAccumulation":
+			groupList = userRepository.groupByYear();
+			if (groupList.size() > 0) {
+				  /* code to sort date strings */
+				  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
+				      @Override
+				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
+				          return object1.getDateString().compareTo(object2.getDateString());
+				      }
+				  });
+				 
+				int accumulatedCounter = 0;
+				for(GroupUsersByDate group : groupList) {
+					accumulatedCounter += group.getCount();
+					group.setCount(accumulatedCounter);
+				}
+			}
+			break;		
 		default:
-			userList = userRepository.groupByMonthYear();
-			if (userList.size() > 0) {
-				  Collections.sort(userList, new Comparator<GroupUsersByDate>() {
+			groupList = userRepository.groupByMonthYear();
+			if (groupList.size() > 0) {
+				  /* code to sort date strings */
+				  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
 				      @Override
 				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
 				          return object1.getDateString().compareTo(object2.getDateString());
@@ -66,6 +106,6 @@ public class HubStatsService {
 				  });
 				}
 		}
-		return userList;
+		return groupList;
 	}
 }
