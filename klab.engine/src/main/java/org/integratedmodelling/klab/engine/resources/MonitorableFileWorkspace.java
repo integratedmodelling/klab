@@ -30,8 +30,8 @@ public class MonitorableFileWorkspace extends AbstractWorkspace implements IWork
     MonitorableFileWorkspace() {
     }
 
-    public MonitorableFileWorkspace(String name, File root) {
-        super(name, root);
+    public MonitorableFileWorkspace(String name, String worldview, File root) {
+        super(name, worldview, root);
     }
 
     @Override

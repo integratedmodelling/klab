@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.rest.controllers.base;
 
 import java.util.Collections;
 
+import org.integratedmodelling.klab.api.PublicAPI;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,7 +29,7 @@ public class SwaggerConfig {
 
     @Bean
     public Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.any()).paths(PathSelectors.any())
+        return new Docket(DocumentationType.SWAGGER_2).select().apis(RequestHandlerSelectors.withClassAnnotation(PublicAPI.class)).paths(PathSelectors.any())
                 .build().apiInfo(apiInfo());
     }
 

@@ -1,12 +1,9 @@
 package org.integratedmodelling.klab;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.common.Urns;
-import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * Simple helper to decompose a URN into its constituents and access them with

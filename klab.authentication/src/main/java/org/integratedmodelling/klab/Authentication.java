@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -245,6 +246,30 @@ public enum Authentication implements IAuthenticationService {
         return null;
     }
 
+    /**
+     * Check which groups we adopt that define a worldview and extract the root worldview name from
+     * the projects that compose it. Makes lots of assumptions.
+     * 
+     * @return
+     */
+    public String getWorldview(IIdentity user) {
+        String ret = null;
+        if (user instanceof IUserIdentity) {
+            for (Group group : ((IUserIdentity) user).getGroups()) {
+                if (group.isWorldview()) {
+                    for (String project : group.getProjectUrls()) {
+                        String pid = MiscUtilities.getURLBaseName(project);
+                        if (ret == null && !pid.contains(".")) {
+                            ret = pid;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    }
+
     @Override
     public IUserIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
 
@@ -391,6 +416,10 @@ public enum Authentication implements IAuthenticationService {
 
         return ret;
     }
+    
+    public ExternalAuthenticationCredentials getCredentials(String hostUrl) {
+        return externalCredentials.get(hostUrl);
+    }
 
     /**
      * Return a new credential provider that knows the credentials saved into the k.LAB database and
@@ -474,6 +503,8 @@ public enum Authentication implements IAuthenticationService {
         externalCredentials.put(host, credentials);
         externalCredentials.write();
     }
+    
+    
 
     public IUserIdentity getUserIdentity(Principal principal) {
         if (principalTranslator != null) {
@@ -493,23 +524,35 @@ public enum Authentication implements IAuthenticationService {
         }
         return false;
     }
-    
-   public boolean hasRole(Object user, Role role) {
+
+    public boolean hasRole(Object user, Role role) {
         if (user instanceof IAuthenticatedIdentity) {
-            return ((IAuthenticatedIdentity)user).getRoles().contains(role);
+            return ((IAuthenticatedIdentity) user).getRoles().contains(role);
         }
         return false;
     }
 
-//    public boolean hasEitherRole(IUserIdentity user, String... groups) {
-//        for (Group g : user.getRoles()) {
-//            for (String grp : groups) {
-//                if (g.getId().equals(grp)) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
+    public Collection<String> getWorldviewRepositories(IUserIdentity user) {
+        Set<String> ret = new LinkedHashSet<>();
+        if (user != null) {
+            for (Group group : user.getGroups()) {
+                if (group.isWorldview()) {
+                    ret.addAll(group.getProjectUrls());
+                }
+            }
+        }
+        return ret;
+    }
+
+    // public boolean hasEitherRole(IUserIdentity user, String... groups) {
+    // for (Group g : user.getRoles()) {
+    // for (String grp : groups) {
+    // if (g.getId().equals(grp)) {
+    // return true;
+    // }
+    // }
+    // }
+    // return false;
+    // }
 
 }

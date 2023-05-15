@@ -28,7 +28,7 @@ public class ServiceWorkspace extends MonitorableFileWorkspace {
                 Logging.INSTANCE.error(e);
             }
         }
-        delegate = new KimWorkspace(root, "service");
+        delegate = new KimWorkspace(root, null, "service");
     }
     
     public IProject getServiceProject(IMonitor monitor) {

@@ -1,0 +1,80 @@
+= Observations
+
+Two perspectives (structural and functional) with three fundamental classes of observables each (independent, dependent and relational). The choice between representing the targets with structural or functional perspectives depends on the choice of description given of time - as a unchanging delimited duration or as an extent onto which notions of "change" and "currency" can be mapped. 
+
+|========
+|  |**Structural** |**Functional**
+|**Independent** |Subject |Event
+|**Dependent** |Quality |Process
+|**Relational** |Structural relationship |Functional relationship
+|========
+
+The two perspectives coexist happily, but the correspondent descriptions are incompatible. In both perspectives, independent and relational observables are _countable_ and can be both _instantiated_ and _resolved_; for dependents, instantiation is implicit and only _resolution_ descriptions can be given. The specific subclasses of description applicable to each observable, and their role in the scientific process, are described in the next sections.
+
+EVENTS AND FUNCTIONAL RELATIONSHIPS CAN BE CONTEXTUAL (but it's optional, so they remain phenomenologically independent)! A FR that is between contextualized events will inherit the context (possibly with OR if different and incompatible).
+
+In addition to observables, _predicates_ can be linked to observations to further describe them when full description through observations is not possible or when the description is linked to the observation context/process/agent rather than directly to the observed entity. Specific classes of description attribute predicates to observations. The observations must have been made already, therefore such descriptions are to be considered dependent.
+
+== The context: worldview and scale
+
+
+
+== Structural description
+
+Structural perspective of description: time exists but its passing is not integral to the description. Under the structural perspective, the fundamental observables are:
+
+
+
+=== Subjects
+
+. instantiation
+. resolution
+
+=== Qualities
+
+=== Structural relationships and bonds
+
+== Functional description
+
+Time is integral
+
+=== Events
+
+. instantiation
+. resolution
+
+=== Processes
+
+=== Functional relationships
+
+== Predicates: characterization and classification
+
+
+== Inherency in observables and descriptions
+
+All dependent observables (qualities and processes) have a context type, even if the observable does not mention it directly: for example, `geography:Elevation` is defined as `within earth:Location` through its inheritance, therefore its context type is `earth:Location` or any of its subclasses. The worldview specifies such constraints using the `within` operator in the `is` clause of the concept definition. This section applies to the usage of the two inherency operators, `of` and `within`, in modeling practice, i.e. when writing queries (observables, dependencies) and when creating descriptions (models).
+
+=== Using `of` to specify secondary inherency in observables
+
+The semantic operator `of`, used in an observable, specifies the _recontextualization_ of the observable to a secondary entity that is also observed in the context of the query. For example, the observable `im:Height of biology:Tree`...
+
+<examples with `of`>
+
+No compatibility is necessary as long as the inherent context can be observed in the original context, which is always the case if the context is a subject or a structural relationship, and may be inconsistent for events and functional relationships as those can be declared as `within` a particular subject. 
+
+yadda yadda
+
+=== Using `within` to recontextualize descriptions to specialized contexts
+
+Descriptions of dependent observables may be contextualized to specialized contexts using the operation `within`, which cannot be used in queries or dependencies but can only appear in concept definitions and as observable targets of descriptions (`model <observable within context>`). It's important to realize the difference between the operators `of` and `within` in descriptions and queries. The operator `within` constrains an observable to be observed only within a particular context. So if a description is given that contains `within` in its observable, for example:
+
+<code for runoff within watershed> 
+
+k.LAB will use it to resolve the same observable in its natural context, in the absence of a more direct strategy, if and only if:
+
+. the context observable after `within` specializes the current context of the query; otherwise, the description is not a suitable candidate for its resolution. In the example above, `hydrology:RunoffWaterVolume` is contextualized to earth:Location, and a RiverBasin is a Location so compatibility is guaranteed; 
+. no description is found that is directly applicable to the current context (such as a direct model of `hydrology:RunoffWaterVolume`);
+. the resolution of the specialized context (`hydrology:RiverBasin`) is successful in the original context.
+
+When the k.LAB resolver only finds a satisfiable specialized description to resolve a query for the unconstrained observable _in a compatible context_, it first resolves the context observable (always an _independent_, countable observable), then makes the observation of the observable `within` each of the instances obtained using the description, and finally merges the results into a final observation contextualized to the original context. The final observation will retain its semantics (without `of hydrology:RiverBasin` operator) _because_ of the semantic compatibility constraint between the recontextualized description and the original context. So if the `hydrology:RunoffWaterVolume` observable observed in a `earth:Region`is modeled in a description of `hydrology:RunoffWaterVolume within hydrology:HydrologicallyCorrected earth:RiverBasin`, the final `hydrology:RunoffWaterVolume` observation, obtained by merging results computed in each river basin within the region, will retain its original semantics (implicitly `within earth:Region`) because a RiverBasin is a Region, therefore it satisfies the observation as a precondition to choose the model.
+
