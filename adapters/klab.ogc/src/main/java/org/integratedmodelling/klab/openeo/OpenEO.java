@@ -18,7 +18,7 @@ public class OpenEO {
 
     private Authorization authorization;
     private String endpoint;
-    
+
     public static class ProcessNode {
 
         private String process_id;
@@ -88,7 +88,9 @@ public class OpenEO {
     }
 
     /**
-     * Validate a process and submit it if valid. Return false if not.
+     * Validate a process and submit it if valid, passing control to callbacks. Return false if
+     * process validation fails. Validation is on the back-end and synchronous, execution is
+     * asynchronous.
      * 
      * @param process
      * @param resultHandler
@@ -96,6 +98,14 @@ public class OpenEO {
      * @return
      */
     public boolean submit(Process process, Consumer<Map<String, Object>> resultHandler, Consumer<String> errorHandler) {
+
+        /*
+         * for the time being this is synchronous
+         */
+        if (!validateProcess(process)) {
+            return false;
+        }
+
         return false;
     }
 
@@ -106,12 +116,12 @@ public class OpenEO {
     public static void main(String[] args) {
 
         Authorization authorization = new Authorization(Authentication.INSTANCE.getCredentials("https://openeo.vito.be"));
-        
+
         OpenEO openEO = new OpenEO("https://openeo.vito.be", authorization);
         String processDefinition = "{\r\n" + "    \"zumba\": {\r\n" + "        \"process_id\": \"add\",\r\n"
                 + "        \"arguments\": {\"x\": 3, \"y\": 5},\r\n" + "        \"result\": true\r\n" + "    }\r\n" + "}";
         Process process = JsonUtils.parseObject(processDefinition, Process.class);
-        
+
         if (openEO.validateProcess(process)) {
             String job = openEO.createJob(process, "Putanada", "Niente descrizione", "no plan", 0);
             if (job != null) {
