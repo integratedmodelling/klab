@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class OpenEOResourceValidator implements IResourceValidator {
 
@@ -51,7 +52,14 @@ public class OpenEOResourceValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        // TODO Auto-generated method stub
+
+        if (resource == null) {
+            return false;
+        }
+        String extension = MiscUtilities.getFileExtension(resource);
+        if (extension != null) {
+            return extension.toLowerCase().equals("json");
+        }
         return false;
     }
 

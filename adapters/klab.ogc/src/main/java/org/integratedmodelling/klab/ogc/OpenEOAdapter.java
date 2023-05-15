@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.openeo.OpenEOImporter;
 import org.integratedmodelling.klab.openeo.OpenEOResourcePublisher;
 import org.integratedmodelling.klab.openeo.OpenEOResourceValidator;
 
-@ResourceAdapter(type = OpenEOAdapter.ID, version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false)
+@ResourceAdapter(type = OpenEOAdapter.ID, version = Version.CURRENT, canCreateEmpty = true, handlesFiles = true)
 public class OpenEOAdapter implements IResourceAdapter {
 
     public static final String ID = "openeo";
@@ -64,4 +64,5 @@ public class OpenEOAdapter implements IResourceAdapter {
                 null));
     }
 
+    
 }
