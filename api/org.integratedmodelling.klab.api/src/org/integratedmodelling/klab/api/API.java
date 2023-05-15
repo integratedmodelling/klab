@@ -417,6 +417,10 @@ public interface API {
          * Base URL path for revoking an agreement of a user by id.
          */
         public static final String USER_REVOKE_AGREEMENT_ID = USER_BASE_ID + "/revoke-agreement/{agreement-id}";
+        /**
+         * Base URL path for user resources on the hub.
+         */
+        public static final String CUSTOM_PROPERTIES = API_BASE + "/custom-properties";
 
         public static interface PARAMETERS {
             /**

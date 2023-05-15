@@ -2,11 +2,13 @@ package org.integratedmodelling.klab.rest;
 
 import java.util.Objects;
 
+
 /**
  * Custom properties with visibility field
  * @author Enrico Girotto
  *
  */
+
 public class CustomProperty {
     
     private String key;
