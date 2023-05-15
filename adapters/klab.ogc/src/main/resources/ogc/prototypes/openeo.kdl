@@ -2,20 +2,13 @@
  * Parameters accepted in a raster resource
  */
  annotation openeo // TODO 	
-	"The WCS adapter is used to create WCS (Web Coverage Service) spatial coverages, supporting servers implementing version 2.0.1 of the WCS standard." 	
-	label "WCS protocol adapter (OGC v2.0.1)" 	
+	"The OpenEO adapter wraps an OpenEO process definition in an imported process.json file." 	
+	label "OpenEO User Process adapter" 	
  {
 
  	final text 'serviceUrl'
  		"The URL of the service providing the data."
- 		
- 	final text 'wcsIdentifier'
- 		"The identifier of the WCS layer, including the namespace if the WCS server needs it."
-
-	final text 'wcsVersion'
- 		"The WCS version for the requests. Currently only 2.0.1 is supported as previous versions do not communicate enough information."
- 	 	default "2.0.1"
- 	 		
+ 		 	 		
  	optional number band
  		"The band for a multi-band raster. Default is 0."
  		default 0
