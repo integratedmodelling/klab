@@ -104,7 +104,7 @@ public class Client extends RestTemplate implements IClient {
 
     ObjectMapper objectMapper;
     String authToken;
-
+    MediaType contentType = MediaType.APPLICATION_JSON;
     RestTemplate basicTemplate;
     private Set<String> endpoints = new HashSet<>();
 
@@ -130,6 +130,12 @@ public class Client extends RestTemplate implements IClient {
         }
 
         return new Client(factory);
+    }
+    
+    public static Client createJson() {
+        Client ret = create();
+        ret.setup();
+        return ret;
     }
 
     /**
@@ -308,6 +314,7 @@ public class Client extends RestTemplate implements IClient {
         this.objectMapper = client.objectMapper;
         this.endpoints = client.endpoints;
         this.authToken = client.authToken;
+        this.contentType = client.contentType;
         setup();
     }
 
@@ -315,6 +322,12 @@ public class Client extends RestTemplate implements IClient {
         super(factory);
     }
 
+    public Client withContentType(MediaType contentType) {
+        Client ret = new Client(this);
+        ret.contentType = contentType;
+        return ret;
+    }
+    
     /**
      * Return a client with authorization set to the passed object.
      * 
@@ -346,7 +359,7 @@ public class Client extends RestTemplate implements IClient {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         if (data != null) {
-            headers.setContentType(MediaType.APPLICATION_JSON);
+            headers.setContentType(contentType);
         }
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
         if (authToken != null) {

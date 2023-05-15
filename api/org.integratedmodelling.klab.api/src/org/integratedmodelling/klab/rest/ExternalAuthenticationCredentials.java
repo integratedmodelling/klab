@@ -6,12 +6,15 @@ import java.util.List;
 public class ExternalAuthenticationCredentials {
 
 	/**
-	 * Credentials, depending on scheme (e.g. for BASIC will be username and password)
+	 * Credentials, depending on scheme 
+	 * 
+	 * for BASIC: username and password
+	 * for OAUTH2: Authentication URL, grant type, client ID, client secret, scope
 	 */
 	private List<String> credentials = new ArrayList<>();
 
 	/**
-	 * one of BASIC, DIGEST, SSL, NTLM, ANY
+	 * one of BASIC, DIGEST, SSL, NTLM, OAUTH2, ANY
 	 */
 	private String scheme = "BASIC";
 

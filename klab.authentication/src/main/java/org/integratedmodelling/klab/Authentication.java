@@ -416,6 +416,10 @@ public enum Authentication implements IAuthenticationService {
 
         return ret;
     }
+    
+    public ExternalAuthenticationCredentials getCredentials(String hostUrl) {
+        return externalCredentials.get(hostUrl);
+    }
 
     /**
      * Return a new credential provider that knows the credentials saved into the k.LAB database and
@@ -499,6 +503,8 @@ public enum Authentication implements IAuthenticationService {
         externalCredentials.put(host, credentials);
         externalCredentials.write();
     }
+    
+    
 
     public IUserIdentity getUserIdentity(Principal principal) {
         if (principalTranslator != null) {
