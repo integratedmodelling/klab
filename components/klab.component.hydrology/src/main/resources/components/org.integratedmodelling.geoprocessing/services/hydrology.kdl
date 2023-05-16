@@ -496,7 +496,7 @@ export number floodlevels
 	
 {
 	import number elevation
-		"The DEM to correct"
+		"The DEM"
 		
 	import number seeds
 	    "The original water levels"
