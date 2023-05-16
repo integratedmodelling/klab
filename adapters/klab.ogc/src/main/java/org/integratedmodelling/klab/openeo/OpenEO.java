@@ -59,6 +59,9 @@ public class OpenEO {
         }
     }
 
+    /*
+     * In addition to processing steps, it should have the fields for parameters, title, etc.
+     */
     public static class Process extends LinkedHashMap<String, ProcessNode> {
         private static final long serialVersionUID = -7734440696956959927L;
     }
@@ -115,9 +118,10 @@ public class OpenEO {
 
     public static void main(String[] args) {
 
-        Authorization authorization = new Authorization(Authentication.INSTANCE.getCredentials("https://openeo.vito.be"));
+        Authorization authorization = new Authorization(
+                Authentication.INSTANCE.getCredentials("https://openeo.vito.be/openeo/1.1.0"), "oidc/terrascope");
 
-        OpenEO openEO = new OpenEO("https://openeo.vito.be", authorization);
+        OpenEO openEO = new OpenEO("https://openeo.vito.be/openeo/1.1.0", authorization);
         String processDefinition = "{\r\n" + "    \"zumba\": {\r\n" + "        \"process_id\": \"add\",\r\n"
                 + "        \"arguments\": {\"x\": 3, \"y\": 5},\r\n" + "        \"result\": true\r\n" + "    }\r\n" + "}";
         Process process = JsonUtils.parseObject(processDefinition, Process.class);

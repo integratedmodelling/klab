@@ -5,6 +5,7 @@ import java.util.Base64;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 
 import kong.unirest.HttpResponse;
@@ -31,12 +32,29 @@ public class Authorization {
     private String prefix;
     private String tokenType;
 
+    /**
+     * Create a new authorization. {@link #isOnline()} should be called after creation.
+     * 
+     * @param credentials
+     * @param prefix prepended to the auth token returned by {@link #getAuthorization()}. Normally
+     *        used for OpenID providers that need the authentication method and the provider (e.g.
+     *        oidc/provider).
+     */
     public Authorization(ExternalAuthenticationCredentials credentials, String prefix) {
         this(credentials);
         this.prefix = prefix;
     }
 
+    /**
+     * Create a new authorization. {@link #isOnline()} should be called after creation.
+     * 
+     * @param credentials
+     */
     public Authorization(ExternalAuthenticationCredentials credentials) {
+
+        if (credentials == null) {
+            throw new KlabIllegalArgumentException("attempted authorization with null credentials");
+        }
 
         this.credentials = credentials;
 
@@ -50,7 +68,17 @@ public class Authorization {
         }
     }
 
+    /**
+     * Check if the last authentication attempt went well.
+     * 
+     * @return
+     */
+    public boolean isOnline() {
+        return token != null;
+    }
+
     private void refreshToken() {
+        
         /*
          * authenticate and get the first token. Credentials should contain: 0. Auth endpoint 1.
          * grant type 2. client ID 3. client secret 4. scope
@@ -87,7 +115,18 @@ public class Authorization {
     }
 
     /**
-     * Return the authorization token for the Authorization: header.
+     * The raw authorization token with no auth method or prefix. May be null if {@link #isOnline()}
+     * returns false.
+     * 
+     * @return
+     */
+    public String getToken() {
+        return this.token;
+    }
+
+    /**
+     * Return the authorization token for the Authorization: header. Includes the auth method (e.g.
+     * Basic, Bearer) and any prefix passed at construction.
      * 
      * @return
      */

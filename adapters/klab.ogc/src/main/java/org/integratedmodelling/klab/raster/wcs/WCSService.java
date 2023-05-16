@@ -486,6 +486,22 @@ public class WCSService {
         }
     }
 
+    public static void main(String[] args) {
+
+        /*
+         * TODO: for 1.0, just get the layer names from the capabilities, then use describeCoverage
+         * on all at the beginning.
+         */
+        WCSService service = new WCSService("https://www.geo.euskadi.eus/WCS_KARTOGRAFIA", Version.create("1.0.0"));
+        for (WCSLayer layer : service.getLayers()) {
+            System.out.println(layer);
+            // this fuck wants
+            // https://www.geo.euskadi.eus/geoeuskadi/services/U11/WCS_KARTOGRAFIA/MapServer/WCSServer?SERVICE=WCS&VERSION=1.0.0&REQUEST=DescribeCoverage&COVERAGE=1
+            layer.describeCoverage();
+            System.out.println(layer);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public WCSService(String serviceUrl, Version version) {
 
@@ -500,8 +516,14 @@ public class WCSService {
 
         if (db == null) {
 
-            File dpath = Configuration.INSTANCE
-                    .getDataPath("ogc/wcs/" + Klab.INSTANCE.getRootIdentity().getIdentityType().name().toLowerCase());
+            /*
+             * anonymous is for testing only
+             */
+            String identity = Klab.INSTANCE.getRootIdentity() == null
+                    ? "anonymous"
+                    : Klab.INSTANCE.getRootIdentity().getIdentityType().name().toLowerCase();
+
+            File dpath = Configuration.INSTANCE.getDataPath("ogc/wcs/" + identity);
             dpath.mkdirs();
 
             db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown().transactionEnable()
@@ -554,38 +576,49 @@ public class WCSService {
                 String content = IOUtils.toString(input, StandardCharsets.UTF_8);
                 Map<?, ?> capabilitiesType = (Map<?, ?>) U.fromXmlMap(content);
 
-                // JXPathContext context = JXPathContext.newContext(capabilitiesType);
-                // System.out.println(MapUtils.dump(capabilitiesType) + "");
-                for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
-                        Collection.class)) {
-                    Map<String, Object> item = (Map<String, Object>) o;
-                    Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
-                    if (name != null) {
-                        identifiers.add(name.toString());
+                if (version.getMajor() == 1) {
+
+                    /*
+                     * TODO get the POS array at CoverageOfferingBrief, then use describeCoverage on
+                     * each new layer. ArcShit will have NUMBERS as layer IDs, with just labels and
+                     * envelope (projection in srsName).
+                     */
+
+                } else {
+
+                    // JXPathContext context = JXPathContext.newContext(capabilitiesType);
+                    // System.out.println(MapUtils.dump(capabilitiesType) + "");
+                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                            Collection.class)) {
+                        Map<String, Object> item = (Map<String, Object>) o;
+                        Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
+                        if (name != null) {
+                            identifiers.add(name.toString());
+                        }
                     }
-                }
 
-                for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
-                        Collection.class)) {
+                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                            Collection.class)) {
 
-                    Map<String, Object> item = (Map<String, Object>) o;
+                        Map<String, Object> item = (Map<String, Object>) o;
 
-                    Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
-                    Object bbox = item.get(WGS84_BOUNDING_BOX);
+                        Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
+                        Object bbox = item.get(WGS84_BOUNDING_BOX);
 
-                    if (name instanceof String && bbox instanceof Map) {
+                        if (name instanceof String && bbox instanceof Map) {
 
-                        WCSLayer layer = new WCSLayer(skipRefresh);
+                            WCSLayer layer = new WCSLayer(skipRefresh);
 
-                        layer.name = name.toString();
-                        double[] upperCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(),
-                                "\\s+");
-                        double[] lowerCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(LOWER_CORNER).toString(),
-                                "\\s+");
-                        layer.wgs84envelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
-                                Projection.getLatLon());
+                            layer.name = name.toString();
+                            double[] upperCorner = NumberUtils
+                                    .doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(), "\\s+");
+                            double[] lowerCorner = NumberUtils
+                                    .doubleArrayFromString(((Map<?, ?>) bbox).get(LOWER_CORNER).toString(), "\\s+");
+                            layer.wgs84envelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
+                                    Projection.getLatLon());
 
-                        layers.put(layer.name, layer);
+                            layers.put(layer.name, layer);
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -648,9 +681,7 @@ public class WCSService {
 
                 s = serviceUrl + "?service=WCS&version=" + version + "&request=GetCoverage&coverage="
                         + layer.getRequestIdentifier() + "&bbox=" + west + "," + south + "," + east + "," + north + "&crs="
-                        + crs.getSimpleSRS() 
-                        + "&responseCRS=" + crs.getSimpleSRS()
-                        + "&width=" + xc + "&height=" + yc
+                        + crs.getSimpleSRS() + "&responseCRS=" + crs.getSimpleSRS() + "&width=" + xc + "&height=" + yc
                         + "&format=" + "GeoTIFF";
 
             } else {
