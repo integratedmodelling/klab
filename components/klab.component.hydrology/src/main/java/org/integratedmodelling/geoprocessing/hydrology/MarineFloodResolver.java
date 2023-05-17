@@ -124,12 +124,12 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 				for (int cnear = -1; cnear <= 1; cnear++) {
 
 					// check if not out of boundaries
-					if ((((cl + cnear) > 0) && ((cl + cnear) < cols) && ((rw + rnear) > 0)) && ((rw + rnear) < rows)
+					if ((((cl + cnear) >= 0) && ((cl + cnear) < cols) && ((rw + rnear) >= 0)) && ((rw + rnear) < rows)
 							&& (newElevations[cl + cnear][rw + rnear] != Double.NaN)) {
 
 						if ((newElevations[cl + cnear][rw + rnear] < val)) {
 
-							newElevations[cl + cnear][rw + rnear] = newElevations[cl + cnear][rw + rnear] + val;
+							newElevations[cl + cnear][rw + rnear] = val;
 
 							lst1 = new double[3];
 							lst1[0] = rw + rnear;
