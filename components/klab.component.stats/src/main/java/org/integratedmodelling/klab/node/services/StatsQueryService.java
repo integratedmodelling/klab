@@ -93,7 +93,8 @@ public class StatsQueryService {
                     " AND start_time < " + request.getTo() + ";";
             break;
             default:
-            query = "SELECT * FROM assets;";
+            	query = "SELECT DISTINCT outcome, COUNT(outcome) "
+                        + "OVER (PARTITION BY outcome) AS instances FROM assets;";
         }
         long n = stats.getDatabase().scan(query, (result) -> {
             StatsQuery queryStats = new StatsQuery(result, request.getQueryType());
