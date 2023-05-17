@@ -56,7 +56,7 @@ public class StatsNodeController {
         Collection<NodeReference> nodes = NodeNetworkManager.INSTANCE.getNodeReferences();
         for (NodeReference node : nodes) {
             Node authNode = new Node(node, token);
-            NodeCapabilities nc = authNode.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
+            // NodeCapabilities nc = authNode.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
             //if (nc.getResourceAdapters().contains("stats")) {
             if (authNode.getName().equals("im.stats")) {
             // TODO there should be just one, or we should be able to pick the one in our
