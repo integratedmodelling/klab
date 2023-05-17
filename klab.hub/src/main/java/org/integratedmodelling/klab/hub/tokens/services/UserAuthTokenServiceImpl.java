@@ -108,10 +108,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		LoginResponse response;
 		if (remote) {
 		    profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
-		    response = new LoginResponse(token, profile, remote);
-		} else {
-		    response = new LoginResponse(token, profile.getSafeProfile(), false);
 		}
+		response = new LoginResponse(token, profile.getSafeProfile(), remote);
 		return response;
 	}
 
