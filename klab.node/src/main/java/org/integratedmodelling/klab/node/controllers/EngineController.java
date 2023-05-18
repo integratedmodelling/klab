@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.node.Node;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
+import org.integratedmodelling.klab.node.utils.PublicCapability;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
@@ -65,6 +66,11 @@ public class EngineController {
 		return ret;
 	}
 
+
+    private boolean isPublicCapability(ResourceAdapterReference adapter) {
+        return PublicCapability.isPublicCapability(adapter.getName());
+    }
+	
 	/**
 	 * In a node, the capabilities endpoint is secured and the result depends on the
 	 * authorized privileges.
@@ -86,7 +92,7 @@ public class EngineController {
 			// check if the adapter is authorized for this user
 			String authorized = Configuration.INSTANCE
 					.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
-			if (isAuthorized(user, authorized)) {
+            if (isAuthorized(user, authorized) || isPublicCapability(adapter)) {
 				ret.getResourceAdapters().add(adapter);
 				if (adapter.isUniversal()) {
 					IUrnAdapter uad = Resources.INSTANCE.getUrnAdapter(adapter.getName());

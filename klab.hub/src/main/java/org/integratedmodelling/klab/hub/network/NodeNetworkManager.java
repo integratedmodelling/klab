@@ -25,7 +25,10 @@ import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 public enum NodeNetworkManager implements INetworkService {
 	
@@ -137,7 +140,26 @@ public enum NodeNetworkManager implements INetworkService {
 		return ret;
 	}
 	
-	
+    private void retrieveNodeCapabilities(INodeIdentity node) {
+        if (!(node instanceof Node)) {
+            return;
+        }
+        if (!((Node)node).getAdapters().isEmpty()) {
+            return;
+        }
+
+        RestTemplate restTemplate = new RestTemplate();
+        ((Node)node).getUrls().forEach(url -> {
+            try {
+                ResponseEntity<NodeCapabilities> responseEntity = restTemplate.getForEntity(url + API.CAPABILITIES, NodeCapabilities.class);
+                ((Node)node).mergeCapabilities(responseEntity.getBody());
+                return;
+            } catch (RestClientException e) {
+                // no need to manage the exception, just try the next URL
+            }
+        });
+    }
+
     public void notifyAuthorizedNode(INodeIdentity node, boolean online) {
         node.getClient();
         if (getNodes().contains(node)) {
@@ -165,6 +187,7 @@ public enum NodeNetworkManager implements INetworkService {
 		for (NodeReference ref : nodes) {
 			Node node = new Node(ref,null);
 			node.getClient();
+            retrieveNodeCapabilities(node);
 			try {
 				if(node.ping()) {
 					Logging.INSTANCE.info("Node Online: " + node.getName());
@@ -185,7 +208,7 @@ public enum NodeNetworkManager implements INetworkService {
             onlineNodes.remove(iNode.getName());
         }
         synchronized (offlineNodes) {
-            offlineNodes.putIfAbsent(iNode.getName(), iNode);
+            offlineNodes.put(iNode.getName(), iNode);
         }
     }
 
@@ -194,7 +217,7 @@ public enum NodeNetworkManager implements INetworkService {
             offlineNodes.remove(node.getName());
         }
         synchronized (onlineNodes) {
-            onlineNodes.putIfAbsent(node.getName(), node);
+            onlineNodes.put(node.getName(), node);
         }
     }
 }
