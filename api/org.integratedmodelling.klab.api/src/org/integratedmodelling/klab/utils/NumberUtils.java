@@ -191,29 +191,23 @@ public class NumberUtils {
 		long[] lret = new long[pods.length];
 		float[] fret = new float[pods.length];
 		boolean[] bret = new boolean[pods.length];
-		int nd = 0, ni = 0;
 		int cl = 0;
 		for (int i = 0; i < pods.length; i++) {
 			if (pods[i] instanceof Double) {
 				cl = 1;
 				dret[i] = (Double) pods[i];
-				nd++;
 			} else if (pods[i] instanceof Integer) {
 				cl = 2;
 				iret[i] = (Integer) pods[i];
-				ni++;
 			} else if (pods[i] instanceof Long) {
 				cl = 3;
 				lret[i] = (Long) pods[i];
-				ni++;
 			} else if (pods[i] instanceof Float) {
 				cl = 4;
 				fret[i] = (Float) pods[i];
-				ni++;
 			} else if (pods[i] instanceof Boolean) {
 				cl = 5;
 				bret[i] = (Boolean) pods[i];
-				ni++;
 			}
 		}
 		
@@ -272,32 +266,6 @@ public class NumberUtils {
 		}
 
 		return ret;
-	}
-
-	public static double sumWithoutNan(double[] data) {
-		double ret = 0;
-		for (double v : data) {
-			if (!Double.isNaN(v)) {
-				if (!Double.isNaN(v)) {
-					ret += v;
-				}
-			}
-		}
-		return ret;
-	}
-
-	public static double averageWithoutNan(double[] data) {
-		int n = 0;
-		double ret = 0;
-		for (double v : data) {
-			if (!Double.isNaN(v)) {
-				if (!Double.isNaN(v)) {
-					ret += v;
-					n++;
-				}
-			}
-		}
-		return ret / (double) n;
 	}
 
 	public static Number convertNumber(Number object, Class<?> cls) {
