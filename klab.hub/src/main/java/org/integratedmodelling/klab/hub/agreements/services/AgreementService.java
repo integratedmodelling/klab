@@ -16,6 +16,8 @@ public abstract interface AgreementService {
     Agreement createAgreement(AgreementType agreementType, AgreementLevel agreementLevel);
 
     Set<Agreement> updateAgreementValidDate(Set<Agreement> agreements, Date validDate);
+
+    Agreement updateAgreement(Agreement agreement);
     
 
 }

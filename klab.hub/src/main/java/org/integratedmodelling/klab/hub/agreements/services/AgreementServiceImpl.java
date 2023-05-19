@@ -145,4 +145,9 @@ public class AgreementServiceImpl implements AgreementService {
 
         return agreements;
     }
+
+    @Override
+    public Agreement updateAgreement(Agreement agreement) {
+        return new UpdateAgreement(agreement, agreementRepository).execute();
+    }
 }

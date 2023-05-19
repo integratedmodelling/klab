@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +19,20 @@ public class GroupRequestTask extends ModifyGroupsTask{
 	@Component
 	public static class Command extends TaskCommand {
 		
-		@Autowired
-		private UserRepository userRepository;
 		
-		@Override
+		private UserRepository userRepository;
+		private AgreementService agreementService;
+
+		@Autowired
+		public Command(UserRepository userRepository, AgreementService agreementService) {
+            super();
+            this.userRepository = userRepository;
+            this.agreementService = agreementService;
+        }
+
+
+
+        @Override
 		public void executeAccept(Task task) {
 			GroupRequestTask grt = (GroupRequestTask)task;
 			User user = userRepository.findByNameIgnoreCase(grt.getUsername()).get();
@@ -69,8 +80,9 @@ public class GroupRequestTask extends ModifyGroupsTask{
 				}
 			}
 			if (added) {
-				user.getAgreements().stream().findFirst().get().getAgreement().setGroupEntries(currentGroupEntries);
-				userRepository.save(user);
+			    Agreement agreement = user.getAgreements().stream().findFirst().get().getAgreement();
+			    agreement.setGroupEntries(currentGroupEntries);
+			    agreementService.updateAgreement(agreement);
 			} else {
 				task.addToLog("No group(s) added");
 			}

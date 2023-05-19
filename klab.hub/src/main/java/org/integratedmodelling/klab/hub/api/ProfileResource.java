@@ -260,6 +260,7 @@ public class ProfileResource implements OAuth2User{
 				cleanGroup.setName(unsafeGroup.getName());
 				cleanGroup.setDependsOn(unsafeGroup.getDependsOn());
 				cleanGroup.setWorldview(unsafeGroup.isWorldview());
+				cleanGroup.setDescription(unsafeGroup.getDescription());
 				entry.setGroup(cleanGroup);
 				safeGroups.add(entry);
 			}

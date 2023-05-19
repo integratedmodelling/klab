@@ -156,5 +156,4 @@ public class MongoGroup extends GenericModel {
     public void setCustomProperties(Set<CustomProperty> customProperties) {
         this.customProperties = customProperties;
     }
-
 }
