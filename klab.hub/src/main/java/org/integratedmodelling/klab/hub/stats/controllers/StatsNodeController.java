@@ -2,25 +2,20 @@ package org.integratedmodelling.klab.hub.stats.controllers;
 //package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
-import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
-import org.integratedmodelling.klab.hub.stats.services.StatsNodeService;
-import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.StatsNodeRequest;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -48,28 +43,16 @@ public class StatsNodeController {
     @PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getOutput(@RequestHeader("Authentication") String token, Principal principal,@Valid StatsNodeRequest request)
                                     throws JsonProcessingException {
-            //throws UnsupportedEncodingException {
-        
         RestTemplate restTemplate = new RestTemplate();
-        Node statsNode = null;
+        Optional<INodeIdentity> statsNode  = NodeNetworkManager.INSTANCE.getNodes().stream()
+                .filter(node -> node.isOnline() && !node.getAdapters().isEmpty()).collect(Collectors.toUnmodifiableList())
+                .stream().filter(n -> n.getAdapters().contains("stats")).findFirst();
 
-        Collection<NodeReference> nodes = NodeNetworkManager.INSTANCE.getNodeReferences();
-        for (NodeReference node : nodes) {
-            Node authNode = new Node(node, token);
-            // NodeCapabilities nc = authNode.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
-            //if (nc.getResourceAdapters().contains("stats")) {
-            if (authNode.getName().equals("im.stats")) {
-            // TODO there should be just one, or we should be able to pick the one in our
-            // federated hub. See what to do if the field isn't null.
-                statsNode = authNode;
-                break;
-            }
-        }
-        if (statsNode == null) {
+        // TODO there should be just one, or we should be able to pick the one in our
+        if (statsNode.isEmpty()) {
             return null;
         }
-        String url = statsNode.getUrls().iterator().next();
-        //INodeIdentity node = getStatisticsServer();
+        String url = ((Node)statsNode.get()).getUrls().iterator().next();
         
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
@@ -106,7 +89,6 @@ public class StatsNodeController {
                 params
         );
         
-        return response;            
- 
+        return response;
     }
 }
