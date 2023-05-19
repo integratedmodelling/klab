@@ -91,12 +91,16 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 				}
 		}
 
+	
+	try {		
+		
+		
 		for (int row = 0; row < rows; row++) {
 			for (int col = 0; col < cols; col++) {
 
 				double watValue = seedsRaster.getValue(col, row);
 
-				if (((!seedsRaster.isNovalue(watValue)) && (watValue >= 0))) {
+				if ((!seedsRaster.isNovalue(watValue)) && (watValue >= 0) && (elevations[col][row] < watValue)) {
 
 					lst = new double[3];
 					lst[0] = row;
@@ -107,11 +111,13 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 				}
 			}
 		}
+		
+		seedsRaster.close();
+		demRaster.close();
+		
 		int i = 0;
 
-		int size = (int) inWatLev.size();
-
-		while (i < size) {
+		while (inWatLev.size() != 0) {
 
 			int rw = (int) inWatLev.get(i)[0];
 
@@ -124,7 +130,8 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 				for (int cnear = -1; cnear <= 1; cnear++) {
 
 					// check if not out of boundaries
-					if ((((cl + cnear) >= 0) && ((cl + cnear) < cols) && ((rw + rnear) >= 0)) && ((rw + rnear) < rows)
+					if ((((cl + cnear) >= 0) && (cl + cnear) < cols) && ((rw + rnear) >= 0) && ((rw + rnear) < rows)
+							&& ((cl != 0) && (rw != 0))
 							&& (newElevations[cl + cnear][rw + rnear] != Double.NaN)) {
 
 						if ((newElevations[cl + cnear][rw + rnear] < val)) {
@@ -137,19 +144,18 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 							lst1[2] = val;
 							inWatLev.add(lst1);
 
-							size++;
-
 						}
 					}
 					
 				 }
-
-					i++;
-
+	
 			   }
+			
+			 inWatLev.remove(i);
+			
 			}
 
-				try {
+
 
 					for (int frow = 0; frow < rows; frow++) {
 						for (int fcol = 0; fcol < cols; fcol++) {
@@ -169,9 +175,8 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 					
 					finalWatLevCov = finalWatLev.buildCoverage();
 					finalWatLev.close();
-					demRaster.close();
-					seedsRaster.close();
-
+					
+					
 
 				} catch (Exception e) {
 					
