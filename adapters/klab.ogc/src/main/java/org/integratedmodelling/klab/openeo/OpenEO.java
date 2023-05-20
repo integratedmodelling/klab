@@ -6,6 +6,7 @@ import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.auth.Authorization;
+import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.JsonUtils;
 
 /**
@@ -16,127 +17,140 @@ import org.integratedmodelling.klab.utils.JsonUtils;
  */
 public class OpenEO {
 
-    private Authorization authorization;
-    private String endpoint;
+	private Authorization authorization;
+	private String endpoint;
 
-    public static class ProcessNode {
+	public static class ProcessNode {
 
-        private String process_id;
-        private String namespace;
-        private String description;
-        private boolean result;
-        private Map<String, Object> arguments;
+		private String process_id;
+		private String namespace;
+		private String description;
+		private boolean result;
+		private Map<String, Object> arguments;
 
-        public String getProcess_id() {
-            return process_id;
-        }
-        public void setProcess_id(String process_id) {
-            this.process_id = process_id;
-        }
-        public String getNamespace() {
-            return namespace;
-        }
-        public void setNamespace(String namespace) {
-            this.namespace = namespace;
-        }
-        public String getDescription() {
-            return description;
-        }
-        public void setDescription(String description) {
-            this.description = description;
-        }
-        public boolean isResult() {
-            return result;
-        }
-        public void setResult(boolean result) {
-            this.result = result;
-        }
-        public Map<String, Object> getArguments() {
-            return arguments;
-        }
-        public void setArguments(Map<String, Object> arguments) {
-            this.arguments = arguments;
-        }
-    }
+		public String getProcess_id() {
+			return process_id;
+		}
 
-    /*
-     * In addition to processing steps, it should have the fields for parameters, title, etc.
-     */
-    public static class Process extends LinkedHashMap<String, ProcessNode> {
-        private static final long serialVersionUID = -7734440696956959927L;
-    }
+		public void setProcess_id(String process_id) {
+			this.process_id = process_id;
+		}
 
-    public OpenEO(String endpoint, Authorization authorization) {
-        this.endpoint = endpoint;
-        this.authorization = authorization;
-    }
+		public String getNamespace() {
+			return namespace;
+		}
 
-    /**
-     * Create a job and return its ID. If a non-null string is returned, it can be passed to other
-     * job-related functions. The job is NOT started, just created on the back end.
-     * 
-     * @param process
-     * @param title
-     * @param description
-     * @param plan
-     * @param budget
-     * @return
-     */
-    public String createJob(Process process, String title, String description, String plan, int budget) {
-        return null;
-    }
+		public void setNamespace(String namespace) {
+			this.namespace = namespace;
+		}
 
-    public void startJob(String jobId, Consumer<Map<String, Object>> resultHandler, Consumer<String> errorHandler) {
+		public String getDescription() {
+			return description;
+		}
 
-    }
+		public void setDescription(String description) {
+			this.description = description;
+		}
 
-    /**
-     * Validate a process and submit it if valid, passing control to callbacks. Return false if
-     * process validation fails. Validation is on the back-end and synchronous, execution is
-     * asynchronous.
-     * 
-     * @param process
-     * @param resultHandler
-     * @param errorHandler
-     * @return
-     */
-    public boolean submit(Process process, Consumer<Map<String, Object>> resultHandler, Consumer<String> errorHandler) {
+		public boolean isResult() {
+			return result;
+		}
 
-        /*
-         * for the time being this is synchronous
-         */
-        if (!validateProcess(process)) {
-            return false;
-        }
+		public void setResult(boolean result) {
+			this.result = result;
+		}
 
-        return false;
-    }
+		public Map<String, Object> getArguments() {
+			return arguments;
+		}
 
-    public boolean validateProcess(Process process) {
-        return false;
-    }
+		public void setArguments(Map<String, Object> arguments) {
+			this.arguments = arguments;
+		}
+	}
 
-    public static void main(String[] args) {
+	/*
+	 * In addition to processing steps, it should have the fields for parameters,
+	 * title, etc.
+	 */
+	public static class Process extends LinkedHashMap<String, ProcessNode> {
+		private static final long serialVersionUID = -7734440696956959927L;
+	}
 
-        Authorization authorization = new Authorization(
-                Authentication.INSTANCE.getCredentials("https://openeo.vito.be/openeo/1.1.0"), "oidc/terrascope");
+	public OpenEO(String endpoint) {
+		this.endpoint = endpoint;
+		ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
+		if (credentials != null) {
+			// FIXME the prefix should be stored with the credentials
+			this.authorization = new Authorization(credentials, "oicd/terrascope");
+		}
+	}
 
-        OpenEO openEO = new OpenEO("https://openeo.vito.be/openeo/1.1.0", authorization);
-        String processDefinition = "{\r\n" + "    \"zumba\": {\r\n" + "        \"process_id\": \"add\",\r\n"
-                + "        \"arguments\": {\"x\": 3, \"y\": 5},\r\n" + "        \"result\": true\r\n" + "    }\r\n" + "}";
-        Process process = JsonUtils.parseObject(processDefinition, Process.class);
+	/**
+	 * Create a job and return its ID. If a non-null string is returned, it can be
+	 * passed to other job-related functions. The job is NOT started, just created
+	 * on the back end.
+	 * 
+	 * @param process
+	 * @param title
+	 * @param description
+	 * @param plan
+	 * @param budget
+	 * @return
+	 */
+	public String createJob(Process process, String title, String description, String plan, int budget) {
+		return null;
+	}
 
-        if (openEO.validateProcess(process)) {
-            String job = openEO.createJob(process, "Putanada", "Niente descrizione", "no plan", 0);
-            if (job != null) {
-                openEO.startJob(job, (result) -> {
-                    System.out.println(result);
-                }, (error) -> {
-                    System.err.println(error);
-                });
-            }
-        }
-        System.out.println("Hola");
-    }
+	public void startJob(String jobId, Consumer<Map<String, Object>> resultHandler, Consumer<String> errorHandler) {
+
+	}
+
+	/**
+	 * Validate a process and submit it if valid, passing control to callbacks.
+	 * Return false if process validation fails. Validation is on the back-end and
+	 * synchronous, execution is asynchronous.
+	 * 
+	 * @param process
+	 * @param resultHandler
+	 * @param errorHandler
+	 * @return
+	 */
+	public boolean submit(Process process, Consumer<Map<String, Object>> resultHandler, Consumer<String> errorHandler) {
+
+		/*
+		 * for the time being this is synchronous
+		 */
+		if (!validateProcess(process)) {
+			return false;
+		}
+
+		return false;
+	}
+
+	public boolean validateProcess(Process process) {
+		return false;
+	}
+
+	public static void main(String[] args) {
+
+		OpenEO openEO = new OpenEO("https://openeo.vito.be/openeo/1.1.0");
+		String processDefinition = "{\r\n" + "    \"zumba\": {\r\n" + "        \"process_id\": \"add\",\r\n"
+				+ "        \"arguments\": {\"x\": 3, \"y\": 5},\r\n" + "        \"result\": true\r\n" + "    }\r\n"
+				+ "}";
+		Process process = JsonUtils.parseObject(processDefinition, Process.class);
+
+		if (openEO.validateProcess(process)) {
+			String job = openEO.createJob(process, "Putanada", "Niente descrizione", "no plan", 0);
+			if (job != null) {
+				openEO.startJob(job, (result) -> {
+					System.out.println(result);
+				}, (error) -> {
+					System.err.println(error);
+				});
+			}
+		}
+		System.out.println("Hola");
+	}
 
 }
