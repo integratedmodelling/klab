@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.time.LocalDateTime;
-import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
@@ -47,7 +46,6 @@ public class GroupEntry {
 
     public LocalDateTime getExpiration() {
         return expiration;
-
     }
 
     public void setExpiration(LocalDateTime expiration) {
@@ -65,9 +63,21 @@ public class GroupEntry {
     public LocalDateTime getInception() {
         return start;
     }
-    
+
+    public boolean isValid() {
+        if (!isExpirable()) {
+            return true;
+        }
+        return !isExpired();
+    }
+
     public boolean isExpired() {
-        return this.expiration != null && this.expiration.isAfter(LocalDateTime.now());
+        return isExpirable() && this.expiration.isBefore(LocalDateTime.now());
+    }
+
+    public boolean isExpirable() {
+        // Groups with null expiration dates are the ones with no expiration date
+        return this.expiration != null;
     }
 
     public MongoGroup getGroup() {

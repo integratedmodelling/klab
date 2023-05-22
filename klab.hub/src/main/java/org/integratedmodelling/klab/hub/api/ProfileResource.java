@@ -191,7 +191,7 @@ public class ProfileResource implements OAuth2User{
 	    List<String> groupsIds = new ArrayList<>();
 	    //TODO Agreement list	    
 	    for (GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
-            if(grp != null && grp.getExpiration() != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
+            if(grp != null && grp.isValid()) {
                 groupsIds.add(grp.getGroup().getName());
             }
         }
@@ -203,7 +203,7 @@ public class ProfileResource implements OAuth2User{
 		//TODO Agreement list 
 
 		for (GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
-			if(grp != null && grp.getExpiration() != null && grp.getExpiration().isAfter(LocalDateTime.now())) {
+			if(grp != null && grp.isValid()) {
 
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
