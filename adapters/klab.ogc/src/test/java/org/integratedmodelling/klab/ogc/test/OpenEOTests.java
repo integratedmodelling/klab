@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ogc.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.integratedmodelling.klab.openeo.OpenEO;
 import org.integratedmodelling.klab.openeo.OpenEO.Process;
@@ -27,14 +28,8 @@ public class OpenEOTests {
 
         if (openEO.validateProcess(process, null)) {
             assertEquals(openEO.runJob(process, 0, null, Number.class), 8);
-
-            // if (job != null) {
-            // openEO.startJob(job, (result) -> {
-            // System.out.println(result);
-            // }, (error) -> {
-            // System.err.println(error);
-            // });
-            // }
+        } else {
+            fail("Validation of UDP failed");
         }
     }
 

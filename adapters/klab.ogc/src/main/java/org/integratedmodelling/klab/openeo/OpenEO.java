@@ -301,8 +301,6 @@ public class OpenEO {
         request.put("plan", plan);
         request.put("budget", budget <= 0 ? null : budget);
         
-        String dioboia = JsonUtils.printAsJson(request);
-        
         HttpResponse<String> response = Unirest.post(endpoint + "/result").contentType("application/json")
                 .header("Authorization", authorization.getAuthorization()).body(request).asString();
 
