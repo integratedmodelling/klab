@@ -2,23 +2,20 @@ package org.integratedmodelling.klab.hub.stats.controllers;
 //package org.integratedmodelling.klab.node.controllers;
 
 import java.security.Principal;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import javax.validation.Valid;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
-import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.StatsNodeRequest;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,20 +33,18 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 @CrossOrigin(origins = "*")
 //@Secured(Role.USER)
 public class StatsNodeController {
-    
-    public static final String STATS_SERVICE_ADAPTER_ID = "stats";
-    
+    private static final String STATS_SERVICE_ADAPTER_ID = "stats";
+
     private boolean nodeIsOnlineAndHasAdapter(INodeIdentity node, String adapterName) {
         return node.isOnline() && !node.getAdapters().isEmpty() && node.getAdapters().contains(adapterName);
     }
 
-    
     @GetMapping(value = API.STATS.STATS_OUTPUT, produces = {"application/json"})
     @PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getOutput(@RequestHeader("Authentication") String token, Principal principal,@Valid StatsNodeRequest request)
                                     throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
-        Optional<INodeIdentity> statsNode  = NodeNetworkManager.INSTANCE.getNodes().stream()
+        Optional<INodeIdentity> statsNode = NodeNetworkManager.INSTANCE.getNodes().stream()
                 .filter(node -> nodeIsOnlineAndHasAdapter(node, STATS_SERVICE_ADAPTER_ID))
                 .findFirst();
 
@@ -57,16 +52,15 @@ public class StatsNodeController {
         // federated hub. See what to do if the field isn't null.
 
         if (statsNode.isEmpty()) {
-            return null;
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         String url = ((Node)statsNode.get()).getUrls().iterator().next();
-        
+
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
         headers.set("Authentication", token);
         HttpEntity<?> entity = new HttpEntity<>(headers);
-       
-        
+
         String urlTemplate = UriComponentsBuilder.fromHttpUrl(url+"/"+API.STATS.STATS_OUTPUT)
                 .queryParam("queryType", "{queryType}")
                 .queryParam("top", "{top}")
@@ -77,7 +71,7 @@ public class StatsNodeController {
                 .queryParam("resolutionTimeMax", "{resolutionTimeMax}")
                 .encode()
                 .toUriString();
-        
+
         Map<String, Object> params = new HashMap<>();
         params.put("queryType", request.getQueryType());
         params.put("top", request.getTop());
@@ -87,7 +81,6 @@ public class StatsNodeController {
         params.put("resolutionTimeMin", request.getResolutionTimeMin());
         params.put("resolutionTimeMax", request.getResolutionTimeMax());
 
-        
         ResponseEntity<?> response = restTemplate.exchange(
                 urlTemplate,
                 HttpMethod.GET,
@@ -95,7 +88,7 @@ public class StatsNodeController {
                 String.class,
                 params
         );
-        
+
         return response;
     }
 }
