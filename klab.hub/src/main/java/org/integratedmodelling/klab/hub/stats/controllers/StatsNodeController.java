@@ -39,16 +39,23 @@ public class StatsNodeController {
     
     public static final String STATS_SERVICE_ADAPTER_ID = "stats";
     
+    private boolean nodeIsOnlineAndHasAdapter(INodeIdentity node, String adapterName) {
+        return node.isOnline() && !node.getAdapters().isEmpty() && node.getAdapters().contains(adapterName);
+    }
+
+    
     @GetMapping(value = API.STATS.STATS_OUTPUT, produces = {"application/json"})
     @PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getOutput(@RequestHeader("Authentication") String token, Principal principal,@Valid StatsNodeRequest request)
                                     throws JsonProcessingException {
         RestTemplate restTemplate = new RestTemplate();
         Optional<INodeIdentity> statsNode  = NodeNetworkManager.INSTANCE.getNodes().stream()
-                .filter(node -> node.isOnline() && !node.getAdapters().isEmpty()).collect(Collectors.toUnmodifiableList())
-                .stream().filter(n -> n.getAdapters().contains("stats")).findFirst();
+                .filter(node -> nodeIsOnlineAndHasAdapter(node, STATS_SERVICE_ADAPTER_ID))
+                .findFirst();
 
         // TODO there should be just one, or we should be able to pick the one in our
+        // federated hub. See what to do if the field isn't null.
+
         if (statsNode.isEmpty()) {
             return null;
         }
