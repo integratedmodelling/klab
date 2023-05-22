@@ -66,8 +66,6 @@ public class ProfileResource implements OAuth2User{
 
     public AccountStatus accountStatus;
     
-    // public String Token;
-
     private Collection<? extends GrantedAuthority> authorities;
     
     private Map<String, Object> attributes;
@@ -124,10 +122,6 @@ public class ProfileResource implements OAuth2User{
     public List<Role> getRoles() {
 		return roles;
 	}
-
-//	public void setToken(String token) {
-//		this.Token = token;
-//	}
 
     public String getJwtToken() {
         return jwtToken;
@@ -247,24 +241,8 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.roles = roles;
 		cleanedProfile.sendUpdates = sendUpdates;
 		cleanedProfile.serverUrl = serverUrl;
-		//cleanedProfile.Token = Token;
 		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
-		//TODO Agreement list 
-		List<GroupEntry> safeGroups = new ArrayList<>();
-		for (GroupEntry entry : cleanedProfile.getAgreements().get(0).getAgreement().getGroupEntries()) {
-			if(entry != null) {
-				MongoGroup cleanGroup = new MongoGroup();
-				MongoGroup unsafeGroup = entry.getGroup();
-				cleanGroup.setIconUrl(unsafeGroup.getIconUrl());
-				cleanGroup.setName(unsafeGroup.getName());
-				cleanGroup.setDependsOn(unsafeGroup.getDependsOn());
-				cleanGroup.setWorldview(unsafeGroup.isWorldview());
-				cleanGroup.setDescription(unsafeGroup.getDescription());
-				entry.setGroup(cleanGroup);
-				safeGroups.add(entry);
-			}
-		}
 		//TODO check
 		cleanedProfile.agreements = cleanedProfile.getAgreements();
 		return cleanedProfile;

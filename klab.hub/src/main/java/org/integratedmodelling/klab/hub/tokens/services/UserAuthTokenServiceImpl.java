@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
-import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
@@ -15,6 +14,7 @@ import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.commands.GetUserProfile;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
+import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
@@ -39,8 +39,6 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	private TokenRepository tokenRepository;
 	
 	private ObjectMapper objectMapper;
-	
-	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 	
 	public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
 			TokenRepository tokenRepository, ObjectMapper objectMapper) {
@@ -100,17 +98,17 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		}
 	}
 
-	@Override
+	@SuppressWarnings("rawtypes")
+    @Override
 	public LoginResponse getAuthResponse(String username, String password, boolean remote) {
 		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
 
-		LoginResponse response;
 		if (remote) {
-		    profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
-		}
-		response = new LoginResponse(token, profile.getSafeProfile(), remote);
-		return response;
+		    return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
+        } else {
+            return new LoginResponse<ProfileResource>(token, profile.getSafeProfile());
+        }
 	}
 
 	@Override
