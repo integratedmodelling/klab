@@ -1,14 +1,9 @@
 package org.integratedmodelling.klab.node.services;
 
-import java.sql.Timestamp;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Objects;
 
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.stats.StatsComponent;
 import org.integratedmodelling.stats.api.StatsQuery;
@@ -96,7 +91,7 @@ public class StatsQueryService {
             	query = "SELECT DISTINCT outcome, COUNT(outcome) "
                         + "OVER (PARTITION BY outcome) AS instances FROM assets;";
         }
-        long n = stats.getDatabase().scan(query, (result) -> {
+        stats.getDatabase().scan(query, (result) -> {
             StatsQuery queryStats = new StatsQuery(result, request.getQueryType());
             ret.add(queryStats);
         }); 

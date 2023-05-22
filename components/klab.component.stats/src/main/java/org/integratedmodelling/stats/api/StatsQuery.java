@@ -7,13 +7,8 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Objects;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * @author aris
@@ -252,11 +247,10 @@ public class StatsQuery {
         case "time_range":
             this.context_id = (String) queryParam.get("context_id");
             this.observable = (String) queryParam.get("observable");
-            this.start_time = (long) queryParam.get("start_time");
             this.resolution_time = (double) queryParam.get("total_time_sec");
             this.outcome = (String) queryParam.get("outcome");
             SimpleDateFormat DateFormat = new SimpleDateFormat("dd.MM.yyyy 'at' HH:mm:ss z");
-            this.start_date = DateFormat.format(this.start_time);
+            this.start_date = DateFormat.format((long) queryParam.get("start_time"));
             break;
         /* default same as "asset" */
         default:

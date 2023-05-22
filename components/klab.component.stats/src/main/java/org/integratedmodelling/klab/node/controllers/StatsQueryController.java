@@ -4,9 +4,7 @@ import java.security.Principal;
 
 import javax.validation.Valid;
 
-import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 //import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.node.services.StatsQueryService;
 import org.integratedmodelling.stats.api.StatsQueryRequest;
@@ -41,10 +39,6 @@ public class StatsQueryController {
     @PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_USER')")
     public ResponseEntity<?> getOutput(Principal principal,@Valid StatsQueryRequest request)
                                     throws JsonProcessingException {
-            //throws UnsupportedEncodingException {
-        
-       // IUserIdentity user = Authentication.INSTANCE.getUserIdentity(principal);
-       // boolean adminOrAuditor = Authentication.INSTANCE.hasRole(principal, Role.ROLE_ADMINISTRATOR);
         
         if(request == null) {
             request = new StatsQueryRequest();
