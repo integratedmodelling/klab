@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ContextRequest;
-import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.TicketRequest;
@@ -300,6 +299,14 @@ public interface API {
          * version.
          */
         public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
+        /**
+         * An endpoint to get the capabilities of the nodes
+         */
+        public static final String NODE_CAPABILITIES = NODE_BASE + "/capabilities";
+        /**
+         * An endpoint to get the adapters of the nodes
+         */
+        public static final String NODE_ADAPTERS = NODE_BASE + "/adapters";
         /**
          * Called by levers on hubs when authenticating with them. Parameters like the engine
          * version.
