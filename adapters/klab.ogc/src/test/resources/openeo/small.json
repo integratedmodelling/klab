@@ -1,0 +1,22 @@
+{
+  "id" : "prrpo",
+  "description" : "Sum three with five",
+  "summary" : "Check results",
+  "returns" : {
+    "description" : "Eight",
+    "schema" : {
+      "type" : "number"
+    }
+  },
+  "parameters" : null,
+  "process_graph" : {
+    "addition" : {
+      "process_id" : "add",
+      "arguments" : {
+        "x" : 3,
+        "y" : 5
+      },
+      "result" : true
+    }
+  }
+}
