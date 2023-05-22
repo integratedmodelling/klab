@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -291,7 +292,8 @@ public class OpenEO {
      * @param budget put 0 if no budget should be sent
      * @param plan null is accepted
      */
-    public Map<String, Object> runJob(Process process, int budget, String plan) {
+    @SuppressWarnings("unchecked")
+    public <T> T runJob(Process process, int budget, String plan, Class<T> resultClass) {
 
         Map<String, Object> request = new LinkedHashMap<>();
         
@@ -299,11 +301,13 @@ public class OpenEO {
         request.put("plan", plan);
         request.put("budget", budget <= 0 ? null : budget);
         
-        HttpResponse<JsonNode> response = Unirest.post(endpoint + "/result").contentType("application/json")
-                .header("Authorization", authorization.getAuthorization()).body(JsonUtils.printAsJson(request)).asJson();
+        String dioboia = JsonUtils.printAsJson(request);
+        
+        HttpResponse<String> response = Unirest.post(endpoint + "/result").contentType("application/json")
+                .header("Authorization", authorization.getAuthorization()).body(request).asString();
 
         if (response.isSuccess()) {
-            return response.getBody().getObject().toMap();
+            return (T)Utils.convertValue(response.getBody().trim(), Utils.getArtifactType(resultClass));
         }
         
         throw new KlabRemoteException("OpenEO runJob returned error code " + response.getStatus());
