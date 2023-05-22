@@ -101,7 +101,7 @@ public class Authorization {
             if (token != null && duration < 0) {
                 duration = response.has("expires_in") ? response.getLong("expires_in") : 0;
             }
-            this.prefix = "oidc/" + credentials.getCredentials().get(5);
+            this.prefix = "oidc/" + credentials.getCredentials().get(5) + "/";
             this.expiry += (duration * 1000l);
         }
     }
