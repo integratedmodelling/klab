@@ -16,6 +16,8 @@ public class StatsQueryRequest {
         private String where;      
         private String select;
 
+        private String groupBy = "month";
+        
         public String getDb() {
             return db;
         }
@@ -79,7 +81,13 @@ public class StatsQueryRequest {
             this.to = to;
         }
 
-        public StatsQueryRequest() {}
+        public String getGroupBy() {
+			return groupBy;
+		}
+		public void setGroupBy(String groupBy) {
+			this.groupBy = groupBy;
+		}
+		public StatsQueryRequest() {}
         @Override
         public String toString() {
             return "StatsQueryRequest [top=" + top + ", queryType=" + queryType + ", outcome=" + outcome + ", resolutionTimeMin="

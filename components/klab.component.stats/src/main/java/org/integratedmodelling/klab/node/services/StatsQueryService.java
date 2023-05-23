@@ -87,9 +87,15 @@ public class StatsQueryService {
             query = "SELECT * FROM queries WHERE start_time > " + request.getFrom() + 
                     " AND start_time < " + request.getTo() + ";";
             break;
-            default:
-            	query = "SELECT DISTINCT outcome, COUNT(outcome) "
-                        + "OVER (PARTITION BY outcome) AS instances FROM assets;";
+        case "queries_per":
+        	query = "SELECT DISTINCT date_trunc('"+ request.getGroupBy() + "', to_timestamp(start_time/1000)) AS date, "
+        			+ "COUNT(context_id) OVER (PARTITION BY date_trunc('" + request.getGroupBy() + "', to_timestamp(start_time/1000))) AS count "
+        			+ "FROM queries ORDER BY date;";
+        	request.setQueryType(request.getQueryType()+"_"+request.getGroupBy());
+        	break;
+        default:
+        	query = "SELECT DISTINCT outcome, COUNT(outcome) "
+                    + "OVER (PARTITION BY outcome) AS instances FROM assets;";
         }
         stats.getDatabase().scan(query, (result) -> {
             StatsQuery queryStats = new StatsQuery(result, request.getQueryType());

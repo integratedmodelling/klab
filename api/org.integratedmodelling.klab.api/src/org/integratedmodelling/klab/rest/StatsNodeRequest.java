@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.rest;
 public class StatsNodeRequest {
 
     private int top = 10;
-    private String queryType = "asset";
+    private String queryType = "asset_name_group_count";
     private String outcome;
     
     private int resolutionTimeMin = -1;
@@ -16,6 +16,8 @@ public class StatsNodeRequest {
     private String where;      
     private String select;
 
+    private String groupBy = "month";
+    
     public String getDb() {
         return db;
     }
@@ -78,7 +80,13 @@ public class StatsNodeRequest {
         this.to = to;
     }
 
-    public StatsNodeRequest() {}
+    public String getGroupBy() {
+		return groupBy;
+	}
+	public void setGroupBy(String groupBy) {
+		this.groupBy = groupBy;
+	}
+	public StatsNodeRequest() {}
     @Override
     public String toString() {
         return "StatsQueryRequest [top=" + top + ", queryType=" + queryType + ", outcome=" + outcome + ", from=" + from

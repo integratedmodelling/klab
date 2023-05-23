@@ -1,28 +1,16 @@
 package org.integratedmodelling.klab.hub.stats.services;
 
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import org.integratedmodelling.klab.hub.api.User;
-import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.stats.controllers.GroupUsersByDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.DateOperators;
-import org.springframework.data.mongodb.core.aggregation.ProjectionOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.stereotype.Service;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mongodb.internal.connection.QueryResult;
 
 @Service
 public class HubStatsService {
@@ -48,106 +36,18 @@ public class HubStatsService {
 		switch(groupBy) {
 		case "year":
 			groupList = userRepository.groupByYear();
-			if (groupList.size() > 0) {
-				  /* code to sort date strings */
-				  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
-				      @Override
-				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
-				          return object1.getDateString().compareTo(object2.getDateString());
-				      }
-				  });
-			}
 			break;
 		case "monthAccumulation":
 			groupList = userRepository.groupByMonthYear();
-			if (groupList.size() > 0) {
-			  /* code to sort date strings */
-			  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
-			      @Override
-			      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
-			          return object1.getDateString().compareTo(object2.getDateString());
-			      }
-			  });
-			 
-			  /* get rid of entries where registrationDate is null */
-			  groupList.removeIf(o -> o.getDateString() == "NaN");
-			  
-			  int accumulatedCounter = 0;
-			  for(GroupUsersByDate group : groupList) {
-				  accumulatedCounter += group.getCount();
-				  group.setCount(accumulatedCounter);
-			  }
-			  
-			  /* formatting return list so that it also contains "empty" months */
-			  int currentMonth = 0, currentYear = 0, currentCount = 0;
-			  int previousMonth = 0, previousYear = groupList.get(0).getYear(), previousCount = 0;
-			  int monthDifference = 0;
-			  GroupUsersByDate group = null;
-			  for(int groupIndex = 0; groupIndex < groupList.size(); groupIndex++) {
-				  group = groupList.get(groupIndex);
-				  currentYear = group.getYear();
-				  currentCount = group.getCount();
-				  
-				  /*  */
-				  if(previousYear != currentYear && previousMonth != 12) {
-					  monthDifference = 12 - previousMonth;
-					  for(int i = 0; i < monthDifference; i++) {
-						  GroupUsersByDate emptyGroup = new GroupUsersByDate();
-						  emptyGroup.setYear(previousYear);
-						  emptyGroup.setMonth(previousMonth + i + 1);
-						  emptyGroup.setCount(previousCount);
-						  emptyGroup.setDateString(Integer.toString(currentYear) + "-" + String.format("%02d", emptyGroup.getMonth()));
-						  groupList.add(groupIndex, emptyGroup);
-						  groupIndex++;
-					  }
-					  previousMonth = 0;
-				  } else if (previousYear != currentYear)	{
-					  previousMonth = 0;
-				  }
-				  
-				  currentMonth = group.getMonth();
-
-				  if(currentMonth > previousMonth + 1) {
-					  monthDifference = currentMonth - previousMonth - 1;
-					  for(int i = 0; i < monthDifference; i++) {
-						  GroupUsersByDate emptyGroup = new GroupUsersByDate();
-						  emptyGroup.setYear(currentYear);
-						  emptyGroup.setMonth(previousMonth + i + 1);
-						  emptyGroup.setCount(previousCount);
-						  emptyGroup.setDateString(Integer.toString(currentYear) + "-" + String.format("%02d", emptyGroup.getMonth()));
-						  groupList.add(groupIndex, emptyGroup);
-						  groupIndex++;
-					  }
-				  }
-				  previousMonth = currentMonth;
-				  previousYear = currentYear;
-				  previousCount = currentCount;
-			  }
-			}
 			break;
 		case "yearAccumulation":
 			groupList = userRepository.groupByYear();
-			if (groupList.size() > 0) {
-				  /* code to sort date strings */
-				  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
-				      @Override
-				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
-				          return object1.getDateString().compareTo(object2.getDateString());
-				      }
-				  });
-				 
-				int accumulatedCounter = 0;
-				for(GroupUsersByDate group : groupList) {
-					accumulatedCounter += group.getCount();
-					group.setCount(accumulatedCounter);
-				}
-			}
 			break;		
 		/*by default users are grouped by month and year */
 		default:
 			groupList = userRepository.groupByMonthYear();
 			if (groupList.size() > 0) {
-				  /* code to sort date strings */
+				/* code to sort date strings */
 				  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
 				      @Override
 				      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
@@ -201,6 +101,82 @@ public class HubStatsService {
 					  previousYear = currentYear;
 				  }
 				}
+		}
+		
+		if (groupList.size() > 0) {
+			  /* code to sort date strings */
+			  Collections.sort(groupList, new Comparator<GroupUsersByDate>() {
+			      @Override
+			      public int compare(final GroupUsersByDate object1, final GroupUsersByDate object2) {
+			          return object1.getDateString().compareTo(object2.getDateString());
+			      }
+			  });
+			  
+			  if(groupBy.equals("monthAccumulation")) {
+				  /* get rid of entries where registrationDate is null */
+				  groupList.removeIf(o -> o.getDateString() == "NaN");
+				  
+				  int accumulatedCounter = 0;
+				  for(GroupUsersByDate group : groupList) {
+					  accumulatedCounter += group.getCount();
+					  group.setCount(accumulatedCounter);
+				  }
+				  
+				  /* formatting return list so that it also contains "empty" months */
+				  int currentMonth = 0, currentYear = 0, currentCount = 0;
+				  int previousMonth = 0, previousYear = groupList.get(0).getYear(), previousCount = 0;
+				  int monthDifference = 0;
+				  GroupUsersByDate group = null;
+				  for(int groupIndex = 0; groupIndex < groupList.size(); groupIndex++) {
+					  group = groupList.get(groupIndex);
+					  currentYear = group.getYear();
+					  currentCount = group.getCount();
+					  
+					  if(previousYear != currentYear && previousMonth != 12) {
+						  monthDifference = 12 - previousMonth;
+						  for(int i = 0; i < monthDifference; i++) {
+							  GroupUsersByDate emptyGroup = new GroupUsersByDate();
+							  emptyGroup.setYear(previousYear);
+							  emptyGroup.setMonth(previousMonth + i + 1);
+							  emptyGroup.setCount(previousCount);
+							  emptyGroup.setDateString(Integer.toString(currentYear) + "-" + String.format("%02d", emptyGroup.getMonth()));
+							  groupList.add(groupIndex, emptyGroup);
+							  groupIndex++;
+						  }
+						  previousMonth = 0;
+					  } else if (previousYear != currentYear)	{
+						  previousMonth = 0;
+					  }
+					  
+					  currentMonth = group.getMonth();
+
+					  if(currentMonth > previousMonth + 1) {
+						  monthDifference = currentMonth - previousMonth - 1;
+						  for(int i = 0; i < monthDifference; i++) {
+							  GroupUsersByDate emptyGroup = new GroupUsersByDate();
+							  emptyGroup.setYear(currentYear);
+							  emptyGroup.setMonth(previousMonth + i + 1);
+							  emptyGroup.setCount(previousCount);
+							  emptyGroup.setDateString(Integer.toString(currentYear) + "-" + String.format("%02d", emptyGroup.getMonth()));
+							  groupList.add(groupIndex, emptyGroup);
+							  groupIndex++;
+						  }
+					  }
+					  previousMonth = currentMonth;
+					  previousYear = currentYear;
+					  previousCount = currentCount;
+				  }
+			  }
+			  
+			  if(groupBy.equals("yearAccumulation")) {
+					if (groupList.size() > 0) {
+						int accumulatedCounter = 0;
+						for(GroupUsersByDate group : groupList) {
+							accumulatedCounter += group.getCount();
+							group.setCount(accumulatedCounter);
+						}
+					}
+			  }
 		}
 		return groupList;
 	}

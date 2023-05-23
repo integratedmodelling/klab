@@ -69,6 +69,7 @@ public class StatsNodeController {
                 .queryParam("to", "{to}")
                 .queryParam("resolutionTimeMin", "{resolutionTimeMin}")
                 .queryParam("resolutionTimeMax", "{resolutionTimeMax}")
+                .queryParam("groupBy", "{groupBy}")
                 .encode()
                 .toUriString();
 
@@ -80,6 +81,7 @@ public class StatsNodeController {
         params.put("to", request.getTo());
         params.put("resolutionTimeMin", request.getResolutionTimeMin());
         params.put("resolutionTimeMax", request.getResolutionTimeMax());
+        params.put("groupBy", request.getGroupBy());
 
         ResponseEntity<?> response = restTemplate.exchange(
                 urlTemplate,
