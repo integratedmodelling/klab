@@ -25,6 +25,8 @@ import oms3.gen.doubleAccess;
 import java.util.ArrayList;
 
 public class MarineFloodResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
+	
+	private Double decayFact;
 
 	@Override
 	public Type getType() {
@@ -100,8 +102,10 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 
 				double watValue = seedsRaster.getValue(col, row);
 
-				if ((!seedsRaster.isNovalue(watValue)) && (watValue >= 0) && (elevations[col][row] < watValue)) {
+				if ((!seedsRaster.isNovalue(watValue)) && (watValue > 0) && (elevations[col][row] < watValue)) {
 
+					newElevations[col][row] = watValue;
+					
 					lst = new double[3];
 					lst[0] = row;
 					lst[1] = col;
@@ -117,6 +121,8 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 		
 		int i = 0;
 
+	  if (decayFact > 0) {
+		
 		while (inWatLev.size() != 0) {
 
 			int rw = (int) inWatLev.get(i)[0];
@@ -124,6 +130,8 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 			int cl = (int) inWatLev.get(i)[1];
 
 			double val = (double) inWatLev.get(i)[2];
+			
+			double newVal = val*decayFact;
 
 			// iterate over 8 pixels surrounding flooded cell
 			for (int rnear = -1; rnear <= 1; rnear++) {
@@ -134,14 +142,14 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 							&& ((cl != 0) && (rw != 0))
 							&& (newElevations[cl + cnear][rw + rnear] != Double.NaN)) {
 
-						if ((newElevations[cl + cnear][rw + rnear] < val)) {
+						if ((newElevations[cl + cnear][rw + rnear] < newVal)) {
 
-							newElevations[cl + cnear][rw + rnear] = val;
+							newElevations[cl + cnear][rw + rnear] = newVal;
 
 							lst1 = new double[3];
 							lst1[0] = rw + rnear;
 							lst1[1] = cl + cnear;
-							lst1[2] = val;
+							lst1[2] = newVal;
 							inWatLev.add(lst1);
 
 						}
@@ -153,9 +161,9 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 			
 			 inWatLev.remove(i);
 			
-			}
+			 }
 
-
+		   }
 
 					for (int frow = 0; frow < rows; frow++) {
 						for (int fcol = 0; fcol < cols; fcol++) {
@@ -200,8 +208,24 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 	}
 
 	@Override
-	public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
+	public Object eval(IContextualizationScope context, Object... params) throws KlabException {
+		
+		Parameters<String> parameters = Parameters.create(params);
+		
+		Double decay = parameters.get("decay_factor", Double.class);
+		
 		MarineFloodResolver ret = new MarineFloodResolver();
+		
+		if (decay != null) {
+		
+		   ret.decayFact = decay;
+		
+		} else { 
+	    
+		   ret.decayFact = 1.0;
+		
+		}	
+		
 		return ret;
 	}
 

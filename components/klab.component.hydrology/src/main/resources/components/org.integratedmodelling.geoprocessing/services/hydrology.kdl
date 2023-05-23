@@ -494,7 +494,11 @@ export process scsrunoffcalc
 export number floodlevels
 	"Expected level of marine flooding"
 	
-{
+{ 
+
+    optional parameter number decay_factor
+        "Describes how the water levels decrease moving from the original sources. 0 means immediate decrease while 1 means constant levels"
+
 	import number elevation
 		"The DEM"
 		
