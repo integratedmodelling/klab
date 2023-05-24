@@ -23,22 +23,22 @@ public class KimRuntimeModule extends AbstractKimRuntimeModule {
   public void configureIScopeProviderDelegate(final Binder binder) {
     binder.<IScopeProvider>bind(IScopeProvider.class).annotatedWith(Names.named(AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(SimpleLocalScopeProvider.class);
   }
-
+  
   @Override
   public Class<? extends IScopeProvider> bindIScopeProvider() {
     return KimScopeProvider.class;
   }
-
+  
   @Override
   public Class<? extends IGlobalScopeProvider> bindIGlobalScopeProvider() {
     return KimGlobalScopeProvider.class;
   }
-
+  
   @Override
   public Class<? extends IContainer.Manager> bindIContainer$Manager() {
     return StateBasedContainerManager.class;
   }
-
+  
   @Override
   public void configure(final Binder binder) {
     super.configure(binder);

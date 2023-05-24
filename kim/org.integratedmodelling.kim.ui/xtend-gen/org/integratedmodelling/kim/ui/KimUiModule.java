@@ -42,64 +42,64 @@ public class KimUiModule extends AbstractKimUiModule {
   public void configure(final Binder binder) {
     super.configure(binder);
   }
-
+  
   @Override
   public Provider<IAllContainersState> provideIAllContainersState() {
     return Access.getJavaProjectsState();
   }
-
+  
   @Override
   public Class<? extends IHyperlinkDetector> bindIHyperlinkDetector() {
     return KimLinkDetector.class;
   }
-
+  
   public Class<? extends IHyperlinkHelper> bindIHyperlinkHelper() {
     return KimHyperlinkHelper.class;
   }
-
+  
   public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
     return KimHighlightingCalculator.class;
   }
-
+  
   public Class<? extends AbstractAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
     return KimSyntaxHighlighter.class;
   }
-
+  
   @Override
   public Class<? extends IResourceSetProvider> bindIResourceSetProvider() {
     return SimpleResourceSetProvider.class;
   }
-
+  
   @Override
   public Class<? extends IResourceForEditorInputFactory> bindIResourceForEditorInputFactory() {
     return KimJavaClassPathResourceForIEditorInputFactory.class;
   }
-
+  
   @Override
   public Class<? extends IXtextEditorCallback> bindIXtextEditorCallback() {
     return KimNatureAddingEditorCallback.class;
   }
-
+  
   public Class<? extends ICompletionProposalAcceptor> bindICompletionProposalAcceptor() {
     return KimProposalAcceptor.class;
   }
-
+  
   public Class<? extends ICompletionProposalAcceptor.Delegate> bindICompletionProposalAcceptorDelegate() {
     return KimProposalAcceptor.class;
   }
-
+  
   public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
     return KimHighlightingConfiguration.class;
   }
-
+  
   public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
     return KimHoverProvider.class;
   }
-
+  
   public Class<? extends IEObjectDocumentationProvider> bindIEObjectDocumentationProvider() {
     return KimDocumentationProvider.class;
   }
-
+  
   public KimUiModule(final AbstractUIPlugin plugin) {
     super(plugin);
   }
