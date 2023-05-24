@@ -1,17 +1,27 @@
 package org.integratedmodelling.klab.openeo;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.Authorization;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,341 +40,536 @@ import kong.unirest.json.JSONObject;
  */
 public class OpenEO {
 
-    private Authorization authorization;
-    private String endpoint;
+	private long POLLING_INTERVAL_MS = 1000;
 
-    public static class ProcessNode {
+	private Authorization authorization;
+	private String endpoint;
+	IMonitor monitor;
+	String plan; // TODO expose, link to /me
+	int budget; // TODO expose, update
 
-        private String process_id;
-        private String namespace;
-        private String description;
-        private boolean result;
-        private Map<String, Object> arguments;
+	class Job {
+		String jobId;
+		Consumer<Map<String, Object>> resultConsumer;
+		BiConsumer<String, String> errorConsumer;
+	}
 
-        public String getProcess_id() {
-            return process_id;
-        }
+	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+	private Set<Job> jobs = Collections.synchronizedSet(new LinkedHashSet<>());
 
-        public void setProcess_id(String process_id) {
-            this.process_id = process_id;
-        }
+	public static class ProcessNode {
 
-        public String getNamespace() {
-            return namespace;
-        }
+		private String process_id;
+		private String namespace;
+		private String description;
+		private boolean result;
+		private Map<String, Object> arguments;
 
-        public void setNamespace(String namespace) {
-            this.namespace = namespace;
-        }
+		public String getProcess_id() {
+			return process_id;
+		}
 
-        public String getDescription() {
-            return description;
-        }
+		public void setProcess_id(String process_id) {
+			this.process_id = process_id;
+		}
 
-        public void setDescription(String description) {
-            this.description = description;
-        }
+		public String getNamespace() {
+			return namespace;
+		}
 
-        public boolean isResult() {
-            return result;
-        }
+		public void setNamespace(String namespace) {
+			this.namespace = namespace;
+		}
 
-        public void setResult(boolean result) {
-            this.result = result;
-        }
+		public String getDescription() {
+			return description;
+		}
 
-        public Map<String, Object> getArguments() {
-            return arguments;
-        }
+		public void setDescription(String description) {
+			this.description = description;
+		}
 
-        public void setArguments(Map<String, Object> arguments) {
-            this.arguments = arguments;
-        }
-    }
+		public boolean isResult() {
+			return result;
+		}
 
-    public static class Schema {
+		public void setResult(boolean result) {
+			this.result = result;
+		}
 
-        public enum Type {
-            number;
-        }
+		public Map<String, Object> getArguments() {
+			return arguments;
+		}
 
-        private Type type = Type.number;
+		public void setArguments(Map<String, Object> arguments) {
+			this.arguments = arguments;
+		}
+	}
 
-        public Type getType() {
-            return type;
-        }
-        public void setType(Type type) {
-            this.type = type;
-        }
+	public static class Schema {
 
-    }
+		private String type = "number";
+		private String subtype;
 
-    public static class Parameter {
+		public String getType() {
+			return type;
+		}
 
-        private String name;
-        private String description;
-        private Schema schema;
-        private boolean optional;
-        private boolean deprecated;
-        private boolean experimental;
-        private boolean isDefault;
+		public void setType(String type) {
+			this.type = type;
+		}
 
-        public String getName() {
-            return name;
-        }
-        public void setName(String name) {
-            this.name = name;
-        }
-        public String getDescription() {
-            return description;
-        }
-        public void setDescription(String description) {
-            this.description = description;
-        }
-        public Schema getSchema() {
-            return schema;
-        }
-        public void setSchema(Schema schema) {
-            this.schema = schema;
-        }
-        public boolean isOptional() {
-            return optional;
-        }
-        public void setOptional(boolean optional) {
-            this.optional = optional;
-        }
-        public boolean isDeprecated() {
-            return deprecated;
-        }
-        public void setDeprecated(boolean deprecated) {
-            this.deprecated = deprecated;
-        }
-        public boolean isExperimental() {
-            return experimental;
-        }
-        public void setExperimental(boolean experimental) {
-            this.experimental = experimental;
-        }
+		public String getSubtype() {
+			return subtype;
+		}
 
-        @JsonProperty("default")
-        public boolean isDefault() {
-            return isDefault;
-        }
+		public void setSubtype(String subtype) {
+			this.subtype = subtype;
+		}
 
-        public void setDefault(boolean isDefault) {
-            this.isDefault = isDefault;
-        }
+	}
 
-    }
+	public static class Parameter {
 
-    public static class ReturnValue {
+		private String name;
+		private String description;
+		private Schema schema;
+		private boolean optional;
+		private boolean deprecated;
+		private boolean experimental;
+		private boolean isDefault;
 
-        private String description;
-        private Schema schema;
+		public String getName() {
+			return name;
+		}
 
-        public String getDescription() {
-            return description;
-        }
-        public void setDescription(String description) {
-            this.description = description;
-        }
-        public Schema getSchema() {
-            return schema;
-        }
-        public void setSchema(Schema schema) {
-            this.schema = schema;
-        }
+		public void setName(String name) {
+			this.name = name;
+		}
 
-    }
+		public String getDescription() {
+			return description;
+		}
 
-    public static class Builder {
+		public void setDescription(String description) {
+			this.description = description;
+		}
 
-        String id = NameGenerator.shortUUID();
-        String description;
-        String summary;
-        Map<String, ProcessNode> nodes = new LinkedHashMap<>();
+		public Schema getSchema() {
+			return schema;
+		}
 
-        public static class NodeBuilder {
+		public void setSchema(Schema schema) {
+			this.schema = schema;
+		}
 
-            ProcessNode node = new ProcessNode();
+		public boolean isOptional() {
+			return optional;
+		}
 
-        }
+		public void setOptional(boolean optional) {
+			this.optional = optional;
+		}
 
-        public NodeBuilder node(String nodeName) {
+		public boolean isDeprecated() {
+			return deprecated;
+		}
 
-            NodeBuilder ret = new NodeBuilder();
+		public void setDeprecated(boolean deprecated) {
+			this.deprecated = deprecated;
+		}
 
-            return ret;
-        }
+		public boolean isExperimental() {
+			return experimental;
+		}
 
-        public Process build() {
-            Process ret = new Process();
-            // TODO
-            return ret;
-        }
-    }
+		public void setExperimental(boolean experimental) {
+			this.experimental = experimental;
+		}
 
-    /*
-     * In addition to processing steps, it should have the fields for parameters, title, etc.
-     */
-    public static class Process {
+		@JsonProperty("default")
+		public boolean isDefault() {
+			return isDefault;
+		}
 
-        private String id;
-        private String summary;
-        private String description;
-        private List<Parameter> parameters = new ArrayList<>();
-        private Map<String, ProcessNode> process_graph = new LinkedHashMap<>();
-        private ReturnValue returns;
+		public void setDefault(boolean isDefault) {
+			this.isDefault = isDefault;
+		}
 
-        public String getId() {
-            return id;
-        }
-        public void setId(String id) {
-            this.id = id;
-        }
-        public String getSummary() {
-            return summary;
-        }
-        public void setSummary(String summary) {
-            this.summary = summary;
-        }
-        public String getDescription() {
-            return description;
-        }
-        public void setDescription(String description) {
-            this.description = description;
-        }
-        public List<Parameter> getParameters() {
-            return parameters;
-        }
-        public void setParameters(List<Parameter> parameters) {
-            this.parameters = parameters;
-        }
-        public Map<String, ProcessNode> getProcess_graph() {
-            return process_graph;
-        }
-        public void setProcess_graph(Map<String, ProcessNode> process_graph) {
-            this.process_graph = process_graph;
-        }
-        public ReturnValue getReturns() {
-            return returns;
-        }
-        public void setReturns(ReturnValue returns) {
-            this.returns = returns;
-        }
+	}
 
-        public static Builder builder() {
-            return new Builder();
-        }
+	public static class ReturnValue {
 
-    }
+		private String description;
+		private Schema schema;
 
-    public OpenEO(String endpoint) {
-        this.endpoint = endpoint;
-        ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
-        if (credentials != null) {
-            this.authorization = new Authorization(credentials);
-        }
-    }
+		public String getDescription() {
+			return description;
+		}
 
-    /**
-     * Create a job and return its ID. If a non-null string is returned, it can be passed to other
-     * job-related functions. The job is NOT started, just created on the back end.
-     * 
-     * @param process
-     * @param title
-     * @param description
-     * @param plan
-     * @param budget
-     * @return
-     */
-    public String createJob(Process process) {
-        return null;
-    }
+		public void setDescription(String description) {
+			this.description = description;
+		}
 
-    /**
-     * <em>Synchronous</em> job executor that blocks until the job is finished. Only to be used with
-     * jobs that are known to be small. Returns the results as a JSON map, which will need to be
-     * interpreted at the user end. The result may contain errors from the OpenEO service. Throws an
-     * exception only in case of remote server error.
-     * 
-     * @param process the process to be sent
-     * @param budget put 0 if no budget should be sent
-     * @param plan null is accepted
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T runJob(Process process, int budget, String plan, Class<T> resultClass) {
+		public Schema getSchema() {
+			return schema;
+		}
 
-        Map<String, Object> request = new LinkedHashMap<>();
-        
-        request.put("process", process);
-        request.put("plan", plan);
-        request.put("budget", budget <= 0 ? null : budget);
-        
-        HttpResponse<String> response = Unirest.post(endpoint + "/result").contentType("application/json")
-                .header("Authorization", authorization.getAuthorization()).body(request).asString();
+		public void setSchema(Schema schema) {
+			this.schema = schema;
+		}
 
-        if (response.isSuccess()) {
-            return (T)Utils.convertValue(response.getBody().trim(), Utils.getArtifactType(resultClass));
-        }
-        
-        throw new KlabRemoteException("OpenEO runJob returned error code " + response.getStatus());
-    }
+	}
 
-    /**
-     * <em>Asynchronous</em> job executor. Must be passed a valid job ID from a previous call to
-     * {@link #createJob(Process)}, which guarantees validation. Returns immediately and calls the
-     * error handler or the result handler depending on the outcome when the process has finished.
-     * Polls the server for status at the established polling interval.
-     * 
-     * @param jobId
-     * @param resultHandler
-     * @param errorHandler
-     */
-    public void startJob(String jobId, Consumer<Map<String, Object>> resultHandler, Consumer<String> errorHandler) {
+	public static class Builder {
 
-    }
+		String id = NameGenerator.shortUUID();
+		String description;
+		String summary;
+		Map<String, ProcessNode> nodes = new LinkedHashMap<>();
 
-    /**
-     * Validate a process and submit it if valid, passing control to callbacks. Return false if
-     * process validation fails. Validation is on the back-end and synchronous, execution is
-     * asynchronous.
-     * 
-     * @param process
-     * @param resultHandler
-     * @param errorHandler
-     * @return
-     */
-    public boolean submit(Process process, Consumer<Map<String, Object>> resultHandler, Consumer<String> errorHandler) {
+		public static class NodeBuilder {
 
-        /*
-         * for the time being this is synchronous
-         */
-        if (!validateProcess(process, null)) {
-            return false;
-        }
+			ProcessNode node = new ProcessNode();
 
-        return false;
-    }
+		}
 
-    public boolean validateProcess(Process process, Consumer<String> errorHandler) {
+		public NodeBuilder node(String nodeName) {
 
-        HttpResponse<JsonNode> response = Unirest.post(endpoint + "/validation").contentType("application/json")
-                .header("Authorization", authorization.getAuthorization()).body(JsonUtils.printAsJson(process)).asJson();
+			NodeBuilder ret = new NodeBuilder();
 
-        if (response.isSuccess()) {
-            if (response.getBody().getObject().has("errors")) {
-                JSONArray errors = response.getBody().getObject().getJSONArray("errors");
-                if (errorHandler != null) {
-                    for (Object error : errors) {
-                        errorHandler.accept(((JSONObject) error).getString("message"));
-                    }
-                }
-                return errors.length() == 0;
-            }
-        }
+			return ret;
+		}
 
-        return false;
-    }
+		public Process build() {
+			Process ret = new Process();
+			// TODO
+			return ret;
+		}
+	}
+
+	/*
+	 * In addition to processing steps, it should have the fields for parameters,
+	 * title, etc.
+	 */
+	public static class Process {
+
+		private String id;
+		private String summary;
+		private String description;
+		private List<Parameter> parameters = new ArrayList<>();
+		private Map<String, ProcessNode> process_graph = new LinkedHashMap<>();
+		private ReturnValue returns;
+
+		public String getId() {
+			return id;
+		}
+
+		public void setId(String id) {
+			this.id = id;
+		}
+
+		public String getSummary() {
+			return summary;
+		}
+
+		public void setSummary(String summary) {
+			this.summary = summary;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public List<Parameter> getParameters() {
+			return parameters;
+		}
+
+		public void setParameters(List<Parameter> parameters) {
+			this.parameters = parameters;
+		}
+
+		public Map<String, ProcessNode> getProcess_graph() {
+			return process_graph;
+		}
+
+		public void setProcess_graph(Map<String, ProcessNode> process_graph) {
+			this.process_graph = process_graph;
+		}
+
+		public ReturnValue getReturns() {
+			return returns;
+		}
+
+		public void setReturns(ReturnValue returns) {
+			this.returns = returns;
+		}
+
+		public static Builder builder() {
+			return new Builder();
+		}
+
+	}
+
+	public OpenEO(String endpoint, IMonitor monitor) {
+		this.endpoint = endpoint;
+		this.monitor = monitor;
+		ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
+		if (credentials != null) {
+			this.authorization = new Authorization(credentials);
+		}
+		this.executor.schedule(() -> {
+			Set<Job> finished = new HashSet<>();
+			for (Job job : jobs) {
+				if (checkFinish(job)) {
+					finished.add(job);
+				}
+			}
+			jobs.removeAll(finished);
+		}, POLLING_INTERVAL_MS, TimeUnit.MILLISECONDS);
+	}
+
+	private boolean checkFinish(Job job) {
+		
+		Map<String, Object> metadata = getJobMetadata(job.jobId);
+		if (metadata.containsKey("status")) {
+			switch (metadata.get("status").toString()) {
+			case "created":
+			case "queued":
+			case "running":
+				return false;
+			case "canceled":
+				job.resultConsumer.accept(Collections.emptyMap());
+				return true;
+			case "finished":
+				job.resultConsumer.accept(metadata);
+				return true;
+			case "error":
+				/*
+				 * TODO extract error messages from metadata (should be in process/exceptions)
+				 */
+				job.errorConsumer.accept("RuntimeError", "Job " + job.jobId + " exited with errors");
+				return true;
+			}
+		}
+
+		job.errorConsumer.accept("InternalError", "Job " + job.jobId + " terminated atypically");
+		return true;
+	}
+
+	/**
+	 * Create a job and return its ID. If a non-null string is returned, it can be
+	 * passed to other job-related functions. The job is NOT started, just created
+	 * on the back end.
+	 * 
+	 * @param process
+	 * @param title
+	 * @param description
+	 * @param plan
+	 * @param budget
+	 * @return
+	 */
+	public String createJob(Process process, Parameters<String> parameters) {
+
+		Map<String, Object> request = new LinkedHashMap<>();
+
+		request.put("process", parameters == null ? process : addParameters(process, parameters));
+		request.put("plan", plan);
+		request.put("budget", budget <= 0 ? null : budget);
+
+		HttpResponse<String> response = Unirest.post(endpoint + "/jobs").contentType("application/json")
+				.header("Authorization", authorization.getAuthorization()).body(request).asString();
+
+		if (response.isSuccess() && response.getStatus() == 201) {
+			for (String header : response.getHeaders().get("OpenEO-Identifier")) {
+				return header;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * <em>Synchronous</em> job executor that blocks until the job is finished. Only
+	 * to be used with jobs that are known to be small. Returns the results as a
+	 * JSON map, which will need to be interpreted at the user end. The result may
+	 * contain errors from the OpenEO service. Throws an exception only in case of
+	 * remote server error.
+	 * 
+	 * @param process the process to be sent
+	 * @param budget  put 0 if no budget should be sent
+	 * @param plan    null is accepted
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T runJob(Process process, Parameters<String> parameters, Class<T> resultClass) {
+
+		Map<String, Object> request = new LinkedHashMap<>();
+
+		request.put("process", parameters == null ? process : addParameters(process, parameters));
+		request.put("plan", plan);
+		request.put("budget", budget <= 0 ? null : budget);
+
+		HttpResponse<String> response = Unirest.post(endpoint + "/result").contentType("application/json")
+				.header("Authorization", authorization.getAuthorization()).body(request).asString();
+
+		if (response.isSuccess()) {
+			return (T) Utils.convertValue(response.getBody().trim(), Utils.getArtifactType(resultClass));
+		}
+
+		throw new KlabRemoteException("OpenEO runJob returned error code " + response.getStatus());
+	}
+
+	private Map<String, Object> addParameters(Process process, Parameters<String> parameters) {
+
+		Map<String, Object> ret = new LinkedHashMap<>();
+
+		if (parameters == null || parameters.isEmpty()) {
+			ret.put("process_graph", process);
+		} else {
+			Map<String, Object> pgr = new LinkedHashMap<>();
+		}
+		// TODO Auto-generated method stub
+		// what goes in the process: field of run requests
+		// add node that calls the actual process, possibly with data saver, set as
+		// result = true
+		return ret;
+	}
+
+	/**
+	 * <em>Asynchronous</em> job executor. Must be passed a valid job ID from a
+	 * previous call to {@link #createJob(Process)}, which guarantees validation.
+	 * Returns immediately and calls the error handler or the result handler
+	 * depending on the outcome when the process has finished. Polls the server for
+	 * status at the established polling interval.
+	 * 
+	 * @param jobId
+	 * @param resultHandler
+	 * @param errorHandler
+	 */
+	public void startJob(String jobId, Consumer<Map<String, Object>> resultHandler,
+			BiConsumer<String, String> errorHandler) {
+
+		HttpResponse<?> response = Unirest.post(endpoint + "/jobs/" + jobId)
+				.header("Authorization", authorization.getAuthorization()).asEmpty();
+
+		if (response.isSuccess() && response.getStatus() == 202) {
+
+			// create the job at server side
+			Job job = new Job();
+
+			job.jobId = jobId;
+			job.errorConsumer = errorHandler;
+			job.resultConsumer = resultHandler;
+
+			// insert in jobs set for polling thread to process
+			jobs.add(job);
+
+		} else {
+			errorHandler.accept("ServerError", "Job " + jobId + ": submission unsuccessful");
+		}
+	}
+
+	/**
+	 * Validate a process and submit it if valid, passing control to callbacks.
+	 * Return false if process validation fails. Validation is on the back-end and
+	 * synchronous, execution is asynchronous.
+	 * 
+	 * @param process
+	 * @param resultHandler
+	 * @param errorHandler
+	 * @return
+	 */
+	public boolean submit(Process process, Parameters<String> parameters, Consumer<Map<String, Object>> resultHandler,
+			BiConsumer<String, String> errorHandler) {
+
+		if (validateProcess(process, parameters, errorHandler)) {
+			String jobId = createJob(process, parameters);
+			if (jobId == null) {
+				errorHandler.accept("InternalError", "Process " + process.getId() + " was rejected by server");
+				return false;
+			}
+			startJob(jobId, resultHandler, errorHandler);
+			return true;
+		}
+
+		errorHandler.accept("InternalError", "Process " + process.getId() + " was not validated by server");
+
+		return false;
+	}
+
+	public boolean validateProcess(Process process, Parameters<String> parameters,
+			BiConsumer<String, String> errorHandler) {
+
+		HttpResponse<JsonNode> response = Unirest.post(endpoint + "/validation").contentType("application/json")
+				.header("Authorization", authorization.getAuthorization()).body(JsonUtils.printAsJson(process))
+				.asJson();
+
+		if (response.isSuccess()) {
+			if (response.getBody().getObject().has("errors")) {
+				JSONArray errors = response.getBody().getObject().getJSONArray("errors");
+				if (errorHandler != null) {
+					for (Object error : errors) {
+						errorHandler.accept(((JSONObject) error).getString("code"),
+								((JSONObject) error).getString("message"));
+					}
+				}
+				return errors.length() == 0;
+			}
+		}
+
+		return false;
+	}
+
+	public boolean deleteJob(String jobId) {
+		HttpResponse<?> response = Unirest.delete(endpoint + "/jobs/" + jobId)
+				.header("Authorization", authorization.getAuthorization()).asEmpty();
+
+		if (response.isSuccess()) {
+			return response.getStatus() == 204;
+		}
+
+		return false;
+	}
+
+	public boolean cancelJob(String jobId) {
+
+		HttpResponse<?> response = Unirest.delete(endpoint + "/jobs/" + jobId + "/results")
+				.header("Authorization", authorization.getAuthorization()).asEmpty();
+
+		if (response.isSuccess()) {
+			return response.getStatus() == 204;
+		}
+
+		return false;
+	}
+
+	public Map<String, Object> getJobMetadata(String jobId) {
+
+		HttpResponse<JsonNode> response = Unirest.get(endpoint + "/jobs/" + jobId)
+				.header("Authorization", authorization.getAuthorization()).asJson();
+
+		if (response.isSuccess()) {
+			return response.getBody().getObject().toMap();
+		}
+
+		return Collections.emptyMap();
+	}
+
+	public boolean isOnline() {
+		return authorization != null && authorization.isOnline();
+	}
+
+	/**
+	 * Budget should be automatically maintained (TODO).
+	 * 
+	 * @return
+	 */
+	public int getBudget() {
+		return this.budget;
+	}
 
 }
