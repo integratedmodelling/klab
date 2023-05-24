@@ -71,6 +71,11 @@ public class StatsQueryService {
             query = "SELECT DISTINCT COUNT(context_name) OVER (PARTITION BY context_name) AS count, "
                     + "context_name FROM contexts  ORDER BY count DESC LIMIT " + request.getTop() + ";";
             break;
+        case "requests_per_user":
+        	query = "SELECT DISTINCT principal, "
+        			+ "COUNT(principal) OVER (PARTITION BY principal) AS count "
+        			+ "FROM contexts ORDER BY count DESC LIMIT " + request.getTop() + ";";
+        	break;
         case "time_range":
             if(request.getFrom() == 0) {
                 request.setFrom(946684800000L);

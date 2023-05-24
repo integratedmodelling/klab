@@ -39,6 +39,7 @@ public class StatsQuery {
     private String assetType;
     private String startDate;
     private String queryResult;
+    private String principal;
     
     public String getQueryResult() {
         return queryResult;
@@ -208,7 +209,19 @@ public class StatsQuery {
         this.resolutionTimeTotal = resolutionTimeTotal;
     }
     
-    public StatsQuery() {
+    public String getPrincipal() {
+		return principal;
+	}
+
+	public void setPrincipal(String principal) {
+		this.principal = principal;
+	}
+
+	public void setGroupBy(String groupBy) {
+		this.groupBy = groupBy;
+	}
+
+	public StatsQuery() {
        
     }
     
@@ -266,6 +279,10 @@ public class StatsQuery {
         	this.count = (long) queryParam.get("count");
             DateFormat = new SimpleDateFormat("yyyy");
         	this.startDate = DateFormat.format(queryParam.get("date"));
+        	break;
+        case "requests_per_user":
+        	this.count = (long) queryParam.get("count");
+        	this.principal = (String) queryParam.get("principal");
         	break;
         /* default same as "asset" */
         default:
