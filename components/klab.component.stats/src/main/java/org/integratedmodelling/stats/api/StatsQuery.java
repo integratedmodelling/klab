@@ -7,7 +7,6 @@ import org.integratedmodelling.klab.utils.Parameters;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
-import java.util.Objects;
 import java.text.SimpleDateFormat;
 
 /**
@@ -284,16 +283,10 @@ public class StatsQuery {
         	this.count = (long) queryParam.get("count");
         	this.principal = (String) queryParam.get("principal");
         	break;
-        /* default same as "asset" */
+        /* default same as "outcome_group_count" */
         default:
-            this.id = (int) queryParam.get("query_id");
-            this.contextId = (String) queryParam.get("context_id");
-            this.assetName = (String) queryParam.get("name");
-            this.resolutionTime = (double) queryParam.get("total_time_sec");
-            
-            if(Objects.equals((String) queryParam.get("outcome"),"Success")) {
-                this.successful = true;
-            }else this.successful = false;  
+        	this.outcome = (String) queryParam.get("outcome");
+            this.count = (long) queryParam.get("instances");
             break;
         }
     }

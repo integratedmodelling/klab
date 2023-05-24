@@ -98,6 +98,7 @@ public class StatsQueryService {
         			+ "FROM queries ORDER BY date;";
         	request.setQueryType(request.getQueryType()+"_"+request.getGroupBy());
         	break;
+        /* default same as "outcome_group_count" */
         default:
         	query = "SELECT DISTINCT outcome, COUNT(outcome) "
                     + "OVER (PARTITION BY outcome) AS instances FROM assets;";
