@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.auth.Authorization;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -334,7 +335,7 @@ public class OpenEO {
 	}
 
 	private boolean checkFinish(Job job) {
-		
+
 		Map<String, Object> metadata = getJobMetadata(job.jobId);
 		if (metadata.containsKey("status")) {
 			switch (metadata.get("status").toString()) {
@@ -431,11 +432,14 @@ public class OpenEO {
 			ret.put("process_graph", process);
 		} else {
 			Map<String, Object> pgr = new LinkedHashMap<>();
+			pgr.put(NameGenerator.shortUUID(),
+					MapUtils.of("process_id", process.getId(), "result", true, "arguments", parameters.getData()));
+			pgr.put(NameGenerator.shortUUID(), process);
+			ret.put("process_graph", pgr);
 		}
-		// TODO Auto-generated method stub
-		// what goes in the process: field of run requests
-		// add node that calls the actual process, possibly with data saver, set as
-		// result = true
+		
+		System.out.println(JsonUtils.printAsJson(ret));
+		
 		return ret;
 	}
 
@@ -505,8 +509,8 @@ public class OpenEO {
 			BiConsumer<String, String> errorHandler) {
 
 		HttpResponse<JsonNode> response = Unirest.post(endpoint + "/validation").contentType("application/json")
-				.header("Authorization", authorization.getAuthorization()).body(JsonUtils.printAsJson(process))
-				.asJson();
+				.header("Authorization", authorization.getAuthorization())
+				.body(parameters == null ? process : addParameters(process, parameters)).asJson();
 
 		if (response.isSuccess()) {
 			if (response.getBody().getObject().has("errors")) {

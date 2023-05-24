@@ -20,69 +20,80 @@ import org.junit.Test;
 
 public class OpenEOTests {
 
-    static String sShape = "EPSG:4326 POLYGON ((-2.6430600187259428 40.75436284251779, -7.8229143312147436 40.75436284251779, -7.8229143312147436 43.322224962103604, -2.6430600187259428 43.322224962103604, -2.6430600187259428 40.75436284251779))";
+	static String sShape = "EPSG:4326 POLYGON ((-2.6430600187259428 40.75436284251779, -7.8229143312147436 40.75436284251779, -7.8229143312147436 43.322224962103604, -2.6430600187259428 43.322224962103604, -2.6430600187259428 40.75436284251779))";
 
-    private OpenEO openEO;
-    private Process smallProcess;
-    private Process largeProcess;
+	private OpenEO openEO;
+	private Process smallProcess;
+	private Process largeProcess;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
+	Map<String, Object> testGeometryGeoJSON = null;
 
-    @AfterClass
-    public static void tearDownAfterClass() throws Exception {
-    }
+	@BeforeClass
+	public static void setUpBeforeClass() throws Exception {
+	}
 
-    @Before
-    public void checkConnection() {
-        this.openEO = new OpenEO("https://openeo.vito.be/openeo/1.1.0", Klab.INSTANCE.getRootMonitor());
-        assert openEO.isOnline();
-        this.smallProcess = JsonUtils.loadFromClasspath("openeo/small.json", Process.class);
-        this.largeProcess = JsonUtils.loadFromClasspath("openeo/udp.json", Process.class);
-        assert this.smallProcess instanceof Process;
-    }
+	@AfterClass
+	public static void tearDownAfterClass() throws Exception {
+	}
 
-    @Test
-    public void smallProcessTest() {
+	@Before
+	public void checkConnection() {
+		this.openEO = new OpenEO("https://openeo.vito.be/openeo/1.1.0", Klab.INSTANCE.getRootMonitor());
+		assert openEO.isOnline();
+		this.smallProcess = JsonUtils.loadFromClasspath("openeo/small.json", Process.class);
+		this.largeProcess = JsonUtils.loadFromClasspath("openeo/udp.json", Process.class);
+		assert this.smallProcess instanceof Process;
+		this.testGeometryGeoJSON = Shape.create(sShape).asGeoJSON();
+	}
 
-        if (openEO.validateProcess(smallProcess, null, null)) {
-            assertEquals(openEO.runJob(smallProcess, null, Number.class), 8);
-        } else {
-            fail("Validation of UDP failed");
-        }
-    }
+	@Test
+	public void smallProcessTest() {
 
-    @Test
-    public void createAndDeleteSmallJob() {
-        String jobId = openEO.createJob(smallProcess, null);
-        assertNotNull(jobId);
-        System.out.println("Job created: ID is " + jobId);
-        System.out.println(MapUtils.dump(openEO.getJobMetadata(jobId)));
-        System.out.println("Deleting job...");
-        assert openEO.deleteJob(jobId);
-    }
+		if (openEO.validateProcess(smallProcess, null, null)) {
+			assertEquals(openEO.runJob(smallProcess, null, Number.class), 8);
+		} else {
+			fail("Validation of UDP failed");
+		}
+	}
 
-    @Test
-    public void largeProcessTestNoParameters() {
-        openEO.submit(largeProcess, null, (result) -> {
-            fail("should not run without parameters");
-        }, (code, error) -> {
-            assertEquals(code, "ProcessParameterRequired");
-        });
-    }
+	@Test
+	public void createAndDeleteSmallJob() {
+		String jobId = openEO.createJob(smallProcess, null);
+		assertNotNull(jobId);
+		System.out.println("Job created: ID is " + jobId);
+		System.out.println(MapUtils.dump(openEO.getJobMetadata(jobId)));
+		System.out.println("Deleting job...");
+		assert openEO.deleteJob(jobId);
+	}
 
-    @Test
-    public void largeProcessTest() {
+	@Test
+	public void validateProcessWithParameters() {
+		assert openEO.validateProcess(largeProcess,
+				Parameters.create("geometry", testGeometryGeoJSON, "year", 2021, "resolution", 100), (code, error) -> {
+					fail(code + ": " + error);
+				});
+	}
 
-        Map<String, Object> nsp = Shape.create(sShape).asGeoJSON();
-        Parameters<String> parameters = Parameters.create("geometry", nsp, "year", 2021, "resolution", 100);
-        
-        openEO.submit(largeProcess, parameters, (result) -> {
-            System.out.println(JsonUtils.asString(result));
-        }, (code, error) -> {
-            fail(code + ": " + error);
-        });
-    }
+	@Test
+	public void largeProcessTestNoParameters() {
+		openEO.submit(largeProcess, null, (result) -> {
+			fail("should not run without parameters");
+		}, (code, error) -> {
+			assertEquals(code, "ProcessParameterRequired");
+		});
+	}
+
+	@Test
+	public void largeProcessTest() {
+
+		Parameters<String> parameters = Parameters.create("geometry", testGeometryGeoJSON, "year", 2021, "resolution",
+				100);
+
+		openEO.submit(largeProcess, parameters, (result) -> {
+			System.out.println(JsonUtils.asString(result));
+		}, (code, error) -> {
+			fail(code + ": " + error);
+		});
+	}
 
 }

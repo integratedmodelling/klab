@@ -24,43 +24,44 @@ import org.integratedmodelling.klab.stac.STACValidator;
 @ResourceAdapter(type = STACAdapter.ID, version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false)
 public class STACAdapter implements IResourceAdapter {
 
-    public static final String ID = "stac";
+	public static final String ID = "stac";
 
-    @Override
-    public String getName() {
-        return ID;
-    }
+	@Override
+	public String getName() {
+		return ID;
+	}
 
-    @Override
-    public IResourceValidator getValidator() {
-        return new STACValidator();
-    }
+	@Override
+	public IResourceValidator getValidator() {
+		return new STACValidator();
+	}
 
-    @Override
-    public IResourcePublisher getPublisher() {
-        return new STACPublisher();
-    }
+	@Override
+	public IResourcePublisher getPublisher() {
+		return new STACPublisher();
+	}
 
-    @Override
-    public IResourceEncoder getEncoder() {
-        return new STACEncoder();
-    }
+	@Override
+	public IResourceEncoder getEncoder() {
+		return new STACEncoder();
+	}
 
-    @Override
-    public IResourceImporter getImporter() {
-        return new STACImporter();
-    }
+	@Override
+	public IResourceImporter getImporter() {
+		return new STACImporter();
+	}
 
-    @Override
-    public IResourceCalculator getCalculator(IResource resource) {
-        return new STACCalculator();
-    }
+	@Override
+	public IResourceCalculator getCalculator(IResource resource) {
+		return new STACCalculator();
+	}
 
-    @Override
-    public Collection<IPrototype> getResourceConfiguration() {
-        return Collections.singleton(new Prototype(
-                Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/stac.kdl"))
-                        .getActuators().iterator().next(),
-                null));    }
-    
+	@Override
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(
+				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/stac.kdl"))
+						.getActuators().iterator().next(),
+				null));
+	}
+
 }
