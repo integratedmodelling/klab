@@ -30,7 +30,6 @@ public class STAC {
         }
 
         for (String cock : stac.clients.keySet()) {
-            System.out.println("COCK " + cock);
             for (HMStacCollection collection : stac.clients.get(cock).getCollections()) {
                 System.out.println("  " + collection.getId() + ": " + collection.getTemporalBounds());
 //                for (HMStacItem item : collection.searchItems()) {

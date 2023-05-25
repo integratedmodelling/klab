@@ -8,7 +8,6 @@
       "type" : "number"
     }
   },
-  "parameters" : null,
   "process_graph" : {
     "addition" : {
       "process_id" : "add",

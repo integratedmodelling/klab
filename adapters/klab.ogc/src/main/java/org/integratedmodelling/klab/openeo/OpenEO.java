@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.openeo;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -20,7 +22,6 @@ import org.integratedmodelling.klab.auth.Authorization;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.JsonUtils;
-import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -222,36 +223,9 @@ public class OpenEO {
 
 	}
 
-	public static class Builder {
-
-		String id = NameGenerator.shortUUID();
-		String description;
-		String summary;
-		Map<String, ProcessNode> nodes = new LinkedHashMap<>();
-
-		public static class NodeBuilder {
-
-			ProcessNode node = new ProcessNode();
-
-		}
-
-		public NodeBuilder node(String nodeName) {
-
-			NodeBuilder ret = new NodeBuilder();
-
-			return ret;
-		}
-
-		public Process build() {
-			Process ret = new Process();
-			// TODO
-			return ret;
-		}
-	}
-
 	/*
-	 * In addition to processing steps, it should have the fields for parameters,
-	 * title, etc.
+	 * A user defined OpenEO process. Can be used as a "namespace" when running a
+	 * job.
 	 */
 	public static class Process {
 
@@ -308,10 +282,6 @@ public class OpenEO {
 
 		public void setReturns(ReturnValue returns) {
 			this.returns = returns;
-		}
-
-		public static Builder builder() {
-			return new Builder();
 		}
 
 	}
@@ -374,11 +344,11 @@ public class OpenEO {
 	 * @param budget
 	 * @return
 	 */
-	public String createJob(Process process, Parameters<String> parameters) {
+	public String createRemoteJob(String processId, Parameters<String> parameters, Process... processes) {
 
 		Map<String, Object> request = new LinkedHashMap<>();
 
-		request.put("process", parameters == null ? process : addParameters(process, parameters));
+		request.put("process", createJobDefinition(processId, parameters));
 		request.put("plan", plan);
 		request.put("budget", budget <= 0 ? null : budget);
 
@@ -401,16 +371,20 @@ public class OpenEO {
 	 * contain errors from the OpenEO service. Throws an exception only in case of
 	 * remote server error.
 	 * 
-	 * @param process the process to be sent
-	 * @param budget  put 0 if no budget should be sent
-	 * @param plan    null is accepted
+	 * @param process   the process to be sent
+	 * @param budget    put 0 if no budget should be sent
+	 * @param plan      null is accepted
+	 * @param namespace any processes that need to be added to the namespace. For
+	 *                  each process, if there is a link with ref = "self", the URL
+	 *                  is used in the namespace. Otherwise the process is stored at
+	 *                  server side before the run and removed afterwards.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T runJob(Process process, Parameters<String> parameters, Class<T> resultClass) {
+	public <T> T runJob(String processId, Parameters<String> parameters, Class<T> resultClass, Process... namespace) {
 
 		Map<String, Object> request = new LinkedHashMap<>();
 
-		request.put("process", parameters == null ? process : addParameters(process, parameters));
+		request.put("process", createJobDefinition(processId, parameters));
 		request.put("plan", plan);
 		request.put("budget", budget <= 0 ? null : budget);
 
@@ -424,22 +398,40 @@ public class OpenEO {
 		throw new KlabRemoteException("OpenEO runJob returned error code " + response.getStatus());
 	}
 
-	private Map<String, Object> addParameters(Process process, Parameters<String> parameters) {
+	/**
+	 * Create the definition of the job named processId with the passed parameters.
+	 * If process UDP objects are added, they must be merged and provided as
+	 * namespace for the job, according to configuration (as a public URL or stored
+	 * at server side before execution).
+	 * 
+	 * @param processId
+	 * @param parameters
+	 * @param namespace any processes that need to be added to the namespace. For
+	 *                  each process, if there is a link with ref = "self", the URL
+	 *                  is used in the namespace. Otherwise the process is stored at
+	 *                  server side before the run and removed afterwards.
+	 * @return
+	 */
+	private Map<String, Object> createJobDefinition(String processId, Parameters<String> parameters,
+			Process... namespace) {
+
+		Map<String, Object> processGraph = new LinkedHashMap<>();
+		Map<String, Object> processCall = new LinkedHashMap<>();
+
+		processCall.put("process_id", processId);
+		processCall.put("arguments", parameters == null ? new HashMap<>() : parameters.getData());
+		processCall.put("result", true);
+
+		processGraph.put("p" + NameGenerator.shortUUID(), processCall);
 
 		Map<String, Object> ret = new LinkedHashMap<>();
 
-		if (parameters == null || parameters.isEmpty()) {
-			ret.put("process_graph", process);
-		} else {
-			Map<String, Object> pgr = new LinkedHashMap<>();
-			pgr.put(NameGenerator.shortUUID(),
-					MapUtils.of("process_id", process.getId(), "result", true, "arguments", parameters.getData()));
-			pgr.put(NameGenerator.shortUUID(), process);
-			ret.put("process_graph", pgr);
-		}
-		
+		ret.put("id", "p" + NameGenerator.shortUUID());
+		ret.put("description", "Generated by k.LAB on " + new Date());
+		ret.put("process_graph", processGraph);
+
 		System.out.println(JsonUtils.printAsJson(ret));
-		
+
 		return ret;
 	}
 
@@ -478,39 +470,44 @@ public class OpenEO {
 	}
 
 	/**
-	 * Validate a process and submit it if valid, passing control to callbacks.
-	 * Return false if process validation fails. Validation is on the back-end and
-	 * synchronous, execution is asynchronous.
+	 * Validate a process graph and submit it if valid, passing control to
+	 * callbacks. Return false if process validation fails. Validation is on the
+	 * back-end and synchronous, execution is asynchronous.
 	 * 
-	 * @param process
+	 * @param processId
+	 * @param parameters
 	 * @param resultHandler
 	 * @param errorHandler
+	 * @param namespace any processes that need to be added to the namespace. For
+	 *                  each process, if there is a link with ref = "self", the URL
+	 *                  is used in the namespace. Otherwise the process is stored at
+	 *                  server side before the run and removed afterwards.
 	 * @return
 	 */
-	public boolean submit(Process process, Parameters<String> parameters, Consumer<Map<String, Object>> resultHandler,
-			BiConsumer<String, String> errorHandler) {
+	public boolean submit(String processId, Parameters<String> parameters, Consumer<Map<String, Object>> resultHandler,
+			BiConsumer<String, String> errorHandler, Process... namespace) {
 
-		if (validateProcess(process, parameters, errorHandler)) {
-			String jobId = createJob(process, parameters);
+		if (validateProcess(processId, parameters, errorHandler)) {
+			String jobId = createRemoteJob(processId, parameters);
 			if (jobId == null) {
-				errorHandler.accept("InternalError", "Process " + process.getId() + " was rejected by server");
+				errorHandler.accept("InternalError", "Process " + processId + " was rejected by server");
 				return false;
 			}
 			startJob(jobId, resultHandler, errorHandler);
 			return true;
 		}
 
-		errorHandler.accept("InternalError", "Process " + process.getId() + " was not validated by server");
+		errorHandler.accept("InternalError", "Process " + processId + " was not validated by server");
 
 		return false;
 	}
 
-	public boolean validateProcess(Process process, Parameters<String> parameters,
+	public boolean validateProcess(String processId, Parameters<String> parameters,
 			BiConsumer<String, String> errorHandler) {
 
 		HttpResponse<JsonNode> response = Unirest.post(endpoint + "/validation").contentType("application/json")
 				.header("Authorization", authorization.getAuthorization())
-				.body(parameters == null ? process : addParameters(process, parameters)).asJson();
+				.body(createJobDefinition(processId, parameters)).asJson();
 
 		if (response.isSuccess()) {
 			if (response.getBody().getObject().has("errors")) {

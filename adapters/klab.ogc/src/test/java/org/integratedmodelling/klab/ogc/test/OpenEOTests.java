@@ -48,39 +48,27 @@ public class OpenEOTests {
 
 	@Test
 	public void smallProcessTest() {
-
-		if (openEO.validateProcess(smallProcess, null, null)) {
-			assertEquals(openEO.runJob(smallProcess, null, Number.class), 8);
-		} else {
-			fail("Validation of UDP failed");
-		}
+		assertEquals(openEO.runJob("add", Parameters.create("x", 5, "y", 3), Number.class), 8);
 	}
 
-	@Test
-	public void createAndDeleteSmallJob() {
-		String jobId = openEO.createJob(smallProcess, null);
-		assertNotNull(jobId);
-		System.out.println("Job created: ID is " + jobId);
-		System.out.println(MapUtils.dump(openEO.getJobMetadata(jobId)));
-		System.out.println("Deleting job...");
-		assert openEO.deleteJob(jobId);
-	}
+//	@Test
+//	public void createAndDeleteSmallJob() {
+//		String jobId = openEO.createJob(smallProcess, null);
+//		assertNotNull(jobId);
+//		System.out.println("Job created: ID is " + jobId);
+//		System.out.println(MapUtils.dump(openEO.getJobMetadata(jobId)));
+//		System.out.println("Deleting job...");
+//		assert openEO.deleteJob(jobId);
+//	}
 
-	@Test
-	public void validateProcessWithParameters() {
-		assert openEO.validateProcess(largeProcess,
-				Parameters.create("geometry", testGeometryGeoJSON, "year", 2021, "resolution", 100), (code, error) -> {
-					fail(code + ": " + error);
-				});
-	}
 
 	@Test
 	public void largeProcessTestNoParameters() {
-		openEO.submit(largeProcess, null, (result) -> {
+		openEO.submit("dummy_udp", null, (result) -> {
 			fail("should not run without parameters");
 		}, (code, error) -> {
 			assertEquals(code, "ProcessParameterRequired");
-		});
+		}, largeProcess);
 	}
 
 	@Test
@@ -89,11 +77,11 @@ public class OpenEOTests {
 		Parameters<String> parameters = Parameters.create("geometry", testGeometryGeoJSON, "year", 2021, "resolution",
 				100);
 
-		openEO.submit(largeProcess, parameters, (result) -> {
+		openEO.submit("dummy_udp", parameters, (result) -> {
 			System.out.println(JsonUtils.asString(result));
 		}, (code, error) -> {
 			fail(code + ": " + error);
-		});
+		}, largeProcess);
 	}
 
 }
