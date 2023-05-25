@@ -93,9 +93,13 @@ public class StatsQueryService {
                     " AND start_time < " + request.getTo() + ";";
             break;
         case "queries_per":
+        	if(!request.getGroupBy().equals("day") && !request.getGroupBy().equals("month") && !request.getGroupBy().equals("year")) {
+        		request.setGroupBy("month");
+        		}
         	query = "SELECT DISTINCT date_trunc('"+ request.getGroupBy() + "', to_timestamp(start_time/1000)) AS date, "
         			+ "COUNT(context_id) OVER (PARTITION BY date_trunc('" + request.getGroupBy() + "', to_timestamp(start_time/1000))) AS count "
         			+ "FROM queries ORDER BY date;";
+            /* change queryType to contain the {day,month,year} which is needed when resolving the query later */
         	request.setQueryType(request.getQueryType()+"_"+request.getGroupBy());
         	break;
         /* default same as "outcome_group_count" */
