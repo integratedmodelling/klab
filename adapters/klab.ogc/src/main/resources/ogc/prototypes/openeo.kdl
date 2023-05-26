@@ -9,11 +9,16 @@
  	final text 'serviceUrl'
  		"The URL of the service providing the data."
  		 	 		
- 	optional number band
- 		"The band for a multi-band raster. Default is 0."
- 		default 0
+	optional text 'processId'
+		"If the resource only calls one process at server side with arguments, name the process here"
 
 	optional number nodata
 		"The no-data value for this raster. If not specified, the nodata value communicated by the WCS server is used. This should only be modified if that is wrong or missing."
 
+	optional text 'namespace'
+		"Public URL of a process definition that will be added to the namespace during contextualization"
+
+ 	optional text band
+ 		"The band for a multi-band raster. Default is none (data must contain one band)"
+ 		default 0
  }

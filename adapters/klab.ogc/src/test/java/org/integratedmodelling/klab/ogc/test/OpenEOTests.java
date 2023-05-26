@@ -1,17 +1,19 @@
 package org.integratedmodelling.klab.ogc.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.openeo.OpenEO;
 import org.integratedmodelling.klab.openeo.OpenEO.Process;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
-import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -61,7 +63,6 @@ public class OpenEOTests {
 //		assert openEO.deleteJob(jobId);
 //	}
 
-
 	@Test
 	public void largeProcessTestNoParameters() {
 		openEO.submit("dummy_udp", null, (result) -> {
@@ -69,6 +70,24 @@ public class OpenEOTests {
 		}, (code, error) -> {
 			assertEquals(code, "ProcessParameterRequired");
 		}, largeProcess);
+	}
+
+	@Test
+	public void runLargeProcessTest() {
+		/*
+		 * Run a large data calculation synchronously, pass the output as a stream to a
+		 * file serializer
+		 */
+		openEO.runJob("udp_annual_avg_fcover", Parameters.create("year", 2020, "geometry", testGeometryGeoJSON),
+				(input) -> {
+					try {
+						FileUtils.copyInputStreamToFile(input,
+								new File(System.getProperty("user.home") + File.separator + "openeo.tif"));
+					} catch (IOException e) {
+						throw new KlabIOException(e);
+					}
+				}, OpenEO.readUdp(
+						"https://raw.githubusercontent.com/integratedmodelling/OpenEO-UDP-UDF-catalogue/main/UDP/json/udp_annual_avg_fcover.json"));
 	}
 
 	@Test
@@ -81,7 +100,8 @@ public class OpenEOTests {
 			System.out.println(JsonUtils.asString(result));
 		}, (code, error) -> {
 			fail(code + ": " + error);
-		}, largeProcess);
+		}, OpenEO.readUdp(
+				"https://raw.githubusercontent.com/integratedmodelling/OpenEO-UDP-UDF-catalogue/main/UDP/json/udp_annual_avg_fcover.json"));
 	}
 
 }

@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.openeo;
 
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -19,6 +22,7 @@ import java.util.function.Consumer;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.Authorization;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -223,6 +227,47 @@ public class OpenEO {
 
 	}
 
+	public static class Link {
+
+		private String rel;
+		private String href;
+		private String type;
+		private String title;
+
+		public String getRel() {
+			return rel;
+		}
+
+		public void setRel(String rel) {
+			this.rel = rel;
+		}
+
+		public String getHref() {
+			return href;
+		}
+
+		public void setHref(String href) {
+			this.href = href;
+		}
+
+		public String getType() {
+			return type;
+		}
+
+		public void setType(String type) {
+			this.type = type;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+
+		public void setTitle(String title) {
+			this.title = title;
+		}
+
+	}
+
 	/*
 	 * A user defined OpenEO process. Can be used as a "namespace" when running a
 	 * job.
@@ -235,6 +280,7 @@ public class OpenEO {
 		private List<Parameter> parameters = new ArrayList<>();
 		private Map<String, ProcessNode> process_graph = new LinkedHashMap<>();
 		private ReturnValue returns;
+		private List<Link> links = new ArrayList<>();
 
 		public String getId() {
 			return id;
@@ -284,6 +330,14 @@ public class OpenEO {
 			this.returns = returns;
 		}
 
+		public List<Link> getLinks() {
+			return links;
+		}
+
+		public void setLinks(List<Link> links) {
+			this.links = links;
+		}
+
 	}
 
 	public OpenEO(String endpoint, IMonitor monitor) {
@@ -302,6 +356,31 @@ public class OpenEO {
 			}
 			jobs.removeAll(finished);
 		}, POLLING_INTERVAL_MS, TimeUnit.MILLISECONDS);
+	}
+
+	/**
+	 * Read a UDP from a network-available JSON specification. Will insert the URL
+	 * into the "self" link of the spec, so that the process can be validated at
+	 * client side but the link remains available for use at server side.
+	 * 
+	 * @param url
+	 * @return
+	 */
+	public static Process readUdp(String url) {
+		try {
+
+			Process ret = JsonUtils.load(new URL(url), Process.class);
+
+			Link self = new Link();
+			self.setRel("self");
+			self.setHref(url);
+			ret.links.add(self);
+
+			return ret;
+
+		} catch (KlabIOException | MalformedURLException e) {
+		}
+		return null;
 	}
 
 	private boolean checkFinish(Job job) {
@@ -367,15 +446,13 @@ public class OpenEO {
 	/**
 	 * <em>Synchronous</em> job executor that blocks until the job is finished. Only
 	 * to be used with jobs that are known to be small. Returns the results as a
-	 * JSON map, which will need to be interpreted at the user end. The result may
+	 * POD, which will need to be interpreted at the user end. The result may
 	 * contain errors from the OpenEO service. Throws an exception only in case of
 	 * remote server error.
 	 * 
 	 * @param process   the process to be sent
-	 * @param budget    put 0 if no budget should be sent
-	 * @param plan      null is accepted
 	 * @param namespace any processes that need to be added to the namespace. For
-	 *                  each process, if there is a link with ref = "self", the URL
+	 *                  each process, if there is a link with ref == "self", the URL
 	 *                  is used in the namespace. Otherwise the process is stored at
 	 *                  server side before the run and removed afterwards.
 	 */
@@ -384,7 +461,7 @@ public class OpenEO {
 
 		Map<String, Object> request = new LinkedHashMap<>();
 
-		request.put("process", createJobDefinition(processId, parameters));
+		request.put("process", createJobDefinition(processId, parameters, namespace));
 		request.put("plan", plan);
 		request.put("budget", budget <= 0 ? null : budget);
 
@@ -399,6 +476,45 @@ public class OpenEO {
 	}
 
 	/**
+	 * <em>Synchronous</em> job executor that blocks until the job is finished. Only
+	 * to be used with jobs that are known to be small. Passes the result
+	 * inputstream to a consumer. Throws an exception only in case of remote server
+	 * error.
+	 * 
+	 * @param process   the process to be sent
+	 * @param budget    put 0 if no budget should be sent
+	 * @param plan      null is accepted
+	 * @param namespace any processes that need to be added to the namespace. For
+	 *                  each process, if there is a link with ref == "self", the URL
+	 *                  is used in the namespace. Otherwise the process is stored at
+	 *                  server side before the run and removed afterwards.
+	 */
+	public void runJob(String processId, Parameters<String> parameters, Consumer<InputStream> resultConsumer,
+			Process... namespace) {
+
+		Map<String, Object> request = new LinkedHashMap<>();
+
+		request.put("process", createJobDefinition(processId, parameters, namespace));
+		request.put("plan", plan);
+		request.put("budget", budget <= 0 ? null : budget);
+
+		Unirest.post(endpoint + "/result").contentType("application/json")
+				.header("Authorization", authorization.getAuthorization()).body(request).thenConsume((rawr) -> {
+					resultConsumer.accept(rawr.getContent());
+				});
+
+	}
+
+	private String getNamespaceUrl(Process udp) {
+		for (Link link : udp.getLinks()) {
+			if ("self".equals(link.getRel())) {
+				return link.getHref();
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Create the definition of the job named processId with the passed parameters.
 	 * If process UDP objects are added, they must be merged and provided as
 	 * namespace for the job, according to configuration (as a public URL or stored
@@ -406,10 +522,10 @@ public class OpenEO {
 	 * 
 	 * @param processId
 	 * @param parameters
-	 * @param namespace any processes that need to be added to the namespace. For
-	 *                  each process, if there is a link with ref = "self", the URL
-	 *                  is used in the namespace. Otherwise the process is stored at
-	 *                  server side before the run and removed afterwards.
+	 * @param namespace  any processes that need to be added to the namespace. For
+	 *                   each process, if there is a link with ref = "self", the URL
+	 *                   is used in the namespace. Otherwise the process is stored
+	 *                   at server side before the run and removed afterwards.
 	 * @return
 	 */
 	private Map<String, Object> createJobDefinition(String processId, Parameters<String> parameters,
@@ -421,6 +537,21 @@ public class OpenEO {
 		processCall.put("process_id", processId);
 		processCall.put("arguments", parameters == null ? new HashMap<>() : parameters.getData());
 		processCall.put("result", true);
+
+		if (namespace != null) {
+			for (Process udp : namespace) {
+				String namespaceUrl = getNamespaceUrl(udp);
+				if (namespaceUrl != null) {
+					// substitute any previous one. The schema only accepts one URL.
+					// TODO clarify the schema and if needed, throw exception if there's 2+
+					// namespace URLs in the args.
+					processCall.put("namespace", namespaceUrl);
+				} else {
+					// TODO must "publish" the process(es) into the OpenEO engine to make them
+					// available in namespace backend
+				}
+			}
+		}
 
 		processGraph.put("p" + NameGenerator.shortUUID(), processCall);
 
@@ -478,10 +609,11 @@ public class OpenEO {
 	 * @param parameters
 	 * @param resultHandler
 	 * @param errorHandler
-	 * @param namespace any processes that need to be added to the namespace. For
-	 *                  each process, if there is a link with ref = "self", the URL
-	 *                  is used in the namespace. Otherwise the process is stored at
-	 *                  server side before the run and removed afterwards.
+	 * @param namespace     any processes that need to be added to the namespace.
+	 *                      For each process, if there is a link with ref = "self",
+	 *                      the URL is used in the namespace. Otherwise the process
+	 *                      is stored at server side before the run and removed
+	 *                      afterwards.
 	 * @return
 	 */
 	public boolean submit(String processId, Parameters<String> parameters, Consumer<Map<String, Object>> resultHandler,
