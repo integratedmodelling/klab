@@ -2,7 +2,8 @@
  * Parameters accepted in a raster resource
  */
  annotation openeo // TODO 	
-	"The OpenEO adapter wraps an OpenEO process definition in an imported process.json file." 	
+	"The OpenEO adapter wraps an OpenEO process call, optionally including a user-defined process definition from a JSON 
+	 specification, either imported locally or as a public URL." 	
 	label "OpenEO User Process adapter" 	
  {
 
@@ -18,7 +19,4 @@
 	optional text 'namespace'
 		"Public URL of a process definition that will be added to the namespace during contextualization"
 
- 	optional text band
- 		"The band for a multi-band raster. Default is none (data must contain one band)"
- 		default 0
  }
