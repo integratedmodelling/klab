@@ -6,22 +6,56 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
+import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
+/**
+ * A field to validate if the GeoJSON is compliant with the STAC specification
+ * @author igc
+ *
+ */
 public class STACValidator implements IResourceValidator {
 
     @Override
     public Builder validate(String urn, URL url, IParameters<String> userData, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
+        if (!canHandle(null, userData)) {
+            throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
+        }
+
+        // TODO ask if band makes sense in this context
+        int band = userData.get("band", 0);
+
+        STACService service = STACAdapter.getService(userData.get("catalogUrl", String.class));
+
+        String collectionId = userData.get("collectionId", String.class);
+        Optional<HMStacCollection> collection;
+        try {
+            collection = service.getCollectionById(collectionId);
+        } catch (Exception e) {
+            throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
+        }
+
+        if(collection.isEmpty()) {
+            throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
+        }
+
+        IGeometry geometry = service.getGeometry(collectionId);
+
+        return new ResourceBuilder(urn).withParameters(userData)//.withType(Type.NUMBER)
+                .withGeometry(geometry).withSpatialExtent(service.getSpatialExtent());
     }
 
     @Override
@@ -50,8 +84,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        // TODO Auto-generated method stub
-        return false;
+        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId");
     }
 
     @Override
