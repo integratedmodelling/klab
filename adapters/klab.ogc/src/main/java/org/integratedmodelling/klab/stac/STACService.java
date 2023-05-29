@@ -42,18 +42,9 @@ public class STACService {
         try {
             this.catalog.open();
             this.collections.addAll(catalog.getCollections());
-            this.collections.stream().forEach(c -> searchItemsOfCollection(c));
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-        }
-    }
-
-    private void searchItemsOfCollection(HMStacCollection c) {
-        try {
-            items.put(c.getId(), c.searchItems());
-        } catch (Exception e) {
-            // Nothing to do here
         }
     }
 
@@ -66,8 +57,6 @@ public class STACService {
         if (collection == null) {
             return Optional.empty();
         }
-//        For some reason, it is not working :/
-//        items.put(collectionId, collection.searchItems());
         return Optional.ofNullable(collection);
     }
 
