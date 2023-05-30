@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -144,7 +145,7 @@ public class OpenEO {
 
 		private String name;
 		private String description;
-		private Schema schema;
+		private Object schema;
 		private boolean optional;
 		private boolean deprecated;
 		private boolean experimental;
@@ -166,11 +167,11 @@ public class OpenEO {
 			this.description = description;
 		}
 
-		public Schema getSchema() {
+		public Object getSchema() {
 			return schema;
 		}
-
-		public void setSchema(Schema schema) {
+		
+		public void setSchema(Object schema) {
 			this.schema = schema;
 		}
 
@@ -205,6 +206,18 @@ public class OpenEO {
 
 		public void setDefault(boolean isDefault) {
 			this.isDefault = isDefault;
+		}
+		
+		public List<Schema> schemata() {
+			List<Schema> ret = new ArrayList<>();
+			if (schema instanceof Map) {
+				ret.add(JsonUtils.convertMap((Map<?,?>)schema, Schema.class));
+			} else if (schema instanceof Collection) {
+				for (Object s : (Collection<?>)schema) {
+					ret.add(JsonUtils.convertMap((Map<?,?>)s, Schema.class));
+				}
+			}
+			return ret;
 		}
 
 	}
@@ -535,6 +548,9 @@ public class OpenEO {
 
 		Unirest.post(endpoint + "/result").contentType("application/json")
 				.header("Authorization", authorization.getAuthorization()).body(request).thenConsume((rawr) -> {
+					if (rawr.getStatus() - 400 >= 0) {
+						throw new KlabRemoteException("Server returned error code " + rawr.getStatus());
+					}
 					resultConsumer.accept(rawr.getContent());
 				});
 

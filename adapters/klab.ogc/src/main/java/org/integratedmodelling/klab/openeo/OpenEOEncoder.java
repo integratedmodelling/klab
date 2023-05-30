@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -69,10 +70,9 @@ public class OpenEOEncoder implements IResourceEncoder {
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
 
-		// TODO switch to false as default
 		boolean synchronous = urnParameters.containsKey("synchronous")
 				? Boolean.parseBoolean(urnParameters.get("synchronous"))
-				: true;
+				: false;
 
 		OpenEO service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
 		if (service != null && service.isOnline()) {
@@ -130,6 +130,13 @@ public class OpenEOEncoder implements IResourceEncoder {
 				}
 			}
 
+			if (scale.getSpace() != null && resource.getParameters().contains("space.projection")) {
+				Object projectionData = scale.getSpace().getProjection().getSimpleSRS().startsWith("EPSG:")
+						? Integer.parseInt(scale.getSpace().getProjection().getSimpleSRS().substring(5))
+						: ((Projection) scale.getSpace().getProjection()).getWKTDefinition();
+				arguments.put(resource.getParameters().get("space.projection", String.class), projectionData);
+			}
+
 			// resource is temporal: must specify extent
 			if (rscal.getTime() != null) {
 				/*
@@ -144,6 +151,12 @@ public class OpenEOEncoder implements IResourceEncoder {
 						throw new KlabUnsupportedFeatureException("non-yearly use of yearly OpenEO resource");
 					}
 				} else if (resource.getParameters().containsKey("time.extent")) {
+
+					List<String> range = new ArrayList<>();
+					range.add(scale.getTime().getStart().toRFC3339String());
+					range.add(scale.getTime().getEnd().toRFC3339String());
+					arguments.put(resource.getParameters().get("time.extent", String.class), range);
+
 				} else {
 					throw new KlabIllegalStateException(
 							"resource does not specify enough temporal parameters to contextualize");
@@ -178,7 +191,7 @@ public class OpenEOEncoder implements IResourceEncoder {
 
 				} catch (Throwable t) {
 					scope.getMonitor().error(t);
-					return;
+					throw t;
 				}
 			} else {
 

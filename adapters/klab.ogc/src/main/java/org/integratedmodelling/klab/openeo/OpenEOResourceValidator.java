@@ -48,7 +48,7 @@ public class OpenEOResourceValidator implements IResourceValidator {
 		GeometryBuilder gBuilder = Geometry.builder();
 		Geometry geometry = Geometry.empty();
 		boolean geometryDefined = false;
-		
+
 		if (!service.isOnline()) {
 			monitor.warn("OpenEO service " + userData.get("serviceUrl", String.class) + " offline or unauthenticated");
 		}
@@ -78,7 +78,7 @@ public class OpenEOResourceValidator implements IResourceValidator {
 				for (Parameter parameter : process.getParameters()) {
 					Parameters<String> dimensions = getDimensionParameters(parameter);
 					if (dimensions == null) {
-						ret = ret.withDependency(parameter.getName(), translateType(parameter.getSchema()), false,
+						ret = ret.withDependency(parameter.getName(), translateType(parameter.schemata()), false,
 								parameter.isOptional());
 						// TODO check conventions!
 					} else {
@@ -124,7 +124,7 @@ public class OpenEOResourceValidator implements IResourceValidator {
 				 */
 
 				if (process.getReturns() != null) {
-					ret = ret.withType(translateType(process.getReturns().getSchema()));
+					ret = ret.withType(translateType(Collections.singleton(process.getReturns().getSchema())));
 				} else {
 					monitor.warn(
 							"OpenEO process " + process.getId() + " does not declare a return type: number assumed");
@@ -157,7 +157,7 @@ public class OpenEOResourceValidator implements IResourceValidator {
 			} else {
 				ret = ret.withParameter("time.extent", "?");
 			}
-			
+
 			if (((ResourceBuilder) ret).getParameters().containsKey("space.resolution")) {
 				// gBuilder.space().resolution(urn)
 				gBuilder.space().regular().build();
@@ -213,27 +213,31 @@ public class OpenEOResourceValidator implements IResourceValidator {
 			return Parameters.create("time.extent", parameter.getName());
 		} else if ("year".equals(parameter.getName())) {
 			return Parameters.create("time.year", parameter.getName());
+		} else if ("projection".equals(parameter.getName())) {
+			return Parameters.create("space.projection", parameter.getName());
 		}
 
 		return null;
 	}
 
-	private Type translateType(Schema schema) {
-		switch (schema.getType()) {
-		case "number":
-			return Type.NUMBER;
-		case "string":
-			return Type.TEXT;
-		case "boolean":
-			return Type.BOOLEAN;
-		case "null":
-			return Type.VOID;
-		case "array":
-			return Type.LIST;
-		case "object":
-			return "geojson".equals(schema.getSubtype()) ? Type.SPATIALEXTENT : Type.OBJECT;
+	private Type translateType(Collection<Schema> schemata) {
+		// TODO this only considers the first value, flexible schemata are BAD
+		for (Schema schema : schemata) {
+			switch (schema.getType()) {
+			case "number":
+				return Type.NUMBER;
+			case "string":
+				return Type.TEXT;
+			case "boolean":
+				return Type.BOOLEAN;
+			case "null":
+				return Type.VOID;
+			case "array":
+				return Type.LIST;
+			case "object":
+				return "geojson".equals(schema.getSubtype()) ? Type.SPATIALEXTENT : Type.OBJECT;
+			}
 		}
-
 		return null;
 	}
 
