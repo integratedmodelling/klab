@@ -111,6 +111,16 @@ public class WcsEncoder implements IResourceEncoder {
 		return encoder.readCoverage(coverageFile);
 	}
 
+	public static File getAdjustedCoverage(String url, IGeometry geometry) {
+		try (InputStream input = new URL(url).openStream()) {
+			URL getCov = new URL(url);
+			return getAdjustedCoverage(getCov.openStream(), geometry);
+		} catch (Throwable e) {
+			throw new KlabIOException(e);
+		}
+	}
+
+	
 	public static File getAdjustedCoverage(InputStream input, IGeometry geometry) {
 
 		try {

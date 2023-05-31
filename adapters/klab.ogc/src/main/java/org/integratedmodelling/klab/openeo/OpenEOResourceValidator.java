@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
+import org.integratedmodelling.klab.common.GeometryBuilder.SpaceBuilder;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
@@ -116,7 +117,13 @@ public class OpenEOResourceValidator implements IResourceValidator {
 					ret = ret.withMetadata(IMetadata.DC_COMMENT, process.getDescription());
 				}
 				if (process.getSummary() != null) {
-					ret = ret.withMetadata(IMetadata.DC_LABEL, process.getSummary());
+					String title = process.getSummary();
+					int dot = title.indexOf('.');
+					if (dot > 0) {
+						title = title.substring(0, dot);
+					}
+					ret = ret.withMetadata(IMetadata.DC_TITLE, title);
+					ret = ret.withMetadata(IMetadata.DC_DESCRIPTION, process.getSummary());
 				}
 
 				/*
@@ -158,18 +165,18 @@ public class OpenEOResourceValidator implements IResourceValidator {
 				ret = ret.withParameter("time.extent", "?");
 			}
 
+			SpaceBuilder spaceBuilder = gBuilder.space();
 			if (((ResourceBuilder) ret).getParameters().containsKey("space.resolution")) {
 				// gBuilder.space().resolution(urn)
-				gBuilder.space().regular().build();
+				spaceBuilder = spaceBuilder.regular();
 			} else {
 				ret = ret.withParameter("space.resolution", "?");
 			}
-			if (((ResourceBuilder) ret).getParameters().containsKey("space.shape")) {
-				// s2 unless resolution is there; otherwise compute x/y grid size
-				// if result explicit and of type object, then we're a vector resource
-				gBuilder.space().build();
-			} else {
+			if (!((ResourceBuilder) ret).getParameters().containsKey("space.shape")) {
 				ret = ret.withParameter("space.shape", "?");
+			}
+			if (!((ResourceBuilder) ret).getParameters().containsKey("space.projection")) {
+				ret = ret.withParameter("space.projection", "?");
 			}
 
 			geometry = gBuilder.build();

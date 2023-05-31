@@ -5,8 +5,10 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -35,8 +37,16 @@ import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class OpenEOEncoder implements IResourceEncoder {
+
+	static Set<String> knownParameters;
+
+	static {
+		knownParameters = new HashSet<>();
+		knownParameters.add("synchronous");
+	}
 
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {
@@ -84,9 +94,14 @@ public class OpenEOEncoder implements IResourceEncoder {
 			/*
 			 * check for urn parameters that are recognized and match the type of the inputs
 			 */
+			for (String parameter : urnParameters.keySet()) {
+				if (!knownParameters.contains(parameter)) {
+					arguments.put(parameter, Utils.asPOD(urnParameters.get(parameter)));
+				}
+			}
 
 			// resource has space: must specify space
-			if (rscal.getSpace().isRegular() && rscal.getSpace().size() > 1) {
+			if (rscal.getSpace().isRegular() && scale.getSpace().size() > 1) {
 
 				IGrid grid = ((Space) scale.getSpace()).getGrid();
 
@@ -198,19 +213,34 @@ public class OpenEOEncoder implements IResourceEncoder {
 				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), arguments,
 						processes.toArray(new Process[processes.size()]));
 
-				if (job.isCancelled()) {
-					scope.getMonitor().warn("job canceled");
-				} else if (job.getError() != null) {
-					scope.getMonitor().error(job.getError());
-					return;
-				}
-
 				try {
+					Map<String, Object> results = job.get();
 
-					Map<String, Object> result = job.get();
-					// TODO should have a URL for the output; at the moment the server produces
-					// errors
+					if (job.isCancelled()) {
+						scope.getMonitor().warn("job canceled");
+					} else if (job.getError() != null) {
+						scope.getMonitor().error(job.getError());
+					} else {
 
+						for (String key : results.keySet()) {
+							Map<?, ?> result = (Map<?, ?>) results.get(key);
+							if (result.containsKey("href") && result.containsKey("type")) {
+								/*
+								 * depending on the geometry, this may be of different types
+								 */
+								if (result.get("type").toString().contains("geotiff")) {
+									File outfile = WcsEncoder.getAdjustedCoverage(result.get("href").toString(),
+											geometry);
+									RasterEncoder encoder = new RasterEncoder();
+									encoder.encodeFromCoverage(resource, urnParameters, encoder.readCoverage(outfile),
+											geometry, builder, scope);
+									break;
+								}
+								// TODO handle other cases
+							}
+						}
+
+					}
 				} catch (InterruptedException | ExecutionException e) {
 					throw new KlabInternalErrorException(e);
 				}

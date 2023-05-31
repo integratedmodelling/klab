@@ -98,7 +98,7 @@ public class OpenEOTests {
 		assert outfile.isFile();
 		
 	}
-
+	
 	@Test
 	public void runLargeProcessAsync() throws InterruptedException, ExecutionException {
 		/*
@@ -113,7 +113,7 @@ public class OpenEOTests {
 			System.out.println("ZIOCAN process terminated with errors: " + future.getError());
 		} else {
 			Map<String, Object> result = future.get();
-			MapUtils.dump(result);
+			System.out.println(MapUtils.dump(result));
 			assert result instanceof Map;
 		}
 	}
