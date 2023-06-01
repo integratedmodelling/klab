@@ -43,7 +43,7 @@ public class OpenEOTests {
 
 	@Before
 	public void checkConnection() {
-		this.openEO = new OpenEO("https://openeo-dev.vito.be/openeo/1.1.0", Klab.INSTANCE.getRootMonitor());
+		this.openEO = new OpenEO("https://openeo-dev.vito.be/openeo/1.1.0");
 		assert openEO.isOnline();
 		this.smallProcess = JsonUtils.loadFromClasspath("openeo/small.json", Process.class);
 		this.largeProcess = JsonUtils.loadFromClasspath("openeo/udp.json", Process.class);
@@ -53,7 +53,9 @@ public class OpenEOTests {
 
 	@Test
 	public void smallProcessTest() {
-		assertEquals(openEO.runJob("add", Parameters.create("x", 5, "y", 3), Number.class), 8);
+		assertEquals(
+				openEO.runJob("add", Parameters.create("x", 5, "y", 3), Klab.INSTANCE.getRootMonitor(), Number.class),
+				8);
 	}
 
 //	@Test
@@ -68,7 +70,7 @@ public class OpenEOTests {
 
 	@Test
 	public void largeProcessTestNoParameters() {
-		openEO.submit("dummy_udp", null, (result) -> {
+		openEO.submit("dummy_udp", null, Klab.INSTANCE.getRootMonitor(), (result) -> {
 			fail("should not run without parameters");
 		}, (code, error) -> {
 			assertEquals(code, "ProcessParameterRequired");
@@ -83,22 +85,21 @@ public class OpenEOTests {
 		 */
 		File outfile = new File(System.getProperty("user.home") + File.separator + "openeo_test.tif");
 		FileUtils.deleteQuietly(outfile);
-		
+
 		openEO.runJob("udp_annual_avg_fcover", Parameters.create("year", 2020, "geometry", testGeometryGeoJSON),
-				(input) -> {
+				Klab.INSTANCE.getRootMonitor(), (input) -> {
 					try {
-						FileUtils.copyInputStreamToFile(input,
-								outfile);
+						FileUtils.copyInputStreamToFile(input, outfile);
 					} catch (IOException e) {
 						throw new KlabIOException(e);
 					}
 				}, OpenEO.readUdp(
 						"https://raw.githubusercontent.com/integratedmodelling/OpenEO-UDP-UDF-catalogue/main/UDP/json/udp_annual_avg_fcover.json"));
-		
+
 		assert outfile.isFile();
-		
+
 	}
-	
+
 	@Test
 	public void runLargeProcessAsync() throws InterruptedException, ExecutionException {
 		/*
@@ -106,7 +107,8 @@ public class OpenEOTests {
 		 * file serializer
 		 */
 		OpenEOFuture future = openEO.submit("udp_annual_avg_fcover",
-				Parameters.create("year", 2020, "geometry", testGeometryGeoJSON), OpenEO.readUdp(
+				Parameters.create("year", 2020, "geometry", testGeometryGeoJSON), Klab.INSTANCE.getRootMonitor(),
+				OpenEO.readUdp(
 						"https://raw.githubusercontent.com/integratedmodelling/OpenEO-UDP-UDF-catalogue/main/UDP/json/udp_annual_avg_fcover.json"));
 
 		if (future.getError() != null) {
@@ -124,7 +126,7 @@ public class OpenEOTests {
 		Parameters<String> parameters = Parameters.create("geometry", testGeometryGeoJSON, "year", 2021, "resolution",
 				100);
 
-		openEO.submit("dummy_udp", parameters, (result) -> {
+		openEO.submit("dummy_udp", parameters, Klab.INSTANCE.getRootMonitor(), (result) -> {
 			System.out.println(JsonUtils.asString(result));
 		}, (code, error) -> {
 			fail(code + ": " + error);

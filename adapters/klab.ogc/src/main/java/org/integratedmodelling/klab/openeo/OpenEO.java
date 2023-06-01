@@ -25,7 +25,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
-import org.apache.log4j.Level;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.Authorization;
@@ -34,7 +33,6 @@ import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.JsonUtils;
-import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -59,7 +57,6 @@ public class OpenEO {
 
 	private Authorization authorization;
 	private String endpoint;
-	IMonitor monitor;
 	String plan; // TODO expose, link to /me
 	int budget; // TODO expose, update
 
@@ -67,6 +64,7 @@ public class OpenEO {
 		String jobId;
 		Consumer<Map<String, Object>> resultConsumer;
 		BiConsumer<String, String> errorConsumer;
+		IMonitor monitor;
 	}
 
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -385,9 +383,8 @@ public class OpenEO {
 
 	}
 
-	public OpenEO(String endpoint, IMonitor monitor) {
+	public OpenEO(String endpoint) {
 		this.endpoint = endpoint;
-		this.monitor = monitor;
 		ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
 		if (credentials != null) {
 			this.authorization = new Authorization(credentials);
@@ -454,10 +451,10 @@ public class OpenEO {
 			case "error":
 				for (Notification notification : getJobLogs(job)) {
 					if ("error".equals(notification.getLevel())) {
-						monitor.error(notification.getMessage());
+						job.monitor.error(notification.getMessage());
 						job.errorConsumer.accept("ServerError", notification.getMessage());
 					} else if ("warning".equals(notification.getLevel())) {
-						monitor.warn(notification.getMessage());
+						job.monitor.warn(notification.getMessage());
 					}
 				}
 				return true;
@@ -481,7 +478,7 @@ public class OpenEO {
 		if (response.isSuccess()) {
 			for (String cost : response.getHeaders().get("OpenEO-Costs")) {
 				// TODO adjust budget if so configured
-				monitor.info("job " + job.jobId + " costs " + cost + " to download");
+				job.monitor.info("job " + job.jobId + " costs " + cost + " to download");
 			}
 			return response.getBody().getObject().toMap();
 		}
@@ -538,7 +535,8 @@ public class OpenEO {
 	 *                  server side before the run and removed afterwards.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T runJob(String processId, Parameters<String> parameters, Class<T> resultClass, Process... namespace) {
+	public <T> T runJob(String processId, Parameters<String> parameters, IMonitor monitor, Class<T> resultClass,
+			Process... namespace) {
 
 		Map<String, Object> request = new LinkedHashMap<>();
 
@@ -570,8 +568,8 @@ public class OpenEO {
 	 *                  is used in the namespace. Otherwise the process is stored at
 	 *                  server side before the run and removed afterwards.
 	 */
-	public void runJob(String processId, Parameters<String> parameters, Consumer<InputStream> resultConsumer,
-			Process... namespace) {
+	public void runJob(String processId, Parameters<String> parameters, IMonitor monitor,
+			Consumer<InputStream> resultConsumer, Process... namespace) {
 
 		Map<String, Object> request = new LinkedHashMap<>();
 
@@ -581,8 +579,17 @@ public class OpenEO {
 
 		Unirest.post(endpoint + "/result").contentType("application/json")
 				.header("Authorization", authorization.getAuthorization()).body(request).thenConsume((rawr) -> {
+					boolean error = false;
 					if (rawr.getStatus() - 400 >= 0) {
-						throw new KlabRemoteException("Server returned error code " + rawr.getStatus());
+						monitor.error(new KlabRemoteException("Server returned error code " + rawr.getStatus()));
+					} else if (rawr.getHeaders().get("Link") != null) {
+						/*
+						 * TODO get logs and check for errors; if error, call monitor and throw
+						 * exception
+						 */
+						for (String link : rawr.getHeaders().get("Link")) {
+							System.out.println("DIO TAFANO: " + link);
+						}
 					}
 					resultConsumer.accept(rawr.getContent());
 				});
@@ -661,7 +668,7 @@ public class OpenEO {
 	 * @param resultHandler
 	 * @param errorHandler
 	 */
-	public void startJob(String jobId, Consumer<Map<String, Object>> resultHandler,
+	public void startJob(String jobId, IMonitor monitor, Consumer<Map<String, Object>> resultHandler,
 			BiConsumer<String, String> errorHandler) {
 
 		HttpResponse<?> response = Unirest.post(endpoint + "/jobs/" + jobId + "/results")
@@ -674,6 +681,7 @@ public class OpenEO {
 			// create the job at server side
 			Job job = new Job();
 
+			job.monitor = monitor;
 			job.jobId = jobId;
 			job.errorConsumer = errorHandler;
 			job.resultConsumer = resultHandler;
@@ -702,15 +710,16 @@ public class OpenEO {
 	 *                      afterwards.
 	 * @return
 	 */
-	public boolean submit(String processId, Parameters<String> parameters, Consumer<Map<String, Object>> resultHandler,
-			BiConsumer<String, String> errorHandler, Process... namespace) {
+	public boolean submit(String processId, Parameters<String> parameters, IMonitor monitor,
+			Consumer<Map<String, Object>> resultHandler, BiConsumer<String, String> errorHandler,
+			Process... namespace) {
 
 		String jobId = createRemoteJob(processId, parameters, namespace);
 		if (jobId == null) {
 			errorHandler.accept("InternalError", "Process " + processId + " was rejected by server");
 			return false;
 		}
-		startJob(jobId, resultHandler, errorHandler);
+		startJob(jobId, monitor, resultHandler, errorHandler);
 		return true;
 	}
 
@@ -723,8 +732,9 @@ public class OpenEO {
 	 * @param namespace
 	 * @return
 	 */
-	public OpenEOFuture submit(String processId, Parameters<String> parameters, Process... namespace) {
-		return new OpenEOFuture(processId, parameters, namespace);
+	public OpenEOFuture submit(String processId, Parameters<String> parameters, IMonitor monitor,
+			Process... namespace) {
+		return new OpenEOFuture(processId, parameters, monitor, namespace);
 	}
 
 	public boolean validateProcess(Process process, Parameters<String> parameters,
@@ -839,7 +849,7 @@ public class OpenEO {
 		AtomicBoolean canceled = new AtomicBoolean(false);
 		String error;
 
-		public OpenEOFuture(String processId, Parameters<String> parameters, Process... namespace) {
+		public OpenEOFuture(String processId, Parameters<String> parameters, IMonitor monitor, Process... namespace) {
 			this.processId = processId;
 			String jobId = createRemoteJob(processId, parameters, namespace);
 			if (jobId == null) {
@@ -847,7 +857,7 @@ public class OpenEO {
 				error = "Server could not create job";
 			} else {
 
-				startJob(jobId, (result) -> {
+				startJob(jobId, monitor, (result) -> {
 					OpenEOFuture.this.result.set(result);
 					done.set(true);
 				}, (code, error) -> {

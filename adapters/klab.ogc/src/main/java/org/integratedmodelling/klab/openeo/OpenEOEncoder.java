@@ -125,7 +125,7 @@ public class OpenEOEncoder implements IResourceEncoder {
 					resolution.add(grid.getCellWidth());
 					resolution.add(grid.getCellHeight());
 
-					arguments.put(resource.getParameters().get("space.resolution", String.class), resolution);
+					arguments.put(resource.getParameters().get("space.resolution", String.class), grid.getCellWidth()/* resolution*/);
 
 				} else {
 					throw new KlabIllegalStateException(
@@ -198,7 +198,7 @@ public class OpenEOEncoder implements IResourceEncoder {
 
 				RasterEncoder encoder = new RasterEncoder();
 				try {
-					service.runJob(resource.getParameters().get("processId", String.class), arguments, (input) -> {
+					service.runJob(resource.getParameters().get("processId", String.class), arguments, scope.getMonitor(), (input) -> {
 						File outfile = WcsEncoder.getAdjustedCoverage(input, geometry);
 						encoder.encodeFromCoverage(resource, urnParameters, encoder.readCoverage(outfile), geometry,
 								builder, scope);
@@ -210,7 +210,7 @@ public class OpenEOEncoder implements IResourceEncoder {
 				}
 			} else {
 
-				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), arguments,
+				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), arguments, scope.getMonitor(),
 						processes.toArray(new Process[processes.size()]));
 
 				try {
