@@ -150,7 +150,7 @@ public class OpenEO {
 		private boolean optional;
 		private boolean deprecated;
 		private boolean experimental;
-		private boolean isDefault;
+		private Object aDefault;
 
 		public String getName() {
 			return name;
@@ -201,12 +201,12 @@ public class OpenEO {
 		}
 
 		@JsonProperty("default")
-		public boolean isDefault() {
-			return isDefault;
+		public Object isDefault() {
+			return aDefault;
 		}
 
-		public void setDefault(boolean isDefault) {
-			this.isDefault = isDefault;
+		public void setDefault(Object isDefault) {
+			this.aDefault = isDefault;
 		}
 
 		public List<Schema> schemata() {
