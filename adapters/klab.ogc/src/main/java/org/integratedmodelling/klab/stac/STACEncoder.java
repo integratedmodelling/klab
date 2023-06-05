@@ -1,22 +1,44 @@
 package org.integratedmodelling.klab.stac;
 
 import java.io.OutputStream;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
+import org.hortonmachine.gears.io.stac.HMStacItem;
+import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
+import org.hortonmachine.gears.utils.RegionMap;
+import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.ogc.STACAdapter;
+import org.integratedmodelling.klab.raster.files.RasterEncoder;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Polygon;
+import org.opengis.coverage.grid.GridCoverage;
 
 public class STACEncoder implements IResourceEncoder {
+
+    /**
+     * The raster encoder that does the actual work after we get our coverage from the service.
+     */
+    RasterEncoder encoder = new RasterEncoder();
 
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
@@ -62,8 +84,54 @@ public class STACEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
-        // TODO Auto-generated method stub
+        STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
+        Optional<HMStacCollection> collection = null;
+        try {
+            collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
+        } catch (Exception e) {
+            scope.getMonitor().error("Collection " + resource.getParameters().get("catalogUrl", String.class)
+                    + " cannot be find.");
+        }
+        
+        GridCoverage coverage = null;
+        
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
+        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
 
+        ITimeInstant start = time.getStart();
+        ITimeInstant end = time.getEnd();
+
+        IEnvelope envelope = space.getEnvelope();
+        Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+        Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
+
+        try {
+
+            List<HMStacItem> items = collection.get().setGeometryFilter(poly)
+                    .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
+                    .searchItems();
+            items = items.stream().filter(i -> !i.getAssets().isEmpty()).toList();
+
+            LogProgressMonitor lpm = new LogProgressMonitor();
+            IGrid grid = space.getGrid();
+
+            RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
+                    space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(),
+                    (int) grid.getXCells(), (int) grid.getYCells());
+
+            ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
+                    DefaultGeographicCRS.WGS84);
+            RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(), (int) grid.getYCells());
+            String stacBand = resource.getParameters().get("band", String.class);
+            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, lpm);
+
+            coverage = outRaster.buildCoverage();
+            scope.getMonitor().info("Coverage: " + coverage);
+        } catch (Exception e) {
+            scope.getMonitor().error("Cannot create STAC file." + e.getMessage());
+        }
+
+        encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
     }
 
     @Override

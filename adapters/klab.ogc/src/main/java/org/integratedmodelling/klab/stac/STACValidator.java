@@ -35,9 +35,6 @@ public class STACValidator implements IResourceValidator {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
 
-        // TODO ask if band makes sense in this context
-        int band = userData.get("band", 0);
-
         STACService service = STACAdapter.getService(userData.get("catalogUrl", String.class));
 
         String collectionId = userData.get("collectionId", String.class);
@@ -84,7 +81,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId");
+        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId") && parameters.contains("band");
     }
 
     @Override
