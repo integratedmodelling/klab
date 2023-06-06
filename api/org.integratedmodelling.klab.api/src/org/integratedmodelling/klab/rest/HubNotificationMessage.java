@@ -81,21 +81,21 @@ public class HubNotificationMessage {
         TAG_NOTIFICATION {
             @Override
             public HubNotificationMessage build(String msg, NotificationParameters param) {
-                Type type = param.type.isPresent() ? param.type.get() : Type.INFO;
+                Type type = param.type.isEmpty() ? Type.INFO : param.type.get();
                 return new HubNotificationMessage(this, type , msg, param.info);
             }
         },
         CERTIFICATE_WITHOUT_AGREEMENT {
             @Override
             public HubNotificationMessage build(String msg, NotificationParameters param) {
-                Type type = param.type.isPresent() ? param.type.get() : Type.INFO;
+                Type type = param.type.isEmpty() ? Type.INFO : param.type.get();
                 return new HubNotificationMessage(this, type , msg, param.info);
             }
         },
         AGREEMENT_NOT_EXIST{
             @Override
             public HubNotificationMessage build(String msg, NotificationParameters param) {
-                Type type = param.type.isPresent() ? param.type.get() : Type.ERROR;
+                Type type = param.type.isEmpty() ? Type.INFO : param.type.get();
                 return new HubNotificationMessage(this, type , msg, param.info);  
             }
         },

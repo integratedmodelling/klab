@@ -26,7 +26,7 @@ public class EngineProperties implements IProperties {
         this.properties = new Properties();
 
         Optional<LocalDateTime> expirationTime = getExpirationTime(agreement);
-        if (expirationTime.isPresent()) {
+        if (!expirationTime.isEmpty()) {
             this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expirationTime.get().toString());
         } else {
             // solution to avoid null pointer in old implementation
