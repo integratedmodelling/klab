@@ -142,10 +142,11 @@ public class EngineAuthResponeFactory {
 	    
 	    
 	    //if agreement is null the certificate is old
+	    // TODO change the MessageClass to the correct one. Need to be changed to be compatible with old control center (1.57)
 	    if (idAgreement == null) {
 	        cipherProperties.remove(KlabCertificate.KEY_AGREEMENT);
 	        HubNotificationMessage msg = HubNotificationMessage.MessageClass
-                    .CERTIFICATE_WITHOUT_AGREEMENT.build("Used certificate is old. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                    .ADMINSTRATOR_MESSAGE.build("Used certificate is old. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
                             new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Certificate without agreement.")
                           })));
             messages.add(msg);
@@ -160,7 +161,7 @@ public class EngineAuthResponeFactory {
 	        agreement = agreementService.getAgreement(idAgreement);
 	        } catch (Exception e) {
 	            HubNotificationMessage msg = HubNotificationMessage.MessageClass
-	                    .AGREEMENT_NOT_EXIST.build("Certificate's agreement doesn't exist. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+	                    .ADMINSTRATOR_MESSAGE.build("Certificate's agreement doesn't exist. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 	                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Agreement not exists.")
 	                          })));
 	            messages.add(msg);
