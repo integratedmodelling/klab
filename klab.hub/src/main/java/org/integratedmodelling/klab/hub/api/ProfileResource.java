@@ -201,6 +201,7 @@ public class ProfileResource implements OAuth2User{
 
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
+				group.setId(mGroup.getName());
 				group.setName(mGroup.getName());
 				group.setDescription(mGroup.getDescription());
 				group.setIconUrl(mGroup.getIconUrl());
@@ -210,7 +211,9 @@ public class ProfileResource implements OAuth2User{
 				group.setSshKey(mGroup.getSshKey());
 				group.setMaxUpload(mGroup.getMaxUpload());
 				group.setWorldview(mGroup.isWorldview());
-				
+				group.setComplimentary(mGroup.isComplimentary());
+				group.setOptIn(group.isOptIn());
+				group.setCustomProperties(group.getCustomProperties());
 				
 				listOfGroups.add(group);
 			}
