@@ -29,9 +29,9 @@ public class EngineProperties implements IProperties {
         if (!expirationTime.isEmpty()) {
             this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, expirationTime.get().toString());
         } else {
-            // solution to avoid null pointer in old implementation
-            // TODO need to find a better solution and spread into all the project
-            this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, LocalDateTime.MAX.toString());
+            // solution to avoid null pointer in old implementations, specially control center, put 5 years of validity
+            // TODO manage NPE in old implementations
+            this.properties.setProperty(KlabCertificate.KEY_EXPIRATION, LocalDateTime.now().plusDays(1825).toString());
         }
 
 		this.properties.setProperty(KlabCertificate.KEY_USERNAME, profile.getUsername());
