@@ -20,8 +20,10 @@ public class STAC {
     public static void main(String[] args) throws Exception {
 
         STAC stac = new STAC();
-        String[] catalogUrls = {"https://planetarycomputer.microsoft.com/api/stac/v1",
-                "https://openeo.vito.be/openeo/1.1.0"};
+		String[] catalogUrls = { "https://planetarycomputer.microsoft.com/api/stac/v1"/*
+																						 * ,
+																						 * "https://earthengine-stac.storage.googleapis.com/catalog/catalog.json"
+																						 */};
 
         for (String curl : catalogUrls) {
             HMStacManager catalog = new HMStacManager(curl, null);
