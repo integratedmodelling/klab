@@ -145,11 +145,12 @@ public class EngineAuthResponeFactory {
 	    // TODO change the MessageClass to the correct one. Need to be changed to be compatible with old control center (1.57)
 	    if (idAgreement == null) {
 	        cipherProperties.remove(KlabCertificate.KEY_AGREEMENT);
-	        HubNotificationMessage msg = HubNotificationMessage.MessageClass
-                    .ADMINSTRATOR_MESSAGE.build("Your certificate is outdated, Please download a new one and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
-                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Certificate outdated.")
-                          })));
-            messages.add(msg);
+	        // TODO activate message when control center can manage it
+//	        HubNotificationMessage msg = HubNotificationMessage.MessageClass
+//                    .ADMINSTRATOR_MESSAGE.build("Your certificate is outdated, Please download a new one and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+//                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Certificate outdated.")
+//                          })));
+//            messages.add(msg);
 	        validAgreements = profile.getAgreements().stream()
 	                .map(AgreementEntry::getAgreement)
 	                .filter(Agreement::isValid).collect(Collectors.toList());
