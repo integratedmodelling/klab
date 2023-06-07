@@ -146,8 +146,8 @@ public class EngineAuthResponeFactory {
 	    if (idAgreement == null) {
 	        cipherProperties.remove(KlabCertificate.KEY_AGREEMENT);
 	        HubNotificationMessage msg = HubNotificationMessage.MessageClass
-                    .ADMINSTRATOR_MESSAGE.build("Used certificate is old. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
-                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Certificate without agreement.")
+                    .ADMINSTRATOR_MESSAGE.build("Your certificate is outdated, Please download a new one and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Certificate outdated.")
                           })));
             messages.add(msg);
 	        validAgreements = profile.getAgreements().stream()
@@ -161,7 +161,7 @@ public class EngineAuthResponeFactory {
 	        agreement = agreementService.getAgreement(idAgreement);
 	        } catch (Exception e) {
 	            HubNotificationMessage msg = HubNotificationMessage.MessageClass
-	                    .ADMINSTRATOR_MESSAGE.build("Certificate's agreement doesn't exist. Please get a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
+	                    .ADMINSTRATOR_MESSAGE.build("Certificate's agreement doesn't exist. Please download a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 	                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Agreement not exists.")
 	                          })));
 	            messages.add(msg);
