@@ -5,6 +5,7 @@ import java.util.Base64;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 
 import kong.unirest.HttpResponse;
@@ -31,12 +32,16 @@ public class Authorization {
     private String prefix;
     private String tokenType;
 
-    public Authorization(ExternalAuthenticationCredentials credentials, String prefix) {
-        this(credentials);
-        this.prefix = prefix;
-    }
-
+    /**
+     * Create a new authorization. {@link #isOnline()} should be called after creation.
+     * 
+     * @param credentials
+     */
     public Authorization(ExternalAuthenticationCredentials credentials) {
+
+        if (credentials == null) {
+            throw new KlabIllegalArgumentException("attempted authorization with null credentials");
+        }
 
         this.credentials = credentials;
 
@@ -45,15 +50,28 @@ public class Authorization {
             byte[] encodedBytes = Base64.getEncoder()
                     .encode((credentials.getCredentials().get(0) + ":" + credentials.getCredentials().get(1)).getBytes());
             this.token = new String(encodedBytes);
-        } else if ("oauth2".equals(credentials.getScheme())) {
+        } else if ("oidc".equals(credentials.getScheme())) {
             refreshToken();
         }
     }
 
+    /**
+     * Check if the last authentication attempt went well.
+     * 
+     * @return
+     */
+    public boolean isOnline() {
+        return token != null;
+    }
+
+    /**
+     * OIDC-style token
+     */
     private void refreshToken() {
+        
         /*
          * authenticate and get the first token. Credentials should contain: 0. Auth endpoint 1.
-         * grant type 2. client ID 3. client secret 4. scope
+         * grant type 2. client ID 3. client secret 4. scope 5. provider
          */
         MultipartBody query = Unirest.post(credentials.getCredentials().get(0))
                 .field("grant_type", credentials.getCredentials().get(1)).field("client_id", credentials.getCredentials().get(2))
@@ -79,15 +97,28 @@ public class Authorization {
             } else {
                 this.token = response.has("access_token") ? response.getString("access_token") : null;
             }
+            
             if (token != null && duration < 0) {
                 duration = response.has("expires_in") ? response.getLong("expires_in") : 0;
             }
+            this.prefix = "oidc/" + credentials.getCredentials().get(5) + "/";
             this.expiry += (duration * 1000l);
         }
     }
 
     /**
-     * Return the authorization token for the Authorization: header.
+     * The raw authorization token with no auth method or prefix. May be null if {@link #isOnline()}
+     * returns false.
+     * 
+     * @return
+     */
+    public String getToken() {
+        return this.token;
+    }
+
+    /**
+     * Return the authorization token for the Authorization: header. Includes the auth method (e.g.
+     * Basic, Bearer) and any prefix passed at construction.
      * 
      * @return
      */
@@ -97,7 +128,7 @@ public class Authorization {
             throw new KlabIOException("Authorization failed");
         }
 
-        if ("oauth2".equals(credentials.getScheme())) {
+        if ("oidc".equals(credentials.getScheme())) {
             if (this.expiry <= System.currentTimeMillis()) {
                 refreshToken();
             }
@@ -111,9 +142,9 @@ public class Authorization {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ExternalAuthenticationCredentials crds = Authentication.INSTANCE.getCredentials("https://openeo.vito.be");
+        ExternalAuthenticationCredentials crds = Authentication.INSTANCE.getCredentials("https://openeo.vito.be/openeo/1.1.0");
         if (crds != null) {
-            Authorization authorization = new Authorization(crds, "oidc/terrascope/");
+            Authorization authorization = new Authorization(crds);
             System.out.println(authorization.getAuthorization());
             System.out.println("Sleeping 300 seconds: don't change the channel");
             Thread.sleep(300000l);

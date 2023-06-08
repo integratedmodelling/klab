@@ -1,9 +1,10 @@
 /*
  * Parameters accepted in a raster resource
  */
- annotation openeo // TODO 	
-	"The WCS adapter is used to create WCS (Web Coverage Service) spatial coverages, supporting servers implementing version 2.0.1 of the WCS standard." 	
-	label "WCS protocol adapter (OGC v2.0.1)" 	
+ annotation stac // TODO 	
+	"The STAC adapter names a collection in a STAC catalog and manages import in k.LAB, including aggregation of multiple timepoints if
+	 context requires it." 	
+	label "STAC collection adapter" 	
  {
 
  	final text 'catalogUrl'

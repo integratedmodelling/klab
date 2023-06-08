@@ -24,6 +24,8 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -834,6 +836,32 @@ public class RuntimeView extends ViewPart {
                 }
             }
         });
+        
+        tableViewer.getTable().addKeyListener(new KeyListener() {
+			
+        	boolean wasCtrl = false;
+        	
+			@Override
+			public void keyReleased(KeyEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.CTRL) {
+					wasCtrl = true;
+				} else if (wasCtrl && e.keyCode == 'c') {
+					wasCtrl = false;
+	                Object o = ((StructuredSelection) (tableViewer.getSelection())).getFirstElement();
+	                if (o instanceof Notification) {
+	                	Eclipse.INSTANCE.copyToClipboard(((Notification)o).getMessage());
+	                }
+				} else {
+					wasCtrl = false;
+				}
+			}
+		});
 
         createActions();
         initializeToolBar();

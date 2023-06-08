@@ -1,0 +1,244 @@
+{
+  "process_graph": {
+    "gte1": {
+      "process_id": "gte",
+      "arguments": {
+        "x": {
+          "from_parameter": "year"
+        },
+        "y": 2015
+      }
+    },
+    "textmerge1": {
+      "process_id": "text_merge",
+      "arguments": {
+        "data": [
+          {
+            "from_parameter": "year"
+          },
+          1,
+          1
+        ],
+        "separator": "-"
+      }
+    },
+    "textmerge2": {
+      "process_id": "text_merge",
+      "arguments": {
+        "data": [
+          {
+            "from_parameter": "year"
+          },
+          12,
+          31
+        ],
+        "separator": "-"
+      }
+    },
+    "loadcollection1": {
+      "process_id": "load_collection",
+      "arguments": {
+        "bands": [
+          "FCOVER"
+        ],
+        "id": "CGLS_FCOVER300_V1_GLOBAL",
+        "spatial_extent": null,
+        "temporal_extent": [
+          {
+            "from_node": "textmerge1"
+          },
+          {
+            "from_node": "textmerge2"
+          }
+        ]
+      }
+    },
+    "loadcollection2": {
+      "process_id": "load_collection",
+      "arguments": {
+        "bands": [
+          "FCOVER"
+        ],
+        "id": "CGLS_FCOVER_V2_GLOBAL",
+        "spatial_extent": null,
+        "temporal_extent": [
+          {
+            "from_node": "textmerge1"
+          },
+          {
+            "from_node": "textmerge2"
+          }
+        ]
+      }
+    },
+    "if1": {
+      "process_id": "if",
+      "arguments": {
+        "accept": {
+          "from_node": "loadcollection1"
+        },
+        "reject": {
+          "from_node": "loadcollection2"
+        },
+        "value": {
+          "from_node": "gte1"
+        }
+      }
+    },
+    "apply1": {
+      "process_id": "apply",
+      "arguments": {
+        "data": {
+          "from_node": "if1"
+        },
+        "process": {
+          "process_graph": {
+            "divide1": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_parameter": "x"
+                },
+                "y": 250
+              }
+            },
+            "gte2": {
+              "process_id": "gte",
+              "arguments": {
+                "x": {
+                  "from_parameter": "x"
+                },
+                "y": 0
+              }
+            },
+            "lte1": {
+              "process_id": "lte",
+              "arguments": {
+                "x": {
+                  "from_parameter": "x"
+                },
+                "y": 250
+              }
+            },
+            "and1": {
+              "process_id": "and",
+              "arguments": {
+                "x": {
+                  "from_node": "gte2"
+                },
+                "y": {
+                  "from_node": "lte1"
+                }
+              }
+            },
+            "if2": {
+              "process_id": "if",
+              "arguments": {
+                "accept": {
+                  "from_node": "divide1"
+                },
+                "value": {
+                  "from_node": "and1"
+                }
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "reducedimension1": {
+      "process_id": "reduce_dimension",
+      "arguments": {
+        "data": {
+          "from_node": "apply1"
+        },
+        "dimension": "t",
+        "reducer": {
+          "process_graph": {
+            "mean1": {
+              "process_id": "mean",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                }
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "resamplespatial1": {
+      "process_id": "resample_spatial",
+      "arguments": {
+        "data": {
+          "from_node": "reducedimension1"
+        },
+        "method": "bilinear",
+        "projection": {
+          "from_parameter": "projection"
+        },
+        "resolution": {
+          "from_parameter": "resolution"
+        }
+      }
+    },
+    "filterspatial1": {
+      "process_id": "filter_spatial",
+      "arguments": {
+        "data": {
+          "from_node": "resamplespatial1"
+        },
+        "geometries": {
+          "from_parameter": "geometry"
+        }
+      },
+      "result": true
+    }
+  },
+  "id": "dummy_udp",
+  "summary": "Annual mean composite of Copernicus Global Land FCover",
+  "description": "Given a year and area of interest, returns a mean composite of [FCover](https://land.copernicus.eu/global/products/fcover).",
+  "parameters": [
+    {
+      "name": "geometry",
+      "description": "Geometry as GeoJSON feature(s).",
+      "schema": {
+        "type": "object",
+        "subtype": "geojson"
+      }
+    },
+    {
+      "name": "year",
+      "description": "The year for which to generate an annual mean composite",
+      "schema": {
+        "type": "integer"
+      },
+      "default": 2021,
+      "optional": true
+    },
+    {
+      "name": "resolution",
+      "description": "The desired resolution, specified in units of the projection system, which is meters by default.",
+      "schema": {
+        "type": "number"
+      },
+      "default": 100,
+      "optional": true
+    },
+    {
+      "schema": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "array"
+        }
+      ],
+      "name": "projection",
+      "optional": true,
+      "default": 3035
+    }
+  ]
+}

@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
-import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;

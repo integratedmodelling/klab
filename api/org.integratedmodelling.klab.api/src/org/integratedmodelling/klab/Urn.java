@@ -34,19 +34,17 @@ public class Urn {
 			urn = urn.substring(Urns.KLAB_URN_PREFIX.length());
 		}
 		if (urn.contains("#")) {
-			if (urn.contains("#")) {
-				String[] uu = urn.split("#");
-				urn = uu[0];
-				for (String s : uu[1].split("&")) {
-					if (s.contains("=")) {
-						String[] kv = s.split("=");
-						parameters.put(kv[0], kv[1]);
+			String[] uu = urn.split("#");
+			urn = uu[0];
+			for (String s : uu[1].split("&")) {
+				if (s.contains("=")) {
+					String[] kv = s.split("=");
+					parameters.put(kv[0], kv[1]);
+				} else {
+					if (parameters.containsKey(SINGLE_PARAMETER_KEY)) {
+						parameters.put(SINGLE_PARAMETER_KEY, parameters.get(SINGLE_PARAMETER_KEY) + "," + s);
 					} else {
-						if (parameters.containsKey(SINGLE_PARAMETER_KEY)) {
-							parameters.put(SINGLE_PARAMETER_KEY, parameters.get(SINGLE_PARAMETER_KEY) + "," + s);
-						} else {
-							parameters.put(SINGLE_PARAMETER_KEY, s);
-						}
+						parameters.put(SINGLE_PARAMETER_KEY, s);
 					}
 				}
 			}

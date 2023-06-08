@@ -299,7 +299,7 @@ public class ResourceEditor extends ViewPart {
         if (adapter != null) {
             for (Argument argument : adapter.getParameters().getArguments()) {
                 Object value = resource.getParameters().get(argument.getName());
-                known.add(new ResourceParameter(argument.getName(), value != null ? value.toString() : null,
+                known.add(new ResourceParameter(argument.getName(), value != null ? value.toString() : "",
                         argument));
                 added.add(argument.getName());
             }
@@ -310,7 +310,7 @@ public class ResourceEditor extends ViewPart {
             if (!pid.contains(".") && !added.contains(pid)) {
                 Object value = resource.getParameters().get(pid);
                 other.add(
-                        new ResourceParameter(pid, value != null ? value.toString() : null, (Argument) null));
+                        new ResourceParameter(pid, value != null ? value.toString() : "", (Argument) null));
                 added.add(pid);
             } else {
                 toAdd.add(Path.getFirst(pid, "."));
@@ -319,7 +319,7 @@ public class ResourceEditor extends ViewPart {
 
         for (String toadd : toAdd) {
             if (!added.contains(toadd)) {
-                other.add(new ResourceParameter(toadd, null, (Argument) null).nonexisting());
+                other.add(new ResourceParameter(toadd, "", (Argument) null).nonexisting());
             }
         }
 
@@ -434,6 +434,7 @@ public class ResourceEditor extends ViewPart {
 
         this.resource = resource;
         this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
+        this.propertyTable.removeAll();
         this.values.clear();
         this.geometry = Geometry.create(resource.getGeometry());
         if (adapter != null) {
@@ -460,7 +461,7 @@ public class ResourceEditor extends ViewPart {
         this.localName.setText(resource.getLocalName());
         this.grpAdapterData.setText(resource.getAdapterType().toUpperCase() + " adapter data");
         this.worldWidget.setExtent(resource.getSpatialExtent());
-        this.adapterPropertyViewer.setInput(null);
+        this.adapterPropertyViewer.setInput(Collections.emptyList());
         this.adapterPropertyViewer.setInput(getParameters());
         this.attributeViewer.getTable().removeAll();
         this.attributeViewer.setInput(resource.getAttributes());

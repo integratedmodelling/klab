@@ -19,6 +19,7 @@ import org.joda.time.Seconds;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.ISODateTimeFormat;
 
 import groovy.lang.GroovyObjectSupport;
 
@@ -414,6 +415,11 @@ public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
 	@Override
 	public TimeInstant endOf(Type temporalAggregation) {
 		return beginOf(temporalAggregation).plus(1, Time.resolution(1, temporalAggregation));
+	}
+
+	@Override
+	public String toRFC3339String() {
+		return ISODateTimeFormat.dateTime().print(getMilliseconds());
 	}
 
 }

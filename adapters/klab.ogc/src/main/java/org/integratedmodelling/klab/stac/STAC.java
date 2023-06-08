@@ -20,8 +20,10 @@ public class STAC {
     public static void main(String[] args) throws Exception {
 
         STAC stac = new STAC();
-        String[] catalogUrls = {"https://planetarycomputer.microsoft.com/api/stac/v1",
-                "https://openeo.vito.be/openeo/1.1.0"};
+		String[] catalogUrls = { "https://planetarycomputer.microsoft.com/api/stac/v1"/*
+																						 * ,
+																						 * "https://earthengine-stac.storage.googleapis.com/catalog/catalog.json"
+																						 */};
 
         for (String curl : catalogUrls) {
             HMStacManager catalog = new HMStacManager(curl, null);
@@ -30,7 +32,6 @@ public class STAC {
         }
 
         for (String cock : stac.clients.keySet()) {
-            System.out.println("COCK " + cock);
             for (HMStacCollection collection : stac.clients.get(cock).getCollections()) {
                 System.out.println("  " + collection.getId() + ": " + collection.getTemporalBounds());
 //                for (HMStacItem item : collection.searchItems()) {
