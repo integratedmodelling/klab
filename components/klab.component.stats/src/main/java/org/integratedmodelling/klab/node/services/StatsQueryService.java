@@ -90,6 +90,7 @@ public class StatsQueryService {
         	query = "SELECT DISTINCT principal,"
         			+ " COUNT(principal) OVER (PARTITION BY principal) AS count"
         			+ " FROM contexts WHERE created > " + request.getFrom()
+        			+ " AND created < " + request.getTo()
         			+ " ORDER BY count DESC LIMIT " + request.getTop() + ";";
         	break;
         case "time_range":
