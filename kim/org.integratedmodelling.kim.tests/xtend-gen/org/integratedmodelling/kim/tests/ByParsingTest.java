@@ -26,9 +26,9 @@ import org.junit.runner.RunWith;
 public class ByParsingTest {
   @Inject
   private ParseHelper<Model> parseHelper;
-
+  
   private static String[] testsOK = { "im:Normalized geography:Slope by im:Level", "im:Normalized geography:Slope by im:Level down to im:Moderate" };
-
+  
   /**
    * Test that parsing the k.IM definition of a normalized declaration
    * produces an identical definition.
@@ -50,7 +50,7 @@ public class ByParsingTest {
       throw Exceptions.sneakyThrow(_e);
     }
   }
-
+  
   @Test
   public void loadModel() {
     try {
@@ -66,7 +66,7 @@ public class ByParsingTest {
       throw Exceptions.sneakyThrow(_e);
     }
   }
-
+  
   public boolean isEquivalent(final String d1, final String d2) {
     try {
       final KimObservable obs1 = Kim.INSTANCE.declareObservable(this.parseHelper.parse(d1).getObservable());

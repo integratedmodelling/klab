@@ -22,11 +22,11 @@ public class KimLabelProvider extends DefaultEObjectLabelProvider {
   public KimLabelProvider(final AdapterFactoryLabelProvider delegate) {
     super(delegate);
   }
-
+  
   public String text(final ObservableSemantics obs) {
     return Kim.INSTANCE.declareObservable(obs).toString();
   }
-
+  
   public String text(final ModelStatement obs) {
     String _xifexpression = null;
     ModelBodyStatement _body = obs.getBody();

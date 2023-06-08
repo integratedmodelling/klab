@@ -29,7 +29,7 @@ public class KimFormatter extends AbstractFormatter2 {
   @Inject
   @Extension
   private KimGrammarAccess _kimGrammarAccess;
-
+  
   protected void _format(final Model model, @Extension final IFormattableDocument document) {
     document.<Namespace>format(model.getNamespace());
     EList<Statement> _statements = model.getStatements();
@@ -37,12 +37,12 @@ public class KimFormatter extends AbstractFormatter2 {
       document.<Statement>format(statement);
     }
   }
-
+  
   protected void _format(final Statement statement, @Extension final IFormattableDocument document) {
     document.<ConceptStatement>format(statement.getConceptStatement());
     document.<ModelStatement>format(statement.getModelStatement());
   }
-
+  
   protected void _format(final ObservableSemantics observableSemantics, @Extension final IFormattableDocument document) {
     document.<ConceptDeclaration>format(observableSemantics.getDeclaration());
     document.<Unit>format(observableSemantics.getUnit());
@@ -50,7 +50,7 @@ public class KimFormatter extends AbstractFormatter2 {
     document.<org.integratedmodelling.kim.kim.Number>format(observableSemantics.getFrom());
     document.<org.integratedmodelling.kim.kim.Number>format(observableSemantics.getTo());
   }
-
+  
   protected void _format(final ConceptDeclaration conceptDeclaration, @Extension final IFormattableDocument document) {
     EList<Concept> _main = conceptDeclaration.getMain();
     for (final Concept concept : _main) {
@@ -59,7 +59,7 @@ public class KimFormatter extends AbstractFormatter2 {
     document.<ConceptDeclaration>format(conceptDeclaration.getInherency());
     document.<ConceptDeclaration>format(conceptDeclaration.getContext());
   }
-
+  
   public void format(final Object conceptDeclaration, final IFormattableDocument document) {
     if (conceptDeclaration instanceof XtextResource) {
       _format((XtextResource)conceptDeclaration, document);
