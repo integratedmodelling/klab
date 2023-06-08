@@ -127,3 +127,38 @@ export number sentinel
     
     class org.integratedmodelling.geoprocessing.remotesensing.SentinelResolver
 }
+
+export number barnesinterpolator
+	"Interpolates values of point features using the Barnes Surface Interpolation method"
+	 label 'BarnesInterpolator'
+{
+	import object artifact 
+		"The object artifact to use to produce the source points. Should identify point features; if not points,
+		 the centroid will be used and the states will be aggregated."
+		
+	concept state 
+		"The semantics for the state to use in the source points or features." 
+		
+	optional number "scale"
+	    "Sets the length scale for the interpolation weighting function. 
+	    The length scale should be determined from the distance between the observation points, 
+	    as well as the scale of the phenomena. Default is the approximate resolution of the grid"
+	    
+	optional number "iterations"
+	    "Sets the number of passes performed during interpolation. Default is 1"
+
+	optional number "maxdist"
+		"Sets the maximum distance from an observation for a grid point to be supported by that observation,
+		 If the value is 0  (default), all grid points are considered to be supported."
+		
+	optional number "minobs"
+	    "Sets the minimum number of in-range observations which are required for a grid point to be supported. 
+	    Default is 2."
+	    
+	optional number "convergence"
+	    "Sets the convergence factor used during refinement passes. The value should be in the range [0,1].Default is 0.3"
+
+	geometry S2
+	
+	class org.integratedmodelling.geoprocessing.core.BarnesSurfaceResolver
+}
