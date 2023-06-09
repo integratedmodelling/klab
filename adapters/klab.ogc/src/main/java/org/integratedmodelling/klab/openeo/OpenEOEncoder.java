@@ -25,6 +25,8 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.data.resources.FlowchartProvider;
+import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -39,7 +41,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
-public class OpenEOEncoder implements IResourceEncoder {
+public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
 	static Set<String> knownParameters;
 
@@ -257,5 +259,11 @@ public class OpenEOEncoder implements IResourceEncoder {
 		// TODO Auto-generated method stub
 
 	}
+
+    @Override
+    public void createwFLowchart(IResource resource, Element parentElement) {
+        // TODO Auto-generated method stub
+        
+    }
 
 }
