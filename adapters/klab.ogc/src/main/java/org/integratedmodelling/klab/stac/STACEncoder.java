@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.libs.modules.HMRaster;
@@ -92,9 +91,9 @@ public class STACEncoder implements IResourceEncoder {
             scope.getMonitor().error("Collection " + resource.getParameters().get("catalogUrl", String.class)
                     + " cannot be find.");
         }
-        
+
         GridCoverage coverage = null;
-        
+
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
         Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
 
@@ -110,7 +109,6 @@ public class STACEncoder implements IResourceEncoder {
             List<HMStacItem> items = collection.get().setGeometryFilter(poly)
                     .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
                     .searchItems();
-            items = items.stream().filter(i -> !i.getAssets().isEmpty()).toList();
 
             LogProgressMonitor lpm = new LogProgressMonitor();
             IGrid grid = space.getGrid();
@@ -120,7 +118,7 @@ public class STACEncoder implements IResourceEncoder {
                     (int) grid.getXCells(), (int) grid.getYCells());
 
             ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
-                    DefaultGeographicCRS.WGS84);
+                    space.getProjection().getCoordinateReferenceSystem());
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(), (int) grid.getYCells());
             String stacBand = resource.getParameters().get("band", String.class);
             HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, lpm);

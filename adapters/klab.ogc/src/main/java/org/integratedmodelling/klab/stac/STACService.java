@@ -97,8 +97,6 @@ public class STACService {
                     wgs84envelope.getMaxY()).withProjection(Projection.DEFAULT_PROJECTION_CODE);
         }
 
-        // TODO temporal
-
         return ret;
     }
 
