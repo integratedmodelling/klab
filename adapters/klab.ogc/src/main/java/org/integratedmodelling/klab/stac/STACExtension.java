@@ -43,7 +43,7 @@ public enum STACExtension {
     private String name;
     
     STACExtension(String name) {
-        this.name = getExtensionName(name);
+        this.name = name;
     }
 
     public String getName() {
@@ -51,21 +51,27 @@ public enum STACExtension {
     }
 
     public static String getExtensionName(String identifier) {
-        return StringUtils.substringBetween("https://stac-extensions.github.io/", "/v");
+        return StringUtils.substringBetween(identifier, "https://stac-extensions.github.io/", "/v");
     }
 
     public static Version getVersion(String identifier) {
-        return Version.create(StringUtils.substringBetween("/v", "/schema.json"));
+        return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
-    public static boolean isDeprecated(STACExtension extension) {
-        switch (extension) {
-        case SingleFileSTAC:
-        case TimeSeries:
-            return true;
-        default:
-            return false;
+    public boolean isDeprecated() {
+        return this.name.equals(SingleFileSTAC.name) || this.name.equals(TimeSeries.name);
+    }
+
+    public boolean isSupported() {
+        return this.name == ElectroOptical.name;
+    }
+
+    public static STACExtension valueOfLabel(String label) {
+        for (STACExtension e : values()) {
+            if (e.name.equals(label)) {
+                return e;
+            }
         }
+        return null;
     }
-
 }

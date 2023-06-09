@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +20,14 @@ import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 
 /**
  * A field to validate if the GeoJSON is compliant with the STAC specification
@@ -34,8 +41,8 @@ public class STACValidator implements IResourceValidator {
         if (!canHandle(null, userData)) {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
-
-        STACService service = STACAdapter.getService(userData.get("catalogUrl", String.class));
+        String catalogUrl = userData.get("catalogUrl", String.class);
+        STACService service = STACAdapter.getService(catalogUrl);
 
         String collectionId = userData.get("collectionId", String.class);
         Optional<HMStacCollection> collection;
@@ -48,6 +55,24 @@ public class STACValidator implements IResourceValidator {
         if(collection.isEmpty()) {
             throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
         }
+
+        // TODO get STAC extensions and add them to the parameters
+        HttpResponse<JsonNode> metadata = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
+        List<STACExtension> extensions = new ArrayList<>();
+        JSONArray extensionArray = metadata.getBody().getObject().getJSONArray("stac_extensions");
+        for (Object ext : extensionArray) {
+            String name = STACExtension.getExtensionName(ext.toString());
+            try {
+                extensions.add(STACExtension.valueOfLabel(name));
+            } catch (Exception e) {
+                monitor.warn("STAC extension " + ext + "unknown. Ignored.");
+            }
+        }
+        if (!extensions.stream().anyMatch(STACExtension::isSupported)) {
+            throw new KlabUnimplementedException("This collection does not contain a supported extension");
+        }
+
+        userData.put("stac_extensions", extensions.stream().map(STACExtension::getName));
 
         IGeometry geometry = service.getGeometry(collectionId);
 
