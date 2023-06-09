@@ -249,6 +249,10 @@ public interface API {
          */
         public static final String USER_BASE = API_BASE + "/users";
         /**
+         * Base URL path for user statistics resources on the hub.
+         */
+        public static final String USER_STATS = API_BASE + "/userStats";
+        /**
          * Base URL path for user resources on the hub.
          */
         public static final String GROUPS_BASE = API_BASE + "/groups";
@@ -295,6 +299,14 @@ public interface API {
          * version.
          */
         public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
+        /**
+         * An endpoint to get the capabilities of the nodes
+         */
+        public static final String NODE_CAPABILITIES = NODE_BASE + "/capabilities";
+        /**
+         * An endpoint to get the adapters of the nodes
+         */
+        public static final String NODE_ADAPTERS = NODE_BASE + "/adapters";
         /**
          * Called by levers on hubs when authenticating with them. Parameters like the engine
          * version.
@@ -1221,6 +1233,9 @@ public interface API {
 
         public static final String STATS_REPORT = STATS_BASE + "/report";
 
+        public static final String STATS_OUTPUT = STATS_BASE + "/output";
+
+        
         /*
          * public anonymous endpoints for web sites or quick monitoring
          */

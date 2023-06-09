@@ -71,8 +71,17 @@ export number owa
 		
 	optional parameter value risk_profile
 		"The observer's risk profile. Can be a list specifying all the ordinal weights or a single number. If a single number is provided, every real 
-		number is accepted. 0 represents maximum risk aversion, 0.5 risk neutrality and 1 minimum risk aversion. Default is 0."
-		default = 0.0		
-
+		number is accepted. 0 represents maximum risk aversion, 0.5 risk neutrality and 1 minimum risk aversion. Default is 0.5"
+		default = 0.5
+	
+	optional parameter boolean balanced_risk_prof
+		"If what is wanted is to express a balanced risk attitude with a parabolic distribution, is it is needed to 
+		set the parameter balanced_risk_prof = true and provide the ratio_balance parameter"
+		
+	optional parameter number ratio_balance
+		"The ratio between the ordinal weights attributed to values in hypothetical extremes and the ordinal weights attributed to
+		the median value"
+		
+		
 	class org.integratedmodelling.owa.OWAResolver
 }

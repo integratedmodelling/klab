@@ -271,4 +271,8 @@ public class Projection implements IProjection {
 		return getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getUnit();
 	}
 
+	public String getWKTDefinition() {
+		return crs.toWKT();
+	}
+
 }

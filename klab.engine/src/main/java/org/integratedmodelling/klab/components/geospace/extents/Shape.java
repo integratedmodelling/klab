@@ -3,16 +3,20 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.eclipse.xtext.util.Arrays;
+import org.geotools.geojson.GeoJSON;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
@@ -45,9 +49,11 @@ import org.integratedmodelling.klab.components.geospace.extents.mediators.GridTo
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.locationtech.jts.algorithm.ConvexHull;
 import org.locationtech.jts.awt.ShapeWriter;
@@ -115,6 +121,25 @@ public class Shape extends AbstractSpatialAbstractExtent implements IShape {
 		return projection.getSimpleSRS() + " " + shapeGeometry;
 	}
 
+	public Map<String, Object> asGeoJSON() {
+	    StringWriter writer = new StringWriter(1024);
+	    try {
+	        GeoJSON.write(shapeGeometry, writer);
+	        return JsonUtils.parseObject(writer.toString(), Map.class);
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+	}
+	
+	public String asGeoJSONString() {
+	    StringWriter writer = new StringWriter(1024);
+	    try {
+	        GeoJSON.write(shapeGeometry, writer);
+	        return writer.toString();
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+	}
 	public static Shape create(String wkt) throws KlabValidationException {
 		Shape ret = new Shape();
 		ret.parseWkt(wkt);

@@ -1,0 +1,22 @@
+/*
+ * Parameters accepted in a raster resource
+ */
+ annotation stac // TODO 	
+	"The STAC adapter names a collection in a STAC catalog and manages import in k.LAB, including aggregation of multiple timepoints if
+	 context requires it." 	
+	label "STAC collection adapter" 	
+ {
+
+ 	final text 'catalogUrl'
+ 		"The URL pointing to the STAC catalog file that contains the resource dataset."
+
+ 	final text 'collectionId'
+ 		"The ID of the annotated data collection."
+ 		
+ 	optional text band
+ 		"The band for a multi-band raster. Default is the first in the catalog."
+ 	
+	optional number nodata
+		"The no-data value for this raster. If not specified, the nodata value communicated by the server is used. This should only be modified if that is wrong or missing."
+
+ }

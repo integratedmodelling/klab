@@ -490,3 +490,22 @@ export process scsrunoffcalc
 
 	class org.integratedmodelling.geoprocessing.hydrology.ScsRunoffResolver
 }
+
+export number floodlevels
+	"Expected level of marine flooding"
+	
+{ 
+
+    optional parameter number decay_factor
+        "Describes how the water levels decrease moving from the original sources. 0 means immediate decrease while 1 means constant levels"
+
+	import number elevation
+		"The DEM"
+		
+	import number seeds
+	    "The original water levels"
+
+	geometry S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.MarineFloodResolver
+}

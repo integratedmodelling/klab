@@ -1,0 +1,22 @@
+/*
+ * Parameters accepted in a raster resource
+ */
+ annotation openeo // TODO 	
+	"The OpenEO adapter wraps an OpenEO process call, optionally including a user-defined process definition from a JSON 
+	 specification, either imported locally or as a public URL." 	
+	label "OpenEO User Process adapter" 	
+ {
+
+ 	final text 'serviceUrl'
+ 		"The URL of the service providing the data."
+ 		 	 		
+	optional text 'processId'
+		"If the resource only calls one process at server side with arguments, name the process here"
+
+	optional number nodata
+		"The no-data value for this raster. If not specified, the nodata value communicated by the WCS server is used. This should only be modified if that is wrong or missing."
+
+	optional text 'namespace'
+		"Public URL of a process definition that will be added to the namespace during contextualization"
+
+ }

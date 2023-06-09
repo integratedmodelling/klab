@@ -26,7 +26,8 @@ import org.springframework.web.client.RestTemplate;
 @Singleton
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.node.security",
-		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers" })
+		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers",
+		"org.integratedmodelling.klab.node.services" })
 public class NodeApplication {
 	
 	// property specifying the resource online checking interval in seconds
