@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,9 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.dataflow.Flowchart;
+import org.integratedmodelling.klab.dataflow.Flowchart.Element;
+import org.integratedmodelling.klab.dataflow.FlowchartProvider;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -32,6 +36,7 @@ import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.ogc.OpenEOAdapter;
 import org.integratedmodelling.klab.openeo.OpenEO.OpenEOFuture;
 import org.integratedmodelling.klab.openeo.OpenEO.Process;
+import org.integratedmodelling.klab.openeo.OpenEO.ProcessNode;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.scale.Scale;
@@ -39,7 +44,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
-public class OpenEOEncoder implements IResourceEncoder {
+public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
 	static Set<String> knownParameters;
 
@@ -125,7 +130,8 @@ public class OpenEOEncoder implements IResourceEncoder {
 					resolution.add(grid.getCellWidth());
 					resolution.add(grid.getCellHeight());
 
-					arguments.put(resource.getParameters().get("space.resolution", String.class), grid.getCellWidth()/* resolution*/);
+					arguments.put(resource.getParameters().get("space.resolution", String.class),
+							grid.getCellWidth()/* resolution */);
 
 				} else {
 					throw new KlabIllegalStateException(
@@ -198,11 +204,12 @@ public class OpenEOEncoder implements IResourceEncoder {
 
 				RasterEncoder encoder = new RasterEncoder();
 				try {
-					service.runJob(resource.getParameters().get("processId", String.class), arguments, scope.getMonitor(), (input) -> {
-						File outfile = WcsEncoder.getAdjustedCoverage(input, geometry);
-						encoder.encodeFromCoverage(resource, urnParameters, encoder.readCoverage(outfile), geometry,
-								builder, scope);
-					}, processes.toArray(new Process[processes.size()]));
+					service.runJob(resource.getParameters().get("processId", String.class), arguments,
+							scope.getMonitor(), (input) -> {
+								File outfile = WcsEncoder.getAdjustedCoverage(input, geometry);
+								encoder.encodeFromCoverage(resource, urnParameters, encoder.readCoverage(outfile),
+										geometry, builder, scope);
+							}, processes.toArray(new Process[processes.size()]));
 
 				} catch (Throwable t) {
 					scope.getMonitor().error(t);
@@ -210,8 +217,8 @@ public class OpenEOEncoder implements IResourceEncoder {
 				}
 			} else {
 
-				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), arguments, scope.getMonitor(),
-						processes.toArray(new Process[processes.size()]));
+				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), arguments,
+						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
 
 				try {
 					Map<String, Object> results = job.get();
@@ -256,6 +263,72 @@ public class OpenEOEncoder implements IResourceEncoder {
 	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void createFlowchart(IResource resource, Element element, Flowchart flowchart) {
+
+		OpenEO service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
+		Process process = service.getProcess(resource);
+		if (process != null) {
+
+			/*
+			 * fix element name, label and description
+			 */
+			element.setDescription(process.getDescription());
+			element.setName("openeo." + process.getId());
+			element.setLabel("OpenEO UDP " + process.getId());
+
+			/*
+			 * create internal structure. First pass (make elements)
+			 */
+			Map<String, Element> children = new HashMap<>();
+			Element output = null;
+			for (String spermer : process.getProcess_graph().keySet()) {
+				ProcessNode proc = process.getProcess_graph().get(spermer);
+				Element procelem = element.newChild("openeo." + spermer);
+				children.put(spermer, procelem);
+
+				procelem.setLabel(proc.getProcess_id());
+				procelem.setDescription(proc.getDescription());
+
+				if (proc.isResult()) {
+					System.out.println("PIRULÈRA l'output è " + proc.getProcess_id());
+					output = procelem;
+				}
+
+				for (String arg : proc.getArguments().keySet()) {
+					Object val = proc.getArguments().get(arg);
+					if (val instanceof Map) {
+						if (((Map) val).containsKey("from_node")) {
+							// make input, link to other node's output
+							System.out.println("GARGARUT gets " + arg + " from " + ((Map) val).get("from_node"));
+						} else if (((Map) val).containsKey("from_parameter")) {
+							// make input, link to containing node input, unless it's mapped to the context
+							System.out.println("PIROLA uses parameter " + arg);
+						} else {
+							// make port and set the default as description
+						}
+					} else {
+						// make named port with val as description
+					}
+				}
+			}
+			/*
+			 * second pass (link them): from_node links elements, from_parameters links to
+			 * inputs, result=true makes the output available
+			 */
+			for (String spermer : process.getProcess_graph().keySet()) {
+				ProcessNode proc = process.getProcess_graph().get(spermer);
+				Element procelem = element.newChild("openeo." + spermer);
+				for (String arg : proc.getArguments().keySet()) {
+					Object val = proc.getArguments().get(arg);
+					if (val instanceof Map) {
+						System.out.println(val);
+					}
+				}
+			}
+		}
 	}
 
 }
