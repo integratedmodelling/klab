@@ -81,7 +81,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId") && parameters.contains("band");
+        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId");
     }
 
     @Override

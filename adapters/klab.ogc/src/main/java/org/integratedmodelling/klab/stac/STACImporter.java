@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.File;
 import java.io.Writer;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +15,6 @@ import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
@@ -60,9 +60,8 @@ public class STACImporter implements IResourceImporter {
             
             HMStacManager catalog = new HMStacManager(importLocation, null);
             catalog.open();
-            
+
             List<HMStacCollection> collections = catalog.getCollections();
-            
             for(HMStacCollection collection : collections) {
                 // Check the regex
                 if (regex != null && !collection.getId().matches(regex)) {
@@ -73,9 +72,11 @@ public class STACImporter implements IResourceImporter {
                 try {
                     Parameters<String> parameters = new Parameters<>();
                     parameters.putAll(userData);
-                    parameters.put("serviceUrl", importLocation);
+                    parameters.put("catalogUrl", importLocation);
 
                     String collectionId = collection.getId();
+                    parameters.put("collectionId", collectionId);
+
                     Builder builder = validator.validate(Resources.INSTANCE.createLocalResourceUrn(collectionId, project),
                             new URL(importLocation), parameters, monitor);
 
@@ -89,6 +90,8 @@ public class STACImporter implements IResourceImporter {
                     continue;
                 }
             }
+            catalog.close();
+
         } catch (Exception e) {
             throw new KlabIOException(e);
         }
@@ -104,8 +107,14 @@ public class STACImporter implements IResourceImporter {
 
     @Override
     public boolean canHandle(String importLocation, IParameters<String> userData) {
-        // TODO Auto-generated method stub
-        return false;
+        URL url = null;
+        try {
+            url = new URL(importLocation);
+        } catch (MalformedURLException e) {
+            return false;
+        }
+        // TODO make more checks to know if it is a proper STAC endpoint
+        return url != null && url.getProtocol().startsWith("http");
     }
 
     @Override
