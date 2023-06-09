@@ -313,10 +313,6 @@ public interface API {
          */
         public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
         /**
-         * Base URL path for node resources on the hub.
-         */
-        public static final String NODE_AGREEMENT_BASE_ID = NODE_BASE_ID + "/{agreementId}";
-        /**
          * Base URL path for user resources on the hub.
          */
         public static final String USER_BASE_ID = USER_BASE + "/{id}";
