@@ -75,7 +75,9 @@ public class OpenEO {
 
 	public static class ProcessNode {
 
-		private String process_id;
+	    private static final long serialVersionUID = 5702995280325999073L;
+
+	    private String process_id;
 		private String namespace;
 		private String description;
 		private boolean result;
@@ -124,6 +126,7 @@ public class OpenEO {
 		public String toString() {
 			return process_id + " " + arguments;
 		}
+
 	}
 
 	public static class Schema {
