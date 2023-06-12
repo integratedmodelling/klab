@@ -26,8 +26,8 @@ public abstract class AbstractWorkspace implements ILocalWorkspace {
     AbstractWorkspace() {
     }
 
-    public AbstractWorkspace(String name, File root) {
-        delegate = new KimWorkspace(root, name);
+    public AbstractWorkspace(String name, String worldview, File root) {
+        delegate = new KimWorkspace(root, worldview, name);
     }
 
     @Override

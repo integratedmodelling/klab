@@ -112,7 +112,7 @@ public class GridAdapter implements IUrnAdapter {
     }
 
     private String sanitize(String urn) {
-        return urn.replaceAll(":", "__").replaceAll(".", "_");
+        return urn.replaceAll(":", "__").replaceAll("\\.", "_");
     }
 
     private void makeTiles(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {

@@ -329,4 +329,8 @@ public class ResourceBuilder implements IResource.Builder {
 	public String getUrn() {
 		return this.urn;
 	}
+	
+	public Parameters<String> getParameters() {
+	    return this.parameters;
+	}
 }

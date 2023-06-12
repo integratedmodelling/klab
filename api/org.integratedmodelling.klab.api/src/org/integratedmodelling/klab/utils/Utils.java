@@ -496,6 +496,7 @@ public class Utils {
 	}
 
 	public static Class<?> getClassForType(IArtifact.Type type) {
+	    
 		switch (type) {
 		case BOOLEAN:
 			return Boolean.class;

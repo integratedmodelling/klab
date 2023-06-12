@@ -279,93 +279,94 @@ public class Grid extends Area implements IGrid {
         return "<GRID [" + xCells + "," + yCells + "] " + envelope + ">";
     }
 
-    /**
-     * Set the envelope from shape.
-     * 
-     * @param shape could be in any CRS.
-     * @param squareSize should be in meters
-     * @throws KlabException
-     */
-    private void setAdjustedEnvelope(Shape shape, double squareSize) {
-        long x = 0, y = 0;
-        // double dx = 0, dy = 0;
-        Envelope env = shape.getEnvelope();
-
-        // Case one: both CRS and square size are in meters.
-        if (shape.getProjection().isMeters()) {
-
-            double height = env.getHeight();
-            double width = env.getWidth();
-
-            x = (long) Math.ceil(width / squareSize);
-            y = (long) Math.ceil(height / squareSize);
-
-            // dx = (x * squareSize) - width;
-            // dy = (y * squareSize) - height;
-
-            // ReferencedEnvelope envelop_ = new ReferencedEnvelope(env.getMinX() - dx,
-            // env.getMaxX() + dx,
-            // env.getMinY() - dy, env.getMaxY() + dy,
-            // shape.getProjection().getCoordinateReferenceSystem());
-
-            // After doing the calculations in the original CRS,
-            // shape and envelope is transformed to default.
-
-            // this.shape = shape.transform(Projection.getDefault());
-            // try {
-            // this.envelope = Envelope
-            // .create(envelop_.transform(Projection.getDefault().getCoordinateReferenceSystem(),
-            // true));
-            // } catch (Exception e) {
-            // // shouldn't happen
-            // throw new KlabValidationException(e);
-            // }
-            // this.projection = Projection.getDefault();
-
-        }
-        // Case 2: CRS uses degrees
-        else {
-            // get height and width in meters
-            double height = Projection.distance(env.getMinY(), env.getMinX(), env.getMaxY(), env.getMinX());
-            double width = Projection.distance(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
-            x = (long) Math.ceil(width / squareSize);
-            y = (long) Math.ceil(height / squareSize);
-
-            // Here I tried to adjust further dx and dy based on the size of the
-            // grid cell
-            // at the center of the Grid. Possibly not right either, so I left
-            // it out.
-            // double centralX = (env.getMaxX() + env.getMinX())/2;
-            // double stepX = (env.getMaxX() - env.getMinX())/x;
-            //
-            // double centralY = (env.getMaxY() + env.getMinY())/2;
-            // double stepY = (env.getMaxY() - env.getMinY())/x;
-            //
-            // double actualStepWidth = Grid.haversine(centralY,centralX,
-            // centralY,centralX+stepX);
-            //
-            // double actualStepHeight = Grid.haversine(centralY, centralX,
-            // centralY+stepY,centralX);
-            // dx = stepX * (squareSize/actualStepWidth) / 2;
-            // dy = stepY * (squareSize/actualStepHeight) / 2;
-
-        }
-
-        // if (!this.projection.equals(Projection.getDefault())) {
-        // this.shape = this.shape.transform(Projection.getDefault());
-        // try {
-        // this.envelope = this.envelope.transform(Projection.getDefault(), true);
-        // } catch (Exception e) {
-        // // TODO: Shouldn't happen
-        // e.printStackTrace();
-        // }
-        // this.projection = Projection.getDefault();
-        // }
-
-        this.setResolution(x, y);
-
-        // activationLayer = Rasterizer.createMask(shape, this);
-    }
+//    /**
+//     * Set the envelope from shape.
+//     * 
+//     * @param shape could be in any CRS.
+//     * @param squareSize should be in meters
+//     * @throws KlabException
+//     */
+//    private void setAdjustedEnvelope(Shape shape, double squareSize) {
+//    	
+//        long x = 0, y = 0;
+//        // double dx = 0, dy = 0;
+//        Envelope env = shape.getEnvelope();
+//
+//        // Case one: both CRS and square size are in meters.
+//        if (shape.getProjection().isMeters()) {
+//
+//            double height = env.getHeight();
+//            double width = env.getWidth();
+//
+//            x = (long) Math.ceil(width / squareSize);
+//            y = (long) Math.ceil(height / squareSize);
+//
+//            // dx = (x * squareSize) - width;
+//            // dy = (y * squareSize) - height;
+//
+//            // ReferencedEnvelope envelop_ = new ReferencedEnvelope(env.getMinX() - dx,
+//            // env.getMaxX() + dx,
+//            // env.getMinY() - dy, env.getMaxY() + dy,
+//            // shape.getProjection().getCoordinateReferenceSystem());
+//
+//            // After doing the calculations in the original CRS,
+//            // shape and envelope is transformed to default.
+//
+//            // this.shape = shape.transform(Projection.getDefault());
+//            // try {
+//            // this.envelope = Envelope
+//            // .create(envelop_.transform(Projection.getDefault().getCoordinateReferenceSystem(),
+//            // true));
+//            // } catch (Exception e) {
+//            // // shouldn't happen
+//            // throw new KlabValidationException(e);
+//            // }
+//            // this.projection = Projection.getDefault();
+//
+//        }
+//        // Case 2: CRS uses degrees
+//        else {
+//            // get height and width in meters
+//            double height = Projection.distance(env.getMinY(), env.getMinX(), env.getMaxY(), env.getMinX());
+//            double width = Projection.distance(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
+//            x = (long) Math.ceil(width / squareSize);
+//            y = (long) Math.ceil(height / squareSize);
+//
+//            // Here I tried to adjust further dx and dy based on the size of the
+//            // grid cell
+//            // at the center of the Grid. Possibly not right either, so I left
+//            // it out.
+//            // double centralX = (env.getMaxX() + env.getMinX())/2;
+//            // double stepX = (env.getMaxX() - env.getMinX())/x;
+//            //
+//            // double centralY = (env.getMaxY() + env.getMinY())/2;
+//            // double stepY = (env.getMaxY() - env.getMinY())/x;
+//            //
+//            // double actualStepWidth = Grid.haversine(centralY,centralX,
+//            // centralY,centralX+stepX);
+//            //
+//            // double actualStepHeight = Grid.haversine(centralY, centralX,
+//            // centralY+stepY,centralX);
+//            // dx = stepX * (squareSize/actualStepWidth) / 2;
+//            // dy = stepY * (squareSize/actualStepHeight) / 2;
+//
+//        }
+//
+//        // if (!this.projection.equals(Projection.getDefault())) {
+//        // this.shape = this.shape.transform(Projection.getDefault());
+//        // try {
+//        // this.envelope = this.envelope.transform(Projection.getDefault(), true);
+//        // } catch (Exception e) {
+//        // // TODO: Shouldn't happen
+//        // e.printStackTrace();
+//        // }
+//        // this.projection = Projection.getDefault();
+//        // }
+//
+//        this.setResolution(x, y);
+//
+//        // activationLayer = Rasterizer.createMask(shape, this);
+//    }
 
     /**
      * Adjust the envelope if necessary.
@@ -1195,60 +1196,60 @@ public class Grid extends Area implements IGrid {
         return shape;
     }
 
-    /**
-     * Return a new grid with compatible geometry to this but limited to the bounding box of the
-     * passed shape, which must be included in our envelope. Also return an array with the x and y
-     * offsets of the grid within the original.
-     * 
-     * @param shape
-     * @return new grid
-     * @throws KlabException
-     */
-    public IGrid cutToShape(Shape shape) throws KlabException {
-
-        org.locationtech.jts.geom.Envelope genv = Envelope.create(getEast(), getWest(), getSouth(), getNorth(),
-                projection).envelope;
-        org.locationtech.jts.geom.Envelope senv = shape.shapeGeometry.getEnvelope().getEnvelopeInternal();
-
-        if (!genv.covers(senv)) {
-            return null;
-        }
-
-        /*
-         * adjusts envelope boundaries to cover original cells exactly
-         */
-        double gxmin = senv.getMinX();
-        double gxmax = senv.getMaxX();
-        double dx = gxmax - gxmin;
-        double gymin = senv.getMinY();
-        double gymax = senv.getMaxY();
-        double dy = gymax - gymin;
-
-        long nx = (long) (dx / getCellWidth());
-        long ny = (long) (dy / getCellHeight());
-
-        if ((nx * getCellWidth()) < dx) {
-            nx++;
-            gxmin -= (getCellWidth() / 2);
-            gxmax += (getCellWidth() / 2);
-        }
-        if ((ny * getCellHeight()) < dy) {
-            ny++;
-            gymin -= (getCellHeight() / 2);
-            gymax += (getCellHeight() / 2);
-        }
-
-        long xofs = (long) ((gxmin - getEast()) / getCellWidth());
-        long yofs = (long) ((gymin - getSouth()) / getCellHeight());
-
-        Grid ret = new Grid(shape, nx, ny);
-        ret.offsetInSupergrid = new long[]{xofs, yofs};
-        ret.superGridId = getSignature();
-
-        ret.createActivationLayer(shape);
-
-        return ret;
-    }
+//    /**
+//     * Return a new grid with compatible geometry to this but limited to the bounding box of the
+//     * passed shape, which must be included in our envelope. Also return an array with the x and y
+//     * offsets of the grid within the original.
+//     * 
+//     * @param shape
+//     * @return new grid
+//     * @throws KlabException
+//     */
+//    public IGrid cutToShape(Shape shape) throws KlabException {
+//
+//        org.locationtech.jts.geom.Envelope genv = Envelope.create(getEast(), getWest(), getSouth(), getNorth(),
+//                projection).envelope;
+//        org.locationtech.jts.geom.Envelope senv = shape.shapeGeometry.getEnvelope().getEnvelopeInternal();
+//
+//        if (!genv.covers(senv)) {
+//            return null;
+//        }
+//
+//        /*
+//         * adjusts envelope boundaries to cover original cells exactly
+//         */
+//        double gxmin = senv.getMinX();
+//        double gxmax = senv.getMaxX();
+//        double dx = gxmax - gxmin;
+//        double gymin = senv.getMinY();
+//        double gymax = senv.getMaxY();
+//        double dy = gymax - gymin;
+//
+//        long nx = (long) (dx / getCellWidth());
+//        long ny = (long) (dy / getCellHeight());
+//
+//        if ((nx * getCellWidth()) < dx) {
+//            nx++;
+//            gxmin -= (getCellWidth() / 2);
+//            gxmax += (getCellWidth() / 2);
+//        }
+//        if ((ny * getCellHeight()) < dy) {
+//            ny++;
+//            gymin -= (getCellHeight() / 2);
+//            gymax += (getCellHeight() / 2);
+//        }
+//
+//        long xofs = (long) ((gxmin - getEast()) / getCellWidth());
+//        long yofs = (long) ((gymin - getSouth()) / getCellHeight());
+//
+//        Grid ret = new Grid(shape, nx, ny);
+//        ret.offsetInSupergrid = new long[]{xofs, yofs};
+//        ret.superGridId = getSignature();
+//
+//        ret.createActivationLayer(shape);
+//
+//        return ret;
+//    }
 
     private void setResolution(long xCells, long yCells) {
         this.xCells = xCells;
@@ -1257,10 +1258,10 @@ public class Grid extends Area implements IGrid {
         this.cellHeight = getEnvelope().getHeight() / yCells;
     }
 
-    private void createActivationLayer(Shape shape) {
-        // TODO Auto-generated method stub
-
-    }
+//    private void createActivationLayer(Shape shape) {
+//        // TODO Auto-generated method stub
+//
+//    }
 
     public Collection<Long> getNeumannNeighbors(long xcell, long ycell) {
         ArrayList<Long> ret = new ArrayList<>();

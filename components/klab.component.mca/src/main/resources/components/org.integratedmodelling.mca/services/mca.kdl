@@ -63,13 +63,25 @@ export number owa
 	
 	optional parameter map weights
 		"Map of relevance weights for each observation."
+		
+	optional parameter boolean interpolate_weights
+		"Whether or not to perform WOWA by interpolating the cumulative sum of the ordinal weights. If true, the list of ordinal weights
+		 should be provided as a parameter. Default is false."
+		default false	
+		
+	optional parameter value risk_profile
+		"The observer's risk profile. Can be a list specifying all the ordinal weights or a single number. If a single number is provided, every real 
+		number is accepted. 0 represents maximum risk aversion, 0.5 risk neutrality and 1 minimum risk aversion. Default is 0.5"
+		default = 0.5
 	
-	optional parameter map ordinal_weights
-		"Map of ordinal weights."	
-	
-	optional parameter number risk_profile
-		"The observer's risk profile from -1 to 1, where negative numbers represent risk aversion."
-		default = 1.0		
-
+	optional parameter boolean balanced_risk_prof
+		"If what is wanted is to express a balanced risk attitude with a parabolic distribution, is it is needed to 
+		set the parameter balanced_risk_prof = true and provide the ratio_balance parameter"
+		
+	optional parameter number ratio_balance
+		"The ratio between the ordinal weights attributed to values in hypothetical extremes and the ordinal weights attributed to
+		the median value"
+		
+		
 	class org.integratedmodelling.owa.OWAResolver
 }

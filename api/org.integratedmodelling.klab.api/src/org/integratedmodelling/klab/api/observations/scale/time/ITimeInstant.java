@@ -142,4 +142,11 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 	 */
 	ITimeInstant endOf(Type temporalAggregation);
 
+	/**
+	 * A string format guaranteed to be RFC3339 compliant.
+	 * 
+	 * @return
+	 */
+	String toRFC3339String();
+
 }

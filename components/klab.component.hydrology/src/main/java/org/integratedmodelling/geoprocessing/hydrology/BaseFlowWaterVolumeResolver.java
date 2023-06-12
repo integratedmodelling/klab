@@ -58,7 +58,7 @@ public class BaseFlowWaterVolumeResolver extends AbstractContextualizer implemen
             // output,
             // since it is not defined in the semantics.
 
-            GeotoolsUtils.INSTANCE.coverageToState(b.outBaseflow, baseflowWaterVolumeState, context.getScale(),
+            GeotoolsUtils.INSTANCE.coverageToState(b.outB, baseflowWaterVolumeState, context.getScale(),
                     (val) -> NumberUtils.equal(val, -9999) ? Double.NaN : val);
         }
 
