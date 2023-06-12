@@ -454,7 +454,7 @@ public class Scale extends GroovyObjectSupport implements IScale {
 
 	private class ScaleIterator implements Iterator<ILocator> {
 
-		long offset = 0;
+		long offset = -1;
 
 		@Override
 		public boolean hasNext() {
