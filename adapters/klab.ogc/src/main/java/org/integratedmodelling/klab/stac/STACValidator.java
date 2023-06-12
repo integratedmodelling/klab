@@ -28,6 +28,7 @@ import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 
 /**
  * A field to validate if the GeoJSON is compliant with the STAC specification
@@ -62,6 +63,11 @@ public class STACValidator implements IResourceValidator {
         JSONArray extensionArray = metadata.getBody().getObject().getJSONArray("stac_extensions");
         for (Object ext : extensionArray) {
             String name = STACExtension.getExtensionName(ext.toString());
+            // We might want to check the doi only if the Scientific Notation extension is provided
+            String doi = getDOI(metadata.getBody().getObject());
+            if (doi != null) {
+                userData.put("sci:doi", doi);
+            }
             try {
                 extensions.add(STACExtension.valueOfLabel(name));
             } catch (Exception e) {
@@ -78,6 +84,30 @@ public class STACValidator implements IResourceValidator {
 
         return new ResourceBuilder(urn).withParameters(userData)//.withType(Type.NUMBER)
                 .withGeometry(geometry).withSpatialExtent(service.getSpatialExtent());
+    }
+
+    private String getDOI(JSONObject object) {
+        String doi = object.getString("sci:doi");
+        if(doi != null) {
+            return doi;
+        }
+        doi = object.getString("assets.sci:doi");
+        if(doi != null) {
+            return doi;
+        }
+        doi = object.getString("summaries.sci:doi");
+        if(doi != null) {
+            return doi;
+        }
+        doi = object.getString("properties.sci:doi");
+        if(doi != null) {
+            return doi;
+        }
+        doi = object.getString("item_assets.sci:doi");
+        if(doi != null) {
+            return doi;
+        }
+        return null;
     }
 
     @Override
