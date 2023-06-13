@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -59,7 +58,6 @@ public class STACValidator implements IResourceValidator {
             throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
         }
 
-        // TODO get STAC extensions and add them to the parameters
         HttpResponse<JsonNode> metadata = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
         List<STACExtension> extensions = new ArrayList<>();
         JSONArray extensionArray = metadata.getBody().getObject().getJSONArray("stac_extensions");
@@ -74,7 +72,6 @@ public class STACValidator implements IResourceValidator {
         if (!extensions.stream().anyMatch(STACExtension::isSupported)) {
             throw new KlabUnimplementedException("This collection does not contain a supported extension");
         }
-
         userData.put("stac_extensions", extensions.stream().map(STACExtension::getName));
 
         IGeometry geometry = service.getGeometry(collectionId);
@@ -82,50 +79,31 @@ public class STACValidator implements IResourceValidator {
         Builder builder = new ResourceBuilder(urn).withParameters(userData)
                 .withGeometry(geometry).withSpatialExtent(service.getSpatialExtent());
 
+        readMetadata(metadata.getBody().getObject(), builder);
+        return builder;
+    }
+
+    private void readMetadata(final JSONObject json, Builder builder) {
         // We might want to check the doi only if the Scientific Notation extension is provided
-        String doi = getDOI(metadata.getBody().getObject());
+        String doi = STACUtils.readDOI(json);
         if (doi != null) {
             builder.withMetadata(IMetadata.DC_URL, doi);
         }
 
-        // Get the keywords
-        String keywords = getKeywords(metadata.getBody().getObject());
+        String description = STACUtils.readDescription(json);
+        if (description != null) {
+            builder.withMetadata(IMetadata.DC_DESCRIPTION, description);
+        }
+
+        String keywords = STACUtils.readKeywords(json);
         if (keywords != null) {
             builder.withMetadata(IMetadata.IM_KEYWORDS, keywords);
         }
-        return builder;
-    }
 
-    private String getKeywords(JSONObject object) {
-        JSONArray keywords = object.getJSONArray("keywords");
-        if (keywords.isEmpty()) {
-            return null;
+        String title = STACUtils.readTitle(json);
+        if (title != null) {
+            builder.withMetadata(IMetadata.DC_TITLE, title);
         }
-        return keywords.toString().replace("\"", "");
-    }
-
-    private String getDOI(JSONObject object) {
-        String doi = object.getString("sci:doi");
-        if(doi != null) {
-            return doi;
-        }
-        doi = object.getString("assets.sci:doi");
-        if(doi != null) {
-            return doi;
-        }
-        doi = object.getString("summaries.sci:doi");
-        if(doi != null) {
-            return doi;
-        }
-        doi = object.getString("properties.sci:doi");
-        if(doi != null) {
-            return doi;
-        }
-        doi = object.getString("item_assets.sci:doi");
-        if(doi != null) {
-            return doi;
-        }
-        return null;
     }
 
     @Override
