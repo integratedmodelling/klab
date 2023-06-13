@@ -140,9 +140,9 @@ export number barnesinterpolator
 		"The semantics for the state to use in the source points or features." 
 		
 	optional number "scale"
-	    "Sets the length scale for the interpolation weighting function. 
+	    "Sets the length scale in m for the interpolation weighting function. 
 	    The length scale should be determined from the distance between the observation points, 
-	    as well as the scale of the phenomena. Default is the approximate resolution of the grid"
+	    as well as the scale of the phenomena. Default is 1 km"
 	    
 	optional number "iterations"
 	    "Sets the number of passes performed during interpolation. Default is 1"

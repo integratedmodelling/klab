@@ -15,6 +15,9 @@ import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.process.vector.BarnesSurfaceInterpolator;
+import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
+import org.geotools.referencing.crs.DefaultProjectedCRS;
 import org.hortonmachine.gears.libs.modules.HMConstants;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.utils.coverage.CoverageUtilities;
@@ -47,6 +50,10 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.datum.Ellipsoid;
 
 public class BarnesSurfaceResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
@@ -82,11 +89,17 @@ public class BarnesSurfaceResolver extends AbstractContextualizer implements IRe
 				
 		Envelope env = inInterpolationGrid.getEnvelope();
 		
+		CoordinateReferenceSystem Crs = grid.getProjection().getCoordinateReferenceSystem();
+		
+		Ellipsoid elli = CRS.getEllipsoid(Crs);
+		
 		Double minY = env.getMinimum(0);
 		Double maxY = env.getMaximum(0);
 		Double minX = env.getMinimum(1);
 		Double maxX = env.getMaximum(1);
 		
+		
+		// The x,y coordinates need to be reversed due to a bug in the interpolator function
 		org.locationtech.jts.geom.Envelope Env2 = new org.locationtech.jts.geom.Envelope(minX, maxX, minY, maxY);
 		
 		
@@ -198,6 +211,7 @@ public class BarnesSurfaceResolver extends AbstractContextualizer implements IRe
 			v = Double.isNaN(v) ? floatNovalue : v;
 			
 			// The variable to interpolate should be stored in z coordinate
+			// The x,y coordinates need to be reversed due to a bug in the interpolator function
 			Coordinate coord = new Coordinate(point.getCoordinate().y, point.getCoordinate().x, v);
 			
 			inputObs[featureId] =  coord; 
@@ -206,23 +220,46 @@ public class BarnesSurfaceResolver extends AbstractContextualizer implements IRe
 
 		}
 		
-		BarnesSurfaceInterpolator barnes = new BarnesSurfaceInterpolator(inputObs);
+		BarnesSurfaceInterpolator barnes;
 		
-		if (lenscale != null) { 
+		// If the crs is projected it is (much) faster to use standard version of the interpolator
+		
+		if ((Crs instanceof DefaultGeographicCRS)) {
+		
+			barnes = new CustomBarnesSurfaceInterpolator(inputObs);
+			((CustomBarnesSurfaceInterpolator) barnes).setEllipsoid(elli);
+		
+		} else if ((Crs instanceof DefaultProjectedCRS)) {
 			
-			barnes.setLengthScale(lenscale);
-			
+			barnes = new BarnesSurfaceInterpolator(inputObs);	
+		//If unable to recognize if Crs is projected or not, better to use the robust custom option	
 		} else {
 			
-			barnes.setLengthScale( (Double) ((((maxX - minX)/grid.getXCells()) + ((maxY - minY)/grid.getYCells()))/2.0));
+			context.getMonitor().warn("The crs is neither projected nor unprojected");
+			barnes = new CustomBarnesSurfaceInterpolator(inputObs);
 			
 		}
 		
-		barnes.setPassCount(passes.intValue());
-		barnes.setMaxObservationDistance(maxdis);
-		barnes.setMinObservationCount(minobs.intValue());
-		barnes.setConvergenceFactor(conv);
-		barnes.setNoData(floatNovalue);
+		if (barnes != null) {
+			
+			barnes.setPassCount(passes.intValue());
+			barnes.setMaxObservationDistance(maxdis);
+			barnes.setMinObservationCount(minobs.intValue());
+			barnes.setConvergenceFactor(conv);
+			barnes.setNoData(floatNovalue);
+			
+			if (lenscale != null) {
+				
+				barnes.setLengthScale(lenscale);
+				
+			} else {
+				
+			    barnes.setLengthScale(1000);
+			
+			}
+				
+			
+		}
 		
 		float[][] interpArray = barnes.computeSurface(Env2, (int) (grid.getYCells()), (int) (grid.getXCells()));
 		
@@ -287,5 +324,7 @@ public class BarnesSurfaceResolver extends AbstractContextualizer implements IRe
 		if (ret.conv == null) {ret.conv = 0.3;}
 		
 		return ret;
+		
 	}
+	
 }
