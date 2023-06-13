@@ -17,11 +17,11 @@ public class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
   public boolean _isLeaf(final ObservableSemantics obs) {
     return true;
   }
-  
+
   public boolean _isLeaf(final ConceptDeclaration obs) {
     return true;
   }
-  
+
   @Override
   public Object _text(final Object modelElement) {
     return modelElement.getClass().getCanonicalName();
