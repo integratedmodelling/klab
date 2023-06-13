@@ -48,6 +48,7 @@ public class StatsDatabase extends Postgis {
 			+ "    queries.observable as observation,\n"
 			+ "    coalesce(contexts.application, 'k.Explorer') as application,\n"
 			+ "    contexts.scale_size,\n"
+			+ "    contexts.context_name,\n"
 			+ "	   queries.outcome,\n"
 			+ "	   ST_Centroid(contexts.geom),\n"
 			+ "    contexts.created as context_time,\n"
