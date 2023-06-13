@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.openeo;
 
+import java.io.File;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -26,10 +27,12 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.Authorization;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
+import org.integratedmodelling.klab.openeo.OpenEO.Process;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -72,7 +75,9 @@ public class OpenEO {
 
 	public static class ProcessNode {
 
-		private String process_id;
+	    private static final long serialVersionUID = 5702995280325999073L;
+
+	    private String process_id;
 		private String namespace;
 		private String description;
 		private boolean result;
@@ -117,6 +122,11 @@ public class OpenEO {
 		public void setArguments(Map<String, Object> arguments) {
 			this.arguments = arguments;
 		}
+		
+		public String toString() {
+			return process_id + " " + arguments;
+		}
+
 	}
 
 	public static class Schema {
@@ -926,6 +936,25 @@ public class OpenEO {
 			return result.get();
 		}
 
+	}
+
+	public Process getProcess(IResource resource) {
+
+		File processDefinition = new File(resource.getLocalPath() + File.separator + "process.json");
+		if (processDefinition.isFile()) {
+			return JsonUtils.load(processDefinition, Process.class);
+		} else if (resource.getParameters().containsKey("namespace")) {
+			try {
+				Process process = JsonUtils.load(new URL(resource.getParameters().get("namespace", String.class)),
+						Process.class);
+				process.encodeSelf(resource.getParameters().get("namespace", String.class));
+				return process;
+			} catch (KlabIOException | MalformedURLException e) {
+				// dio stracane
+				throw new KlabIOException(e);
+			}
+		}
+		return null;
 	}
 
 }

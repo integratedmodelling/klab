@@ -1,25 +1,23 @@
 {
   "process_graph": {
-    "gte1": {
-      "process_id": "gte",
-      "arguments": {
-        "x": {
-          "from_parameter": "year"
-        },
-        "y": 2015
-      }
-    },
     "textmerge1": {
       "process_id": "text_merge",
       "arguments": {
         "data": [
-          {
-            "from_parameter": "year"
-          },
-          1,
-          1
+          2000,
+          "01",
+          "01"
         ],
         "separator": "-"
+      }
+    },
+    "add1": {
+      "process_id": "add",
+      "arguments": {
+        "x": {
+          "from_parameter": "year"
+        },
+        "y": 1
       }
     },
     "textmerge2": {
@@ -27,10 +25,10 @@
       "arguments": {
         "data": [
           {
-            "from_parameter": "year"
+            "from_node": "add1"
           },
-          12,
-          31
+          "01",
+          "01"
         ],
         "separator": "-"
       }
@@ -39,9 +37,9 @@
       "process_id": "load_collection",
       "arguments": {
         "bands": [
-          "FCOVER"
+          "CLC_ACC"
         ],
-        "id": "CGLS_FCOVER300_V1_GLOBAL",
+        "id": "CORINE_LAND_COVER_ACCOUNTING_LAYERS",
         "spatial_extent": null,
         "temporal_extent": [
           {
@@ -53,93 +51,22 @@
         ]
       }
     },
-    "loadcollection2": {
-      "process_id": "load_collection",
-      "arguments": {
-        "bands": [
-          "FCOVER"
-        ],
-        "id": "CGLS_FCOVER_V2_GLOBAL",
-        "spatial_extent": null,
-        "temporal_extent": [
-          {
-            "from_node": "textmerge1"
-          },
-          {
-            "from_node": "textmerge2"
-          }
-        ]
-      }
-    },
-    "if1": {
-      "process_id": "if",
-      "arguments": {
-        "accept": {
-          "from_node": "loadcollection1"
-        },
-        "reject": {
-          "from_node": "loadcollection2"
-        },
-        "value": {
-          "from_node": "gte1"
-        }
-      }
-    },
-    "apply1": {
-      "process_id": "apply",
+    "reducedimension1": {
+      "process_id": "reduce_dimension",
       "arguments": {
         "data": {
-          "from_node": "if1"
+          "from_node": "loadcollection1"
         },
-        "process": {
+        "dimension": "t",
+        "reducer": {
           "process_graph": {
-            "divide1": {
-              "process_id": "divide",
+            "last1": {
+              "process_id": "last",
               "arguments": {
-                "x": {
-                  "from_parameter": "x"
+                "data": {
+                  "from_parameter": "data"
                 },
-                "y": 250
-              }
-            },
-            "gte2": {
-              "process_id": "gte",
-              "arguments": {
-                "x": {
-                  "from_parameter": "x"
-                },
-                "y": 0
-              }
-            },
-            "lte1": {
-              "process_id": "lte",
-              "arguments": {
-                "x": {
-                  "from_parameter": "x"
-                },
-                "y": 250
-              }
-            },
-            "and1": {
-              "process_id": "and",
-              "arguments": {
-                "x": {
-                  "from_node": "gte2"
-                },
-                "y": {
-                  "from_node": "lte1"
-                }
-              }
-            },
-            "if2": {
-              "process_id": "if",
-              "arguments": {
-                "accept": {
-                  "from_node": "divide1"
-                },
-                "value": {
-                  "from_node": "and1"
-                }
+                "ignore_nodata": false
               },
               "result": true
             }
@@ -147,21 +74,27 @@
         }
       }
     },
-    "reducedimension1": {
-      "process_id": "reduce_dimension",
+    "apply1": {
+      "process_id": "apply",
       "arguments": {
         "data": {
-          "from_node": "apply1"
+          "from_node": "reducedimension1"
         },
-        "dimension": "t",
-        "reducer": {
+        "process": {
           "process_graph": {
-            "mean1": {
-              "process_id": "mean",
+            "runudf1": {
+              "process_id": "run_udf",
               "arguments": {
+                "context": {
+                  "class_mapping": {
+                    "from_parameter": "remapping_dict"
+                  }
+                },
                 "data": {
-                  "from_parameter": "data"
-                }
+                  "from_parameter": "x"
+                },
+                "runtime": "Python",
+                "udf": "import numpy as np\nfrom openeo.udf import XarrayDataCube\nimport xarray\n\n\ndef apply_datacube(cube: XarrayDataCube, context: dict) -> XarrayDataCube:\n    \"\"\" remap cube values by given dictionary\n\n    :param cube: data cube\n    :param context: dictionary to provide external data - key class_mapping is used to provide external re-mapping dict\n    :return: data cube with remapped values (new cube)\n    \"\"\"\n    class_mapping = context[\"class_mapping\"]\n\n    array: xarray.DataArray = cube.get_array()\n    result = np.full_like(array.values, np.nan)\n\n    for k, v in class_mapping.items():\n        # Note: JSON-encoding of the class mapping converted the keys from int to strings, so we have to undo that\n        k = int(k)\n        result[array.values == k] = v\n\n    return XarrayDataCube(array=xarray.DataArray(result, dims=array.dims, coords=array.coords))\n"
               },
               "result": true
             }
@@ -172,15 +105,30 @@
     "resamplespatial1": {
       "process_id": "resample_spatial",
       "arguments": {
+        "align": "upper-left",
         "data": {
-          "from_node": "reducedimension1"
+          "from_node": "apply1"
         },
-        "method": "bilinear",
+        "method": "near",
         "projection": {
-          "from_parameter": "projection"
+          "from_parameter": "output_epsg"
         },
         "resolution": {
           "from_parameter": "resolution"
+        }
+      }
+    },
+    "if1": {
+      "process_id": "if",
+      "arguments": {
+        "accept": {
+          "from_node": "resamplespatial1"
+        },
+        "reject": {
+          "from_node": "apply1"
+        },
+        "value": {
+          "from_parameter": "output_warp"
         }
       }
     },
@@ -188,7 +136,7 @@
       "process_id": "filter_spatial",
       "arguments": {
         "data": {
-          "from_node": "resamplespatial1"
+          "from_node": "if1"
         },
         "geometries": {
           "from_parameter": "geometry"
@@ -197,9 +145,9 @@
       "result": true
     }
   },
-  "id": "dummy_udp",
-  "summary": "Annual mean composite of Copernicus Global Land FCover",
-  "description": "Given a year and area of interest, returns a mean composite of [FCover](https://land.copernicus.eu/global/products/fcover).",
+  "id": "udp_CORINE_arable_mask",
+  "summary": "arable/non-arable mask based on CORINE ACC remapped with custom dictionary. Returns a single band RasterCube.",
+  "description": "Creates a arable/non-arable mask for the CORINE Accounting Layers based on a given remapping dictionary.",
   "parameters": [
     {
       "name": "geometry",
@@ -219,6 +167,55 @@
       "optional": true
     },
     {
+      "name": "remapping_dict",
+      "description": "dict with the remapping values.",
+      "schema": {
+        "type": "object"
+      },
+      "default": {
+        "141": 0,
+        "211": 1,
+        "212": 1,
+        "213": 1,
+        "221": 0,
+        "222": 0,
+        "223": 0,
+        "231": 0,
+        "241": 0,
+        "242": 0,
+        "243": 0,
+        "244": 0,
+        "311": 0,
+        "312": 0,
+        "313": 0,
+        "321": 0,
+        "322": 0,
+        "323": 0,
+        "324": 0,
+        "333": 0,
+        "334": 0
+      },
+      "optional": true
+    },
+    {
+      "name": "output_warp",
+      "description": "Boolean switch if output should be warped to given projection and resolution, default=False.",
+      "schema": {
+        "type": "boolean"
+      },
+      "default": false,
+      "optional": true
+    },
+    {
+      "name": "output_epsg",
+      "description": "The desired output projection system, which is EPSG:3035 by default.",
+      "schema": {
+        "type": "integer"
+      },
+      "default": 3035,
+      "optional": true
+    },
+    {
       "name": "resolution",
       "description": "The desired resolution, specified in units of the projection system, which is meters by default.",
       "schema": {
@@ -226,19 +223,6 @@
       },
       "default": 100,
       "optional": true
-    },
-    {
-      "schema": [
-        {
-          "type": "integer"
-        },
-        {
-          "type": "array"
-        }
-      ],
-      "name": "projection",
-      "optional": true,
-      "default": 3035
     }
   ]
 }
