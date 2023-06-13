@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -63,11 +64,6 @@ public class STACValidator implements IResourceValidator {
         JSONArray extensionArray = metadata.getBody().getObject().getJSONArray("stac_extensions");
         for (Object ext : extensionArray) {
             String name = STACExtension.getExtensionName(ext.toString());
-            // We might want to check the doi only if the Scientific Notation extension is provided
-            String doi = getDOI(metadata.getBody().getObject());
-            if (doi != null) {
-                userData.put("sci:doi", doi);
-            }
             try {
                 extensions.add(STACExtension.valueOfLabel(name));
             } catch (Exception e) {
@@ -82,8 +78,15 @@ public class STACValidator implements IResourceValidator {
 
         IGeometry geometry = service.getGeometry(collectionId);
 
-        return new ResourceBuilder(urn).withParameters(userData)//.withType(Type.NUMBER)
+        Builder builder = new ResourceBuilder(urn).withParameters(userData)
                 .withGeometry(geometry).withSpatialExtent(service.getSpatialExtent());
+
+        // We might want to check the doi only if the Scientific Notation extension is provided
+        String doi = getDOI(metadata.getBody().getObject());
+        if (doi != null) {
+            builder.withMetadata("dc:url", doi);
+        }
+        return builder;
     }
 
     private String getDOI(JSONObject object) {
@@ -112,8 +115,8 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public IResource update(IResource resource, ResourceCRUDRequest updateData) {
-        // TODO Auto-generated method stub
-        return null;
+        ((Resource) resource).update(updateData);
+        return resource;
     }
 
     @Override

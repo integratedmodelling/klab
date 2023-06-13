@@ -63,7 +63,8 @@ public enum STACExtension {
     }
 
     public boolean isSupported() {
-        return this.name == ElectroOptical.name;
+        // TODO
+        return true;
     }
 
     public static STACExtension valueOfLabel(String label) {
