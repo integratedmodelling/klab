@@ -113,6 +113,10 @@ public class StatsQueryService {
         	if(!request.getGroupBy().equals("day") && !request.getGroupBy().equals("month") && !request.getGroupBy().equals("year")) {
         		request.setGroupBy("month");
         		}
+        	/* if we want to receive number of contexts instead of queries */
+//        	query = "SELECT DISTINCT date_trunc('"+ request.getGroupBy() + "', to_timestamp(created/1000)) AS date, "
+//        			+ "COUNT(id) OVER (PARTITION BY date_trunc('" + request.getGroupBy() + "', to_timestamp(created/1000))) AS count "
+//        			+ "FROM contexts ORDER BY date;";
         	query = "SELECT DISTINCT date_trunc('"+ request.getGroupBy() + "', to_timestamp(start_time/1000)) AS date, "
         			+ "COUNT(context_id) OVER (PARTITION BY date_trunc('" + request.getGroupBy() + "', to_timestamp(start_time/1000))) AS count "
         			+ "FROM queries ORDER BY date;";
