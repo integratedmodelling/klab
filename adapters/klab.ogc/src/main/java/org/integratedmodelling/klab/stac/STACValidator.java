@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -84,9 +85,23 @@ public class STACValidator implements IResourceValidator {
         // We might want to check the doi only if the Scientific Notation extension is provided
         String doi = getDOI(metadata.getBody().getObject());
         if (doi != null) {
-            builder.withMetadata("dc:url", doi);
+            builder.withMetadata(IMetadata.DC_URL, doi);
+        }
+
+        // Get the keywords
+        String keywords = getKeywords(metadata.getBody().getObject());
+        if (keywords != null) {
+            builder.withMetadata(IMetadata.IM_KEYWORDS, keywords);
         }
         return builder;
+    }
+
+    private String getKeywords(JSONObject object) {
+        JSONArray keywords = object.getJSONArray("keywords");
+        if (keywords.isEmpty()) {
+            return null;
+        }
+        return keywords.toString().replace("\"", "");
     }
 
     private String getDOI(JSONObject object) {
