@@ -20,7 +20,7 @@ public class EngineProfileResource {
 
     public EngineProfileResource(ProfileResource profile) {
         if (profile != null) {
-            this.name = profile.getName();
+            this.name = profile.getUsername();
             this.email = profile.getEmail();
             this.roles = profile.getRoles();
             this.groupEntries = profile.getAgreements().get(0).getAgreement().getGroupEntries();
