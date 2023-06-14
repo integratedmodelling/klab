@@ -5,8 +5,6 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.DOIReader;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -32,11 +30,7 @@ public class STACUtils {
     }
 
     public static String readDOIAuthors(String doi) {
-        HttpResponse<JsonNode> response = DOIReader.getDOIInformation(doi);
-        if (!response.isSuccess()) {
-            return null;
-        }
-        Set<String> authorsSet = DOIReader.readAuthors(response.getBody());
+        Set<String> authorsSet = DOIReader.readAuthors(doi);
         StringBuilder authors = new StringBuilder();
         authorsSet.forEach(a -> authors.append(a).append("\n"));
         return authors.toString().trim();
