@@ -76,6 +76,8 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 		}
 		return out;
 	}
+	
+	
 
 	/**
 	 * Convert to UTF 8.
