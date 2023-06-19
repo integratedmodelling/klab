@@ -260,6 +260,7 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 		
 		} else {
 		for(String key : cumulativeRW.keySet()){
+		  if (ratio.doubleValue() >= 1) {
 			Double cPar = ratio.doubleValue();
 			aPar = 4*(cPar-1);
 			bPar = -aPar;
@@ -267,6 +268,16 @@ public class OWAResolver extends AbstractContextualizer implements IStateResolve
 			val2 = ((1.0/3.0)*aPar*Math.pow(cumulativeRW.get(key),3.0) + (1.0/2.0)*bPar*Math.pow(cumulativeRW.get(key),2.0) + cPar*(cumulativeRW.get(key)))/ParIntSum;
 			finalWeights.put(key,val2 - previous);
 			previous = val2;
+		  }
+		  else if ((ratio.doubleValue() <= 1) && (ratio.doubleValue() > 0)) {
+			Double cPar = (1/ratio.doubleValue());
+			aPar = -4*(cPar-1);
+			bPar = -aPar;
+			ParIntSum = (1.0/3.0)*aPar*1 + (1.0/2.0)*bPar*1;
+			val2 = ((1.0/3.0)*aPar*Math.pow(cumulativeRW.get(key),3.0) + (1.0/2.0)*bPar*Math.pow(cumulativeRW.get(key),2.0))/ParIntSum;
+			finalWeights.put(key,val2 - previous);
+			previous = val2;
+		  }
 		}
 		}
 		return finalWeights;
