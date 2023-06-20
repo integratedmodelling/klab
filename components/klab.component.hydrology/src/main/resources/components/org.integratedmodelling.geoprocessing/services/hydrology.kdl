@@ -501,15 +501,15 @@ export number floodlevels
          0 means immediate decrease while 1 means constant levels. Defaults to 1"
         
     optional parameter number tolerance
-        "Numerical tolerance when computing flooding levels. Defaults to 0.001,
-        values lower than 0.001 are not recommended"
+        "Numerical tolerance in m when computing flooding levels. Defaults to 0.001 m,
+        values lower than 0.001 m are not recommended"
     
 	import number elevation
 		"The DEM"
 		
 	import number seeds
 	    "The original water levels"
-	    
+	
 	optional import number decay
 	    "A map with spatially heterogeneous decay parameters"
 
