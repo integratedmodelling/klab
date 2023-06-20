@@ -27,6 +27,8 @@ import java.util.ArrayList;
 public class MarineFloodResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 	
 	private Double decayFact;
+	
+	private Double numTol;
 
 	@Override
 	public Type getType() {
@@ -38,6 +40,7 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 
 		IState seeds = context.getArtifact("seeds", IState.class);
 		IState dem = context.getArtifact("elevation", IState.class);
+		IState decay = context.getArtifact("decay", IState.class);
 
 		GridCoverage2D seedsCover = GeotoolsUtils.INSTANCE.stateToCoverage(seeds, context.getScale(),
 				DataBuffer.TYPE_FLOAT, floatNovalue, false);
@@ -92,8 +95,39 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 					newElevations[col][row] = elevations[col][row];
 				}
 		}
-
+		
+		Double[][] decayArr = new Double[cols][rows];
+		
+	try {	
+		
+		if (decay != null) {
+			
+		    GridCoverage2D decayCover = GeotoolsUtils.INSTANCE.stateToCoverage(decay, context.getScale(), DataBuffer.TYPE_FLOAT,
+				floatNovalue, false);
+		
+		    HMRaster decayRaster = HMRaster.fromGridCoverage(decayCover);
+		    
+		    for (int row = 0; row < rows; row++) {
+				for (int col = 0; col < cols; col++) {
+					double decValue = decayRaster.getValue(col, row);
+					if (!decayRaster.isNovalue(decValue)) {
+						decayArr[col][row] = decValue;
+					} else {
+						decayArr[col][row] = Double.NaN;
+					}
+				}
+			}
+		    
+		    decayRaster.close();
+		
+		}
+	}  catch (Exception e) {
+		
+		throw new KlabException(e);
 	
+	}
+		
+		
 	try {		
 		
 		
@@ -119,6 +153,7 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 		seedsRaster.close();
 		demRaster.close();
 		
+		
 		int i = 0;
 
 	  if (decayFact > 0) {
@@ -131,7 +166,25 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 
 			double val = (double) inWatLev.get(i)[2];
 			
-			double newVal = val*decayFact;
+			Double newVal;
+			
+			if (decay != null) {
+								
+			   if (decayArr[cl][rw] != Double.NaN) {
+			   
+				   newVal = val*decayArr[cl][rw];
+				   
+			   } else {
+				   
+				 newVal = Double.NaN;
+				   
+			   }
+				
+			} else {
+				
+				newVal = val*decayFact;
+				
+			}
 
 			// iterate over 8 pixels surrounding flooded cell
 			for (int rnear = -1; rnear <= 1; rnear++) {
@@ -141,8 +194,9 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 					if ((((cl + cnear) >= 0) && (cl + cnear) < cols) && ((rw + rnear) >= 0) && ((rw + rnear) < rows)
 							&& ((cl != 0) && (rw != 0))
 							&& (newElevations[cl + cnear][rw + rnear] != Double.NaN)) {
-
-						if ((newElevations[cl + cnear][rw + rnear] < newVal)) {
+                        
+						// discarding small numerical imprecision
+						if ((newVal - newElevations[cl + cnear][rw + rnear]) > numTol) {
 
 							newElevations[cl + cnear][rw + rnear] = newVal;
 
@@ -214,6 +268,8 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 		
 		Double decay = parameters.get("decay_factor", Double.class);
 		
+		Double tolerance = parameters.get("tolerance", Double.class);
+		
 		MarineFloodResolver ret = new MarineFloodResolver();
 		
 		if (decay != null) {
@@ -224,9 +280,20 @@ public class MarineFloodResolver extends AbstractContextualizer implements IReso
 	    
 		   ret.decayFact = 1.0;
 		
-		}	
+		}
+
+        if (tolerance != null) {		
 		
+		   ret.numTol = tolerance;
+		   
+        } else {
+        	
+           ret.numTol = 0.001;
+           
+        }
+        	
 		return ret;
+		
 	}
 
 }

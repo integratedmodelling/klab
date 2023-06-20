@@ -497,15 +497,24 @@ export number floodlevels
 { 
 
     optional parameter number decay_factor
-        "Describes how the water levels decrease moving from the original sources. 0 means immediate decrease while 1 means constant levels"
-
+        "Describes how the water levels decrease moving from the original sources. 
+         0 means immediate decrease while 1 means constant levels. Defaults to 1"
+        
+    optional parameter number tolerance
+        "Numerical tolerance when computing flooding levels. Defaults to 0.001,
+        values lower than 0.001 are not recommended"
+    
 	import number elevation
 		"The DEM"
 		
 	import number seeds
 	    "The original water levels"
+	    
+	optional import number decay
+	    "A map with spatially heterogeneous decay parameters"
 
 	geometry S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.MarineFloodResolver
+	
 }
