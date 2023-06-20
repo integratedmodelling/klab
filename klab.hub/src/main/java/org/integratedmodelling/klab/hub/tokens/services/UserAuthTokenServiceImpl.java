@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
@@ -48,6 +49,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		this.tokenRepository = tokenRepository;
 		this.objectMapper = objectMapper;
 	}
+	
+	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 
 	@Override
 	public TokenAuthentication createToken(String username, TokenType type) {
@@ -103,9 +106,9 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	public LoginResponse getAuthResponse(String username, String password, boolean remote) {
 		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
-
 		if (remote) {
-		    return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
+            profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
+            return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
         } else {
             return new LoginResponse<ProfileResource>(token, profile.getSafeProfile());
         }
