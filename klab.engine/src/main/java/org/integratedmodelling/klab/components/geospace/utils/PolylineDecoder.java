@@ -21,8 +21,6 @@ public class PolylineDecoder {
 	 * Precision should be something like 1E5 or 1E6. For OSRM routes found
 	 * precision was 1E6, not the original default 1E5.
 	 * 
-	 * FIXME precision different from 1E5 changes the magnitude!
-	 *
 	 * @param encoded
 	 * @param precision
 	 * @return
