@@ -70,20 +70,7 @@ export object route
 	optional concept target
 		"Semantics for the type of the subjects used as target for the relationships"
 		default ""
-		
-	optional Number time_limit
-		"Time threshold to consider a route a valid option"
-		default "no limit"	
-		
-	optional Number distance_limit
-		"Distance threshold to consider a route a valid option"
-		default "no limit"	
-	
-	optional string transport
-		"Type of transport used to find a route"
-		default "auto"	
 
-	
 //	TODO configuration to use 
 
 	class org.integratedmodelling.klab.components.network.services.RoutingRelationshipInstantiator
