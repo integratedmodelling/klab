@@ -3,8 +3,8 @@ package org.integratedmodelling.klab.components.geospace.routing;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.components.geospace.extents.Shape;
-
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -101,7 +101,7 @@ public class Valhalla {
 
         // Call to optimized route method with input, the function returns the deserialized JSON string in a specific format.
         ValhallaOutputDeserializer.OptimizedRoute route = valhalla.optimized_route(input);
-        Shape path = route.getPath();
+        IShape path = route.getPath();
         Map<String,Double> stats = route.getSummaryStatistics();
         List<Map<String,Number>> waypoints = route.getWaypoints();
 
@@ -109,6 +109,18 @@ public class Valhalla {
         System.out.println(stats);
         System.out.println(waypoints);
     }
+
+	public static String buildValhallaJsonInput(IDirectObservation source, IDirectObservation target, String transportType) {
+		
+		double[] sourceCoordinates = source.getSpace().getStandardizedCentroid();
+		double[] targetCoordinates = target.getSpace().getStandardizedCentroid();
+		double sourceLat = sourceCoordinates[0]; double sourceLon = sourceCoordinates[1]; double targetLat = targetCoordinates[0]; double targetLon = targetCoordinates[1];
+		
+		String input = 
+				"{\"locations\": [{\"lat\":" + sourceLat + ",\"lon\":" + sourceLon + "}, {\"lat\":" + targetLat + ",\"lon\":" + targetLon + "}], \"costing\":" + transportType + "}";
+		
+		return input;
+	}
 
 
 }
