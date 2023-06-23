@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class NodeAuthResponeFactory {
@@ -48,6 +49,10 @@ public class NodeAuthResponeFactory {
         this.nodeService = nodeService;
         this.groupRepository = groupRepository;
         this.configService = configService;
+        // this solve the issue of unknown properties observationReferences, but avoid send the observable linked to the group
+        // In the case of node is not necessary, but is a workaround.
+        // TODO review all the structure
+        this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 	
 	public NodeAuthenticationResponse getRespone(NodeAuthenticationRequest request,String ip) {
