@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.utils.PolylineDecoder;
 
@@ -189,7 +190,7 @@ public class ValhallaOutputDeserializer {
     static public class OptimizedRoute{
         public Trip trip;
 
-        public Shape getPath() {
+        public IShape getPath() {
         	List<String> polylinePath = getPolylineEncodedPath();
         	Shape trajectory = PolylineDecoder.decode(polylinePath, 1E6);
         	return trajectory;
