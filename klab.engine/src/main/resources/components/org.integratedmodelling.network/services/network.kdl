@@ -71,11 +71,11 @@ export object route
 		"Semantics for the type of the subjects used as target for the relationships"
 		default ""
 		
-	optional number time_limit
+	optional Number time_limit
 		"Time threshold to consider a route a valid option"
 		default "no limit"	
 		
-	optional number distance_limit
+	optional Number distance_limit
 		"Distance threshold to consider a route a valid option"
 		default "no limit"	
 	
