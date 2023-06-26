@@ -6,6 +6,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -293,10 +294,11 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
                 procelem.setLabel(proc.getProcess_id());
                 procelem.setDescription(proc.getDescription());
-                procelem.setType(ElementType.RESOURCE); // TODO unless internals are available, should be RESOURCE but not green
+                procelem.setType(ElementType.RESOURCE); // TODO unless internals are available,
+                                                        // should be RESOURCE but not green
 
                 if (proc.isResult()) {
-                    System.out.println("PIRULÈRA l'output è " + proc.getProcess_id());
+//                    System.out.println("PIRULÈRA l'output è " + proc.getProcess_id());
                     output = procelem;
                 }
             }
@@ -317,10 +319,10 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                                 String out = from.getOrCreateOutput(arg);
                                 String in = procelem.getOrCreateInput(arg);
                                 flowchart.getConnections().add(new Pair<>(out, in));
-                                if (from != null) {
-                                    System.out.println("GARGARUT " + spermer + "  gets " + arg + " from "
-                                            + ((Map<?, ?>) val).get("from_node"));
-                                }
+//                                if (from != null) {
+//                                    System.out.println("GARGARUT " + spermer + "  gets " + arg + " from "
+//                                            + ((Map<?, ?>) val).get("from_node"));
+//                                }
                             } else if (((Map<?, ?>) val).containsKey("from_parameter")
                             /*
                              * && !isContextParameter(resource, ((Map<?, ?>)
@@ -332,22 +334,22 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                                 String in = element.getOrCreateInput(arg);
                                 String out = procelem.getOrCreateInput(arg);
                                 flowchart.getConnections().add(new Pair<>(in, out));
-                                System.out.println("PIROLA " + spermer + " uses parameter "
-                                        + ((Map<?, ?>) val).containsKey("from_parameter"));
+//                                System.out.println("PIROLA " + spermer + " uses parameter "
+//                                        + ((Map<?, ?>) val).containsKey("from_parameter"));
                             } else {
                                 // make port and set the default as description
                                 String in = element.getOrCreateInput(arg);
                                 // String out = procelem.getOrCreateInput(arg);
                                 // flowchart.getConnections().add(new Pair<>(in, out));
 
-                                System.out.println("PUTANGA " + spermer + " inputs object " + arg + ": " + val);
+//                                System.out.println("PUTANGA " + spermer + " inputs object " + arg + ": " + val);
                             }
                         } else {
                             // make named port with val as description. This should have the
                             // parameter's
                             // name, for now just give it a random ID
                             procelem.getOrCreateInput(arg);
-                            System.out.println("TORTELLO " + spermer + " inputs " + arg + " = " + val);
+//                            System.out.println("TORTELLO " + spermer + " inputs " + arg + " = " + val);
                         }
                     }
                 }
@@ -380,9 +382,11 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
             ProcessNode node = processGraph.get(key);
             ret.put((prefix == null ? "" : prefix) + key, node);
             for (String arg : node.getArguments().keySet()) {
-                Object bop = node.getArguments().get(arg);
-                if (bop instanceof Map && ((Map<?,?>)bop).containsKey("process_graph")) {
-                    flattenProcesses(JsonUtils.convertMap((Map<?,?>)bop, Process.class).getProcess_graph(), arg, ret);
+                Object borp = node.getArguments().get(arg);
+                for (Object bop : (borp instanceof Collection ? ((Collection<?>) borp) : Collections.singleton(borp))) {
+                    if (bop instanceof Map && ((Map<?, ?>) bop).containsKey("process_graph")) {
+                        flattenProcesses(JsonUtils.convertMap((Map<?, ?>) bop, Process.class).getProcess_graph(), arg, ret);
+                    }
                 }
             }
         }

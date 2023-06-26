@@ -3,53 +3,68 @@ package org.integratedmodelling.kim.api;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+
 public interface IKimModel extends IKimActiveStatement {
 
-	public static enum Type {
-		SEMANTIC, NUMBER, TEXT, BOOLEAN
-	}
+    public static enum Type {
 
-	Optional<IKimConcept> getReinterpretingRole();
+        SEMANTIC(IArtifact.Type.CONCEPT), NUMBER(IArtifact.Type.NUMBER), TEXT(IArtifact.Type.TEXT), BOOLEAN(
+                IArtifact.Type.BOOLEAN);
 
-	List<IKimObservable> getDependencies();
+        // for 1.0 forward compatibility
+        IArtifact.Type atype;
 
-	List<IKimObservable> getObservables();
+        Type(IArtifact.Type atype) {
+            this.atype = atype;
+        }
 
-	Scope getScope();
+        public IArtifact.Type artifactType() {
+            return atype;
+        }
+    }
 
-	Type getType();
+    Optional<IKimConcept> getReinterpretingRole();
 
-	List<String> getResourceUrns();
+    List<IKimObservable> getDependencies();
 
-	boolean isLearningModel();
+    List<IKimObservable> getObservables();
 
-	boolean isInterpreter();
+    Scope getScope();
 
-	boolean isAbstract();
+    Type getType();
 
-	boolean isInactive();
+    List<String> getResourceUrns();
 
-	boolean isInstantiator();
+    boolean isLearningModel();
 
-	String getName();
+    boolean isInterpreter();
 
-	Optional<Object> getInlineValue();
+    boolean isAbstract();
 
-	/**
-	 * Contextualizer or processor(s) given after 'using'
-	 * 
-	 * @return computables or an empty list
-	 */
-	List<IContextualizable> getContextualization();
+    boolean isInactive();
 
-	String getDocstring();
+    boolean isInstantiator();
 
-	/**
-	 * Normally true, it will return false in models that were expressed as
-	 * non-semantic operations, using the 'number', 'text', etc. keywords. These are
-	 * also, by default, private and are used only directly by name.
-	 * 
-	 * @return
-	 */
-	boolean isSemantic();
+    String getName();
+
+    Optional<Object> getInlineValue();
+
+    /**
+     * Contextualizer or processor(s) given after 'using'
+     * 
+     * @return computables or an empty list
+     */
+    List<IContextualizable> getContextualization();
+
+    String getDocstring();
+
+    /**
+     * Normally true, it will return false in models that were expressed as non-semantic operations,
+     * using the 'number', 'text', etc. keywords. These are also, by default, private and are used
+     * only directly by name.
+     * 
+     * @return
+     */
+    boolean isSemantic();
 }
