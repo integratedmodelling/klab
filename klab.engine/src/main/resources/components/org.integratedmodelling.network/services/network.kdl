@@ -70,6 +70,18 @@ export object route
 	optional concept target
 		"Semantics for the type of the subjects used as target for the relationships"
 		default ""
+		
+	optional number time_limit
+		"Time threshold to consider a route a valid option"
+		default "no limit"	
+		
+	optional number distance_limit
+		"Distance threshold to consider a route a valid option"
+		default "no limit"	
+	
+	optional string transport
+		"Type of transport used to find a route"
+		default "auto"	
 
 //	TODO configuration to use 
 
