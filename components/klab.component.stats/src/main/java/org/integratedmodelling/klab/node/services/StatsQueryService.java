@@ -26,25 +26,33 @@ public class StatsQueryService {
         String query = null;
         switch(request.getQueryType()) {
         case "asset":
+        	if(request.getFrom() == 0) {
+                request.setFrom(946684800000L);
+            }
+            if(request.getTo() == 0) {
+                request.setTo(4070908800000L);
+            }
+            
             query = "SELECT * FROM assets";
             if(request.getResolutionTimeMin() != -1 && request.getResolutionTimeMax() != -1) {
-                query = query + " WHERE total_time_sec > " + request.getResolutionTimeMin()
+                query += " WHERE total_time_sec > " + request.getResolutionTimeMin()
                 + " AND total_time_sec < " + request.getResolutionTimeMax(); 
             }else if(request.getResolutionTimeMin() != -1) {
-                query = query + " WHERE total_time_sec > " + request.getResolutionTimeMin();
+                query += " WHERE total_time_sec > " + request.getResolutionTimeMin();
             }else if(request.getResolutionTimeMax() != -1) {
-                query = query + " WHERE total_time_sec < " + request.getResolutionTimeMax();
+                query += " WHERE total_time_sec < " + request.getResolutionTimeMax();
             }
             String outcome = request.getOutcome();
             if(Objects.equals(outcome,"Success") ||  Objects.equals(outcome,"Error") ||  Objects.equals(outcome,"Exception") ) {
                 if(request.getResolutionTimeMin() == -1 && request.getResolutionTimeMax() == -1)
-                    query = query + " WHERE ";
+                    query += " WHERE ";
                 else
-                    query = query + " AND ";
-                query = query + "outcome='" + outcome +"'";
+                    query +=  " AND ";
+                query += "outcome='" + outcome +"'";
+            query +=  "AND start_time >  " + request.getFrom() + " AND start_time < " + request.getTo() +";";
             }
             
-            query = query + ";";
+            query += ";";
             break;
         case "asset_name_group_count":
             query = "SELECT DISTINCT name, COUNT(name) OVER (PARTITION BY name) AS count, "
@@ -59,22 +67,31 @@ public class StatsQueryService {
             query = "SELECT DISTINCT c.context_name,q.id, q.observable, COUNT(a.outcome) "
                     + "OVER (PARTITION BY q.context_id,q.id,a.outcome,a.asset_type,c.context_name)"
                     + ",a.outcome,a.asset_type "
-                    + "FROM assets a INNER JOIN queries q ON a.context_id=q.context_id and a.query_id = q.id "
+                    + "FROM assets a INNER JOIN queries q ON a.context_id=q.context_id AND a.query_id = q.id "
                     + "INNER JOIN contexts c on c.id=q.context_id ";
             outcome = request.getOutcome();
             if(Objects.equals(outcome,"Success") ||  Objects.equals(outcome,"Error") ||  Objects.equals(outcome,"Exception") ) {
-                query = query + "WHERE a.outcome='" + outcome +"'";
+                query += "WHERE a.outcome='" + outcome +"'";
             }
-            query = query + " ORDER BY c.context_name, q.id, count DESC;";  
+            query += " ORDER BY c.context_name, q.id, count DESC;";  
             break;
         case "context_name_count":
             query = "SELECT DISTINCT COUNT(context_name) OVER (PARTITION BY context_name) AS count, "
                     + "context_name FROM contexts  ORDER BY count DESC LIMIT " + request.getTop() + ";";
             break;
         case "requests_per_user":
-        	query = "SELECT DISTINCT principal, "
-        			+ "COUNT(principal) OVER (PARTITION BY principal) AS count "
-        			+ "FROM contexts ORDER BY count DESC LIMIT " + request.getTop() + ";";
+        	if(request.getFrom() == 0) {
+                request.setFrom(946684800000L);
+            }
+            if(request.getTo() == 0) {
+                request.setTo(4070908800000L);
+            }
+            
+        	query = "SELECT DISTINCT principal,"
+        			+ " COUNT(principal) OVER (PARTITION BY principal) AS count"
+        			+ " FROM contexts WHERE created > " + request.getFrom()
+        			+ " AND created < " + request.getTo()
+        			+ " ORDER BY count DESC LIMIT " + request.getTop() + ";";
         	break;
         case "time_range":
             if(request.getFrom() == 0) {
@@ -96,6 +113,10 @@ public class StatsQueryService {
         	if(!request.getGroupBy().equals("day") && !request.getGroupBy().equals("month") && !request.getGroupBy().equals("year")) {
         		request.setGroupBy("month");
         		}
+        	/* if we want to receive number of contexts instead of queries */
+//        	query = "SELECT DISTINCT date_trunc('"+ request.getGroupBy() + "', to_timestamp(created/1000)) AS date, "
+//        			+ "COUNT(id) OVER (PARTITION BY date_trunc('" + request.getGroupBy() + "', to_timestamp(created/1000))) AS count "
+//        			+ "FROM contexts ORDER BY date;";
         	query = "SELECT DISTINCT date_trunc('"+ request.getGroupBy() + "', to_timestamp(start_time/1000)) AS date, "
         			+ "COUNT(context_id) OVER (PARTITION BY date_trunc('" + request.getGroupBy() + "', to_timestamp(start_time/1000))) AS count "
         			+ "FROM queries ORDER BY date;";

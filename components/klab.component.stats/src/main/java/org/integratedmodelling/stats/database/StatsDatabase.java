@@ -44,16 +44,22 @@ public class StatsDatabase extends Postgis {
 			+ "  ) as json\n"
 			+ "FROM (\n"
 			+ "  SELECT\n"
-			+ "	   queries.observable as observation,\n"
+			+ "	   queries.context_id as context_id,\n"
+			+ "    queries.observable as observation,\n"
 			+ "    coalesce(contexts.application, 'k.Explorer') as application,\n"
 			+ "    contexts.scale_size,\n"
+			+ "    contexts.context_name,\n"
 			+ "	   queries.outcome,\n"
-			+ "	   ST_Centroid(contexts.geom)\n"
+			+ "	   ST_Centroid(contexts.geom),\n"
+			+ "    contexts.created as context_time,\n"
+			+ "    queries.start_time as query_time\n"
 			+ "  FROM\n"
 			+ "    contexts, queries\n"
 			+ "  WHERE \n"
 			+ "	    contexts.id = queries.context_id\n"
-			+ "     {RESTRICTIONS}" // AND template here
+			+ "     {RESTRICTIONS}\n" // AND template here
+			+ "  ORDER BY\n"
+			+ "     context_time, query_time"
 			+ ") AS t";
 	
 	/*
