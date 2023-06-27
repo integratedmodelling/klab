@@ -56,11 +56,7 @@ ModelBodyStatement:
 		 ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		 (('classified' | discretization?='discretized') (('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId)))?
 	     // arg ? means result field, arg * means ignore column. If not given, will match self in the first column and result in last, ignoring anything in between
-		 (('lookup' 
-		 	('(' lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')?  
-		 	'into' 
-		 		(lookupTable=Table | lookupTableId=UPPERCASE_ID)
-		 ) | 
+		 (('lookup' lookupTables+=LookupDeclaration (',' lookupTables+=LookupDeclaration)* )? | 
 		  (twoway?='match' 
 		 	('(' lookupTableArgs+=LookupTableArgumentQualified ',' lookupTableArgs+=LookupTableArgumentQualified ')')?  
 		 	'to' 
@@ -69,6 +65,12 @@ ModelBodyStatement:
 		 )?
 		 actions+=ActionSpecification*
 		 ('metadata' metadata=Map)? 
+;
+
+LookupDeclaration:
+	('(' lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')?  
+	'into' 
+	    (lookupTable=Table | lookupTableId=UPPERCASE_ID)
 ;
 
 LookupTableArgument:

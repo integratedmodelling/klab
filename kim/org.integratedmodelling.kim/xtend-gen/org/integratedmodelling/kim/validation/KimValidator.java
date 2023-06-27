@@ -54,6 +54,7 @@ import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.LookupDeclaration;
 import org.integratedmodelling.kim.kim.LookupTableArgument;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.Model;
@@ -789,101 +790,109 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
     }
-    if (((model.getLookupTable() != null) || (model.getLookupTableId() != null))) {
-      KimLookupTable table = null;
-      String _lookupTableId = model.getLookupTableId();
-      boolean _tripleNotEquals_1 = (_lookupTableId != null);
-      if (_tripleNotEquals_1) {
-        IKimNamespace ns = Kim.INSTANCE.getNamespace(model);
-        Object tobj = ns.getSymbolTable().get(model.getLookupTableId());
-        if ((!(tobj instanceof IKimTable))) {
-          String _lookupTableId_1 = model.getLookupTableId();
-          String _plus_2 = ("Identifier " + _lookupTableId_1);
-          String _plus_3 = (_plus_2 + " does not specify a k.IM table");
-          this.error(_plus_3, 
-            KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID, KimValidator.BAD_TABLE_FORMAT);
-          ok = false;
-        } else {
-          EList<LookupTableArgument> _lookupTableArgs = model.getLookupTableArgs();
-          boolean _isTwoway = model.isTwoway();
-          KimLookupTable _kimLookupTable = new KimLookupTable(((IKimTable) tobj), _lookupTableArgs, _isTwoway, null);
-          table = _kimLookupTable;
-        }
-      } else {
-        Table _lookupTable = model.getLookupTable();
-        KimTable _kimTable = new KimTable(_lookupTable, null);
-        EList<LookupTableArgument> _lookupTableArgs_1 = model.getLookupTableArgs();
-        boolean _isTwoway_1 = model.isTwoway();
-        KimLookupTable _kimLookupTable_1 = new KimLookupTable(_kimTable, _lookupTableArgs_1, _isTwoway_1, 
-          null);
-        table = _kimLookupTable_1;
+    int _size_1 = model.getLookupTables().size();
+    boolean _greaterThan_1 = (_size_1 > 0);
+    if (_greaterThan_1) {
+      EList<LookupDeclaration> _lookupTables = model.getLookupTables();
+      for (final LookupDeclaration tableDeclaration : _lookupTables) {
       }
-      if ((table != null)) {
-        boolean _isTwoway_2 = model.isTwoway();
-        if (_isTwoway_2) {
-          int _size_1 = model.getLookupTableArgs().size();
-          boolean _tripleNotEquals_2 = (_size_1 != 2);
-          if (_tripleNotEquals_2) {
-            this.error("Two-way tables must have two arguments", 
-              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+    } else {
+      if (((model.getLookupTable() != null) || (model.getLookupTableId() != null))) {
+        KimLookupTable table = null;
+        String _lookupTableId = model.getLookupTableId();
+        boolean _tripleNotEquals_1 = (_lookupTableId != null);
+        if (_tripleNotEquals_1) {
+          IKimNamespace ns = Kim.INSTANCE.getNamespace(model);
+          Object tobj = ns.getSymbolTable().get(model.getLookupTableId());
+          if ((!(tobj instanceof IKimTable))) {
+            String _lookupTableId_1 = model.getLookupTableId();
+            String _plus_2 = ("Identifier " + _lookupTableId_1);
+            String _plus_3 = (_plus_2 + " does not specify a k.IM table");
+            this.error(_plus_3, 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID, KimValidator.BAD_TABLE_FORMAT);
             ok = false;
+          } else {
+            EList<LookupTableArgument> _lookupTableArgs = model.getLookupTableArgs();
+            boolean _isTwoway = model.isTwoway();
+            KimLookupTable _kimLookupTable = new KimLookupTable(((IKimTable) tobj), _lookupTableArgs, _isTwoway, null);
+            table = _kimLookupTable;
           }
         } else {
-          int _size_2 = model.getLookupTableArgs().size();
-          int _columnCount = table.getTable().getColumnCount();
-          boolean _greaterThan_1 = (_size_2 > _columnCount);
-          if (_greaterThan_1) {
-            this.error(
-              "The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
-              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
-            ok = false;
-          }
-          String _error = table.getError();
-          boolean _tripleNotEquals_3 = (_error != null);
-          if (_tripleNotEquals_3) {
-            this.error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, 
-              KimValidator.BAD_TABLE_FORMAT);
-            ok = false;
-          }
-          int o = 0;
-          boolean checkFound = false;
-          EList<LookupTableArgument> _lookupTableArgs_2 = model.getLookupTableArgs();
-          for (final LookupTableArgument arg : _lookupTableArgs_2) {
-            {
-              String _id = arg.getId();
-              boolean _tripleNotEquals_4 = (_id != null);
-              if (_tripleNotEquals_4) {
-                if (((!Objects.equal(arg.getId(), "?")) && (!Objects.equal(arg.getId(), "*")))) {
-                  boolean found = false;
-                  for (final KimObservable dependency : dependencies) {
-                    if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
-                      found = true;
+          Table _lookupTable = model.getLookupTable();
+          KimTable _kimTable = new KimTable(_lookupTable, null);
+          EList<LookupTableArgument> _lookupTableArgs_1 = model.getLookupTableArgs();
+          boolean _isTwoway_1 = model.isTwoway();
+          KimLookupTable _kimLookupTable_1 = new KimLookupTable(_kimTable, _lookupTableArgs_1, _isTwoway_1, 
+            null);
+          table = _kimLookupTable_1;
+        }
+        if ((table != null)) {
+          boolean _isTwoway_2 = model.isTwoway();
+          if (_isTwoway_2) {
+            int _size_2 = model.getLookupTableArgs().size();
+            boolean _tripleNotEquals_2 = (_size_2 != 2);
+            if (_tripleNotEquals_2) {
+              this.error("Two-way tables must have two arguments", 
+                KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+              ok = false;
+            }
+          } else {
+            int _size_3 = model.getLookupTableArgs().size();
+            int _columnCount = table.getTable().getColumnCount();
+            boolean _greaterThan_2 = (_size_3 > _columnCount);
+            if (_greaterThan_2) {
+              this.error(
+                "The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
+                KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+              ok = false;
+            }
+            String _error = table.getError();
+            boolean _tripleNotEquals_3 = (_error != null);
+            if (_tripleNotEquals_3) {
+              this.error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, 
+                KimValidator.BAD_TABLE_FORMAT);
+              ok = false;
+            }
+            int o = 0;
+            boolean checkFound = false;
+            EList<LookupTableArgument> _lookupTableArgs_2 = model.getLookupTableArgs();
+            for (final LookupTableArgument arg : _lookupTableArgs_2) {
+              {
+                String _id = arg.getId();
+                boolean _tripleNotEquals_4 = (_id != null);
+                if (_tripleNotEquals_4) {
+                  if (((!Objects.equal(arg.getId(), "?")) && (!Objects.equal(arg.getId(), "*")))) {
+                    boolean found = false;
+                    for (final KimObservable dependency : dependencies) {
+                      if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
+                        found = true;
+                      }
                     }
-                  }
-                  if ((!found)) {
-                  }
-                } else {
-                  String _id_1 = arg.getId();
-                  boolean _equals = Objects.equal(_id_1, "?");
-                  if (_equals) {
-                    if (checkFound) {
-                      this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
-                        KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, 
-                        KimValidator.BAD_TABLE_FORMAT);
-                      ok = false;
+                    if ((!found)) {
                     }
-                    checkFound = true;
+                  } else {
+                    String _id_1 = arg.getId();
+                    boolean _equals = Objects.equal(_id_1, "?");
+                    if (_equals) {
+                      if (checkFound) {
+                        this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
+                          KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, 
+                          KimValidator.BAD_TABLE_FORMAT);
+                        ok = false;
+                      }
+                      checkFound = true;
+                    }
                   }
                 }
+                o++;
               }
-              o++;
             }
-          }
-          if (((!checkFound) && (model.getLookupTableArgs().size() > 2))) {
-            this.error(
-              "One \'?\' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.", 
-              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
-            ok = false;
+            if (((!checkFound) && (model.getLookupTableArgs().size() > 2))) {
+              this.error(
+                "One \'?\' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.", 
+                KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+              ok = false;
+            }
           }
         }
       }
@@ -1035,9 +1044,9 @@ public class KimValidator extends AbstractKimValidator {
         if (_tripleNotEquals_11) {
           descriptor.name = model.getName();
         } else {
-          int _size_3 = descriptor.getObservables().size();
-          boolean _greaterThan_2 = (_size_3 > 0);
-          if (_greaterThan_2) {
+          int _size_4 = descriptor.getObservables().size();
+          boolean _greaterThan_3 = (_size_4 > 0);
+          if (_greaterThan_3) {
             String _formalName = descriptor.getObservables().get(0).getFormalName();
             boolean _tripleNotEquals_12 = (_formalName != null);
             if (_tripleNotEquals_12) {

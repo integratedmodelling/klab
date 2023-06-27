@@ -477,11 +477,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -510,11 +510,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*

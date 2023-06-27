@@ -606,7 +606,16 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 
-		if (model.lookupTable !== null || model.lookupTableId !== null) {
+		if (model.lookupTables.size() > 0) {
+			
+			// one or more chained lookup tables, conventional
+			for (tableDeclaration : model.lookupTables) {
+				
+			} 
+			
+		} else if (model.lookupTable !== null || model.lookupTableId !== null) {
+
+			// a single two-way table, still implemented as if it could be another
 
 			var KimLookupTable table = null;
 			if (model.lookupTableId !== null) {
