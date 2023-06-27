@@ -60,17 +60,22 @@ public class STACValidator implements IResourceValidator {
 
         HttpResponse<JsonNode> metadata = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
         List<STACExtension> extensions = new ArrayList<>();
-        JSONArray extensionArray = metadata.getBody().getObject().getJSONArray("stac_extensions");
+        JSONArray extensionArray = metadata.getBody() != null
+                ? extensionArray = metadata.getBody().getObject().getJSONArray("stac_extensions")
+                : new JSONArray();
         for (Object ext : extensionArray) {
             String name = STACExtension.getExtensionName(ext.toString());
             try {
-                extensions.add(STACExtension.valueOfLabel(name));
+                STACExtension extension = STACExtension.valueOfLabel(name);
+                if(extension != null) {
+                    extensions.add(extension);
+                }
             } catch (Exception e) {
                 monitor.warn("STAC extension " + ext + "unknown. Ignored.");
             }
         }
         if (!extensions.stream().anyMatch(STACExtension::isSupported)) {
-            throw new KlabUnimplementedException("This collection does not contain a supported extension");
+            monitor.warn("This collection does not contain a supported extension");
         }
         userData.put("stac_extensions", extensions.stream().map(STACExtension::getName));
 

@@ -15,6 +15,9 @@ public class STACUtils {
     }
 
     public static String readKeywords(JSONObject json) {
+        if (!json.has("keywords")) {
+            return null;
+        }
         JSONArray keywords = json.getJSONArray("keywords");
         return keywords.isEmpty() ? null : keywords.toString().replace("\"", "");
     }
