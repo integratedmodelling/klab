@@ -244,7 +244,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 		(distanceThreshold == null || (stats.get("length") < distanceThreshold))
                 	) 
                 {
-                	connect((IDirectObservation) source, (IDirectObservation) target, null);
+                	connect((IDirectObservation) source, (IDirectObservation) target, trajectory);
                 	connected.add((IObservation) target);
                 	trajectories.put(new Pair<IDirectObservation,IDirectObservation>((IDirectObservation)source,(IDirectObservation)target),trajectory);
                 } 

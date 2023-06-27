@@ -192,7 +192,7 @@ public class ValhallaOutputDeserializer {
 
         public IShape getPath() {
         	List<String> polylinePath = getPolylineEncodedPath();
-        	Shape trajectory = PolylineDecoder.decode(polylinePath, 1E6);
+        	Shape trajectory = PolylineDecoder.decode(polylinePath, 1E6, true);
         	return trajectory;
         }
         
