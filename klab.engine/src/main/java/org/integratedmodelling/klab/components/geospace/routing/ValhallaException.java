@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.components.geospace.routing;
 
-public class ValhallaException extends Exception{
+import org.integratedmodelling.klab.exceptions.KlabException;
 
+public class ValhallaException extends KlabException{
+
+	private static final long serialVersionUID = -2808727016413136720L;
 
 	public ValhallaException(String message) {
         super(message);
@@ -13,10 +16,6 @@ public class ValhallaException extends Exception{
 
     public ValhallaException(Throwable cause) {
         super(cause);
-    }
-
-    protected ValhallaException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
     }
 
 }
