@@ -18,9 +18,11 @@ public class Valhalla {
     private boolean isOnline = false;
     ValhallaRuntimeEnvironment valhalla;
     ValhallaOutputDeserializer deserializer;
+    public String service = "";
 
     public Valhalla(){
         String service = "http://localhost:8002";
+        this.service = service;
         valhalla = new ValhallaRuntimeEnvironment(service);
         isOnline = valhalla.isOnline();
         deserializer = new ValhallaOutputDeserializer();
@@ -114,10 +116,10 @@ public class Valhalla {
 		
 		double[] sourceCoordinates = source.getSpace().getStandardizedCentroid();
 		double[] targetCoordinates = target.getSpace().getStandardizedCentroid();
-		double sourceLat = sourceCoordinates[0]; double sourceLon = sourceCoordinates[1]; double targetLat = targetCoordinates[0]; double targetLon = targetCoordinates[1];
+		double sourceLat = sourceCoordinates[1]; double sourceLon = sourceCoordinates[0]; double targetLat = targetCoordinates[1]; double targetLon = targetCoordinates[0];
 		
 		String input = 
-				"{\"locations\": [{\"lat\":" + sourceLat + ",\"lon\":" + sourceLon + "}, {\"lat\":" + targetLat + ",\"lon\":" + targetLon + "}], \"costing\":" + transportType + "}";
+				"{\"locations\": [{\"lat\":" + sourceLat + ",\"lon\":" + sourceLon + "}, {\"lat\":" + targetLat + ",\"lon\":" + targetLon + "}], \"costing\":" + "\"" + transportType +"\"}";
 		
 		return input;
 	}
