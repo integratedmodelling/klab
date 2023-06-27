@@ -35,6 +35,8 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API.PUBLIC.Export;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerScope;
 import org.integratedmodelling.klab.api.data.general.IExpression.Forcing;
 import org.integratedmodelling.klab.api.data.general.IExpression.Scope;
@@ -156,6 +158,10 @@ public class Flowchart {
 				root = this;
 			}
 		}
+		
+		private Element(String id) {
+			this.id = id;
+		}
 
 		Element(IProvenance.Node node) {
 			this.id = node.getId();
@@ -163,7 +169,8 @@ public class Flowchart {
 			this.label = node.toString();
 			this.type = node instanceof NodeWrapper ? ((NodeWrapper) node).getType() : ElementType.RESOURCE_ENTITY;
 			this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this,
-					node instanceof NodeWrapper ? ((NodeWrapper) node).getDelegate() : node, Flowchart.this.runtimeScope);
+					node instanceof NodeWrapper ? ((NodeWrapper) node).getDelegate() : node,
+					Flowchart.this.runtimeScope);
 			elementsByName.put(this.name, this);
 			elementsById.put(this.id, this);
 		}
@@ -178,6 +185,7 @@ public class Flowchart {
 			elementsById.put(this.id, this);
 			parent.children.add(this);
 		}
+		
 
 		// only for the root element
 		private Element() {
@@ -187,6 +195,12 @@ public class Flowchart {
 			this.name = "";
 		}
 
+		public Element newChild(String id) {
+			Element ret = new Element(id);
+			this.children.add(ret);
+			return ret;
+		}
+		
 		public String getId() {
 			return id;
 		}
@@ -584,7 +598,6 @@ public class Flowchart {
 					element.outputs.put(actuator.getName(), element.getOrCreateOutput(actuator.getName()));
 				}
 
-				// personalize label and description
 				element.name = resource.getUrn();
 				element.label = resource.getAdapterType().toUpperCase() + " resource";
 				element.setTooltip("Contextualize URN " + resource.getUrn());
@@ -610,6 +623,23 @@ public class Flowchart {
 					IObservable out = findOutput(output.getName(), actuator);
 					if (out != null) {
 						element.outputs.put(out.getReferenceName(), element.getOrCreateOutput(out.getReferenceName()));
+					}
+				}
+
+				/*
+				 * check if the adapter has flowchart capabilities. TODO/FIXME: this should be
+				 * from the (non-existent) adapter capabilities, and there must be a remote API
+				 * for this.
+				 * 
+				 * The adapter should also ensure that labels, names and tooltips are OK for the
+				 * main element. It will enter the function with the default ones.
+				 * 
+				 */
+				IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+				if (adapter != null) {
+					IResourceEncoder encoder = adapter.getEncoder();
+					if (encoder instanceof FlowchartProvider) {
+						((FlowchartProvider) encoder).createFlowchart(resource, element, this);
 					}
 				}
 			}
@@ -975,28 +1005,28 @@ public class Flowchart {
 
 			}
 
-            @Override
-            public CompilerScope getCompilerScope() {
-                return CompilerScope.Contextual;
-            }
+			@Override
+			public CompilerScope getCompilerScope() {
+				return CompilerScope.Contextual;
+			}
 
-            @Override
-            public Scope scalar(Forcing forcing) {
-                // TODO Auto-generated method stub
-                return this;
-            }
+			@Override
+			public Scope scalar(Forcing forcing) {
+				// TODO Auto-generated method stub
+				return this;
+			}
 
-            @Override
-            public IContextualizationScope getRuntimeScope() {
-                // TODO Auto-generated method stub
-                return null;
-            }
+			@Override
+			public IContextualizationScope getRuntimeScope() {
+				// TODO Auto-generated method stub
+				return null;
+			}
 
-            @Override
-            public boolean isForcedScalar() {
-                // TODO Auto-generated method stub
-                return false;
-            }
+			@Override
+			public boolean isForcedScalar() {
+				// TODO Auto-generated method stub
+				return false;
+			}
 
 		});
 

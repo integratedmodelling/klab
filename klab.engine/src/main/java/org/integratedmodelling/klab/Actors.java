@@ -368,6 +368,19 @@ public enum Actors implements IActorsService {
         }
     }
 
+    @Override
+    public IKActorsBehavior declare(InputStream file) throws KlabValidationException {
+        IKActorsBehavior ret = null;
+        try {
+            String definition = IOUtils.toString(file, StandardCharsets.UTF_8);
+            Model model = kActorsParser.parse(definition);
+            ret = KActors.INSTANCE.declare(model);
+        } catch (Exception e) {
+            throw new KlabValidationException(e);
+        }
+        return ret;
+    }
+
     /**
      * Install listeners to build behaviors on read and organize them by project.
      */
@@ -386,19 +399,6 @@ public enum Actors implements IActorsService {
                 }
             }
         });
-    }
-
-    @Override
-    public IKActorsBehavior declare(InputStream file) throws KlabValidationException {
-        IKActorsBehavior ret = null;
-        try {
-            String definition = IOUtils.toString(file, StandardCharsets.UTF_8);
-            Model model = kActorsParser.parse(definition);
-            ret = KActors.INSTANCE.declare(model);
-        } catch (Exception e) {
-            throw new KlabValidationException(e);
-        }
-        return ret;
     }
 
     /**

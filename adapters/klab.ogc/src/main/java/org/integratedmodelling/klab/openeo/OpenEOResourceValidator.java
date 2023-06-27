@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.common.GeometryBuilder.SpaceBuilder;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.ogc.OpenEOAdapter;
@@ -250,8 +251,8 @@ public class OpenEOResourceValidator implements IResourceValidator {
 
 	@Override
 	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
-		// TODO Auto-generated method stub
-		return null;
+        ((Resource) resource).update(updateData);
+        return resource;
 	}
 
 	@Override
