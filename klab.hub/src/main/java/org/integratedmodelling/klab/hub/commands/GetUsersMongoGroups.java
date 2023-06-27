@@ -20,7 +20,7 @@ public class GetUsersMongoGroups {
 	
 	public Set<MongoGroup> execute(){
 		Set<MongoGroup> groups = new HashSet<>();
-		user.getGroupEntries()
+		user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries()
 			.forEach(e -> repository
 					.findByNameIgnoreCase(e.getGroupName())
 					.ifPresent(group -> groups.add(group)));

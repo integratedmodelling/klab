@@ -60,6 +60,7 @@ public static class Parameters extends TaskParameters {
 			} else {
 				throw new ClassCastException();
 			}
+			User user = userRepository.findByName(param.username).orElseThrow();
 			ArrayList<Task> ret = new ArrayList<Task>(2);
 			
 			Set<GroupEntry> optIn = new HashSet<>();
@@ -97,13 +98,12 @@ public static class Parameters extends TaskParameters {
 			}
 			
 			for (MongoGroup group : groups) {
-				if (param.getRequest().isUserInRole(group.getRoleRequirement().toString())) {
+				if (group.isOptIn()) {
 					optIn.add(new GroupEntry(group));
 				} else {
 					requestGroups.add(new GroupEntry(group));
 				}
 			}
-			
 			Constructor<? extends ModifyGroupsTask> constructor = null;
 			try {
 				constructor = param.clazz.getConstructor(String.class, Set.class);
@@ -113,9 +113,9 @@ public static class Parameters extends TaskParameters {
 			}
 			try {
 				if(!optIn.isEmpty()) {
-					Task optInTask = constructor.newInstance(param.username, optIn);
+					Task optInTask = constructor.newInstance(user.getUsername(), optIn);
 					optInTask.setAutoAccepted(true);
-					optInTask.setRoleRequirement(optIn.iterator().next().getGroup().getRoleRequirement());
+					optInTask.setRoleRequirement(user.getRoles().iterator().next());
 					ret.add(optInTask);
 				}
 				if(!requestGroups.isEmpty()) {

@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.users.controllers;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,7 @@ public class UserProfileController {
 		ProfileResource profile = userService.getCurrentUserProfile(remote);
 		if (remote) {
             profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
+            return new ResponseEntity<>(new EngineProfileResource(profile), HttpStatus.ACCEPTED); 
         }
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
 	}

@@ -327,7 +327,8 @@ public enum Authentication implements IAuthenticationService {
             EngineAuthenticationRequest request = new EngineAuthenticationRequest(
                     certificate.getProperty(KlabCertificate.KEY_USERNAME), certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
                     certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel());
+                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel(),
+                    certificate.getProperty(KlabCertificate.KEY_AGREEMENT));
 
             // add email if we have it, so the hub can notify in any case if so configured
             request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));
@@ -469,7 +470,7 @@ public enum Authentication implements IAuthenticationService {
     }
 
     public boolean canAccess(IUserIdentity user, String projectId) {
-        Set<String> userGroups = user.getGroups().stream().map((group) -> group.getId()).collect(Collectors.toSet());
+        Set<String> userGroups = user.getGroups().stream().map((group) -> group.getName()).collect(Collectors.toSet());
         Set<String> permissions = this.projectPermissions.get(projectId);
         if (permissions != null && !permissions.isEmpty()) {
             return Sets.intersection(permissions, userGroups).size() > 0;
@@ -517,7 +518,7 @@ public enum Authentication implements IAuthenticationService {
     public boolean hasEitherGroup(IUserIdentity user, String... groups) {
         for (Group g : user.getGroups()) {
             for (String grp : groups) {
-                if (g.getId().equals(grp)) {
+                if (g.getName().equals(grp)) {
                     return true;
                 }
             }

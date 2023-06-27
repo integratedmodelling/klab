@@ -161,7 +161,7 @@ public class HubUserService implements RemoteUserService {
 
 		profile.getGroupEntries().forEach(e -> {
 			Group group = new Group();
-			group.setId(e.getGroup().getId());
+			group.setName(e.getGroup().getName());
 			group.setIconUrl(e.getGroup().getIconUrl());
 			group.setObservables(e.getGroup().getObservables());
 			group.setDescription(e.getGroup().getDescription());
@@ -237,11 +237,11 @@ public class HubUserService implements RemoteUserService {
 	private Session activeSession(HubUserProfile profile, String token) {
 		Set<Session> sessions = new HashSet<>();
 		Set<String> userRoles = Set.copyOf(profile.getRoles());
-		Set<String> userGroupsIds = Set.copyOf(profile.getGroupEntries().stream().map(ge -> ge.getGroup().getId()).toList());
+		Set<String> userGroupsIds = Set.copyOf(profile.getGroupEntries().stream().map(ge -> ge.getGroup().getName()).toList());
 		Authentication.INSTANCE.getSessions().forEach(s -> {
 			if (s.getParentIdentity().getUsername().equals(profile.getName())) {
 			    Set<String> roles = Set.copyOf(profile.getRoles());
-			    Set<String> groupsId = Set.copyOf(s.getParentIdentity().getGroups().stream().map(Group::getId).toList());
+			    Set<String> groupsId = Set.copyOf(s.getParentIdentity().getGroups().stream().map(Group::getName).toList());
 			    Session sesh = Authentication.INSTANCE.getIdentity(s.getId(), Session.class);
 			    // check if there are changes in user
 			    if (groupsId.equals(userGroupsIds) && roles.equals(userRoles)) {

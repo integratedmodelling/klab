@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.hub.groups.services;
 
 import java.util.Collection;
+import java.util.List;
+
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.commands.CreateMongoGroup;
 import org.integratedmodelling.klab.hub.commands.DeleteMongoGroup;
@@ -98,5 +100,13 @@ public class GroupServiceImpl implements GroupService {
 			throw new GroupDoesNotExistException("No group by the id: " + id + " was found.");
 		}
 	}
+	
+	@Override
+    public List<MongoGroup> getGroupsDefault() {
+	    return repository.findByComplimentaryIsTrue();        
+    }
+    
+	
+	
 
 }

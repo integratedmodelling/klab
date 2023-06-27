@@ -275,7 +275,7 @@ public class ModelKbox extends ObservableKbox {
         List<ModelReference> ret = new ArrayList<>();
         IUserIdentity user = context.getSession().getParentIdentity(IUserIdentity.class);
         Collection<IResolutionConstraint> constraints = context.getSession().getState().getResolutionConstraints();
-        Set<String> userPermissions = new HashSet<>(user.getGroups().stream().map((g) -> g.getId()).collect(Collectors.toList()));
+        Set<String> userPermissions = new HashSet<>(user.getGroups().stream().map((g) -> g.getName()).collect(Collectors.toList()));
 
         if (!database.hasTable("model")) {
             return ret;

@@ -101,7 +101,8 @@ public class Authentication {
         EngineAuthenticationRequest request = new EngineAuthenticationRequest(
                 certificate.getProperty(KlabCertificate.KEY_USERNAME), certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
                 certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-                certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), ICertificate.Level.USER);
+                certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), ICertificate.Level.USER,
+                certificate.getProperty(KlabCertificate.KEY_AGREEMENT));
 
         /*
          * worst-case scenario, using only info from physical certificate
