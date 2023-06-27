@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.Graph;
@@ -55,14 +56,14 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
     
     static enum TransportType{
-    	auto("auto"),
-    	pedestrian("pedestrian"),
-    	bicycle("bicycle"),
-    	bus("bus"),
-    	truck("truck"),
-    	taxi("taxi"),
-    	motor_scooter("motor_scooter"),
-    	multimodal("multimodel");
+    	Auto("auto"),
+    	Pedestrian("pedestrian"),
+    	Bicycle("bicycle"),
+    	Bus("bus"),
+    	Truck("truck"),
+    	Taxi("taxi"),
+    	MotorScooter("motor_scooter"),
+    	Multimodal("multimodel");
     	
     	private String type; 
     	
@@ -74,29 +75,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             return this.type;
         }
     }
-    
-    private static TransportType setTransportType(String type) throws KlabException{
-		switch(type) {
-			case "auto":
-				return TransportType.auto;
-			case "pedestrian":
-				return TransportType.pedestrian;
-			case "bycycle":
-				return TransportType.bicycle;
-			case "bus":
-				return TransportType.bus;
-			case "truck":
-				return TransportType.truck;
-			case "taxi":
-				return TransportType.taxi;
-			case "motor_scooter":
-				return TransportType.motor_scooter;
-			case "multimodal":
-				return TransportType.multimodal;
-			default:
-				throw new IllegalArgumentException("klab.networks.routing: transport type " + type + " is not supported.");
-		}
-	}
     
     private TransportType transportType;
     private IContextualizationScope scope;
@@ -120,8 +98,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         this.distanceThreshold = parameters.get("distance_limit", Double.class);
         
         if (parameters.containsKey("transport")) {
-        	this.transportType = setTransportType(parameters.get("transport", String.class));
-        } else this.transportType = TransportType.auto;
+        	this.transportType = TransportType.valueOf(Utils.removePrefix(parameters.get("transport", String.class)));
+        } else this.transportType = TransportType.Auto;
         
         
         this.valhalla = new Valhalla();
