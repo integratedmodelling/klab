@@ -7,6 +7,7 @@ public enum Role implements GrantedAuthority {
     // where the values here are UPPER_CASE_ROLE_NAME
     ROLE_ADMINISTRATOR,
     ROLE_DATA_MANAGER,
+    ROLE_MANAGER,
     ROLE_USER,
 
     ROLE_CLICKBACK,
@@ -18,6 +19,8 @@ public enum Role implements GrantedAuthority {
     public static final String ADMINISTRATOR = "ROLE_ADMINISTRATOR";
 
     public static final String DATA_MANAGER = "ROLE_DATA_MANAGER";
+
+    public static final String MANAGER = "ROLE_MANAGER";
 
     public static final String USER = "ROLE_USER";
 

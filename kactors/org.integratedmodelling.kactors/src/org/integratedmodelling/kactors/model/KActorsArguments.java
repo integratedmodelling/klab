@@ -24,7 +24,7 @@ public class KActorsArguments extends Parameters<String> {
 
     Set<String> metadataKeys = new HashSet<>();
 
-    protected KActorsArguments() {
+    public KActorsArguments() {
     }
 
     /*

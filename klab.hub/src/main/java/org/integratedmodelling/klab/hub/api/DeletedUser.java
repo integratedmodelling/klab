@@ -1,10 +1,10 @@
 package org.integratedmodelling.klab.hub.api;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -31,9 +31,9 @@ public class DeletedUser implements UserDetails {
 
     String lastName;
 
-    DateTime registrationDate;
+    LocalDateTime registrationDate;
     
-    DateTime deletionDate;
+    LocalDateTime deletionDate;
     
     AccountStatus accountStatus = AccountStatus.deleted;
 
@@ -67,20 +67,20 @@ public class DeletedUser implements UserDetails {
 		this.lastName = lastName;
 	}
 
-	public DateTime getRegistrationDate() {
+	public LocalDateTime getRegistrationDate() {
 		return registrationDate;
 	}
 
-	public void setRegistrationDate(DateTime registrationDate) {
+	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
 
-	public DateTime getDeletionDate() {
+	public LocalDateTime getDeletionDate() {
 		return deletionDate;
 	}
 
 	public void setDeletionDate() {
-		this.deletionDate = new DateTime();
+		this.deletionDate = LocalDateTime.now();
 	}
 
 	public List<GroupEntry> getGroups() {

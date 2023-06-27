@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class NodeLicenseController extends LicenseController<NodeAuthenticationRequest>{
+public class NodeLicenseController{
 	
 	private NodeService nodeService;
     private LicenseGenerator licenseGenerator;

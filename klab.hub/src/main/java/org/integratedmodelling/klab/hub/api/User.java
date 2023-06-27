@@ -1,12 +1,17 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
-import org.joda.time.DateTime;
+import org.integratedmodelling.klab.rest.CustomProperty;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
@@ -60,7 +65,7 @@ public class User extends IdentityModel implements UserDetails{
 
     String serverUrl;
 
-    DateTime lastLogin;
+    LocalDateTime lastLogin;
 
 
     boolean sendUpdates = true;
@@ -68,11 +73,15 @@ public class User extends IdentityModel implements UserDetails{
     private Set<Role> roles = new HashSet<>();;
 
     @Reference
-    private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
+    private Set<AgreementEntry> agreements = new HashSet<>();
+
+    private List<TagEntry> tags = new ArrayList<>();
 
     private Set<String> applications = new HashSet<>();
 
     AccountStatus accountStatus = AccountStatus.pendingActivation;
+
+    Set<CustomProperty> customProperties = new HashSet<>();
 
     public enum AccountStatus {
         active,
@@ -80,7 +89,7 @@ public class User extends IdentityModel implements UserDetails{
         deleted,
         expired,
         pendingActivation,
-        verified,
+        verified
     };
 
     // @Transient prevents the password from being stored in Mongo.
@@ -145,6 +154,10 @@ public class User extends IdentityModel implements UserDetails{
         return isRole(Role.ROLE_ADMINISTRATOR);
     }
 
+    public boolean isManager() {
+        return isRole(Role.ROLE_MANAGER);
+    }
+
     public boolean isRole(Role role) {
         return roles.contains(role);
     }
@@ -206,39 +219,8 @@ public class User extends IdentityModel implements UserDetails{
     	return this.roles;
     }
     
-    public void addGroupEntries(GroupEntry... groups) {
-        this.groupEntries.addAll(Arrays.asList(groups));
-    }
-
-    public void addGroupEntries(Set<GroupEntry> groups) {
-        this.groupEntries.addAll(groups);
-    }
-
-    public void setGroupEntries(Set<GroupEntry> groups) {
-        this.groupEntries = groups;
-    }
-    
-	public void removeGroupEntries(Set<GroupEntry> groupEntries) {
-    	
-		Set<String> names = new HashSet<>();
-    	groupEntries
-    	  .forEach(e -> {
-    		  String name = e.getGroupName();
-    		  names.add(name);
-    	  });
-    	
-    	if(groupEntries.isEmpty()) {
-    		return;
-    	}
-    	
-    	Set<GroupEntry> entries = getGroupEntries();
-		entries.removeIf(e -> names.contains(e.getGroupName()));		
-		setGroupEntries(entries);
-		
-	}
-
-    public Set<GroupEntry> getGroupEntries() {
-        return groupEntries;
+    public void removeRoles(Collection<Role> rolesToRemove) {
+    	this.roles.removeAll(rolesToRemove);
     }
 
     public Set<String> getApplications() {
@@ -314,24 +296,24 @@ public class User extends IdentityModel implements UserDetails{
     }
 
 
-	public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {
-        if (groups == null) {
-            // force this to be checked by set intersection, rather than instantly failing (preserves logic)
-            groups = new HashSet<>();
-        }
-
-        if (groups.contains(User.GLOBAL_GROUP)) {
-            return true;
-        }
-
-        Set<GroupEntry> list = getGroupEntries(); // returns a copy
-        list.retainAll(groups);
-        if (list.size() > 0) {
-            return true;
-        }
-
-        return false;
-    }
+//	public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {
+//        if (groups == null) {
+//            // force this to be checked by set intersection, rather than instantly failing (preserves logic)
+//            groups = new HashSet<>();
+//        }
+//
+//        if (groups.contains(User.GLOBAL_GROUP)) {
+//            return true;
+//        }
+//
+//        Set<GroupEntry> list = getGroupEntries(); // returns a copy
+//        list.retainAll(groups);
+//        if (list.size() > 0) {
+//            return true;
+//        }
+//
+//        return false;
+//    }
 
     /**
      * return full name (if available) or some sensible constructed value so that LDAP/Crowd doesn't choke on
@@ -360,14 +342,14 @@ public class User extends IdentityModel implements UserDetails{
 	
 
     public void setLastLogin() {
-        lastLogin = DateTime.now();
+        lastLogin = LocalDateTime.now();
     }
     
-    public void setLastLogin(DateTime date) {
+    public void setLastLogin(LocalDateTime date) {
         lastLogin = date;
     }
 
-    public DateTime getLastLogin() {
+    public LocalDateTime getLastLogin() {
     	return lastLogin;
     }
 
@@ -385,5 +367,69 @@ public class User extends IdentityModel implements UserDetails{
 	public void setEmail(String email) {
 		this.email = email;
 	}
+	
+	public void addAgreements(AgreementEntry agreements) {
+        this.agreements.addAll(Arrays.asList(agreements));
+    }
+
+    public void addAgreements(Set<AgreementEntry> agreements) {
+        this.agreements.addAll(agreements);
+    }
+
+    
+    public Set<AgreementEntry> getAgreements() {
+        return agreements;
+    }
+
+    public void setAgreements(Set<AgreementEntry> agreements) {
+        this.agreements = agreements;
+    }
+
+    public boolean hasTag(String tagName) {
+        return tags.stream()
+        .anyMatch(t -> t.getTag() != null && t.getTag().getName().equals(tagName));
+    }
+	
+    public void addTag(MongoTag mongoTag) {
+        TagEntry tagEntry = new TagEntry(mongoTag);
+        this.tags.add(tagEntry);
+    }
+
+    public void addTags(Collection<MongoTag> tags) {
+        for(MongoTag t : tags) {
+            addTag(t);
+        }
+    }
+
+    public List<TagEntry> getTags() {
+        return tags;
+    }
+
+    public List<TagEntry> getUnsentTags() {
+        return tags.stream()
+                .filter(t -> !t.isSent())
+                .collect(Collectors.toList());
+    }
+
+    public Set<CustomProperty> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Set<CustomProperty> customProperties) {
+        this.customProperties = customProperties;
+    }
+
+    public void putCustomProperty(CustomProperty customProperty) {
+        this.customProperties.add(customProperty);
+    }
+
+    public void putCustomProperties(Collection<CustomProperty> customProperties) {
+        this.customProperties.addAll(customProperties);
+    }
+
+    public Optional<CustomProperty> findCustomProperty(String key) {
+        return customProperties.stream()
+                .filter(cp -> cp.getKey().equals(key)).findFirst();
+    }
 
 }

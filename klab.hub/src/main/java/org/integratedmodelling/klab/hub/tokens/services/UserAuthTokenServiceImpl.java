@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.commands.GetUserProfile;
 import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
+import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
 import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
@@ -40,8 +41,6 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	
 	private ObjectMapper objectMapper;
 	
-	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
-	
 	public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
 			TokenRepository tokenRepository, ObjectMapper objectMapper) {
 		super();
@@ -50,6 +49,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		this.tokenRepository = tokenRepository;
 		this.objectMapper = objectMapper;
 	}
+	
+	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 
 	@Override
 	public TokenAuthentication createToken(String username, TokenType type) {
@@ -100,18 +101,17 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 		}
 	}
 
-	@Override
+	@SuppressWarnings("rawtypes")
+    @Override
 	public LoginResponse getAuthResponse(String username, String password, boolean remote) {
 		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
-		LoginResponse response;
 		if (remote) {
-		    profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
-		    response = new LoginResponse(token, profile, remote);
-		} else {
-		    response = new LoginResponse(token, profile.getSafeProfile(), false);
-		}
-		return response;
+            profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
+            return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
+        } else {
+            return new LoginResponse<ProfileResource>(token, profile.getSafeProfile());
+        }
 	}
 
 	@Override

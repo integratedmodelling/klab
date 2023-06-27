@@ -82,7 +82,7 @@ public class EmailManager {
     				+ "\n\nPlease make sure those groups are appropriate for %s" 
     				+ "and if so click on the following link: %s",
     			username, groups, username,clickbackUrl);
-    	sendInternalEmail(emailConfig.senderEmail(), emailConfig.replyableGeneralEmailAddress(), subject,msg);
+    	sendInternalEmail(emailConfig.senderEmail(), emailConfig.noreplyEmailAddress(), subject,msg);
     }
     
     public void sendInviteWithGroupsEmail(String to, URL clickbackUrl) throws MessagingException {

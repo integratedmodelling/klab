@@ -15,6 +15,15 @@ EVENTS AND FUNCTIONAL RELATIONSHIPS CAN BE CONTEXTUAL (but it's optional, so the
 
 In addition to observables, _predicates_ can be linked to observations to further describe them when full description through observations is not possible or when the description is linked to the observation context/process/agent rather than directly to the observed entity. Specific classes of description attribute predicates to observations. The observations must have been made already, therefore such descriptions are to be considered dependent.
 
+== So what is "modeling" in the semantic world?
+
+Creating "artifacts" that explain the world based on existing "artifacts" that we have accepted as explanations (data) and applying the "descriptions" that we build to explain how these outcomes come into existence. So for example we know that we have a certain precipitation and a certain temperature, and we assume that forest biomass depends on them as well as soil composition. We can write a "description" that links these "inputs" to the "output" - a measure of forest biomass, e.g. in kg. In order to compute an output we need a _context_: we can only measure biomass in a given space and time, in which all of our inputs must be available. 
+
+From a semantic perspective, we first characterize the observables involved as input and output:
+
+These observables don't say anything about the context.
+
+
 == The context: worldview and scale
 
 

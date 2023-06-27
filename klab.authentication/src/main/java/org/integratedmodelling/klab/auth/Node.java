@@ -9,15 +9,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.communication.client.Client.NodeClient;
@@ -241,6 +240,8 @@ public class Node implements INodeIdentity {
 		this.namespaceIds.addAll(nodeCapabilities.getResourceNamespaces());
 		this.resourceUrls.clear();
 		this.resourceUrls.addAll(nodeCapabilities.getResourceUrns());
+        this.adapterIds.addAll(nodeCapabilities.getResourceAdapters().stream()
+                .map(ra -> ra.getLabel()).collect(Collectors.toSet()));
 		// FIXME use a proper field
 		this.uptime = nodeCapabilities.getRefreshFrequencyMillis();
 	}

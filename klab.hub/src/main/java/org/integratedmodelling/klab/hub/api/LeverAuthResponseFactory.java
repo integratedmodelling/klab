@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.net.SocketException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 import org.integratedmodelling.klab.Authentication;
@@ -17,7 +18,6 @@ import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.LeverAuthenticationRequest;
 import org.integratedmodelling.klab.rest.LeverAuthenticationResponse;
-import org.joda.time.DateTime;
 
 public class LeverAuthResponseFactory {
 
@@ -41,8 +41,8 @@ public class LeverAuthResponseFactory {
 	}
 
 	private LeverAuthenticationResponse local(LeverAuthenticationRequest request, LeverAuthTokenService tokenService) {
-		DateTime now = DateTime.now();
-		DateTime tomorrow = now.plusDays(90);
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime tomorrow = now.plusDays(90);
 		
 		ILeverIdentity lever = authenticateLocal(request.getName());
 		
