@@ -76,7 +76,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         }
     }
     
-    private TransportType transportType;
+    private TransportType transportType = TransportType.Auto;
     private IContextualizationScope scope;
     private Valhalla valhalla; 
     private Graph<IObjectArtifact, DefaultEdge> graph;
@@ -96,14 +96,13 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         this.targetArtifact = parameters.get("target", String.class);
         this.timeThreshold = parameters.get("time_limit", Double.class);
         this.distanceThreshold = parameters.get("distance_limit", Double.class);
-        
+         
         if (parameters.containsKey("transport")) {
         	this.transportType = TransportType.valueOf(Utils.removePrefix(parameters.get("transport", String.class)));
-        } else this.transportType = TransportType.Auto;
-        
+        }
         
         this.valhalla = new Valhalla();
-      
+
 	}
 	
 	/*
@@ -112,9 +111,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
 		
+		
         IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
         IConcept targetConcept = Observables.INSTANCE.getRelationshipTarget(semantics.getType());
 
+        
         /*
          * recover artifacts according to parameterization or lack thereof. Source and target
          * artifacts may be the same artifact.
@@ -142,6 +143,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 }
             }
         }
+        
 
         // all artifacts must be non-null and objects
         for (List<?> co : new List[]{sources, targets}) {
@@ -162,7 +164,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         // TODO these are the simple methods - enable others separately
         Collection<IObservation> allSources = CollectionUtils.joinObservations(sources);
         Collection<IObservation> allTargets = CollectionUtils.joinObservations(targets);
-       
+        
 
         graph = new DefaultDirectedGraph<>(DefaultEdge.class);
         trajectories = new HashMap<>();
@@ -171,6 +173,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
         for (IObservation source : allSources) {
 
+        	
             if (context.getMonitor().isInterrupted()) {
                 break;
             }
@@ -180,7 +183,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             }
 
             for (IArtifact target : allTargets) {
-
+            	
                 if (context.getMonitor().isInterrupted()) {
                     break;
                 }
@@ -219,7 +222,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 
                 // Find the optimal route between target and location. 
                 
-                String valhallaInput = Valhalla.buildValhallaJsonInput((IDirectObservation) source, (IDirectObservation) target, transportType.getType());
+                String valhallaInput = Valhalla.buildValhallaJsonInput((IDirectObservation) source, (IDirectObservation) target, transportType.getType());                
                 ValhallaOutputDeserializer.OptimizedRoute route;
                 IShape trajectory; 
                 Map<String,Double> stats;
@@ -248,6 +251,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                   
             }
         }
+
 
         context.getMonitor()
                 .info("creating " + graph.edgeSet().size() + " " + Concepts.INSTANCE.getDisplayName(semantics.getType())
