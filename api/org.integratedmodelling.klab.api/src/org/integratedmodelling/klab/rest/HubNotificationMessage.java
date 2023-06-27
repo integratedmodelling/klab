@@ -1,18 +1,25 @@
 package org.integratedmodelling.klab.rest;
 
-import java.util.List;
-
 import org.integratedmodelling.klab.utils.Pair;
 
-
 public class HubNotificationMessage {
-    
+
     public HubNotificationMessage() {
         
     }
     
+    public static class Parameters extends NotificationParameters {
+        public Parameters(Pair<ExtendedInfo, Object>[] info) {
+            super(info, null);
+        }
+        public Parameters(Pair<ExtendedInfo, Object>[] info, Type type) {
+            super(info, type);
+        }
+
+    }
+    
     interface MessageInterface {
-        HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info);
+        HubNotificationMessage build(String msg, NotificationParameters param);
     };
     
     public enum Type {
@@ -31,50 +38,67 @@ public class HubNotificationMessage {
     public enum MessageClass implements MessageInterface{
         EXPIRED_CERTIFICATE {
             @Override
-            public HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info) {
-                return new HubNotificationMessage(this, Type.ERROR, msg, info);
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.ERROR, msg, param.info);
             }
-
-            
         },
         EXPIRED_GROUP {
             @Override
-            public HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info) {
-                return new HubNotificationMessage(this, Type.ERROR, msg, info);
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.ERROR, msg, param.info);
+            }
+        },
+        EXPIRING_AGREEMENT {
+            @Override
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.WARNING, msg, param.info);
             }
         },
         EXPIRING_CERTIFICATE {
             @Override
-            public HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info) {
-                return new HubNotificationMessage(this, Type.WARNING, msg, info);
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.WARNING, msg, param.info);
             }
-
-            
         },
         EXPIRING_GROUP {
             @Override
-            public HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info) {
-                return new HubNotificationMessage(this, Type.WARNING, msg, info);
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.WARNING, msg, param.info);
             }
-
-
         },
         ADMINSTRATOR_MESSAGE {
             @Override
-            public HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info) {
-                return new HubNotificationMessage(this, Type.INFO, msg, info);
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.INFO, msg, param.info);
             }
-
-            
         },
         GROUP_MESSAGE {
             @Override
-            public HubNotificationMessage build(String msg, Pair<ExtendedInfo, Object>[] info) {
-                return new HubNotificationMessage(this, Type.INFO, msg, info);
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                return new HubNotificationMessage(this, Type.INFO, msg, param.info);
             }
-
-        }
-        
+        },
+        TAG_NOTIFICATION {
+            @Override
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                Type type = param.type.isEmpty() ? Type.INFO : param.type.get();
+                return new HubNotificationMessage(this, type , msg, param.info);
+            }
+        },
+        CERTIFICATE_WITHOUT_AGREEMENT {
+            @Override
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                Type type = param.type.isEmpty() ? Type.INFO : param.type.get();
+                return new HubNotificationMessage(this, type , msg, param.info);
+            }
+        },
+        AGREEMENT_NOT_EXIST{
+            @Override
+            public HubNotificationMessage build(String msg, NotificationParameters param) {
+                Type type = param.type.isEmpty() ? Type.INFO : param.type.get();
+                return new HubNotificationMessage(this, type , msg, param.info);  
+            }
+        },
     }
    
     
@@ -146,7 +170,5 @@ public class HubNotificationMessage {
     public void setInfo(Pair<ExtendedInfo, Object>[] info) {
         this.info = info;
     }
-    
-    
     
 }

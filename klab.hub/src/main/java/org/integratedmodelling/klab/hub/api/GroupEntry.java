@@ -1,89 +1,107 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
-import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
 public class GroupEntry {
-	
-	@DBRef
-	private MongoGroup group;
-	private DateTime experation;
-	private DateTime inception;
-	
-	public GroupEntry(MongoGroup group, DateTime experation) {
-		this.group = group;
-		if(experation != null) {
-			this.experation = experation;
-		} else {
-			this.experation = DateTime.now().plusDays(365);
-		}
-		setInception();
-	}
-	
-	public GroupEntry(MongoGroup group) {
-		this.group = group;
-		this.experation = DateTime.now().plusDays(365);
-		setInception();
-	}
-	
-	public GroupEntry() {
-	}
-	
-	
-	public void setInception() {
-		this.inception = DateTime.now();
-	}
+    
+    @DBRef
+    private MongoGroup group;
+    private LocalDateTime start;
+    private LocalDateTime expiration;
+    
+    
+    public GroupEntry(MongoGroup group, LocalDateTime expiration) {
+        this.group = group;
+        setStart();
+        setExpiration(expiration);
+    }
+    
+    public GroupEntry(MongoGroup group) {
+        this(group, null);
+    }
+    /*
+    private static LocalDateTime getDefaultExpirationPeriod(MongoGroup group) {
+        return group.getDefaultExpirationPeriod() == null
+                || group.getDefaultExpirationPeriod().equals(Period.ZERO) ? null : LocalDateTime.now().plus(group.getDefaultExpirationPeriod());
+    }
+    */
+    public GroupEntry() {
+    }
+    
+    public void setStart(LocalDateTime start) {
+        this.start = start;
+    }
+    
+    public void setStart() {
+        this.start = LocalDateTime.now();
+    }
 
-	public String getGroupName() {
-		return group.getName();
-	}
+    public String getGroupName() {
+        return group.getName();
+    }
 
-	public DateTime getExperation() {
-		if(experation == null) {
-			return DateTime.now().plusMonths(6);
-		} else {
-			return experation;
-		}
-	}
+    public LocalDateTime getExpiration() {
+        return expiration;
+    }
 
-	public void setRenewal(DateTime experation) {
-		this.experation = experation;
-	}
+    public void setExpiration(LocalDateTime expiration) {
+        if(expiration != null) {
+            this.expiration = expiration;
+        } else if (this.group != null && this.group.getDefaultExpirationTime() != 0) {
+            if (this.start != null) {
+                this.expiration = this.start.plus(group.getDefaultExpirationTime(), ChronoUnit.MILLIS);
+            } else {
+                this.expiration = LocalDateTime.now().plus(group.getDefaultExpirationTime(), ChronoUnit.MILLIS);
+            }
+        }
+    }
 
-	public DateTime getInception() {
-		return inception;
-	}
-	
-	public boolean isExpired() {
-		DateTime expires = getExperation();
-		expires.isAfterNow();
-		return true;
-	}
+    public LocalDateTime getInception() {
+        return start;
+    }
 
-	public MongoGroup getGroup() {
-		return group;
-	}
-	
-	public void setGroup(MongoGroup group) {
-		this.group = group;
-	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(group);
-	}
+    public boolean isValid() {
+        if (!isExpirable()) {
+            return true;
+        }
+        return !isExpired();
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		GroupEntry other = (GroupEntry) obj;
-		return Objects.equals(group, other.group);
-	}
+    public boolean isExpired() {
+        return isExpirable() && this.expiration.isBefore(LocalDateTime.now());
+    }
+
+    public boolean isExpirable() {
+        // Groups with null expiration dates are the ones with no expiration date
+        return this.expiration != null;
+    }
+
+    public MongoGroup getGroup() {
+        return group;
+    }
+    
+    public void setGroup(MongoGroup group) {
+        this.group = group;
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(group);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        GroupEntry other = (GroupEntry) obj;
+        return Objects.equals(group, other.group);
+    }
 }

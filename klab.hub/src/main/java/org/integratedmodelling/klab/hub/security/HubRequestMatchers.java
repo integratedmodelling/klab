@@ -9,7 +9,6 @@ public final class HubRequestMatchers {
 			API.HUB.AUTHENTICATE_LEVER,
 			API.HUB.AUTHENTICATE_NODE,
 			API.HUB.AUTHENTICATE_USER,
-			API.HUB.LEGACY_AUTHENTICATE_ENGINE
 	};
 	
 	private static final String[] users = new String[] {
@@ -19,6 +18,10 @@ public final class HubRequestMatchers {
 			API.HUB.USER_BASE+".*" + API.HUB.PARAMETERS.USER_VERIFICATION + ".*",
 			API.HUB.USER_BASE+"$"
 	};
+	
+	private static final String[] agreements = new String[] {
+	        API.HUB.AGREEMENT_TEMPLATE_TYPE_LEVEL+"*"            
+    };
 
 	public static String[] getAuthentication() {
 		return authentication;
@@ -27,6 +30,10 @@ public final class HubRequestMatchers {
 	public static String[] getUsers() {
 		return users;
 	}
+	
+	public static String[] getAgreements() {
+        return agreements;
+    }
 
 	
 }

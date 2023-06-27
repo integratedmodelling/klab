@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.commands;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -15,7 +16,6 @@ import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.joda.time.DateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 
@@ -75,17 +75,17 @@ public class CreateInitialUsers {
         return result;
     }
     
-    private static final DateTime generateRandomDate(DateTime from) {
+    private static final LocalDateTime generateRandomDate(LocalDateTime from) {
     	GregorianCalendar gc = new GregorianCalendar();
         int year = randBetween(from != null ? from.getYear() : 2015, 2019);
         gc.set(Calendar.YEAR, year);
         int dayOfYear = randBetween(from != null ? from.getDayOfYear() : 1, gc.getActualMaximum(Calendar.DAY_OF_YEAR));
         gc.set(Calendar.DAY_OF_YEAR, dayOfYear);
-        int hour = randBetween(from != null ? from.getHourOfDay() : 0, 23);
+        int hour = randBetween(from != null ? from.getHour() : 0, 23);
         gc.set(Calendar.HOUR_OF_DAY, hour);
-        int minute = randBetween(from != null ? from.getMinuteOfHour() : 0, 60);
+        int minute = randBetween(from != null ? from.getMinute() : 0, 60);
         gc.set(Calendar.MINUTE, minute);
-        return new DateTime(gc);
+        return gc.toZonedDateTime().toLocalDateTime();
     }
     
     private static int randBetween(int start, int end) {
@@ -94,10 +94,10 @@ public class CreateInitialUsers {
     
     private List<User> getInitialUsers() {
 		GroupEntry im = new GroupEntry(new GetMongoGroupByName("IM", groupRepository).execute());
-		GroupEntry aries = new GroupEntry(new GetMongoGroupByName("ARIES", groupRepository).execute(), DateTime.now().minusDays(20));
+		GroupEntry aries = new GroupEntry(new GetMongoGroupByName("ARIES", groupRepository).execute(), LocalDateTime.now().minusDays(20));
 		GroupEntry alice = new GroupEntry(new GetMongoGroupByName("ALICE", groupRepository).execute());
-		GroupEntry seea = new GroupEntry(new GetMongoGroupByName("SEEA", groupRepository).execute(), DateTime.now().plusDays(10));
-		GroupEntry leticia = new GroupEntry(new GetMongoGroupByName("LETICIA", groupRepository).execute(), DateTime.now().plusDays(10));
+		GroupEntry seea = new GroupEntry(new GetMongoGroupByName("SEEA", groupRepository).execute(), LocalDateTime.now().plusDays(10));
+		GroupEntry leticia = new GroupEntry(new GetMongoGroupByName("LETICIA", groupRepository).execute(), LocalDateTime.now().plusDays(10));
 		Set<GroupEntry> entries = new HashSet<GroupEntry>();
 		entries.add(im);
 		entries.add(aries);
@@ -113,12 +113,12 @@ public class CreateInitialUsers {
     			u.addRoles(Role.ROLE_DATA_MANAGER); // less than 7% are data manager
     		x = (int)(Math.random()*100+1);
     		if (x <= 80) {
-    			u.addGroupEntries(im); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
-    			u.addGroupEntries(aries);
+    			u.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(im); // 80% has IM and ARIES. If no IM and ARIES, no groups for now
+    			u.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(aries);
         		x = (int)(Math.random()*100+1);
         		if (x < 22) {
         			for (int j = 0; j<=x; j++) {
-        				u.addGroupEntries(alice); // multiple groups
+        				u.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(alice); // multiple groups
         			}
         		}
     		}
@@ -126,9 +126,6 @@ public class CreateInitialUsers {
     		if (x <= 5) { // 5% pending activation
     			u.setAccountStatus(AccountStatus.pendingActivation);
     			u.setLastLogin(null);
-    			u.setRegistrationDate(null);
-    		}
-    		if (x >= 6 && x <= 8) { // not pending but no registration date (legacy problem)
     			u.setRegistrationDate(null);
     		}
     		if (u.getAccountStatus() != AccountStatus.pendingActivation) {
@@ -143,20 +140,20 @@ public class CreateInitialUsers {
     		}
     		initialUsers.add(u);
     	}
-        system.addGroupEntries(aries);
-        system.addGroupEntries(im);
-        system.addGroupEntries(alice);
-        system.addGroupEntries(seea);
-        hades.addGroupEntries(aries);
-        hades.addGroupEntries(im);
-        developerS.addGroupEntries(aries);
-        developerS.addGroupEntries(im);
-        developerE.addGroupEntries(aries);
-        developerE.addGroupEntries(im);
-        developerE.addGroupEntries(seea);
-        developerE.addGroupEntries(leticia);
-        achilles_activeMissingLdap.addGroupEntries(im);
-        triton_pendingMissingLdap.addGroupEntries(aries);
+        system.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(aries);
+        system.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(im);
+        system.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(alice);
+        system.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(seea);
+        hades.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(aries);
+        hades.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(im);
+        developerS.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(aries);
+        developerS.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(im);
+        developerE.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(aries);
+        developerE.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(im);
+        developerE.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(seea);
+        developerE.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(leticia);
+        achilles_activeMissingLdap.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(im);
+        triton_pendingMissingLdap.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
         initialUsers.add(system);
         initialUsers.add(hades);

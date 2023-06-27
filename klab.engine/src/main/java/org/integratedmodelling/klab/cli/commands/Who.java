@@ -20,7 +20,7 @@ public class Who implements ICommand {
 
 		String ret = "Session ID = " + session.getId() + "\n" + session.getUser().getUsername() + " ("
 				+ session.getUser().getEmailAddress() + ") "
-				+ session.getUser().getGroups().stream().map((g) -> g.getId()).collect(Collectors.toList());
+				+ session.getUser().getGroups().stream().map((g) -> g.getName()).collect(Collectors.toList());
 
 		if (nodeId != null) {
 			INodeIdentity node = Network.INSTANCE.getNode(nodeId);

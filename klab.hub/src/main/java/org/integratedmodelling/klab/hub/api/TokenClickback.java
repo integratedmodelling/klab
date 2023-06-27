@@ -1,13 +1,13 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.joda.time.DateTime;
 import org.springframework.data.annotation.Transient;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -26,7 +26,7 @@ public abstract class TokenClickback extends TokenAuthentication {
 
     public TokenClickback(String username) {
         super(username);
-        expiration = DateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
+        expiration = LocalDateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
     }
     
 	@Override

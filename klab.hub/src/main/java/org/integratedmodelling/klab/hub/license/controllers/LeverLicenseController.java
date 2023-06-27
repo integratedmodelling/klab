@@ -38,7 +38,7 @@ public class LeverLicenseController extends LicenseController<LeverAuthenticatio
 
 	@Override
 	@GetMapping(value= API.HUB.LEVER_BASE_ID, params = "certificate")
-	void generateCertFile(String id, HttpServletResponse response) throws IOException {
+	void generateCertFile(String id, String agreementId, HttpServletResponse response) throws IOException {
 		// TODO Auto-generated method stub
 		
 	}

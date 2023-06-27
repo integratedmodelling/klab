@@ -136,8 +136,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 		.authorizeRequests()
+		    .antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements())
+            .permitAll()
 			.antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication())
-			.permitAll()
+			.permitAll()			
 			.regexMatchers(HttpMethod.POST, HubRequestMatchers.getUsers())
 			.permitAll()
 		.anyRequest()
@@ -157,6 +159,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.successHandler(oAuth2AuthenticationSuccessHandler)
 		.failureHandler(oAuth2AuthenticationFailureHandler);
 
+	
 		http.csrf().disable().antMatcher("/api/**")
 		.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 		//.addFilterBefore(WebSecurityCorsFilter(), ChannelProcessingFilter.class);
@@ -185,6 +188,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		config.setAllowCredentials(false);
 		config.setAllowedOrigins(ImmutableList.of(
 				"https://integratedmodelling.org",
+				"https://test.integratedmodelling.org",
 				"http://localhost:8080",
 				"https://localhost:8080",
 				"http://localhost:8081",
