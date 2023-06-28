@@ -112,13 +112,13 @@ public class EngineController {
 		ret.getResourceCatalogs().add(resourceManager.getDefaultCatalog());
 		ret.getResourceNamespaces().add(resourceManager.getDefaultNamespace());
 		// if hub is searching for statistics node, the user is null
-		if (user != null) {
+		//if (user != null) {
     		for (String urn : resourceManager.getOnlineResources()) {
     			if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
     				ret.getResourceUrns().add(urn);
     			}
     		}
-		}
+		//}
 
 		/**
 		 * Temporarily stick the time since boot in here instead of adding a proper
