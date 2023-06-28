@@ -10,7 +10,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.xbase.typesystem.internal.ExpressionScope;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
@@ -948,7 +947,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
                 }
             }
         }
-        throw new KlabIllegalStateException("getResource() called on a non-resource contextualizable");
+        return null;
     }
 
 }

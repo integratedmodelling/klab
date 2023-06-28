@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,7 +16,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.rest.Group;
-import org.joda.time.DateTime;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -51,23 +51,21 @@ public class ProfileResource implements OAuth2User{
     public String affiliation;
 
     public List<Role> roles = new ArrayList<>(); // LDAP security roles or OAuth
-
-    public List<GroupEntry> groupEntries = new ArrayList<>(); // research groups, etc. in web tool
+    
+    public List<AgreementEntry> agreements = new ArrayList<>();
 
     public boolean sendUpdates;
 
     public String comments;
 
-    public DateTime registrationDate;
+    public LocalDateTime registrationDate;
 
-    public DateTime lastLogin;
+    public LocalDateTime lastLogin;
 
-	public DateTime lastConnection;
+	public LocalDateTime lastConnection;
 
     public AccountStatus accountStatus;
     
-    // public String Token;
-
     private Collection<? extends GrantedAuthority> authorities;
     
     private Map<String, Object> attributes;
@@ -80,7 +78,7 @@ public class ProfileResource implements OAuth2User{
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(name).append(email).append(serverUrl).append(firstName).append(lastName)
-                .append(initials).append(address).append(jobTitle).append(phone).append(affiliation).append(groupEntries)
+                .append(initials).append(address).append(jobTitle).append(phone).append(affiliation).append(agreements)
                 .append(sendUpdates).append(comments).append(accountStatus).hashCode();
     }
 
@@ -100,7 +98,7 @@ public class ProfileResource implements OAuth2User{
         return new EqualsBuilder().append(name, other.name).append(email, other.email)
                 .append(serverUrl, other.serverUrl).append(firstName, other.firstName).append(lastName, other.lastName)
                 .append(initials, other.initials).append(address, other.address).append(jobTitle, other.jobTitle)
-                .append(phone, other.phone).append(affiliation, other.affiliation).append(groupEntries, other.groupEntries)
+                .append(phone, other.phone).append(affiliation, other.affiliation).append(agreements, other.agreements)
                 .append(sendUpdates, other.sendUpdates).append(comments, other.comments)
                 .append(accountStatus, other.accountStatus).isEquals();
     }
@@ -111,23 +109,19 @@ public class ProfileResource implements OAuth2User{
 
 	public void setUsername(String username) {
 		this.name = username;
-	}
-	
-    public List<GroupEntry> getGroups() {
-		return groupEntries;
-	}
+	}	
 
-	public void setGroups(List<GroupEntry> groups) {
-		this.groupEntries = groups;
-	}
+    public List<AgreementEntry> getAgreements() {
+        return agreements;
+    }
 
-	public List<Role> getRoles() {
+    public void setAgreements(List<AgreementEntry> agreements) {
+        this.agreements = agreements;
+    }
+
+    public List<Role> getRoles() {
 		return roles;
 	}
-
-//	public void setToken(String token) {
-//		this.Token = token;
-//	}
 
     public String getJwtToken() {
         return jwtToken;
@@ -171,26 +165,27 @@ public class ProfileResource implements OAuth2User{
 		this.email = email;
 	}
 	
-    public DateTime getLastLogin() {
+    public LocalDateTime getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(DateTime lastLogin) {
+	public void setLastLogin(LocalDateTime lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
-	public DateTime getLastConnection() {
+	public LocalDateTime getLastConnection() {
 		return lastConnection;
 	}
 
-	public void setLastConnection(DateTime lastConnection) {
+	public void setLastConnection(LocalDateTime lastConnection) {
 		this.lastConnection = lastConnection;
 	}
 
 	public List<String> getGroupsIds() {
 	    List<String> groupsIds = new ArrayList<>();
-	    for (GroupEntry grp : this.getGroups()) {
-            if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+	    //TODO Agreement list	    
+	    for (GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
+            if(grp != null && grp.isValid()) {
                 groupsIds.add(grp.getGroup().getName());
             }
         }
@@ -199,11 +194,15 @@ public class ProfileResource implements OAuth2User{
 	
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
-		for (GroupEntry grp : this.getGroups()) {
-			if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
+		//TODO Agreement list 
+
+		for (GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
+			if(grp != null && grp.isValid()) {
+
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
 				group.setId(mGroup.getName());
+				group.setName(mGroup.getName());
 				group.setDescription(mGroup.getDescription());
 				group.setIconUrl(mGroup.getIconUrl());
 				group.setMaxUpload(mGroup.getMaxUpload());
@@ -212,7 +211,9 @@ public class ProfileResource implements OAuth2User{
 				group.setSshKey(mGroup.getSshKey());
 				group.setMaxUpload(mGroup.getMaxUpload());
 				group.setWorldview(mGroup.isWorldview());
-				
+				group.setComplimentary(mGroup.isComplimentary());
+				group.setOptIn(group.isOptIn());
+				group.setCustomProperties(group.getCustomProperties());
 				
 				listOfGroups.add(group);
 			}
@@ -231,7 +232,7 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.comments = comments;
 		cleanedProfile.email = email;
 		cleanedProfile.firstName = firstName;
-		cleanedProfile.groupEntries = groupEntries;
+		cleanedProfile.agreements = agreements;
 		cleanedProfile.id = id;
 		cleanedProfile.initials = initials;
 		cleanedProfile.jobTitle = jobTitle;
@@ -243,31 +244,19 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.roles = roles;
 		cleanedProfile.sendUpdates = sendUpdates;
 		cleanedProfile.serverUrl = serverUrl;
-		//cleanedProfile.Token = Token;
 		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
-		List<GroupEntry> safeGroups = new ArrayList<>();
-		for (GroupEntry entry : cleanedProfile.getGroups()) {
-			if(entry != null) {
-				MongoGroup cleanGroup = new MongoGroup();
-				MongoGroup unsafeGroup = entry.getGroup();
-				cleanGroup.setIconUrl(unsafeGroup.getIconUrl());
-				cleanGroup.setName(unsafeGroup.getName());
-				cleanGroup.setDependsOn(unsafeGroup.getDependsOn());
-				cleanGroup.setWorldview(unsafeGroup.isWorldview());
-				entry.setGroup(cleanGroup);
-				safeGroups.add(entry);
-			}
-		}
-		cleanedProfile.groupEntries = cleanedProfile.getGroups();
+		//TODO check
+		cleanedProfile.agreements = cleanedProfile.getAgreements();
 		return cleanedProfile;
 	}
 
 
     public ArrayList<GroupEntry> expiredGroupEntries() {
         ArrayList<GroupEntry> expired = new ArrayList<GroupEntry>();
-        for (GroupEntry e : getGroups()) {
-            if(e.getExperation().isBeforeNow()) {
+
+        for (GroupEntry e : getAgreements().get(0).getAgreement().getGroupEntries()) {
+            if(e.getExpiration() != null && e.getExpiration().isBefore(LocalDateTime.now())) {
                 expired.add(e);
             }
         }
@@ -276,8 +265,9 @@ public class ProfileResource implements OAuth2User{
     
     public ArrayList<GroupEntry> expiringGroupEntries() {
         ArrayList<GroupEntry> expiring = new ArrayList<GroupEntry>();
-        for (GroupEntry e : getGroups()) {
-            if(!e.getExperation().isBeforeNow() && !e.getExperation().isAfter(DateTime.now().plusDays(30))) {
+
+        for (GroupEntry e : getAgreements().get(0).getAgreement().getGroupEntries()) {
+            if(e.getExpiration() != null && !e.getExpiration().isBefore(LocalDateTime.now()) && !e.getExpiration().isAfter(LocalDateTime.now().plusDays(30))) {
                 expiring.add(e);
             }
         }

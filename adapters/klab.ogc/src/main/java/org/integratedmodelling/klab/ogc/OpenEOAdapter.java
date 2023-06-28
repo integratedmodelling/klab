@@ -68,7 +68,7 @@ public class OpenEOAdapter implements IResourceAdapter {
 	public static OpenEO getClient(String serverUrl) {
 		OpenEO ret = clients.get(serverUrl);
 		if (ret == null) {
-			clients.put(serverUrl, (ret = new OpenEO(serverUrl, Klab.INSTANCE.getRootMonitor())));
+			clients.put(serverUrl, (ret = new OpenEO(serverUrl)));
 		}
 		return ret;
 	}

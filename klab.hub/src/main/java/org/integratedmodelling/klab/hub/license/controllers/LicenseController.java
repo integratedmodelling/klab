@@ -23,10 +23,10 @@ public abstract class LicenseController<R extends AuthenticationRequest>{
 	* The response is used to stream back the new certificate as a download.
 	* 
 	*/
-	abstract void generateCertFile(String id, HttpServletResponse response) throws IOException;
+	abstract void generateCertFile(String id, String agreementId, HttpServletResponse response) throws IOException;
 	/**
 	* Creates a license for the specified id.
-	* The response is used to stream back the new certifacte in download form
+	* The response is used to stream back the new certificate in download form
 	 * @throws MessagingException 
 	* 
 	*/

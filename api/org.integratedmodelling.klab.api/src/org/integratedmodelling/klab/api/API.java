@@ -16,7 +16,6 @@ package org.integratedmodelling.klab.api;
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.ContextRequest;
-import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.integratedmodelling.klab.rest.TicketRequest;
@@ -250,6 +249,10 @@ public interface API {
          */
         public static final String USER_BASE = API_BASE + "/users";
         /**
+         * Base URL path for user statistics resources on the hub.
+         */
+        public static final String USER_STATS = API_BASE + "/userStats";
+        /**
          * Base URL path for user resources on the hub.
          */
         public static final String GROUPS_BASE = API_BASE + "/groups";
@@ -297,6 +300,14 @@ public interface API {
          */
         public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
         /**
+         * An endpoint to get the capabilities of the nodes
+         */
+        public static final String NODE_CAPABILITIES = NODE_BASE + "/capabilities";
+        /**
+         * An endpoint to get the adapters of the nodes
+         */
+        public static final String NODE_ADAPTERS = NODE_BASE + "/adapters";
+        /**
          * Called by levers on hubs when authenticating with them. Parameters like the engine
          * version.
          */
@@ -306,7 +317,7 @@ public interface API {
          */
         public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
         /**
-         * Called by users to log into the hub and recieve an authentication token.
+         * Called by users to log into the hub and receive an authentication token.
          */
         public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
         /**
@@ -317,6 +328,10 @@ public interface API {
          * Base URL path for user resources on the hub.
          */
         public static final String USER_BASE_ID = USER_BASE + "/{id}";
+        /**
+         * Base URL path for user's agreements resources on the hub.
+         */
+        public static final String USER_AGREEMENT_BASE_ID = USER_BASE_ID + "/{agreementId}";
         /**
          * Base URL path for user resources on the hub.
          */
@@ -349,13 +364,77 @@ public interface API {
          * URL path for current user profile, based on Authentication Token parsing.
          */
         public static final String CURRENT_PROFILE = USER_BASE + "/me";
+        /**
+         * Base URL path for locked users.
+         */
+        public static final String LOCKED_USERS = USER_BASE + "/locked-users";
+        /**
+
+         *URL path for get agreement template.
+         */
+        public static final String GET_AGREEMENT = API_BASE + "/agreements";
+        /**
+         *URL path for get agreement template.
+         */
+        public static final String AGREEMENT_TEMPLATE = API_BASE + "/agreement-templates";
+        /**
+         *URL path for get agreement template by type and level.
+         */
+        public static final String AGREEMENT_TEMPLATE_TYPE_LEVEL = AGREEMENT_TEMPLATE + "/type-level";
+        /**
+         * Base URL path for tag resources on the hub.
+         */
+        public static final String TAG_BASE = API_BASE + "/tags";
+        /**
+         * Base URL path for identifying tags by name.
+         */
+        public static final String TAG_ID = TAG_BASE + "/{name}";
+        /**
+         * Base URL path for all tags referencing a user.
+         */
+        public static final String TAGS_OF_USER = USER_BASE_ID + "/tags";
+        /**
+         * Base URL path for every unsent tag.
+         */
+        public static final String TAG_UNSENT = API_BASE + "/tags-unsent";
+        /**
+         * Base URL path for all unsent tags referencing a user.
+         */
+        public static final String TAG_UNSENT_OF_USER = TAG_UNSENT + "/{username}";
+        /**
+         * Base URL path for tag notifications on the hub.
+         */
+        public static final String TAG_NOTIFICATIONS = API_BASE + "/tag-notifications";
+        /**
+         * Base URL path for tag notifications by tag.
+         */
+        public static final String TAG_NOTIFICATION_OF_TAG = TAG_NOTIFICATIONS + "/{name}";
+        /**
+         * Base URL path for tag notifications by user.
+         */
+        public static final String TAG_NOTIFICATION_OF_USER = USER_BASE_ID + "/tag-notifications";
+        /**
+         * Base URL path for managing all the agreements of a user.
+         */
+        public static final String USER_AGREEMENTS = USER_BASE_ID + "/agreements";
+        /**
+         * Base URL path for getting an agreement of a user by id.
+         */
+        public static final String USER_AGREEMENT_ID = USER_BASE_ID + "/agreement/{agreement-id}";
+        /**
+         * Base URL path for revoking an agreement of a user by id.
+         */
+        public static final String USER_REVOKE_AGREEMENT_ID = USER_BASE_ID + "/revoke-agreement/{agreement-id}";
+        /**
+         * Base URL path for user resources on the hub.
+         */
+        public static final String CUSTOM_PROPERTIES = API_BASE + "/custom-properties";
 
         public static interface PARAMETERS {
             /**
              * URL PARAMETER for user activation tokens.
              */
-            public static final String USER_ACTIVATION = "activate";
-
+			public static final String USER_ACTIVATION = "activate";
             /**
              * URL PARAMETER for user requesting a lost password email.
              */
@@ -416,6 +495,28 @@ public interface API {
              * URL PARAMETER for user group entry service, find users with a particular group
              */
             public static final String HAS_GROUP = "has-group";
+            /**
+             * URL PARAMETER for changing the account status of a user
+             */
+            public static final String USER_SET_ACCOUNT_STATUS = "account-status";
+            /**
+             * URL PARAMETER for user role entry service, sets a role for a given user
+             */
+            public static final String SET_ROLES = "set-roles";
+            /**
+             * URL PARAMETER for user role entry service, removes a role for a given user
+             */
+            public static final String REMOVE_ROLES = "remove-roles";
+            /**
+             * URL PARAMETER for user role entry service, lists all the users with a particular role
+             */
+
+            public static final String HAS_ROLES = "has-roles";
+            /**
+             * Base PARAMETER for the type of a tag
+             */
+            public static final String TYPE_OF_TAG = "type";
+
         }
 
     }
@@ -1132,6 +1233,9 @@ public interface API {
 
         public static final String STATS_REPORT = STATS_BASE + "/report";
 
+        public static final String STATS_OUTPUT = STATS_BASE + "/output";
+
+        
         /*
          * public anonymous endpoints for web sites or quick monitoring
          */

@@ -17,16 +17,6 @@ spring:
     ldap:
       repositories:
         enabled: false
-  ldap:
-    embedded:
-      base-dn: dc=integratedmodelling,dc=org
-      ldif: classpath:initial-ldap-structure.ldif
-      credential:
-        username: cn=admin,dc=integratedmodelling,dc=org
-        password: password
-      port: 8389
-      validation:
-        enabled: true
   profiles:
     default: true
   security:
@@ -43,10 +33,24 @@ spring:
               
 mongo:
   hostname: localhost
-  port: 27017
+  port: 27018
+
+ldap:
+  partitionSuffix: dc=integratedmodelling,dc=org
+  principal: cn=admin,dc=integratedmodelling,dc=org
+  password: curd-h0cod
+  port: 389
+  url: ldap://localhost:389
+  userGroup: ou=groups
+  userDnPattern: (uid={0})
   
 logging:
   file: hub.log
+  #level:
+  #  org:
+  #    springframework:
+  #      data:
+  #       mongodb: DEBUG
   
 site:
   callback: http://localhost:8080/#/callback
@@ -62,10 +66,11 @@ engine:
 
 email:
    server:
-      hostname: localhost
-      port: 3025
-      username: system
-      password: password
+      hostname: mail.privateemail.com
+      port: 587
+      username: info@integratedmodelling.org
+      password: tinyhipposarefriend
+
    replyable:
       replyable:
       general:

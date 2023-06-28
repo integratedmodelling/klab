@@ -2,61 +2,76 @@
 	"IM": {
 		"name": "IM",
 		"description": "Integrated Modelling Partnership",
+		"iconUrl": "https://integratedmodelling.org/statics/logos/k.lab.png",
 		"sshKey": null,
+		"defaultExpirationTime": 0,
+		"worldview": true,
+		"complimentary": true,
+		"optIn": false,
+		"maxUpload": 1073741824,
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/im.git",
 			"https://bitbucket.org/integratedmodelling/im.aries.git"
 		],
-        "iconUrl": "http://integratedmodelling.org/statics/logos/k.lab.png",
-		"worldview": true,
-		"preliminary": true,
         "observables": [],
-        "roleRequirement" : "ROLE_ADMINISTRATOR"
+        "customProperties":[],
+        "dependsOn":[]
 	},
 	"ALICE" : {
         "name": "ALICE",
         "description": "Improving the management of Atlantic Landscapes: accounting for biodiversity and ecosystem services",
+        "iconUrl": "http://integratedmodelling.org/statics/logos/ALICE.png",
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/alice.sandbox.git"
 		],
-        "iconUrl": "http://integratedmodelling.org/statics/logos/ALICE.png",
-		"observables": [],
+        "sshKey": null,
+		"defaultExpirationTime": 86400000,
 		"worldview": false,
-		"roleRequirement" : "ROLE_ADMINISTRATOR",
-		"dependsOn": ["IM"]
+		"complimentary": false,
+		"optIn": false,
+		"maxUpload": 1073741824,
+		"observables": [],
+        "customProperties":[],
+        "dependsOn":["IM","ARIES"]
 	},
 	"SEEA" : {
         "name": "SEEA",
         "description": "SEEA Project",
+        "iconUrl": "https://integratedmodelling.org/statics/logos/SEEA_logo_512x512.png",
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/un.seea.aries.git#master"
 		],
-        "iconUrl": "https://integratedmodelling.org/statics/logos/SEEA_logo_512x512.png",
-		"observables": [],
+        "sshKey": null,
+		"defaultExpirationTime": 86400000,
 		"worldview": false,
-		"roleRequirement" : "ROLE_ADMINISTRATOR",
-		"dependsOn": ["IM","ARIES"]
+		"complimentary": true,
+		"optIn": false,
+		"maxUpload": 1073741824,
+		"observables": [],
+        "customProperties":[],
+        "dependsOn": ["IM","ARIES"]
 	},
 	"LETICIA" : {
         "name": "LETICIA",
         "description": "Improving the management of Atlantic Landscapes: accounting for biodiversity and ecosystem services",
+        "iconUrl": "",
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/aries.heco.git"
 		],
-        "iconUrl": "",
-		"observables": [],
+        "sshKey": null,
+		"defaultExpirationTime": 0,
 		"worldview": false,
-		"roleRequirement" : "ROLE_ADMINISTRATOR",
+		"complimentary": false,
+		"optIn": false,
+		"maxUpload": 1073741824,
+		"observables": [],
+        "customProperties":[],
 		"dependsOn": ["IM","ARIES"]
 	},
 	"ARIES": {
 		"name": "ARIES",
-		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
-		"sshKey": null,
+		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",		
         "iconUrl": "http://integratedmodelling.org/statics/logos/ARIES.png",
-		"worldview": false,
-		"roleRequirement" : "ROLE_ADMINISTRATOR",
-		"dependsOn": ["IM"],
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/im.data.global.git",
 			"https://bitbucket.org/integratedmodelling/im.data.usa.git",
@@ -392,7 +407,15 @@
 				"state": "FORTHCOMING",
 				"extendedDescription": "A dynamic model estimating the total accumulated nitrogen from livestock and from addition of fertilizers that cannot be absorbed by vegetation and flow into groundwater will come online in 2020."
 			}
-		]
+		],
+		"sshKey": null,
+		"defaultExpirationTime": 0,
+		"worldview": false,
+		"complimentary": true,
+		"optIn": false,
+		"maxUpload": 1073741824,
+        "customProperties":[],
+        "dependsOn": ["IM"]
 	}
 }
 

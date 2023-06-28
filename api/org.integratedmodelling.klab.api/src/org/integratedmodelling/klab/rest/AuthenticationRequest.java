@@ -15,6 +15,7 @@ public abstract class AuthenticationRequest {
 	protected String certificate;
 	protected String key;
 	protected ICertificate.Level level;
+	protected String idAgreement;
 	
 	public AuthenticationRequest() {
 	    this.setLevel(ICertificate.Level.INSTITUTIONAL);
@@ -50,5 +51,13 @@ public abstract class AuthenticationRequest {
 	public void setLevel(ICertificate.Level level) {
 		this.level = level;
 	}
+    public String getIdAgreement() {
+        return idAgreement;
+    }
+    public void setIdAgreement(String idAgreement) {
+        this.idAgreement = idAgreement;
+    }
+	
+	
 
 }

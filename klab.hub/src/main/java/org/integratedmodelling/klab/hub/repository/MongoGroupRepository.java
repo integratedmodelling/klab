@@ -17,7 +17,10 @@ public interface MongoGroupRepository extends MongoRepository<MongoGroup, Object
 	Optional<MongoGroup> findByNameIgnoreCase(String groupName);
 	boolean existsByNameIgnoreCase(String groupName);
 	
-	@Query("{'preliminary' : true }")
-	List<MongoGroup> findPrelimGroups(); 
+	@Query("{'complimentary' : true }")
+	List<MongoGroup> findComplimentaryGroups(); 
+	
+    List<MongoGroup> findByOptInIsTrue();
+    List<MongoGroup> findByComplimentaryIsTrue(); 
 	
 }

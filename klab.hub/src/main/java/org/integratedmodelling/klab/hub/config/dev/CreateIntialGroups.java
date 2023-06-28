@@ -20,7 +20,6 @@ public class CreateIntialGroups {
 	
 	private URL fileUrl;
 	private MongoGroupRepository repo;
-	private Map<String, MongoGroup> groups = new HashMap<>();
 	
 	public void execute() {
 		Map<String, MongoGroup> groups = new HashMap<>();

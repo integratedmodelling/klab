@@ -56,38 +56,4 @@ public class JwtToken {
 		}
 		return token;
 	}
-
-
-	//This is only around to work for the legacy code
-	public String createEngineJwtToken(User user) {
-		JwtClaims claims = new JwtClaims();
-		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-		claims.setIssuer(hub.getName());
-		claims.setSubject(user.getUsername());
-		claims.setAudience(ENGINE_AUDIENCE);
-		claims.setIssuedAtToNow();
-		claims.setExpirationTimeMinutesInTheFuture(60 * 24 * EXPIRATION_DAYS);
-		claims.setGeneratedJwtId();
-		
-		List<String> roleStrings = new ArrayList<>();
-		for (Role role : user.getAuthorities()) {
-			roleStrings.add(role.toString());
-		}
-		
-		claims.setStringListClaim(JWT_CLAIM_KEY_PERMISSIONS, roleStrings);
-		JsonWebSignature jws = new JsonWebSignature();
-		jws.setPayload(claims.toJson());
-		jws.setKey(NetworkKeyManager.INSTANCE.getPrivateKey());
-		jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.RSA_USING_SHA256);
-		
-		String token;
-		try {
-			token = jws.getCompactSerialization();
-		} catch (JoseException e) {
-			token = null;
-			Logging.INSTANCE
-					.error(String.format("Failed to generate JWT token string for user '%s': ", user.getUsername()), e);
-		}
-		return token;
-	}
 }

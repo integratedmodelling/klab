@@ -113,6 +113,7 @@ public class KrigingResolver extends AbstractContextualizer implements IResolver
 
 			Point point = (Point) shape.getJTSGeometry();
 			IState svalue = null;
+			
 			if (this.observable == null) {
 				if (((IDirectObservation) feature).getStates().size() == 1) {
 					this.observable = ((IDirectObservation) feature).getStates().iterator().next().getObservable()

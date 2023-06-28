@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,15 +19,25 @@ public class GroupRequestTask extends ModifyGroupsTask{
 	@Component
 	public static class Command extends TaskCommand {
 		
-		@Autowired
-		private UserRepository userRepository;
 		
-		@Override
+		private UserRepository userRepository;
+		private AgreementService agreementService;
+
+		@Autowired
+		public Command(UserRepository userRepository, AgreementService agreementService) {
+            super();
+            this.userRepository = userRepository;
+            this.agreementService = agreementService;
+        }
+
+
+
+        @Override
 		public void executeAccept(Task task) {
 			GroupRequestTask grt = (GroupRequestTask)task;
 			User user = userRepository.findByNameIgnoreCase(grt.getUsername()).get();
 			Set<GroupEntry> newGroupEntries = grt.getRequestGroups();
-			Set<GroupEntry> currentGroupEntries = user.getGroupEntries();
+			Set<GroupEntry> currentGroupEntries = user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries();
 			
 			Set<String> currentGroupNameList = currentGroupEntries.stream()
 					.map(GroupEntry::getGroupName)
@@ -51,10 +62,10 @@ public class GroupRequestTask extends ModifyGroupsTask{
 							.findFirst()
 							.get();
 					
-					if(userGrpEntry.getExperation() !=null && !userGrpEntry.getExperation().isAfter(newGrpEntry.getExperation())) {
+					if(userGrpEntry.getExpiration() !=null && !userGrpEntry.getExpiration().isAfter(newGrpEntry.getExpiration())) {
 						currentGroupEntries.remove(userGrpEntry);
 						currentGroupEntries.add(newGrpEntry);
-						task.addToLog("Group "+newGrpEntry.getGroupName()+" experation updated to "+newGrpEntry.getExperation());
+						task.addToLog("Group "+newGrpEntry.getGroupName()+" expiration updated to "+newGrpEntry.getExpiration());
 						added = true;
 					}
 					
@@ -64,13 +75,14 @@ public class GroupRequestTask extends ModifyGroupsTask{
 							.findFirst()
 							.get();
 					currentGroupEntries.add(newGrpEntry);
-					task.addToLog("Group "+newGrpEntry.getGroupName()+" added with experation "+newGrpEntry.getExperation());
+					task.addToLog("Group "+newGrpEntry.getGroupName()+" added with expiration "+newGrpEntry.getExpiration());
 					added = true;
 				}
 			}
 			if (added) {
-				user.setGroupEntries(currentGroupEntries);
-				userRepository.save(user);
+			    Agreement agreement = user.getAgreements().stream().findFirst().get().getAgreement();
+			    agreement.setGroupEntries(currentGroupEntries);
+			    agreementService.updateAgreement(agreement);
 			} else {
 				task.addToLog("No group(s) added");
 			}

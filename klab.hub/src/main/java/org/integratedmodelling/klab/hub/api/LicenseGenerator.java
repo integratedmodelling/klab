@@ -17,7 +17,7 @@ public class LicenseGenerator {
 	
     LicenseConfigService configService;
 
-	public byte[] generate(ProfileResource profile, String configId) {
+	public byte[] generate(ProfileResource profile, Agreement agreement, String configId) {
 	    LicenseConfiguration config;
 	    
 	    if(configId == null) {
@@ -26,15 +26,12 @@ public class LicenseGenerator {
 	        config = configService.getConfigByKey(configId);
 	    }
 	    
-	    Properties props = PropertiesFactory.fromProfile(profile, config).getProperties();
+	    Properties props = PropertiesFactory.fromProfile(profile, agreement, config).getProperties();
 	    
 	    //Properties engineProperties = PropertiesFactory.fromProfile(profile, c).getProperties();
 	    
 		if(config.getClass().getName().equals(BouncyConfiguration.class.getName())) {
 			return new BouncyLicense().generate(props, config);
-		}
-		if(config.getClass().getName().equals(LegacyConfiguration.class.getName())) {
-			return new LegacyLicense().generate(props, config);
 		} else {
 			throw new BadRequestException("Bad request");
 		}
@@ -55,9 +52,6 @@ public class LicenseGenerator {
         
         if(config.getClass().getName().equals(BouncyConfiguration.class.getName())) {
             return new BouncyLicense().generate(props, config);
-        }
-        if(config.getClass().getName().equals(LegacyConfiguration.class.getName())) {
-            return new LegacyLicense().generate(props, config);
         } else {
             throw new BadRequestException("Bad request");
         }
