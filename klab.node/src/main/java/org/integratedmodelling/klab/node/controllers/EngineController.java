@@ -111,11 +111,13 @@ public class EngineController {
 		ret.getResourceNamespaces().addAll(resourceManager.getNamespaces());
 		ret.getResourceCatalogs().add(resourceManager.getDefaultCatalog());
 		ret.getResourceNamespaces().add(resourceManager.getDefaultNamespace());
-
-		for (String urn : resourceManager.getOnlineResources()) {
-			if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
-				ret.getResourceUrns().add(urn);
-			}
+		// if hub is searching for statistics node, the user is null
+		if (user != null) {
+    		for (String urn : resourceManager.getOnlineResources()) {
+    			if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
+    				ret.getResourceUrns().add(urn);
+    			}
+    		}
 		}
 
 		/**
