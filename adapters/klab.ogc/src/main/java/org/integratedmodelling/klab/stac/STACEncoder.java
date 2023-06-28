@@ -5,11 +5,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
+import org.hortonmachine.gears.utils.CrsUtilities;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -30,7 +34,7 @@ import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -92,7 +96,7 @@ public class STACEncoder implements IResourceEncoder {
                     + " cannot be find.");
         }
 
-        GridCoverage coverage = null;
+        GridCoverage2D coverage = null;
 
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
         Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
@@ -117,8 +121,10 @@ public class STACEncoder implements IResourceEncoder {
                     space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(),
                     (int) grid.getXCells(), (int) grid.getYCells());
 
+            Integer srid = items.get(0).getEpsg();
+            CoordinateReferenceSystem outputCrs = CrsUtilities.getCrsFromSrid(srid);
             ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
-                    space.getProjection().getCoordinateReferenceSystem());
+                    DefaultGeographicCRS.WGS84).transform(outputCrs, true);
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(), (int) grid.getYCells());
             String stacBand = resource.getParameters().get("band", String.class);
             HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, lpm);
