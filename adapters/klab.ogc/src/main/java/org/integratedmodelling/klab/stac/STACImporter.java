@@ -72,7 +72,7 @@ public class STACImporter implements IResourceImporter {
                 try {
                     Parameters<String> parameters = new Parameters<>();
                     parameters.putAll(userData);
-                    parameters.put("catalogUrl", importLocation);
+                    parameters.put("catalogUrl", removeLastSlash(importLocation));
 
                     String collectionId = collection.getId();
                     parameters.put("collectionId", collectionId);
@@ -97,6 +97,11 @@ public class STACImporter implements IResourceImporter {
         }
 
         return ret;
+    }
+
+    // Removing the last slash makes the URL easier to manage on later steps
+    private String removeLastSlash(String importLocation) {
+        return importLocation.endsWith("/") ? importLocation.substring(0, importLocation.length() - 1) : importLocation;
     }
 
     @Override
