@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.stac.STACCalculator;
 import org.integratedmodelling.klab.stac.STACEncoder;
 import org.integratedmodelling.klab.stac.STACImporter;
 import org.integratedmodelling.klab.stac.STACPublisher;
+import org.integratedmodelling.klab.stac.STACService;
 import org.integratedmodelling.klab.stac.STACValidator;
 
 @ResourceAdapter(type = STACAdapter.ID, version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false)
@@ -64,4 +65,7 @@ public class STACAdapter implements IResourceAdapter {
 				null));
 	}
 
+	public static STACService getService(String catalogUrl) {
+	    return new STACService(catalogUrl);
+	}
 }
