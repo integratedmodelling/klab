@@ -24,10 +24,16 @@ public class Valhalla {
 	public Valhalla() {
 		this("http://localhost:8002");
 	}
-
+	
+	public Valhalla(boolean remote) {
+		String serviceUrl;
+		if (remote) serviceUrl = "http://192.168.250.240:8002";
+		else serviceUrl = "http://localhost:8002";
+		new Valhalla(serviceUrl);
+	}
+	
 	public Valhalla(String serviceUrl) {
-		String service = "http://localhost:8002";
-		this.service = service;
+		this.service = serviceUrl;
 		valhalla = new ValhallaRuntimeEnvironment(service);
 		isOnline = valhalla.isOnline();
 		deserializer = new ValhallaOutputDeserializer();
