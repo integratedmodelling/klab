@@ -246,6 +246,24 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.serverUrl = serverUrl;
 		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
+
+		//TODO Agreement list 
+		List<GroupEntry> safeGroups = new ArrayList<>();
+		for (GroupEntry entry : cleanedProfile.getAgreements().get(0).getAgreement().getGroupEntries()) {
+			if(entry != null) {
+				MongoGroup cleanGroup = new MongoGroup();
+				MongoGroup unsafeGroup = entry.getGroup();
+				cleanGroup.setIconUrl(unsafeGroup.getIconUrl());
+				cleanGroup.setName(unsafeGroup.getName());
+				cleanGroup.setDependsOn(unsafeGroup.getDependsOn());
+				cleanGroup.setWorldview(unsafeGroup.isWorldview());
+				cleanGroup.setDescription(unsafeGroup.getDescription());
+				cleanGroup.setOptIn(unsafeGroup.isOptIn());
+				entry.setGroup(cleanGroup);
+				safeGroups.add(entry);
+			}
+		}
+
 		//TODO check
 		cleanedProfile.agreements = cleanedProfile.getAgreements();
 		return cleanedProfile;

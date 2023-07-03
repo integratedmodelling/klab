@@ -96,7 +96,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                     agreement.getAgreement().getAgreementLevel().equals(agreementLevel)).toList();        
         
         if (agreements.isEmpty()) {
-            Agreement agreement = agreementService.createAgreement(agreementType, agreementLevel);
+            Agreement agreement = agreementService.createAgreement(agreementType, agreementLevel).stream().findFirst().get();
             user = addAgreement(user, agreement);
         }   
         
