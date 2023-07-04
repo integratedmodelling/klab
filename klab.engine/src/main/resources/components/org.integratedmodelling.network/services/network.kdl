@@ -83,6 +83,12 @@ export object route
 		"Type of transport used to find a route"
 		values Auto, Pedestrian, Bicycle, Bus, Truck, Taxi, MotorScooter, Multimodal
 		default "Auto"	
+		
+	optional enum collapse_geometry
+		"Method used to collapse line and polygon sources and targets to a single point or a set of points that allow route
+		finding."
+		values Centroid
+		default "Centroid"		
 
 	
 //	TODO configuration to use 

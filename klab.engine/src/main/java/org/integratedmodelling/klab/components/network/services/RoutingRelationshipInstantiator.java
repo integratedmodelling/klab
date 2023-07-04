@@ -76,7 +76,19 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         }
     }
     
+    static enum GeometryCollapser {
+    	Centroid("centroid");
+    	private String type;
+    	GeometryCollapser(String type) {
+    		this.type = type;
+    	}
+    	final public String getType() {
+            return this.type;
+        }
+    }
+    
     private TransportType transportType = TransportType.Auto;
+    private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
     private IContextualizationScope scope;
     private Valhalla valhalla; 
     private Graph<IObjectArtifact, DefaultEdge> graph;
@@ -99,6 +111,9 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
          
         if (parameters.containsKey("transport")) {
         	this.transportType = TransportType.valueOf(Utils.removePrefix(parameters.get("transport", String.class)));
+        }
+        if (parameters.containsKey("collapse_geometry")) {
+        	this.geometryCollapser = GeometryCollapser.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
         }
         
         this.valhalla = new Valhalla();
@@ -222,7 +237,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 
                 // Find the optimal route between target and location. 
                 
-                String valhallaInput = Valhalla.buildValhallaJsonInput((IDirectObservation) source, (IDirectObservation) target, transportType.getType());                
+                // Handle non-0 dimension objects: collapse higher dimension geometries to their centroid. This is the easiest. 
+                // More complex versions could involve generating N random points within the geometry, or for polygons random points
+                // along its border. 
+                    
+                String valhallaInput = Valhalla.buildValhallaJsonInput((IDirectObservation) source, (IDirectObservation) target, transportType.getType(), geometryCollapser.getType());                
                 ValhallaOutputDeserializer.OptimizedRoute route;
                 IShape trajectory; 
                 Map<String,Double> stats;

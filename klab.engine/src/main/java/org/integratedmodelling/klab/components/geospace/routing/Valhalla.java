@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.exceptions.KlabException;
+
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -132,10 +134,21 @@ public class Valhalla {
 	}
 
 	public static String buildValhallaJsonInput(IDirectObservation source, IDirectObservation target,
-			String transportType) {
-
-		double[] sourceCoordinates = source.getSpace().getStandardizedCentroid();
-		double[] targetCoordinates = target.getSpace().getStandardizedCentroid();
+			String transportType, String geometryCollapser) {
+		
+		double[] sourceCoordinates = null;
+		double[] targetCoordinates = null;
+		
+		// Using a switch statement for generality when more methods will be supported.
+		switch(geometryCollapser) {
+		case "centroid":
+			sourceCoordinates = source.getSpace().getStandardizedCentroid();
+			targetCoordinates = target.getSpace().getStandardizedCentroid();
+			break;
+		default: 
+			throw new KlabException("Invalid method for geometry collapse: " + geometryCollapser +". Supported: \"centroid\".");
+		}
+		
 		double sourceLat = sourceCoordinates[1];
 		double sourceLon = sourceCoordinates[0];
 		double targetLat = targetCoordinates[1];
