@@ -68,7 +68,7 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
-import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.alg.cycle.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;

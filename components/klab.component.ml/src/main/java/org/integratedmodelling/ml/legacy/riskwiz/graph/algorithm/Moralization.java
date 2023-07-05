@@ -10,14 +10,14 @@ import org.jgrapht.Graphs;
  
 public class Moralization<V, E > extends Algorithm<V, E > {
 
-    public Moralization() {// TODO Auto-generated constructor stub
+    public Moralization(Class<? extends E> cls) {// TODO Auto-generated constructor stub
+    	super(cls);
     }
 
-    public RiskUndirectedGraph<V, E>   execute(RiskDirectedGraph<V, E> srcGarph) {
+    public RiskUndirectedGraph<V, E> execute(RiskDirectedGraph<V, E> srcGarph) {
         // add moral edges
 		
-        RiskUndirectedGraph<V, E> copyGraph = new RiskUndirectedGraph<V, E>(
-                srcGarph.getEdgeFactory());
+        RiskUndirectedGraph<V, E> copyGraph = new RiskUndirectedGraph<V, E>(this.edgeClass);
 		  
         Graphs.addGraph(copyGraph, srcGarph);
 		 

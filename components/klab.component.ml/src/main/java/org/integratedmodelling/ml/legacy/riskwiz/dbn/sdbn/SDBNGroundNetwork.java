@@ -34,10 +34,7 @@
 package org.integratedmodelling.ml.legacy.riskwiz.dbn.sdbn;
 
 
-import org.integratedmodelling.ml.legacy.riskwiz.bn.BNEdge;
-import org.integratedmodelling.ml.legacy.riskwiz.bn.BNNode;
 import org.integratedmodelling.ml.legacy.riskwiz.dbn.DBNGroundNetwork;
-import org.jgrapht.EdgeFactory;
 
 
 /**
@@ -54,32 +51,31 @@ public class SDBNGroundNetwork extends DBNGroundNetwork {
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * @param edgeClass
-     */
-    public SDBNGroundNetwork(Class<? extends BNEdge> edgeClass) {
-        super(edgeClass);
-        // TODO Auto-generated constructor stub
-    }
+//    /**
+//     * @param edgeClass
+//     */
+//    public SDBNGroundNetwork(Class<? extends BNEdge> edgeClass) {
+//        super(edgeClass);
+//        // TODO Auto-generated constructor stub
+//    }
 
     /**
      * @param ef
      * @param allowMultipleEdges
      * @param allowLoops
      */
-    public SDBNGroundNetwork(EdgeFactory<BNNode, BNEdge> ef,
-            boolean allowMultipleEdges, boolean allowLoops) {
-        super(ef, allowMultipleEdges, allowLoops);
+    public SDBNGroundNetwork(boolean allowMultipleEdges, boolean allowLoops) {
+        super(allowMultipleEdges, allowLoops);
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * @param ef
-     */
-    public SDBNGroundNetwork(EdgeFactory<BNNode, BNEdge> ef) {
-        super(ef);
-        // TODO Auto-generated constructor stub
-    }
+//    /**
+//     * @param ef
+//     */
+//    public SDBNGroundNetwork(EdgeFactory<BNNode, BNEdge> ef) {
+//        super(ef);
+//        // TODO Auto-generated constructor stub
+//    }
 
     /**
      * @param name
