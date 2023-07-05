@@ -643,7 +643,7 @@ public class Space extends AbstractSpatialExtent implements ISpace {
     }
 
     @Override
-    public IProjection getProjection() {
+    public Projection getProjection() {
         return projection;
     }
 
