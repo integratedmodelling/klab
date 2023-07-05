@@ -40,7 +40,6 @@ import org.integratedmodelling.ml.legacy.riskwiz.domain.DiscreteDomain;
 import org.integratedmodelling.ml.legacy.riskwiz.domain.IntervalDomain;
 import org.integratedmodelling.ml.legacy.riskwiz.domain.LabelDomain;
 import org.integratedmodelling.ml.legacy.riskwiz.graph.RiskDirectedGraph;
-import org.jgrapht.EdgeFactory;
 
 
 /**
@@ -65,7 +64,7 @@ public class GenericBeliefNetwork<E> extends RiskDirectedGraph<BNNode, E> {
      * @param allowMultipleEdges
      * @param allowLoops
      */
-    public GenericBeliefNetwork(EdgeFactory<BNNode, E> ef,
+    public GenericBeliefNetwork(Class<? extends E> ef,
             boolean allowMultipleEdges, boolean allowLoops) {
         super(ef, allowMultipleEdges, allowLoops);
         // TODO Auto-generated constructor stub
@@ -79,13 +78,13 @@ public class GenericBeliefNetwork<E> extends RiskDirectedGraph<BNNode, E> {
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * @param ef
-     */
-    public GenericBeliefNetwork(EdgeFactory<BNNode, E> ef) {
-        super(ef);
-        // TODO Auto-generated constructor stub
-    }
+//    /**
+//     * @param ef
+//     */
+//    public GenericBeliefNetwork(EdgeFactory<BNNode, E> ef) {
+//        super(ef);
+//        // TODO Auto-generated constructor stub
+//    }
 	
     public String getComment() {
         return comment;

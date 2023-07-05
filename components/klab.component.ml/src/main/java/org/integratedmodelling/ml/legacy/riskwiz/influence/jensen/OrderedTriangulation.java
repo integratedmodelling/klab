@@ -20,7 +20,9 @@ public class OrderedTriangulation extends Algorithm<BNNode, BNEdge> {
     private SortedSet<SJTVertex> cliques;
     int counter = 0;
 
-    public OrderedTriangulation() {}
+    public OrderedTriangulation() {
+    	super(BNEdge.class);
+    }
 
     /*
      * Returns triangulated beliefNetwork  , create a set of cliques of that beliefNetwork which
@@ -31,8 +33,7 @@ public class OrderedTriangulation extends Algorithm<BNNode, BNEdge> {
             Vector<Set<BNNode>> oredredSets,
             Vector< BNNode> oredredDecisionNodes) {
         cliques = new TreeSet<SJTVertex>();
-        RiskUndirectedGraph<BNNode, BNEdge> graphCopy = new RiskUndirectedGraph<BNNode, BNEdge>(
-                graph.getEdgeFactory());
+        RiskUndirectedGraph<BNNode, BNEdge> graphCopy = new RiskUndirectedGraph<BNNode, BNEdge>(BNEdge.class);
 
         // copy beliefNetwork
         Graphs.addGraph(graphCopy, graph);

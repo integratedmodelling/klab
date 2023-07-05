@@ -33,53 +33,46 @@
 
 package org.integratedmodelling.ml.legacy.riskwiz.bn;
 
-
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.graph.ClassBasedEdgeFactory;
-
-
 /**
  * @author Sergey Krivov
  * 
  */
 public class BeliefNetwork extends GenericBeliefNetwork<BNEdge> {
 
-    /**
+    private static final long serialVersionUID = -4789285633181382847L;
+
+	/**
      * @param ef
      * @param allowMultipleEdges
      * @param allowLoops
      */
-    public BeliefNetwork(EdgeFactory<BNNode, BNEdge> ef,
-            boolean allowMultipleEdges, boolean allowLoops) {
-        super(ef, allowMultipleEdges, allowLoops);
-        // TODO Auto-generated constructor stub
+    public BeliefNetwork(boolean allowMultipleEdges, boolean allowLoops) {
+        super(BNEdge.class, allowMultipleEdges, allowLoops);
+        this.name = "";
     }
 
     /**
      * @param edgeClass
      */
-    public BeliefNetwork(Class<? extends BNEdge> edgeClass) {
-        super(edgeClass);
-        // TODO Auto-generated constructor stub
+    public BeliefNetwork() {
+        this(false, false);
+        this.name = "";
     }
 
-    /**
-     * @param ef
-     */
-    public BeliefNetwork(EdgeFactory<BNNode, BNEdge> ef) {
-        super(ef);
-        // TODO Auto-generated constructor stub
-    }
+//    /**
+//     * @param ef
+//     */
+//    public BeliefNetwork(EdgeFactory<BNNode, BNEdge> ef) {
+//        super(ef);
+//        // TODO Auto-generated constructor stub
+//    }
 	
     public BeliefNetwork(String name) {
-        super(new ClassBasedEdgeFactory<BNNode, BNEdge>(BNEdge.class));
+    	this(false, false);
         this.name = name;
         bNNodeFactory = new BNNodeFactory();
     }
 	
-    public BeliefNetwork() {
-        this("");
-    }
 
     public String getEdgeComment(String sourceNodeName, String targetNodeName) {
         BNNode sourceNode = getBeliefNode(sourceNodeName);

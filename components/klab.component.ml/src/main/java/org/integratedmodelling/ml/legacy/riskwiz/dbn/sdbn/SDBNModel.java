@@ -38,7 +38,6 @@ import java.util.Vector;
 
 import org.integratedmodelling.ml.legacy.riskwiz.bn.BNNode;
 import org.integratedmodelling.ml.legacy.riskwiz.bn.GenericBeliefNetwork;
-import org.jgrapht.EdgeFactory;
 
 
 /**
@@ -65,9 +64,8 @@ public class SDBNModel extends GenericBeliefNetwork<SDBNEdge> {
      * @param allowMultipleEdges
      * @param allowLoops
      */
-    public SDBNModel(EdgeFactory<BNNode, SDBNEdge> ef,
-            boolean allowMultipleEdges, boolean allowLoops) {
-        super(ef, allowMultipleEdges, allowLoops);
+    public SDBNModel(boolean allowMultipleEdges, boolean allowLoops) {
+        super(SDBNEdge.class, allowMultipleEdges, allowLoops);
         // TODO Auto-generated constructor stub
     }
 
@@ -79,13 +77,13 @@ public class SDBNModel extends GenericBeliefNetwork<SDBNEdge> {
         // TODO Auto-generated constructor stub
     }
 
-    /**
-     * @param ef
-     */
-    public SDBNModel(EdgeFactory<BNNode, SDBNEdge> ef) {
-        super(ef);
-        // TODO Auto-generated constructor stub
-    }
+//    /**
+//     * @param ef
+//     */
+//    public SDBNModel(EdgeFactory<BNNode, SDBNEdge> ef) {
+//        super(ef);
+//        // TODO Auto-generated constructor stub
+//    }
 	
     public int getNumberOfSlices() {
         return numberOfSlices;
