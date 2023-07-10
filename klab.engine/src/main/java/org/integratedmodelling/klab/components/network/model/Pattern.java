@@ -23,7 +23,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.jgrapht.Graph;
-import org.jgrapht.alg.BlockCutpointGraph;
+import org.jgrapht.alg.connectivity.BlockCutpointGraph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 
