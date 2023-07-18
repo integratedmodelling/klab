@@ -95,7 +95,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
     private KimConcept relationshipSource = null;
     private KimConcept relationshipTarget = null;
     private KimConcept temporalInherent = null;
-
     private KimConcept validParent = null;
 
     /**
@@ -1157,6 +1156,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
         this.otherConcept = otherConcept;
     }
 
+    @Override
     public KimConcept getValidParent() {
         return validParent;
     }
