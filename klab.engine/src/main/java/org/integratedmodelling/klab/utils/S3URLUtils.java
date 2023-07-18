@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab;
+package org.integratedmodelling.klab.utils;
 
 import static org.junit.Assert.assertTrue;
 
@@ -11,9 +11,6 @@ import javax.annotation.CheckReturnValue;
 
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
-import org.integratedmodelling.klab.utils.FileUtils;
-import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.URLUtils;
 import org.junit.Test;
 
 import com.amazonaws.SdkClientException;
@@ -26,17 +23,17 @@ import com.amazonaws.services.s3.model.S3ObjectInputStream;
 
 public class S3URLUtils {
 	@CheckReturnValue
-	public static File getFileForURL(String url) throws KlabIOException {
+	public static File getFileForURL(String url, String region) throws KlabIOException {
 		if (url.toString().startsWith("s3:")) {
 			Pair<String, String> bucketAndKey = extractBucketAndKey(url);
 			String bucketName = bucketAndKey.getFirst();
 			String key = bucketAndKey.getSecond();
 			try {
 				AmazonS3 s3client = AmazonS3ClientBuilder.standard()
-					.withRegion(Regions.US_WEST_2) // TODO detect the Region beforehand
+					.withRegion(Regions.fromName(region))
 					.withCredentials(new ProfileCredentialsProvider())
 					.build();
-				
+
 				S3Object s3object = s3client.getObject(bucketName, key);
 				S3ObjectInputStream inputStream = s3object.getObjectContent();
 				File temp = File.createTempFile("url", "url");
@@ -66,8 +63,8 @@ public class S3URLUtils {
 		// We are using this URL because it is a known open S3 resource
 		String S3_URL = "s3://landsat-pds/scene_list.gz";
 		
-		File file = S3URLUtils.getFileForURL(S3_URL);
-		
+		File file = S3URLUtils.getFileForURL(S3_URL, "us-west-2");
+
 		assertTrue(file.exists());
 	}
 }

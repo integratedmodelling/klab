@@ -1,10 +1,10 @@
-package org.integratedmodelling.klab.ogc;
+package org.integratedmodelling.klab.test;
 
 import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 
-import org.integratedmodelling.klab.DOIReader;
+import org.integratedmodelling.klab.utils.DOIReader;
 import org.junit.Test;
 
 public class DOIReaderTest {

@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.stac;
 import java.util.Optional;
 import java.util.Set;
 
-import org.integratedmodelling.klab.DOIReader;
+import org.integratedmodelling.klab.utils.DOIReader;
 
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
