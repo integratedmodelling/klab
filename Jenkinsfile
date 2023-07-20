@@ -21,7 +21,7 @@ pipeline {
         NODE_CONTAINER = "node-server-16"
         BASE_CONTAINER = "klab-base-16:bc344fa9a66e93edaa3a2b528a65e7efa2e55a6f"
         PRODUCTS_GEN = shouldPushProducts(env.BRANCH_NAME)
-        TAG = "${env.BRANCH_NAME}"
+        TAG = "${env.BRANCH.replace("/","-")}"
         MINIO_HOST = "http://192.168.250.224:9000"
         MINIO_CREDENTIALS = "bc42afcf-7037-4d23-a7cb-6c66b8a0aa45"
         REGISTRY_CREDENTIALS = "83f9fb8b-e503-4566-9784-e80f2f2d7c64"
