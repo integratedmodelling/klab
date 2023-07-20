@@ -378,9 +378,21 @@ public interface API {
          */
         public static final String AGREEMENT_TEMPLATE = API_BASE + "/agreement-templates";
         /**
+         *URL path for get agreement template.
+         */
+        public static final String AGREEMENT_TEMPLATE_DELETE = AGREEMENT_TEMPLATE + "/delete";
+        /**
+         *URL path for get agreement template.
+         */
+        public static final String AGREEMENT_TEMPLATE_ID = AGREEMENT_TEMPLATE + "/{id}";
+        /**
          *URL path for get agreement template by type and level.
          */
         public static final String AGREEMENT_TEMPLATE_TYPE_LEVEL = AGREEMENT_TEMPLATE + "/type-level";
+        /**
+         *URL path for get agreement template filtered
+         */
+        public static final String AGREEMENT_TEMPLATE_FILTER= AGREEMENT_TEMPLATE + "/filter";
         /**
          * Base URL path for tag resources on the hub.
          */

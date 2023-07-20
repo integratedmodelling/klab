@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
@@ -12,9 +13,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AgreementTemplateRepository  extends MongoRepository<AgreementTemplate, ObjectId>{
 
-     Optional<AgreementTemplate> findByAgreementTypeAndAgreementLevel(AgreementType agreementType, AgreementLevel agreementLevel);
+     Optional<AgreementTemplate> findByAgreementTypeAndAgreementLevelAndDefaultTemplate(AgreementType agreementType, AgreementLevel agreementLevel, Boolean deafaultTemplate);
+     List<AgreementTemplate> findAllByAgreementTypeAndAgreementLevel(AgreementType agreementType, AgreementLevel agreementLevel);
 
     Optional<AgreementTemplate> findById(String id);
+
+    Optional<AgreementTemplate> findByIdIgnoreCase(String id);
 
 
 }
