@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.ogc;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,8 +9,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.integratedmodelling.klab.S3URLUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import io.minio.MinioClient;
 import io.minio.errors.ErrorResponseException;
@@ -28,16 +27,16 @@ public class S3URLUtilsTest {
     String minioEndpoint = "https://play.min.io";
     String accessKey = "Q3AM3UQ867SPQQA43P2F";
     String secretKey = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG";
-    
+
     @Test
-    @Ignore("Not finished yet")
+    @Disabled("Not finished yet")
     public void getAFile() {
         // We are using this URL because it is a known open S3 resource
         String S3_URL = "s3://landsat-pds/scene_list.gz";
         
         File file = S3URLUtils.getFileForURL(S3_URL, "us-west-2");
 
-        assertTrue(file.exists());
+        assertEquals(true, file.exists());
     }
 
     @Test
@@ -57,6 +56,6 @@ public class S3URLUtilsTest {
 
         List<Bucket> buckets = minioClient.listBuckets();
 
-        assertFalse(buckets.isEmpty());
+        assertEquals(false, buckets.isEmpty());
     }
 }
