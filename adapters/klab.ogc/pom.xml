@@ -104,12 +104,27 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk 
+		<!-- https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib -->
 		<dependency>
-			<groupId>com.amazonaws</groupId>
-			<artifactId>aws-java-sdk</artifactId>
-			<version>1.12.506</version>
+		    <groupId>org.jetbrains.kotlin</groupId>
+		    <artifactId>kotlin-stdlib</artifactId>
+		    <version>1.9.0</version>
 		</dependency>
-		-->
+		<!-- https://mvnrepository.com/artifact/io.minio/minio -->
+		<dependency>
+		    <groupId>io.minio</groupId>
+		    <artifactId>minio</artifactId>
+		    <version>8.5.4</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>guava</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-stdlib</artifactId>
+					</exclusion>
+				</exclusions>
+		</dependency>
 	</dependencies>
 </project>

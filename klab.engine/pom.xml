@@ -183,6 +183,10 @@
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.jetbrains.kotlin</groupId>
+					<artifactId>kotlin-stdlib</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -748,6 +752,10 @@
 				<exclusion>
 					<groupId>org.scala-lang</groupId>
 					<artifactId>scala-library</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jetbrains.kotlin</groupId>
+					<artifactId>kotlin-stdlib</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
