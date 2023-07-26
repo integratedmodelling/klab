@@ -67,8 +67,8 @@ public class EngineController {
 	}
 
 
-    private boolean isPublicCapability(ResourceAdapterReference adapter) {
-        return PublicCapability.isPublicCapability(adapter.getName());
+    private boolean isPublicCapability(ResourceAdapterReference adapter, String permissions) {
+        return "*".equals(permissions) && PublicCapability.isPublicCapability(adapter.getName());
     }
 	
 	/**
@@ -92,7 +92,7 @@ public class EngineController {
 			// check if the adapter is authorized for this user
 			String authorized = Configuration.INSTANCE
 					.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
-            if (isAuthorized(user, authorized) || isPublicCapability(adapter)) {
+            if (isAuthorized(user, authorized) || isPublicCapability(adapter, authorized)) {
 				ret.getResourceAdapters().add(adapter);
 				if (adapter.isUniversal()) {
 					IUrnAdapter uad = Resources.INSTANCE.getUrnAdapter(adapter.getName());
