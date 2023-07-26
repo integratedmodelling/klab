@@ -814,10 +814,8 @@ public enum Klab implements IRuntimeService {
             for (INodeIdentity node : Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID)) {
                 // TODO there should be just one, or we should be able to pick the one in our
                 // federated hub. See what to do if the field isn't null.
-                if (node.getName().contains("stats")) {
-                    this.statisticsServer = node;
-                    break;
-                }
+                this.statisticsServer = node;
+                break;
             }
         }
         return this.statisticsServer;

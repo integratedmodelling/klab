@@ -27,18 +27,18 @@ public class StatsNodeService {
     public ResponseEntity<?> getURL(StatsNodeRequest request) throws JsonProcessingException{
         
         RestTemplate restTemplate = new RestTemplate();
-        INodeIdentity statsNode = null;
+        INodeIdentity statsNode;
 
         Collection<INodeIdentity> nodes = Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID);
         for (INodeIdentity node : Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID)) {
             // TODO there should be just one, or we should be able to pick the one in our
             // federated hub. See what to do if the field isn't null.
-            if (node.getName().contains("stats")) {
-                statsNode = node;
-                break;
-            }
+            statsNode = node;
+            break;
         }
-        if (statsNode == null) {
+        if (!nodes.isEmpty()) {
+            statsNode = nodes.iterator().next();
+        } else {
             return null;
         }
         String url = statsNode.getUrls().iterator().next();
