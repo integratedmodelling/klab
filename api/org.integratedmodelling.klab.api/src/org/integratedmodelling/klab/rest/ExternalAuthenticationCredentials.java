@@ -17,18 +17,20 @@ public class ExternalAuthenticationCredentials {
         parameterKeys = new HashMap<>();
         parameterKeys.put("basic", new String[]{"username", "password"});
         parameterKeys.put("oidc", new String[]{"url", "grant_type", "client_id", "client_secrets", "scope", "provider_id"});
+        parameterKeys.put("s3", new String[]{"accessKey", "secretKey"});
     }
 
     /**
      * Credentials, depending on scheme
      * 
-     * for basic: username and password for oidc: Authentication URL, grant type, client ID, client
-     * secret, scope, provider
+     * for basic: username and password
+     * for oidc: Authentication URL, grant type, client ID, client secret, scope, provider
+     * for s3: endpoint URL, access key, secret key
      */
     private List<String> credentials = new ArrayList<>();
 
     /**
-     * one of basic, oidc, ...
+     * one of basic, oidc, s3...
      */
     private String scheme = "basic";
 
