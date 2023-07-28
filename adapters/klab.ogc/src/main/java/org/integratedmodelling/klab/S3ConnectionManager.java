@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
@@ -12,6 +13,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.Pair;
 import io.minio.DownloadObjectArgs;
+import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.InsufficientDataException;
@@ -82,5 +84,22 @@ public class S3ConnectionManager {
 
     public boolean isConnected() {
         return minioClient != null;
+    }
+
+    public InputStream getInputStreamFromS3URL(String url) {
+        Pair<String, String> bucketAndKey = extractBucketAndKey(url);
+        String bucket = bucketAndKey.getFirst();
+        String object = bucketAndKey.getSecond();
+
+        try {
+            return minioClient.getObject(GetObjectArgs.builder()
+                    .bucket(bucket)
+                    .object(object)
+                    .build());
+        } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+                | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
+                | IllegalArgumentException | IOException e) {
+            throw new KlabResourceAccessException("Cannot get stream from the resource at " + url + ". Error " + e);
+        }
     }
 }

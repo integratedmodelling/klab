@@ -5,10 +5,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.S3ConnectionManager;
 import org.integratedmodelling.klab.S3URLUtils;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -62,6 +64,20 @@ public class S3ConnectionManagerTest {
 
             assertTrue(file.exists());
             file.delete();
+        }
+
+        @Test
+        public void getStream() throws IOException {
+            String testResourceURL = "s3://landsat-pds/scene_list.gz";
+            String bucketRegion = "us-west-2";
+            S3ConnectionManager s3connection = new S3ConnectionManager();
+            s3connection.connect(S3URLUtils.AWS_ENDPOINT, Optional.of(bucketRegion));
+
+            InputStream input = s3connection.getInputStreamFromS3URL(testResourceURL);
+
+            File file = File.createTempFile("test", ".gz");
+            FileUtils.copyInputStreamToFile(input, file);
+            assertTrue(file.exists());
         }
     }
 }
