@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-public class S3URLUtilsTest {
+public class S3ConnectionManagerTest {
     String minioEndpoint = "https://play.min.io";
 
     @Test
