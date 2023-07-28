@@ -10,7 +10,6 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.S3ConnectionManager;
 import org.integratedmodelling.klab.S3URLUtils;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,45 +22,18 @@ import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
 
 public class S3URLUtilsTest {
-    @Nested
-    @DisplayName("Minio Exploratory Tests")
-    public class MinioExploratoryTests {
-        String minioEndpoint = "https://play.min.io";
+    String minioEndpoint = "https://play.min.io";
 
-        @Test
-        public void makeATestConnection() {
-            S3ConnectionManager s3connection = new S3ConnectionManager();
-            s3connection.connect(minioEndpoint, Optional.empty());
-        }
-
-        @Test
-        @Disabled("We are in the process of rethinking the Minio utilities")
-        public void getBuckets() throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
-            S3ConnectionManager s3connection = new S3ConnectionManager();
-            s3connection.connect(minioEndpoint, Optional.empty());
-
-//            List<Bucket> buckets = minioClient.listBuckets();
-//
-//            assertFalse(buckets.isEmpty());
-        }
-
-        @Test
-        @Disabled("We are in the process of rethinking the Minio utilities")
-        public void knownBucketExists() throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
-            String existingBucketName = "grocery";
-            S3ConnectionManager s3connection = new S3ConnectionManager();
-            s3connection.connect(minioEndpoint, Optional.empty());
-
-//            List<Bucket> buckets = minioClient.listBuckets();
-//            Optional<Bucket> bucket = buckets.stream().filter(b -> b.name().equals(existingBucketName)).findFirst();
-//
-//            assertTrue(bucket.isPresent());
-        }
+    @Test
+    public void makeATestConnection() {
+        S3ConnectionManager s3connection = new S3ConnectionManager();
+        s3connection.connect(minioEndpoint, Optional.empty());
     }
 
+
     @Nested
-    @DisplayName("AWS Exploratory Tests")
-    public class AWSExploratoryTests {
+    @DisplayName("AWS Tests")
+    public class AWSTests {
         @Test
         public void makeATestConnection() {
             S3ConnectionManager s3connection = new S3ConnectionManager();
@@ -78,7 +50,7 @@ public class S3URLUtilsTest {
             s3connection.connect(S3URLUtils.AWS_ENDPOINT, Optional.of(bucketRegion));
 
             File file = s3connection.getFileFromS3URL(testResourceURL);
-            
+
             assertTrue(file.exists());
         }
     }
