@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.S3ConnectionManager;
@@ -50,17 +51,17 @@ public class S3ConnectionManagerTest {
         }
 
         @Test
-        public void downloadFile() {
-            // TODO see how to manage the file
-            String fileDestination = "./scene_list.gz";
+        public void downloadFile() throws IOException {
             String testResourceURL = "s3://landsat-pds/scene_list.gz";
             String bucketRegion = "us-west-2";
+            String filePath = "test.gz";
             S3ConnectionManager s3connection = new S3ConnectionManager();
             s3connection.connect(S3URLUtils.AWS_ENDPOINT, Optional.of(bucketRegion));
 
-            File file = s3connection.getFileFromS3URL(testResourceURL);
+            File file = s3connection.downloadFileFromS3URL(testResourceURL, filePath);
 
             assertTrue(file.exists());
+            file.delete();
         }
     }
 }
