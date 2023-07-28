@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ogc;
+package org.integratedmodelling.klab.test.utils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -21,6 +21,7 @@ import io.minio.errors.XmlParserException;
 import io.minio.messages.Bucket;
 
 public class MinioExploratoryTests {
+    // These endpoint and credentials were taken from the official MinIO documentation
     String minioEndpoint = "https://play.min.io";
     String minioAccessKey = "Q3AM3UQ867SPQQA43P2F";
     String minioSecretKey = "zuf+tfteSlswRu7BJ86wekitnifILbZam1KYY3TG";

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab;
+package org.integratedmodelling.klab.utils.s3;
 
 import java.io.File;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;

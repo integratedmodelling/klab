@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab;
+package org.integratedmodelling.klab.utils;
 
 import java.util.Collections;
 import java.util.HashSet;

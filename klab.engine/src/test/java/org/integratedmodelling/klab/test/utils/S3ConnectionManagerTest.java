@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.ogc;
+package org.integratedmodelling.klab.test.utils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.S3ConnectionManager;
-import org.integratedmodelling.klab.S3URLUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.s3.S3ConnectionManager;
+import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ public class S3ConnectionManagerTest {
     }
 
     @Nested
-    @DisplayName("AWS Tests")
+    @DisplayName("Tests usign ")
     public class AWSTests {
         @Test
         public void makeATestConnection() {

@@ -1,15 +1,13 @@
-package org.integratedmodelling.klab.ogc;
+package org.integratedmodelling.klab.test.utils;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 
-import org.integratedmodelling.klab.DOIReader;
-import org.junit.Test;
+import org.integratedmodelling.klab.utils.DOIReader;
+import org.junit.jupiter.api.Test;
 
 public class DOIReaderTest {
-
-
     @Test
     public void getAuthorInfoCrossref() {
         String exampleDOI = "10.1093/mnras/stac3799";
