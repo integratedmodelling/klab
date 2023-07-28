@@ -8,6 +8,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.S3ConnectionManager;
 import org.integratedmodelling.klab.S3URLUtils;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -29,13 +30,15 @@ public class S3URLUtilsTest {
 
         @Test
         public void makeATestConnection() {
-            S3URLUtils.connect(minioEndpoint, Optional.empty());
+            S3ConnectionManager s3connection = new S3ConnectionManager();
+            s3connection.connect(minioEndpoint, Optional.empty());
         }
 
         @Test
         @Disabled("We are in the process of rethinking the Minio utilities")
         public void getBuckets() throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
-            S3URLUtils.connect(minioEndpoint, Optional.empty());
+            S3ConnectionManager s3connection = new S3ConnectionManager();
+            s3connection.connect(minioEndpoint, Optional.empty());
 
 //            List<Bucket> buckets = minioClient.listBuckets();
 //
@@ -46,7 +49,8 @@ public class S3URLUtilsTest {
         @Disabled("We are in the process of rethinking the Minio utilities")
         public void knownBucketExists() throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
             String existingBucketName = "grocery";
-            S3URLUtils.connect(minioEndpoint, Optional.empty());
+            S3ConnectionManager s3connection = new S3ConnectionManager();
+            s3connection.connect(minioEndpoint, Optional.empty());
 
 //            List<Bucket> buckets = minioClient.listBuckets();
 //            Optional<Bucket> bucket = buckets.stream().filter(b -> b.name().equals(existingBucketName)).findFirst();
@@ -60,7 +64,8 @@ public class S3URLUtilsTest {
     public class AWSExploratoryTests {
         @Test
         public void makeATestConnection() {
-            S3URLUtils.connect(S3URLUtils.AWS_ENDPOINT, Optional.empty());
+            S3ConnectionManager s3connection = new S3ConnectionManager();
+            s3connection.connect(S3URLUtils.AWS_ENDPOINT, Optional.empty());
         }
 
         @Test
@@ -69,9 +74,10 @@ public class S3URLUtilsTest {
             String fileDestination = "./scene_list.gz";
             String testResourceURL = "s3://landsat-pds/scene_list.gz";
             String bucketRegion = "us-west-2";
-            S3URLUtils.connect(S3URLUtils.AWS_ENDPOINT, Optional.of(bucketRegion));
+            S3ConnectionManager s3connection = new S3ConnectionManager();
+            s3connection.connect(S3URLUtils.AWS_ENDPOINT, Optional.of(bucketRegion));
 
-            File file = S3URLUtils.getFileForURL(testResourceURL, bucketRegion);
+            File file = s3connection.getFileFromS3URL(testResourceURL);
             
             assertTrue(file.exists());
         }
