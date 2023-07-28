@@ -43,7 +43,7 @@ public class S3ConnectionManager {
     }
 
     public File getFileFromS3URL(String url) {
-        if (!url.startsWith("s3:")) {
+        if (!S3URLUtils.isS3Endpoint(url)) {
             throw new KlabIllegalArgumentException("Tried to download the resource at " + url + " using an S3 connection.");
         }
         Pair<String, String> bucketAndKey = extractBucketAndKey(url);
@@ -82,4 +82,7 @@ public class S3ConnectionManager {
         return new Pair<>(uriParts[0], uriParts[1]);
     }
 
+    public boolean isConnected() {
+        return minioClient != null;
+    }
 }

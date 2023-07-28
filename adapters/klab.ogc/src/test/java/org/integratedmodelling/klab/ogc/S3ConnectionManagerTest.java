@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.ogc;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
@@ -20,6 +21,24 @@ public class S3ConnectionManagerTest {
         s3connection.connect(minioEndpoint, Optional.empty());
     }
 
+    @Test
+    public void isNotConnectedBeforeConnection() {
+        S3ConnectionManager s3connection = new S3ConnectionManager();
+
+        boolean isConnected = s3connection.isConnected();
+
+        assertFalse(isConnected);
+    }
+
+    @Test
+    public void isConnectedAfterConnection() {
+        S3ConnectionManager s3connection = new S3ConnectionManager();
+        s3connection.connect(minioEndpoint, Optional.empty());
+
+        boolean isConnected = s3connection.isConnected();
+
+        assertTrue(isConnected);
+    }
 
     @Nested
     @DisplayName("AWS Tests")
