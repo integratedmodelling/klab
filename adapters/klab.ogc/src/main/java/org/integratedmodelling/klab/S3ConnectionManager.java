@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.Pair;
 import io.minio.DownloadObjectArgs;
@@ -41,9 +42,7 @@ public class S3ConnectionManager {
         }
     }
 
-    public File getFileFromS3URL(String url) throws InvalidKeyException, ErrorResponseException, InsufficientDataException,
-            InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException,
-            IllegalArgumentException, IOException { // TODO manage Exceptions
+    public File getFileFromS3URL(String url) {
         if (!url.startsWith("s3:")) {
             throw new KlabIllegalArgumentException("Tried to download the resource at " + url + " using an S3 connection.");
         }
@@ -53,11 +52,17 @@ public class S3ConnectionManager {
         // TODO see how to manage the file
         String filename = "./temp-" + object;
 
-        minioClient.downloadObject(DownloadObjectArgs.builder()
-                .bucket(bucket)
-                .filename(filename)
-                .object(object)
-                .build());
+        try {
+            minioClient.downloadObject(DownloadObjectArgs.builder()
+                    .bucket(bucket)
+                    .filename(filename)
+                    .object(object)
+                    .build());
+        } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+                | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
+                | IllegalArgumentException | IOException e) {
+            throw new KlabResourceAccessException("Cannot download the resource at " + url + ". Error " + e);
+        }
 
         return new File(filename);
     }
