@@ -120,6 +120,7 @@ public class Unit extends AbstractMediator implements IUnit {
             // caught in org.integratedmodelling.klab.model.Model.java:488
             throw new KlabValidationException("Invalid unit: " + string);
         }
+
         if (factor != 1.0) {
             unit = unit.multiply(factor);
         }
@@ -418,72 +419,57 @@ public class Unit extends AbstractMediator implements IUnit {
         return this;
     }
 
-    /**
-     * Perform a context analysis w.r.t. the passed scale and observable and populate the
-     * aggregatedDimension map in the result to reflect how the scale's dimensions are considered
-     * when the unit is used in that scale. Will only properly work with conformant scales in the
-     * geometry, i.e. won't allow areal to mix with volumetric; any hybrid dimensionality will
-     * return a null unit.
-     * 
-     * @param scale
-     * @return
-     * @deprecated
-     */
-    private Unit contextualizeExtents(IObservable observable, IGeometry scale) {
+    // /**
+    // * Perform a context analysis w.r.t. the passed scale and observable and populate the
+    // * aggregatedDimension map in the result to reflect how the scale's dimensions are considered
+    // * when the unit is used in that scale. Will only properly work with conformant scales in the
+    // * geometry, i.e. won't allow areal to mix with volumetric; any hybrid dimensionality will
+    // * return a null unit.
+    // *
+    // * @param scale
+    // * @return
+    // * @deprecated
+    // */
+    // private Unit contextualizeExtents(IObservable observable, IGeometry scale) {
+    //
+    // UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable,
+    // scale, null);
+    // Unit ret = new Unit(_unit);
+    // Unit matching = null;
+    //
+    // if (this.isCompatible(contextualization.getChosenUnit())) {
+    // matching = (Unit) contextualization.getChosenUnit();
+    // /*
+    // * if the chosen unit matches, all dimensions of the scale are represented.
+    // */
+    // for (IGeometry.Dimension dimension : scale.getDimensions()) {
+    // ret.aggregatedDimensions.put(dimension.getExtentDimension(), ExtentDistribution.INTENSIVE);
+    // }
+    // }
+    //
+    // if (matching == null) {
+    // for (IUnit unit : contextualization.getCandidateUnits()) {
+    // if (this.isCompatible(unit)) {
+    // matching = (Unit) unit;
+    // break;
+    // }
+    // }
+    // }
+    //
+    // if (matching == null) {
+    // return null;
+    // }
+    //
+    // ret.aggregatedDimensions.putAll(matching.getAggregatedDimensions());
+    //
+    // return ret;
+    // }
 
-        UnitContextualization contextualization = Units.INSTANCE.getContextualization(observable, scale, null);
-        Unit ret = new Unit(_unit);
-        Unit matching = null;
 
-        if (this.isCompatible(contextualization.getChosenUnit())) {
-            matching = (Unit) contextualization.getChosenUnit();
-            /*
-             * if the chosen unit matches, all dimensions of the scale are represented.
-             */
-            for (IGeometry.Dimension dimension : scale.getDimensions()) {
-                ret.aggregatedDimensions.put(dimension.getExtentDimension(), ExtentDistribution.INTENSIVE);
-            }
-        }
-
-        if (matching == null) {
-            for (IUnit unit : contextualization.getCandidateUnits()) {
-                if (this.isCompatible(unit)) {
-                    matching = (Unit) unit;
-                    break;
-                }
-            }
-        }
-
-        if (matching == null) {
-            return null;
-        }
-
-        ret.aggregatedDimensions.putAll(matching.getAggregatedDimensions());
-
-        return ret;
-    }
 
     @Override
     public IUnit contextualize(IObservable observable, IGeometry scale) {
 
-        /**
-         * EXAMPLE
-         * 
-         * Precipitation comes from data as mm/day. The I,I form of the observable base unit (m^3)
-         * in T,S is m/s, compatible. OK - proceed. Target is m, which is I,E w.r.t. the target as
-         * seen matching to the contextualized extension of m^3. Specific extents must match - if
-         * AREAL and LINEAL are seen together, no compatibility can exist.
-         * 
-         * 1. Turn mm/day -> m/s. Only a mult factor needed M1 2. Turn m/s (I,I) into its (I,E) form
-         * using T extension -> mm: op(x * Tms * 1000) 3. Turn the resulting mm into m. Another
-         * multiplication factor M2. 4. Final strategy is (M1*M2*1000)*x*Tms.
-         * 
-         * In case the target is m^3: I,I -> E,E so step 2 produces two extensions:
-         * op(x*Tms*1000)op(x*S)
-         * 
-         * Model validator should always WARN if extensive is output by data AS LONG AS data come
-         * with their fully specified extension (e.g. T is physical). Otherwise it's an error.
-         */
 
         return Units.INSTANCE.contextualize(observable, this, scale);
 
