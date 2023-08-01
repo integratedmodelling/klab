@@ -18,6 +18,8 @@ import org.junit.jupiter.api.Test;
 public class S3ConnectionManagerTest {
     String minioEndpoint = "https://play.min.io";
 
+    // Note: These tests might require that you have added your MinIO or AWS credentials.
+
     @Test
     public void makeATestConnection() {
         S3ConnectionManager s3connection = new S3ConnectionManager();

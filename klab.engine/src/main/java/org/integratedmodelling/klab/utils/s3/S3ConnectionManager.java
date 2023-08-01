@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
@@ -28,6 +29,11 @@ public class S3ConnectionManager {
     String s3SecretKey;
     MinioClient minioClient;
 
+    /**
+     * Creates a connection to the S3 endpoint 
+     * @param endpoint S3 endpoint
+     * @param region Region of the bucket (Optional)
+     */
     public void connect(String endpoint, Optional<String> region) {
         readS3Credentials(endpoint);
         if (region.isPresent()) {
@@ -45,7 +51,17 @@ public class S3ConnectionManager {
         }
     }
 
+    /**
+     * Downloads a file from the S3 endpoint
+     * @param url of the object
+     * @param filename where the file is going to be stored
+     * @return the File where the object has been downloaded
+     */
     public File downloadFileFromS3URL(String url, String filename) {
+        if (!isConnected()) {
+            throw new KlabIllegalStateException("There is not an open S3 connection.");
+        }
+
         if (!S3URLUtils.isS3Endpoint(url)) {
             throw new KlabIllegalArgumentException("Tried to download the resource at " + url + " using an S3 connection.");
         }
@@ -83,10 +99,19 @@ public class S3ConnectionManager {
         return new Pair<>(uriParts[0], uriParts[1]);
     }
 
+    /**
+     * Checks if there is an existing connection to a S3 endpoint
+     * @return true if connected
+     */
     public boolean isConnected() {
         return minioClient != null;
     }
 
+    /**
+     * Gets the input stream of an object
+     * @param url of the object
+     * @return the object as an InputStream
+     */
     public InputStream getInputStreamFromS3URL(String url) {
         Pair<String, String> bucketAndKey = extractBucketAndKey(url);
         String bucket = bucketAndKey.getFirst();
