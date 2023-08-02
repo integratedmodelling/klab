@@ -126,8 +126,8 @@ public class STACEncoder implements IResourceEncoder {
             ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
                     DefaultGeographicCRS.WGS84).transform(outputCrs, true);
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(), (int) grid.getYCells());
-            String stacBand = resource.getParameters().get("band", String.class);
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, lpm);
+            String assetId = resource.getParameters().get("asset", String.class);
+            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, lpm);
 
             coverage = outRaster.buildCoverage();
             scope.getMonitor().info("Coverage: " + coverage);
