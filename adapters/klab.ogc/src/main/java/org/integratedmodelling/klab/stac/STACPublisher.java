@@ -9,8 +9,8 @@ public class STACPublisher implements IResourcePublisher {
 
     @Override
     public IResource publish(IResource localResource, IResourceCatalog catalog, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
+        // A validation does not seem to be needed
+        return localResource;
     }
 
     @Override
