@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.stats.services;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
@@ -23,23 +24,25 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 public class StatsNodeService {
 
     public static final String STATS_SERVICE_ADAPTER_ID = "stats";
+    private static Logger logger = Logger.getLogger(StatsNodeService.class.getName());
     
     public ResponseEntity<?> getURL(StatsNodeRequest request) throws JsonProcessingException{
         
         RestTemplate restTemplate = new RestTemplate();
-        INodeIdentity statsNode;
+        INodeIdentity statsNode = null;
 
         Collection<INodeIdentity> nodes = Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID);
-        for (INodeIdentity node : Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID)) {
+        for (INodeIdentity node : nodes) {
             // TODO there should be just one, or we should be able to pick the one in our
             // federated hub. See what to do if the field isn't null.
             statsNode = node;
             break;
         }
-        if (!nodes.isEmpty()) {
-            statsNode = nodes.iterator().next();
-        } else {
+        if (statsNode == null) {
+            logger.warning("No statistics server was found");
             return null;
+        } else {
+            logger.info("A stats node was found: "+statsNode.getName());
         }
         String url = statsNode.getUrls().iterator().next();
         //INodeIdentity node = getStatisticsServer();
