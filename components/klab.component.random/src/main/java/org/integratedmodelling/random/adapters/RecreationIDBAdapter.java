@@ -89,7 +89,9 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 		} 
 		if (urn.getParameters().containsKey(RADIUS) ) {
 			parameters.put(RADIUS,urn.getParameters().get(RADIUS));
-		} 
+		} else {
+			parameters.put(RADIUS,"0.0");
+		}
 		
 		String apiKey = urn.getParameters().containsKey(APIKEY) 
 				? urn.getParameters().get(APIKEY) 
@@ -113,17 +115,17 @@ public class RecreationIDBAdapter implements IUrnAdapter {
             	
             	double lat = (double) area.get("lat");
             	double lon = (double) area.get("lon");
+            	String siteName = (String) area.get("name");
             	            	
             	// Create the point. 
             	// TODO: in the general case recreation areas should be polygons while entrances to the areas are points.
             	shape = Shape.create(lon,lat,(Projection) scope.getScale().getSpace().getProjection());
             	
-            	Builder obuilder = builder.startObject(scope.getTargetName(), artifactName + "_" + (n++),
-                        makeScale(urn, shape, scope));
+            	Builder obuilder = builder.startObject(scope.getTargetName(), siteName, makeScale(urn, shape, scope));
             
             	// Add attributes to each recreation area like the name and id.
             	for (Map.Entry<String, Object> entry : area.entrySet()) {
-            		if (entry.getKey()!="lat" || entry.getKey()!="lon") {
+            		if (entry.getKey()!="lat" || entry.getKey()!="lon" || entry.getKey()!="name") {
             			obuilder.withMetadata(entry.getKey(), entry.getValue());
             		}
             	}
@@ -155,8 +157,6 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 	public IResource getResource(String urn) {
 		Urn kurn = new Urn(urn);
         ResourceReference ref = new ResourceReference();
-        System.out.println(urn.toString());
-        System.out.println(kurn.getResourceId());
         ref.setUrn(urn.toString());
         ref.setAdapterType(getName());
         ref.setLocalName(kurn.getResourceId());
