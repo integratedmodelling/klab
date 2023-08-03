@@ -38,7 +38,11 @@ public class RecreationIDB {
 
         RecreationIDB ridb = new RecreationIDB();
 
-        String input = "limit=1&offset=0&state=CO&activity=6,BOATING&radius=9.75";
+//        String input = "limit=1&offset=0&state=CO&activity=6,BOATING&radius=9.75";
+        
+//        String input = "offset=0&activity=1&limit=10&state=CO&radius=10.0";
+        
+        String input = "offset=0&state=CO&radius=20";
 
         final String apiKey = "82b00cad-58b5-40e8-9d77-77caba299473";
 
@@ -46,6 +50,7 @@ public class RecreationIDB {
 
         List<Map<String, Object>> list = recreationAreas.getData();
         System.out.println(list);
+        System.out.println(list.size());
 
     }
 

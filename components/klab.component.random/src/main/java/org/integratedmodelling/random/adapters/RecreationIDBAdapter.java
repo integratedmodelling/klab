@@ -27,23 +27,32 @@ import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 
-@UrnAdapter(type = "random", version = Version.CURRENT)
+@UrnAdapter(type = "recreationidb", version = Version.CURRENT)
 public class RecreationIDBAdapter implements IUrnAdapter {
 
 	public static final String NAME = "ridb";
+	
+	public static final String RECAREAS = "recreation.areas";
+	
+	public static final String SITES = "sites";
 	
 	public static final String LIMIT = "limit";
 	public static final String OFFSET = "offset";
 	public static final String STATE = "state";
 	public static final String ACTIVITY = "activity";
 	public static final String RADIUS = "radius";
+	
 	public static final String APIKEY = "apikey"; 
 	
-	
-	public static String[] object_attribute_ids = new String[] { LIMIT, OFFSET, STATE, ACTIVITY, RADIUS};
+	// TODO: complete other possible namespaces.
+	public static String[] namespace_ids = new String[] { RECAREAS };
+	public static String[] area_attribute_ids = new String[] { LIMIT, OFFSET, STATE, ACTIVITY, RADIUS};
 	
 	public RecreationIDBAdapter() {
-		Arrays.sort(object_attribute_ids);
+		System.out.println("In constructor.");
+		
+		Arrays.sort(area_attribute_ids);
+		Arrays.sort(namespace_ids);
 	}
 	
 	@Override
@@ -54,40 +63,33 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 	@Override
 	public boolean isOnline(Urn urn) {
 		//TODO
-		return false;
+		return true;
 	}
 	
 	@Override
 	public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
+		
+		System.out.println("In encodeData.");
+		
 		// Based on the encodeData method of the RandomAdapter, assuming that we only create objects:
 		// instances of observables.		
 		
 		Map<String,String> parameters = new HashMap<>();
 		if (urn.getParameters().containsKey(LIMIT)){
 			parameters.put(LIMIT,urn.getParameters().get(LIMIT));
-		} else {
-			parameters.put(LIMIT,"20");
-		}
+		} 
 		if (urn.getParameters().containsKey(OFFSET)) {
 			parameters.put(OFFSET, urn.getParameters().get(OFFSET));
-		} else {
-			parameters.put(OFFSET,"0");
-		}
+		} 
 		if (urn.getParameters().containsKey(STATE)) {
 			parameters.put(STATE,urn.getParameters().get(STATE));
-		} else {
-			parameters.put(STATE,"CO");
-		}
+		} 
 		if (urn.getParameters().containsKey(ACTIVITY)) {
 			parameters.put(ACTIVITY,urn.getParameters().get(ACTIVITY)) ;
-		} else {
-			parameters.put(ACTIVITY,"1");
-		}
+		} 
 		if (urn.getParameters().containsKey(RADIUS) ) {
 			parameters.put(RADIUS,urn.getParameters().get(RADIUS));
-		} else {
-			parameters.put(RADIUS,"10.0");
-		}
+		} 
 		
 		String apiKey = urn.getParameters().containsKey(APIKEY) 
 				? urn.getParameters().get(APIKEY) 
@@ -104,14 +106,14 @@ public class RecreationIDBAdapter implements IUrnAdapter {
             String input = buildRecreationIDBInput(parameters);
             RecreationIDBOutputDeserializer.RecreationAreas recreationAreas = ridb.recreationAreas(input,apiKey);
             List<Map<String, Object>> data = recreationAreas.getData();
-            
+                        
             IShape shape;
             
             for (Map<String,Object> area : data) {
             	
             	double lat = (double) area.get("lat");
             	double lon = (double) area.get("lon");
-            	
+            	            	
             	// Create the point. 
             	// TODO: in the general case recreation areas should be polygons while entrances to the areas are points.
             	shape = Shape.create(lon,lat,(Projection) scope.getScale().getSpace().getProjection());
@@ -122,9 +124,10 @@ public class RecreationIDBAdapter implements IUrnAdapter {
             	// Add attributes to each recreation area like the name and id.
             	for (Map.Entry<String, Object> entry : area.entrySet()) {
             		if (entry.getKey()!="lat" || entry.getKey()!="lon") {
-            			obuilder.withMetadata(entry.getKey(), (String) entry.getValue());
+            			obuilder.withMetadata(entry.getKey(), entry.getValue());
             		}
             	}
+            	obuilder.finishObject();
             
             }
             
@@ -150,15 +153,17 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 	
 	@Override
 	public IResource getResource(String urn) {
-		
 		Urn kurn = new Urn(urn);
         ResourceReference ref = new ResourceReference();
+        System.out.println(urn.toString());
+        System.out.println(kurn.getResourceId());
         ref.setUrn(urn.toString());
         ref.setAdapterType(getName());
         ref.setLocalName(kurn.getResourceId());
         ref.setGeometry("#S2");
 	    ref.setVersion(Version.CURRENT);
 	    ref.setType(getType(kurn));
+	    System.out.println("Returning from getResource.");
 	    return new Resource(ref);
 	}
 

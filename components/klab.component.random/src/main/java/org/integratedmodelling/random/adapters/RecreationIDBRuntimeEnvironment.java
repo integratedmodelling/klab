@@ -95,7 +95,7 @@ public class RecreationIDBRuntimeEnvironment {
     }
 
     private GetRequest buildRequest(String URL, String input, String apiKey) {
-        return Unirest.get(URL)
+        return Unirest.get(URL+input)
                 .header("accept", "application/json")
                 .header("apikey", apiKey);
     }
