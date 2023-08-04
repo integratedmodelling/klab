@@ -186,6 +186,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
         Set<IObservation> connected = new HashSet<>();
 
+        int nullTrajectories = 0;
+        
         for (IObservation source : allSources) {
 
         	
@@ -249,6 +251,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 					route = valhalla.optimized_route(valhallaInput);
 					trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
 	                stats = route.getSummaryStatistics();
+	                
 				} catch (ValhallaException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -261,26 +264,43 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 if (
                 		(timeThreshold == null || (stats.get("time") < timeThreshold)) && 
                 		(distanceThreshold == null || (stats.get("length") < distanceThreshold))
+                	
                 	) 
                 {
-                	connect((IDirectObservation) source, (IDirectObservation) target, trajectory);
-                	connected.add((IObservation) target);
-                	trajectories.put(new Pair<IDirectObservation,IDirectObservation>((IDirectObservation)source,(IDirectObservation)target),trajectory);
-                } 
+                	
+                	if (trajectory != null) {
+                		connect((IDirectObservation) source, (IDirectObservation) target, trajectory);
+                		connected.add((IObservation) target);
+                		trajectories.put(new Pair<IDirectObservation,IDirectObservation>((IDirectObservation)source,(IDirectObservation)target),trajectory);
+                	}
+                	else {
+                		
+                		nullTrajectories += 1; 
+                		
+                	}
+                } 	
                   
             }
         }
-
-
-        context.getMonitor()
-                .info("creating " + graph.edgeSet().size() + " " + Concepts.INSTANCE.getDisplayName(semantics.getType())
-                        + " routing relationships.");
-
+        
+        if (nullTrajectories > 0) {
+        	
+        	context.getMonitor()
+            .info("creating " + graph.edgeSet().size() + " " + Concepts.INSTANCE.getDisplayName(semantics.getType())
+                    + " routing relationships. \n" + nullTrajectories + " relationships could not be created because a route "
+                    		+ "was not found either due to a lack of data or because travel characteristics exceed the allowed limits.");
+        	
+        } else {
+	        context.getMonitor()
+	                .info("creating " + graph.edgeSet().size() + " " + Concepts.INSTANCE.getDisplayName(semantics.getType())
+	                        + " routing relationships.");
+        }
+        
         return instantiateRelationships(semantics);
 	}
 
 	private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
-		// Diego: Not sure about the IScale part...
+		
         int i = 1;
         List<IObjectArtifact> ret = new ArrayList<>();
         // build from graph
