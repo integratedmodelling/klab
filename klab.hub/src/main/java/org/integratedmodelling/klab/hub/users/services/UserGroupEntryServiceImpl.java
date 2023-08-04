@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -24,6 +23,7 @@ import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
 import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.commands.UpdateUsers;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
@@ -69,23 +69,29 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		
 		new UpdateUsers(users, userRepository).execute();
 	}
-	
+
     private Optional<Date> calculateGroupExpirationTime(String username, String groupName) {
-        User user = userRepository.findByNameIgnoreCase(username).orElseThrow();
+        User user = userRepository.findByNameIgnoreCase(username)
+                .orElseThrow(() -> new UserDoesNotExistException(username));
 
-        List<String> dependedOnGroups = groupRepository.findByNameIgnoreCase(groupName).orElseThrow().getDependsOn();
+        List<String> dependedOnGroups = groupRepository.findByNameIgnoreCase(groupName)
+                .orElseThrow(() -> new GroupDoesNotExistException(groupName))
+                .getDependsOn();
 
+        // TODO initialize the Collections of the MongoGroup class and then remove this smelly check
         if (dependedOnGroups == null) {
             return Optional.empty();
         }
-        
         if(dependedOnGroups.isEmpty()) {
             return Optional.empty();
         }
 
         Map<String, Date> groupMaxDate = new HashMap<>();
         for (String group : dependedOnGroups) {
-            Collection<Agreement> agreementsWithGroup = user.getAgreements().stream().map(AgreementEntry::getAgreement).filter(ag -> ag.isValid() && ag.getGroupEntries().contains(group)).collect(Collectors.toUnmodifiableSet());
+            Collection<Agreement> agreementsWithGroup = user.getAgreements().stream()
+                    .map(AgreementEntry::getAgreement)
+                    .filter(ag -> ag.isValid() && ag.getGroupEntries().contains(group))
+                    .collect(Collectors.toUnmodifiableSet());
 
             if (agreementsWithGroup.isEmpty()) {
                 continue;
@@ -97,11 +103,17 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
             }
 
             Date maxExpirationTime = agreementsWithGroup.stream().map(Agreement::getExpirationDate).max(Date::compareTo).get();
-
             groupMaxDate.put(groupName, maxExpirationTime);
         }
 
         return groupMaxDate.values().stream().min(Date::compareTo);
+    }
+
+    private void setExpirationTime(String username, GroupEntry group) {
+        Optional<Date> expirationDate = calculateGroupExpirationTime(username, group.getGroupName());
+        if (expirationDate.isPresent()) {
+            group.setExpiration(DateConversionUtils.dateToLocalDateTime(expirationDate.get()));
+        }
     }
 
 	@Override
@@ -117,20 +129,13 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 					.map(user -> {
 					    List<GroupEntry> groupsToAdd = new ArrayList<GroupEntry>();
 					    groupsToAdd.addAll(groupEntries);
-
-					    groupsToAdd.stream().forEach(g -> {
-					        Optional<Date> expirationDate = calculateGroupExpirationTime(username, g.getGroupName());
-					        if (expirationDate.isPresent()) {
-					            g.setExpiration(DateConversionUtils.dateToLocalDateTime(expirationDate.get()));
-					        }
-					    });
+					    groupsToAdd.stream().forEach(g -> setExpirationTime(username, g));
 
 						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
 						agreements.add(user.getAgreements().stream().findFirst().get().getAgreement());
 						return user;
 						})
-					.orElseThrow(() ->
-					new UserDoesNotExistException(username))
+					.orElseThrow(() -> new UserDoesNotExistException(username))
 			);		
 		}
 		
