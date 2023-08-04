@@ -48,9 +48,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 	public static String[] namespace_ids = new String[] { RECAREAS };
 	public static String[] area_attribute_ids = new String[] { LIMIT, OFFSET, STATE, ACTIVITY, RADIUS};
 	
-	public RecreationIDBAdapter() {
-		System.out.println("In constructor.");
-		
+	public RecreationIDBAdapter() {		
 		Arrays.sort(area_attribute_ids);
 		Arrays.sort(namespace_ids);
 	}
@@ -67,12 +65,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 	}
 	
 	@Override
-	public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
-		
-		System.out.println("In encodeData.");
-		
-		// Based on the encodeData method of the RandomAdapter, assuming that we only create objects:
-		// instances of observables.		
+	public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {	
 		
 		Map<String,String> parameters = new HashMap<>();
 		if (urn.getParameters().containsKey(LIMIT)){
@@ -99,10 +92,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 		
         IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 
-        int n = 1;
         if (scale.getSpace() != null) {
-        	
-        	String artifactName = urn.getResourceId().substring(0, urn.getResourceId().length() - 1);
         	
         	RecreationIDB ridb = new RecreationIDB();
             String input = buildRecreationIDBInput(parameters);
@@ -163,7 +153,6 @@ public class RecreationIDBAdapter implements IUrnAdapter {
         ref.setGeometry("#S2");
 	    ref.setVersion(Version.CURRENT);
 	    ref.setType(getType(kurn));
-	    System.out.println("Returning from getResource.");
 	    return new Resource(ref);
 	}
 
