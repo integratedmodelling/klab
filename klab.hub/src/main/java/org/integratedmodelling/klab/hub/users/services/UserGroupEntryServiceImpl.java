@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.utils.DateConversionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -69,12 +70,6 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		new UpdateUsers(users, userRepository).execute();
 	}
 	
-    private LocalDateTime optionalDateToLocalDateTime(Optional<Date> expirationDate) {
-        return expirationDate.get().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-    }
-    
     private Optional<Date> calculateGroupExpirationTime(String username, String groupName) {
         User user = userRepository.findByNameIgnoreCase(username).orElseThrow();
 
@@ -126,7 +121,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 					    groupsToAdd.stream().forEach(g -> {
 					        Optional<Date> expirationDate = calculateGroupExpirationTime(username, g.getGroupName());
 					        if (expirationDate.isPresent()) {
-					            g.setExpiration(optionalDateToLocalDateTime(expirationDate));
+					            g.setExpiration(DateConversionUtils.dateToLocalDateTime(expirationDate.get()));
 					        }
 					    });
 
