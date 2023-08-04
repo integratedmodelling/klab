@@ -1,14 +1,22 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.User;
@@ -61,9 +69,48 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		new UpdateUsers(users, userRepository).execute();
 	}
 	
+    private LocalDateTime optionalDateToLocalDateTime(Optional<Date> expirationDate) {
+        return expirationDate.get().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
+    
+    private Optional<Date> calculateGroupExpirationTime(String username, String groupName) {
+        User user = userRepository.findByNameIgnoreCase(username).orElseThrow();
+
+        List<String> dependedOnGroups = groupRepository.findByNameIgnoreCase(groupName).orElseThrow().getDependsOn();
+
+        if (dependedOnGroups == null) {
+            return Optional.empty();
+        }
+        
+        if(dependedOnGroups.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Map<String, Date> groupMaxDate = new HashMap<>();
+        for (String group : dependedOnGroups) {
+            Collection<Agreement> agreementsWithGroup = user.getAgreements().stream().map(AgreementEntry::getAgreement).filter(ag -> ag.isValid() && ag.getGroupEntries().contains(group)).collect(Collectors.toUnmodifiableSet());
+
+            if (agreementsWithGroup.isEmpty()) {
+                continue;
+            }
+
+            boolean isNonExpiringGroup = agreementsWithGroup.stream().anyMatch(a -> !a.isExpirable());
+            if (isNonExpiringGroup) {
+                continue;
+            }
+
+            Date maxExpirationTime = agreementsWithGroup.stream().map(Agreement::getExpirationDate).max(Date::compareTo).get();
+
+            groupMaxDate.put(groupName, maxExpirationTime);
+        }
+
+        return groupMaxDate.values().stream().min(Date::compareTo);
+    }
+
 	@Override
 	public void addUsersGroupsByNames(UpdateUsersGroups updateRequest) {
-		
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
 		Set<Agreement> agreements = new HashSet<>();
@@ -73,6 +120,16 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 				userRepository
 					.findByNameIgnoreCase(username)
 					.map(user -> {
+					    List<GroupEntry> groupsToAdd = new ArrayList<GroupEntry>();
+					    groupsToAdd.addAll(groupEntries);
+
+					    groupsToAdd.stream().forEach(g -> {
+					        Optional<Date> expirationDate = calculateGroupExpirationTime(username, g.getGroupName());
+					        if (expirationDate.isPresent()) {
+					            g.setExpiration(optionalDateToLocalDateTime(expirationDate));
+					        }
+					    });
+
 						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
 						agreements.add(user.getAgreements().stream().findFirst().get().getAgreement());
 						return user;
@@ -85,7 +142,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		new UpdateAgreement(agreements, agreementRepository).execute();
 		//new UpdateUsers(users, userRepository).execute();
 	}
-	
+
 	@Override
 	public void removeUsersGroupsByNames(UpdateUsersGroups updateRequest) {
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
