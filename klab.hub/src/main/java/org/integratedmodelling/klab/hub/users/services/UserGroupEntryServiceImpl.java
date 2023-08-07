@@ -71,48 +71,61 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		new UpdateUsers(users, userRepository).execute();
 	}
 
-    private Optional<Date> calculateGroupExpirationTime(User user, String groupName) {
+    private List<MongoGroup> getDependendOnGroups(String groupName) {
         List<String> dependedOnGroupNames = groupRepository.findByNameIgnoreCase(groupName)
                 .orElseThrow(() -> new GroupDoesNotExistException(groupName))
                 .getDependsOn();
 
         if(dependedOnGroupNames.isEmpty()) {
+            return List.of();
+        }
+        return groupRepository.findByNameIn(dependedOnGroupNames);
+    }
+
+    private Collection<Agreement> getAgreementsOfUserWithGroup(User user, String groupName) {
+        return user.getAgreements().stream()
+                .map(AgreementEntry::getAgreement)
+                .filter(ag -> ag.isValid() && ag.getGroupEntries().contains(groupName))
+                .collect(Collectors.toUnmodifiableSet());
+    }
+	
+    private Optional<Date> calculateMaxExpirationOfGroupForUser(User user, MongoGroup group) {
+        Collection<Agreement> agreementsWithGroup = getAgreementsOfUserWithGroup(user, group.getName());
+        if (agreementsWithGroup.isEmpty()) {
             return Optional.empty();
         }
 
-        List<MongoGroup> dependedOnGroups = groupRepository.findByNameIn(dependedOnGroupNames);
+        // Groups that do not expire do not need to be taken into account for the calculation
+        boolean isNonExpiringGroup = agreementsWithGroup.stream()
+                .anyMatch(a -> !a.isExpirable());
+        if (isNonExpiringGroup) {
+            return Optional.empty();
+        }
+
+        // No need for null/empty checks as the previous step removes them
+        Date maxFoundExpiration = agreementsWithGroup.stream()
+                .map(Agreement::getExpirationDate)
+                .max(Date::compareTo).get();
+
+        long defaultExpirationDateOfGroup = group.getDefaultExpirationTime();
+        if (defaultExpirationDateOfGroup != 0) {
+            Date defaultExpiration = new Date(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + defaultExpirationDateOfGroup);
+            maxFoundExpiration = maxFoundExpiration.before(defaultExpiration) 
+                    ? maxFoundExpiration
+                    : defaultExpiration;
+        }
+        return Optional.of(maxFoundExpiration);
+    }
+
+    private Optional<Date> calculateGroupExpirationTime(User user, String groupName) {
+        List<MongoGroup> dependedOnGroups = getDependendOnGroups(groupName);
+
         Map<String, Date> groupMaxDate = new HashMap<>();
-        for (String group : dependedOnGroupNames) {
-            Collection<Agreement> agreementsWithGroup = user.getAgreements().stream()
-                    .map(AgreementEntry::getAgreement)
-                    .filter(ag -> ag.isValid() && ag.getGroupEntries().contains(group))
-                    .collect(Collectors.toUnmodifiableSet());
-
-            if (agreementsWithGroup.isEmpty()) {
-                continue;
+        for (MongoGroup group : dependedOnGroups) {
+            Optional<Date> expirationDate = calculateMaxExpirationOfGroupForUser(user, group);
+            if (expirationDate.isPresent()) {
+                groupMaxDate.put(groupName, expirationDate.get());
             }
-
-            boolean isNonExpiringGroup = agreementsWithGroup.stream()
-                    .anyMatch(a -> !a.isExpirable());
-            if (isNonExpiringGroup) {
-                continue;
-            }
-
-            Date maxFoundExpiration = agreementsWithGroup.stream()
-                    .map(Agreement::getExpirationDate)
-                    .max(Date::compareTo).get();
-
-            long defaultExpirationDateOfGroup = dependedOnGroups.stream()
-                    .filter(mg -> mg.getName().equalsIgnoreCase(groupName))
-                    .findFirst().get()
-                    .getDefaultExpirationTime();
-            if (defaultExpirationDateOfGroup != 0) {
-                Date defaultExpiration = new Date(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + defaultExpirationDateOfGroup);
-                maxFoundExpiration = maxFoundExpiration.before(defaultExpiration) 
-                        ? maxFoundExpiration
-                        : defaultExpiration;
-            }
-            groupMaxDate.put(groupName, maxFoundExpiration);
         }
 
         if (groupMaxDate.isEmpty()) {
@@ -139,8 +152,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 				userRepository
 					.findByNameIgnoreCase(username)
 					.map(user -> {
-					    List<GroupEntry> groupsToAdd = new ArrayList<GroupEntry>();
-					    groupsToAdd.addAll(groupEntries);
+					    Set<GroupEntry> groupsToAdd = groupEntries;
 					    groupsToAdd.stream().forEach(g -> setExpirationTime(user, g));
 
 						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);

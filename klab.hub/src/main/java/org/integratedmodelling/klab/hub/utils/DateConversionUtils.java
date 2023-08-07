@@ -10,7 +10,7 @@ public class DateConversionUtils {
         return LocalDateTime.ofInstant(dateToConvert.toInstant(), ZoneId.systemDefault());
     }
 
-    public static Date convertLocalDateTimeToDate(LocalDateTime dateToConvert) {
+    public static Date localDateTimeToDate(LocalDateTime dateToConvert) {
         return Date.from(dateToConvert.atZone(ZoneId.systemDefault()).toInstant());
     }
 
