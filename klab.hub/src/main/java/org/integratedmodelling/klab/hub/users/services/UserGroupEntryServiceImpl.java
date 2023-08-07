@@ -79,10 +79,6 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
                 .orElseThrow(() -> new GroupDoesNotExistException(groupName))
                 .getDependsOn();
 
-        // TODO initialize the Collections of the MongoGroup class and then remove this smelly check
-        if (dependedOnGroupNames == null) {
-            return Optional.empty();
-        }
         if(dependedOnGroupNames.isEmpty()) {
             return Optional.empty();
         }
