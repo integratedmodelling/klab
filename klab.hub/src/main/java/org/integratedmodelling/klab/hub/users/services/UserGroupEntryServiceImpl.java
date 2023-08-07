@@ -71,10 +71,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		new UpdateUsers(users, userRepository).execute();
 	}
 
-    private Optional<Date> calculateGroupExpirationTime(String username, String groupName) {
-        User user = userRepository.findByNameIgnoreCase(username)
-                .orElseThrow(() -> new UserDoesNotExistException(username));
-
+    private Optional<Date> calculateGroupExpirationTime(User user, String groupName) {
         List<String> dependedOnGroupNames = groupRepository.findByNameIgnoreCase(groupName)
                 .orElseThrow(() -> new GroupDoesNotExistException(groupName))
                 .getDependsOn();
@@ -124,8 +121,8 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
         return groupMaxDate.values().stream().min(Date::compareTo);
     }
 
-    private void setExpirationTime(String username, GroupEntry group) {
-        Optional<Date> expirationDate = calculateGroupExpirationTime(username, group.getGroupName());
+    private void setExpirationTime(User user, GroupEntry group) {
+        Optional<Date> expirationDate = calculateGroupExpirationTime(user, group.getGroupName());
         if (expirationDate.isPresent()) {
             group.setExpiration(DateConversionUtils.dateToLocalDateTime(expirationDate.get()));
         }
@@ -144,7 +141,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 					.map(user -> {
 					    List<GroupEntry> groupsToAdd = new ArrayList<GroupEntry>();
 					    groupsToAdd.addAll(groupEntries);
-					    groupsToAdd.stream().forEach(g -> setExpirationTime(username, g));
+					    groupsToAdd.stream().forEach(g -> setExpirationTime(user, g));
 
 						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
 						agreements.add(user.getAgreements().stream().findFirst().get().getAgreement());
@@ -155,7 +152,6 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		}
 		
 		new UpdateAgreement(agreements, agreementRepository).execute();
-		//new UpdateUsers(users, userRepository).execute();
 	}
 
 	@Override
