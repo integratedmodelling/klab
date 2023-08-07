@@ -24,20 +24,23 @@ public class Valhalla {
 	public String service = "";
 
 	public Valhalla() {
-		this("http://localhost:8002");
+		this("http://192.168.250.240:8002");
 	}
 	
-	public Valhalla(boolean remote) {
+	public Valhalla(boolean local) {
 		String serviceUrl;
-		if (remote) serviceUrl = "http://192.168.250.240:8002";
-		else serviceUrl = "http://localhost:8002";
+		if (local) serviceUrl = "http://localhost:8002" ;
+		else serviceUrl = "http://192.168.250.240:8002";
+		System.out.println(serviceUrl);
 		new Valhalla(serviceUrl);
 	}
 	
 	public Valhalla(String serviceUrl) {
 		this.service = serviceUrl;
-		valhalla = new ValhallaRuntimeEnvironment(service);
+		System.out.println(this.service);
+		valhalla = new ValhallaRuntimeEnvironment(this.service);
 		isOnline = valhalla.isOnline();
+		System.out.println(isOnline);
 		deserializer = new ValhallaOutputDeserializer();
 	}
 
@@ -79,8 +82,11 @@ public class Valhalla {
 		// costing parameter which essentially
 		// is the means of transport. For testing make sure that coordinates are within
 		// the loaded OSM environment.
-		String input = "{\"sources\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.524014,\"lon\":1.5263911}],\"targets\":[{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.541735,\"lon\":1.4888}],\"costing\":\"pedestrian\"}";
+//		String input = "{\"sources\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.524014,\"lon\":1.5263911}],\"targets\":[{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.541735,\"lon\":1.4888}],\"costing\":\"pedestrian\"}";
 
+		String input = "{\"sources\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"targets\":[{\"lat\":40.539735,\"lon\":-103},{\"lat\":40.541735,\"lon\":-103}],\"costing\":\"auto\"}";
+
+		
 		// Call to matrix method with input, the function returns the deserialized JSON
 		// string in a specific format.
 		ValhallaOutputDeserializer.Matrix matrix = valhalla.matrix(input);
@@ -119,8 +125,11 @@ public class Valhalla {
 		 */
 
 		// This is a back and forth trip in Andorra.
-		input = "{\"locations\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.544014,\"lon\":1.5163911}],\"costing\":\"auto\"}";
+//		input = "{\"locations\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.544014,\"lon\":1.5163911}],\"costing\":\"auto\"}";
 
+		input = "{\"locations\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"costing\":\"auto\"}";
+
+		
 		// Call to optimized route method with input, the function returns the
 		// deserialized JSON string in a specific format.
 		ValhallaOutputDeserializer.OptimizedRoute route = valhalla.optimized_route(input);

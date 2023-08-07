@@ -76,6 +76,21 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         }
     }
     
+    static enum Server{
+    	Local(true),
+    	Remote(false);
+    	
+    	private boolean type; 
+    	
+    	Server(boolean type) {
+    		this.type = type;
+    	}
+    	
+    	final public boolean getType() {
+            return this.type;
+        }
+    }
+    
     static enum GeometryCollapser {
     	Centroid("centroid");
     	private String type;
@@ -89,6 +104,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
     
     private TransportType transportType = TransportType.Auto;
     private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
+    private Server server = Server.Local;
     private IContextualizationScope scope;
     private Valhalla valhalla; 
     private Graph<IObjectArtifact, DefaultEdge> graph;
@@ -108,6 +124,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         this.targetArtifact = parameters.get("target", String.class);
         this.timeThreshold = parameters.get("time_limit", Double.class);
         this.distanceThreshold = parameters.get("distance_limit", Double.class);
+        this.distanceThreshold = parameters.get("distance_limit", Double.class);
          
         if (parameters.containsKey("transport")) {
         	this.transportType = TransportType.valueOf(Utils.removePrefix(parameters.get("transport", String.class)));
@@ -115,7 +132,13 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         if (parameters.containsKey("collapse_geometry")) {
         	this.geometryCollapser = GeometryCollapser.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
         }
+        if (parameters.containsKey("server")) {
+        	this.server = Server.valueOf(Utils.removePrefix(parameters.get("server", String.class)));
+        }
         
+//        System.out.println(this.server.getType());
+        
+//        this.valhalla = new Valhalla(this.server.getType());
         this.valhalla = new Valhalla();
 
 	}
