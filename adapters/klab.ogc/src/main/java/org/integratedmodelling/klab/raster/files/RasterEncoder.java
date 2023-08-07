@@ -108,7 +108,7 @@ public class RasterEncoder implements IResourceEncoder {
         int band = 0;
         if (urnParameters.containsKey("band")) {
             band = Integer.parseInt(urnParameters.get("band"));
-        } else {
+        } else if (!resource.getAdapterType().equals("stac")) {
             resource.getParameters().get("band", 0);
         }
         Set<Double> nodata = getNodata(resource, coverage, band);

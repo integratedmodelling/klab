@@ -109,7 +109,7 @@
 		<tycho-version>2.7.3</tycho-version>
 		<xtextVersion>2.27.0</xtextVersion>
 		<mweVersion>2.13.0</mweVersion>
-		<googleJibVersion>3.3.1</googleJibVersion>
+		<googleJibVersion>3.3.2</googleJibVersion>
 		<jib.jvmFlags>-XshowSettings:vm</jib.jvmFlags>
 
 		<!-- the five below go together. Never change one without checking the

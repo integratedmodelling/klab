@@ -20,8 +20,7 @@ public class Moralization {
     public RiskUndirectedGraph<BNNode, BNEdge>   execute(RiskDirectedGraph<BNNode, BNEdge>  srcGarph) {
         // add moral edges
 		
-        RiskDirectedGraph<BNNode, BNEdge>  copyGraph = new RiskDirectedGraph<BNNode, BNEdge>(
-                srcGarph.getEdgeFactory());
+        RiskDirectedGraph<BNNode, BNEdge>  copyGraph = new RiskDirectedGraph<BNNode, BNEdge>(BNEdge.class);
 		  
         Graphs.addGraph(copyGraph, srcGarph);		 
         removeInformationLinks(copyGraph);
@@ -34,7 +33,7 @@ public class Moralization {
 		
         removeUtilityNodes(copyGraph);
 		
-        RemoveDirectionality<BNNode, BNEdge>  RD = new RemoveDirectionality<BNNode, BNEdge>();
+        RemoveDirectionality<BNNode, BNEdge>  RD = new RemoveDirectionality<BNNode, BNEdge>(BNEdge.class);
 		
         // remove directionality
         return RD.execute(copyGraph);

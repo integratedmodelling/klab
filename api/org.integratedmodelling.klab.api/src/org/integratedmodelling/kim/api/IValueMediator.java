@@ -102,6 +102,26 @@ public interface IValueMediator {
      * unit returned, which also carries the definition of the contextual nature re: S/T and a
      * string explaining the transformations made and why.
      * </ol>
+     * <p>
+     * EXAMPLE
+     * <p>
+     * Precipitation comes from data as mm/day. The I,I form of the observable base unit (m^3) in
+     * T,S is m/s, compatible. OK - proceed. Target is m, which is I,E w.r.t. the target as seen
+     * matching to the contextualized extension of m^3. Specific extents must match - if AREAL and
+     * LINEAL are seen together, no compatibility can exist.
+     * <p>
+     * <ol>
+     * <li>Turn mm/day -> m/s. Only a multiplicative factor M1 is needed.</li>
+     * <li>Turn m/s (I,I) into its (I,E) form using T extension -> mm: op(x * Tms * 1000)</li>
+     * <li>Turn the resulting mm into m. Another multiplication factor (M2)</li>
+     * <li>Final strategy is (M1*M2*1000)*x*Tms.</li>
+     * </ol>
+     * <p>
+     * In case the target is m^3: I,I -> E,E so step 2 produces two extensions:
+     * op(x*Tms*1000)op(x*S)
+     * <p>
+     * Model validator should always WARN if extensive is output by data AS LONG AS data come with
+     * their fully specified extension (e.g. T is physical). Otherwise it's an error.
      * 
      * @param observable
      * @param scale

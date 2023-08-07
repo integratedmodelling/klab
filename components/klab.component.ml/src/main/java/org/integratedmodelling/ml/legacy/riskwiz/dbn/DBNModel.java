@@ -38,7 +38,6 @@ import java.util.Vector;
 
 import org.integratedmodelling.ml.legacy.riskwiz.bn.BNNode;
 import org.integratedmodelling.ml.legacy.riskwiz.bn.GenericBeliefNetwork;
-import org.jgrapht.EdgeFactory;
 
 
 /**
@@ -47,7 +46,9 @@ import org.jgrapht.EdgeFactory;
  */
 public class DBNModel extends GenericBeliefNetwork<DBNEdge> {
 	
-    int numberOfSlices;
+    private static final long serialVersionUID = 2985991876480120930L;
+
+	int numberOfSlices;
 	
     private Vector<BNNode> temporalNodes;
 
@@ -64,17 +65,16 @@ public class DBNModel extends GenericBeliefNetwork<DBNEdge> {
      * @param allowMultipleEdges
      * @param allowLoops
      */
-    public DBNModel(EdgeFactory<BNNode, DBNEdge> ef,
-            boolean allowMultipleEdges, boolean allowLoops) {
-        super(ef, allowMultipleEdges, allowLoops);
+    public DBNModel(boolean allowMultipleEdges, boolean allowLoops) {
+        super(DBNEdge.class, allowMultipleEdges, allowLoops);
         temporalNodes = new Vector<BNNode>();
     }
 
     /**
      * @param ef
      */
-    public DBNModel(EdgeFactory<BNNode, DBNEdge> ef) {
-        super(ef);
+    public DBNModel() {
+        super(DBNEdge.class);
         temporalNodes = new Vector<BNNode>();
     }
 	

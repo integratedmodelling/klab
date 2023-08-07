@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import org.jgrapht.DirectedGraph;
+import org.jgrapht.Graph;
 
 /**
  * An iterator returning elements based on the partial order relationship we have in the directed
@@ -35,9 +35,9 @@ class TopologicalSortIterator<T,K> implements Iterator<T> {
   private final LinkedList<T>     sources           = new LinkedList<>();
   private final Map<T, Countdown> residualInDegrees = new LinkedHashMap<>();
   private boolean throwOnCycle = true;
-  private DirectedGraph<T,K> graph;
+  private Graph<T,K> graph;
   
-  public TopologicalSortIterator(DirectedGraph<T,K> graph) {
+  public TopologicalSortIterator(Graph<T,K> graph) {
     this.graph = graph;
     for (T node : graph.vertexSet()) {
       int inDegree = graph.incomingEdgesOf(node).size();

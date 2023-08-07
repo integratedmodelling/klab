@@ -63,14 +63,34 @@ export object route
 	"Connects subjects through routes computed along a specified spatial configuration. Relationships are only
 	 created if a route exists."
 {
-	optional concept source
+	optional import object source
 		"Semantics for the type of the subjects used as source for the relationships"
 		default ""
 
-	optional concept target
+	optional import object target
 		"Semantics for the type of the subjects used as target for the relationships"
 		default ""
+		
+	optional number time_limit
+		"Time threshold to consider a route a valid option"
+		default "No limit"
+		
+	optional number distance_limit
+		"Distance threshold to consider a route a valid option"
+		default "No limit"
+	
+	optional enum transport
+		"Type of transport used to find a route"
+		values Auto, Pedestrian, Bicycle, Bus, Truck, Taxi, MotorScooter, Multimodal
+		default "Auto"	
+		
+	optional enum collapse_geometry
+		"Method used to collapse line and polygon sources and targets to a single point or a set of points that allow route
+		finding."
+		values Centroid
+		default "Centroid"		
 
+	
 //	TODO configuration to use 
 
 	class org.integratedmodelling.klab.components.network.services.RoutingRelationshipInstantiator

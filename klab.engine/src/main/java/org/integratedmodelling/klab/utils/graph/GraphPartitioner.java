@@ -6,7 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.Stack;
-import org.jgrapht.DirectedGraph;
+
+import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
@@ -26,8 +27,8 @@ public class GraphPartitioner<V, E> {
     this.cls = cls;
   }
   
-  public Collection<DirectedGraph<V, E>> getDisconnectedSubgraphs(DirectedGraph<V, E> from) {
-    List<DirectedGraph<V, E>> subGraphs = new ArrayList<>();
+  public Collection<Graph<V, E>> getDisconnectedSubgraphs(Graph<V, E> from) {
+    List<Graph<V, E>> subGraphs = new ArrayList<>();
 
     Stack<V> verticesRemaining = new Stack<V>();
     verticesRemaining.addAll(from.vertexSet());
@@ -39,7 +40,7 @@ public class GraphPartitioner<V, E> {
     
     do {
       Set<V> visited = new HashSet<>();
-      DirectedGraph<V, E> newGraph = getNewGraph();
+      Graph<V, E> newGraph = getNewGraph();
       dfsCopy(verticesRemaining.pop(), from, newGraph, visited);
       verticesRemaining.removeAll(visited);
       subGraphs.add(newGraph);
@@ -48,11 +49,11 @@ public class GraphPartitioner<V, E> {
     return subGraphs;
   }
 
-  public DirectedGraph<V, E> getNewGraph() {
+  public Graph<V, E> getNewGraph() {
     return new DefaultDirectedGraph<>(cls);
   }
 
-  private void dfsCopy(V v, DirectedGraph<V, E> from, DirectedGraph<V, E> to, Set<V> visited) {
+  private void dfsCopy(V v, Graph<V, E> from, Graph<V, E> to, Set<V> visited) {
 
     if (!visited.add(v)) {
       return;

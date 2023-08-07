@@ -34,15 +34,16 @@
 package org.integratedmodelling.ml.legacy.riskwiz.bn;
 
 
+import java.util.function.Supplier;
+
 import org.integratedmodelling.ml.legacy.riskwiz.domain.DiscreteDomain;
-import org.jgrapht.VertexFactory;
 
 
 /**
  * @author Sergey Krivov
  *
  */
-public class BNNodeFactory implements  VertexFactory<BNNode> {
+public class BNNodeFactory implements  Supplier<BNNode> {
 
     /**
      * 
@@ -52,7 +53,7 @@ public class BNNodeFactory implements  VertexFactory<BNNode> {
         nodeCount = 0;
     }
 
-    @Override
+//    @Override
 	public BNNode createVertex() {
         nodeCount++;
         return new BNNode("Node" + nodeCount);
@@ -82,5 +83,10 @@ public class BNNodeFactory implements  VertexFactory<BNNode> {
         nodeCount++;
         return new BNNode(name, from, to, numberOfIntervals, nodeType);
     }
+
+	@Override
+	public BNNode get() {
+		return createVertex();
+	}
 
 }

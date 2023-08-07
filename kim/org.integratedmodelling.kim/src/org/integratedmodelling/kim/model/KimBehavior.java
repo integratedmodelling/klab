@@ -254,6 +254,11 @@ public class KimBehavior extends KimStatement implements IKimBehavior {
     }
 
     @Override
+    public List<IKimAction> getActions() {
+        return this.actions;
+    }
+    
+    @Override
     public Collection<IServiceCall> getExtentFunctions() {
         return extents;
     }

@@ -143,7 +143,7 @@ public enum Authentication implements IAuthenticationService {
         externalCredentials = FileCatalog.create(file, ExternalAuthenticationCredentials.class,
                 ExternalAuthenticationCredentials.class);
 
-        Services.INSTANCE.registerService(this, IAuthenticationService.class);
+//        Services.INSTANCE.registerService(this, IAuthenticationService.class);
     }
 
     /**
