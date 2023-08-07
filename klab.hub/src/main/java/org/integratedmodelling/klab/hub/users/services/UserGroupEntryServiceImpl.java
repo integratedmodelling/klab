@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -74,20 +75,21 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
         User user = userRepository.findByNameIgnoreCase(username)
                 .orElseThrow(() -> new UserDoesNotExistException(username));
 
-        List<String> dependedOnGroups = groupRepository.findByNameIgnoreCase(groupName)
+        List<String> dependedOnGroupNames = groupRepository.findByNameIgnoreCase(groupName)
                 .orElseThrow(() -> new GroupDoesNotExistException(groupName))
                 .getDependsOn();
 
         // TODO initialize the Collections of the MongoGroup class and then remove this smelly check
-        if (dependedOnGroups == null) {
+        if (dependedOnGroupNames == null) {
             return Optional.empty();
         }
-        if(dependedOnGroups.isEmpty()) {
+        if(dependedOnGroupNames.isEmpty()) {
             return Optional.empty();
         }
 
+        List<MongoGroup> dependedOnGroups = groupRepository.findByNameIn(dependedOnGroupNames);
         Map<String, Date> groupMaxDate = new HashMap<>();
-        for (String group : dependedOnGroups) {
+        for (String group : dependedOnGroupNames) {
             Collection<Agreement> agreementsWithGroup = user.getAgreements().stream()
                     .map(AgreementEntry::getAgreement)
                     .filter(ag -> ag.isValid() && ag.getGroupEntries().contains(group))
@@ -97,15 +99,32 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
                 continue;
             }
 
-            boolean isNonExpiringGroup = agreementsWithGroup.stream().anyMatch(a -> !a.isExpirable());
+            boolean isNonExpiringGroup = agreementsWithGroup.stream()
+                    .anyMatch(a -> !a.isExpirable());
             if (isNonExpiringGroup) {
                 continue;
             }
 
-            Date maxExpirationTime = agreementsWithGroup.stream().map(Agreement::getExpirationDate).max(Date::compareTo).get();
-            groupMaxDate.put(groupName, maxExpirationTime);
+            Date maxFoundExpiration = agreementsWithGroup.stream()
+                    .map(Agreement::getExpirationDate)
+                    .max(Date::compareTo).get();
+
+            long defaultExpirationDateOfGroup = dependedOnGroups.stream()
+                    .filter(mg -> mg.getName().equalsIgnoreCase(groupName))
+                    .findFirst().get()
+                    .getDefaultExpirationTime();
+            if (defaultExpirationDateOfGroup != 0) {
+                Date defaultExpiration = new Date(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + defaultExpirationDateOfGroup);
+                maxFoundExpiration = maxFoundExpiration.before(defaultExpiration) 
+                        ? maxFoundExpiration
+                        : defaultExpiration;
+            }
+            groupMaxDate.put(groupName, maxFoundExpiration);
         }
 
+        if (groupMaxDate.isEmpty()) {
+            return Optional.empty();
+        }
         return groupMaxDate.values().stream().min(Date::compareTo);
     }
 
