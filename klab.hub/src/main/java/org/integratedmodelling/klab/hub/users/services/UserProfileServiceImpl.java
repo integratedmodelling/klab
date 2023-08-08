@@ -70,7 +70,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 		return profile.getSafeProfile();
 	}
 
-	@Override
+	@Override  
 	public Set<ProfileResource> getAllUserProfiles() {
 		Set<ProfileResource> profiles = new HashSet<>();
 		userRepository.findAll().forEach(user -> profiles.add(
