@@ -116,7 +116,7 @@ public class SentinelResolver extends AbstractContextualizer implements IResolve
                         DefaultGeographicCRS.WGS84).transform(outputCrs, true);
                 RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelopeTransformed, (int) cols, (int) rows);
 
-                HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, taskMonitor);
+                HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, true, taskMonitor);
                 
                 // apply averaging based on the amount of times the cell has been assigned a value
                 outRaster.applyCountAverage(taskMonitor);
