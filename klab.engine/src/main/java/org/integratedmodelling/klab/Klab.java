@@ -20,7 +20,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -73,8 +72,6 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 public enum Klab implements IRuntimeService {
 
     INSTANCE;
-    private static Logger logger = Logger.getLogger(Klab.class.getName());
-
 
     public static final int TICKET_CHECK_INTERVAL_SECONDS = 60;
     public static final int TICKET_CHECK_NOTIFICATIONS_SECONDS = 5;
@@ -787,7 +784,7 @@ public enum Klab implements IRuntimeService {
 
     public void addActivity(IIdentity identity, ActivityBuilder activity) {
 
-        //System.out.println(activity);
+        System.out.println(activity);
 
         INodeIdentity node = getStatisticsServer();
         if (node != null || statisticsConsumer != null) {
@@ -817,16 +814,10 @@ public enum Klab implements IRuntimeService {
             for (INodeIdentity node : Network.INSTANCE.getNodesWithAdapter(STATS_SERVICE_ADAPTER_ID)) {
                 // TODO there should be just one, or we should be able to pick the one in our
                 // federated hub. See what to do if the field isn't null.
-                if (node == null) {
-                    logger.warning("Stats node was found but null");
+                if (node.getName().contains("stats")) {
+                    this.statisticsServer = node;
+                    break;
                 }
-                this.statisticsServer = node;
-                break;
-            }
-            if (this.statisticsServer == null) {
-                logger.warning("No stats node was found");
-            } else {
-                logger.info("A stats node was found: "+this.statisticsServer.getName());
             }
         }
         return this.statisticsServer;
