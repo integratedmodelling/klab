@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface AgreementTemplateRepository  extends MongoRepository<AgreementTemplate, ObjectId>{
+public interface AgreementTemplateRepository  extends ResourceRepository<AgreementTemplate, String>{
 
      Optional<AgreementTemplate> findByAgreementTypeAndAgreementLevelAndDefaultTemplate(AgreementType agreementType, AgreementLevel agreementLevel, Boolean deafaultTemplate);
      List<AgreementTemplate> findAllByAgreementTypeAndAgreementLevel(AgreementType agreementType, AgreementLevel agreementLevel);

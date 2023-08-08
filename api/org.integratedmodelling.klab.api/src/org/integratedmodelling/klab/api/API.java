@@ -374,6 +374,11 @@ public interface API {
          */
         public static final String GET_AGREEMENT = API_BASE + "/agreements";
         /**
+
+         *URL path for get agreement template.
+         */
+        public static final String GET_AGREEMENT_ID = GET_AGREEMENT + "/{id}";
+        /**
          *URL path for get agreement template.
          */
         public static final String AGREEMENT_TEMPLATE = API_BASE + "/agreement-templates";

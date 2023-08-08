@@ -19,6 +19,9 @@ import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;
@@ -133,8 +136,7 @@ public class AgreementServiceImpl implements AgreementService {
         if (agreementTemplate.getDefaultDuration() != 0)
             dates.add(new Date(System.currentTimeMillis() + agreementTemplate.getDefaultDuration()));
 
-        /* If dates isn't empty get minimun date of them */
-        groupEntry.setExpiration(dates.isEmpty()
+        /* If dates isn't empty get minimun date of them */        groupEntry.setExpiration(dates.isEmpty()
                 ? null
                 : Instant.ofEpochMilli(Collections.min(dates).getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
@@ -151,5 +153,22 @@ public class AgreementServiceImpl implements AgreementService {
     @Override
     public List<Agreement> updateAgreement(Agreement agreement) {
         return new UpdateAgreement(Sets.newHashSet(agreement), agreementRepository).execute();
+    }
+    
+    
+    /**
+     * Call to findAll function with defined page and filters
+     */
+    @Override
+    public Page<Agreement> getPage(Query query, Pageable pageable) {
+        return agreementRepository.findAll(query, pageable);
+    }
+
+    /**
+     * Call to findAll function with filters
+     */
+    @Override
+    public List<Agreement> getAll(Query query) {
+        return agreementRepository.findAll(query);
     }
 }

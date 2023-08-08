@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @author Enrico Girotto
  *
  */
-public interface EmailTemplateRepository extends MongoRepository<EmailTemplate, ObjectId> {
+public interface EmailTemplateRepository extends ResourceRepository<EmailTemplate, String> {
 
 	Optional<EmailTemplate> findById(String id);
 	

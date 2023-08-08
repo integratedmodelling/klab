@@ -173,8 +173,15 @@
 					<artifactId>javax.annotation-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>	
+		
 		<!-- ////////////////////////////////////////////////////////////////// -->
+		<dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+            <version>1.18.28</version>
+        </dependency>
 
 		<!-- This section is for Spring Security Dependencies -->
 		<dependency>

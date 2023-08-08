@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.google.common.base.Optional;
 
 @Repository
-public interface CustomPropertiesRepository extends MongoRepository<CustomProperties, ObjectId>{
+public interface CustomPropertiesRepository extends ResourceRepository<CustomProperties, String>{
 
         List<CustomProperties> findByIsForUserIsTrue();
         List<CustomProperties> findByIsForGroupIsTrue();
