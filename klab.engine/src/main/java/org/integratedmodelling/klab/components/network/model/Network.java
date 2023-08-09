@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.components.network.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -45,17 +48,23 @@ public class Network extends Pattern implements INetwork {
 	public Network(Collection<IObservation> observations, IRuntimeScope scope) {
 
 		super(observations, scope);
-
+		IDirectObservation source=null;
+		IDirectObservation target=null;
 		for (IObservation observation : observations) {
 			for (IArtifact artifact : observation) {
 				if (artifact instanceof IRelationship) {
-					IDirectObservation source = scope.getSourceSubject((IRelationship) artifact);
-					IDirectObservation target = scope.getTargetSubject((IRelationship) artifact);
+					source = scope.getSourceSubject((IRelationship) artifact);
+					target = scope.getTargetSubject((IRelationship) artifact);
 					network.addVertex(source); network.addVertex(target);
 					network.addEdge(source, target, (IRelationship) artifact);
 				}
 			}
 		}
+		
+		String namePattern = scope.getPattern().getName();
+		String nameSource = source.getName();
+		String nameTarget = target.getName();
+		export("json","~/.klab/export/network_pattern_"+namePattern+"_source_"+nameSource+"_target_"+nameTarget+".json");
 	}
 	
 
@@ -79,7 +88,7 @@ public class Network extends Pattern implements INetwork {
 		};
 		
 		Writer writer = new OutputStreamWriter(output);
-
+		
 		switch (format) {
 		case "json":
 			JSONExporter<IDirectObservation, IRelationship> json = new JSONExporter<>();
@@ -134,6 +143,17 @@ public class Network extends Pattern implements INetwork {
 		}
 	}
 
+	
+	public void export(String format, String filename){ 
+		try { 
+			OutputStream out = new FileOutputStream( new File(filename) ); 
+			export(format, out); 
+		} catch (FileNotFoundException e) { 
+			// TODO Auto-generated catch block 
+			e.printStackTrace(); 
+		} 
+			 
+	} 
 	
 	@Override
 	public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
