@@ -136,9 +136,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         	this.server = Server.valueOf(Utils.removePrefix(parameters.get("server", String.class)));
         }
         
-//        System.out.println(this.server.getType());
-        
-//        this.valhalla = new Valhalla(this.server.getType());
         this.valhalla = new Valhalla();
 
 	}

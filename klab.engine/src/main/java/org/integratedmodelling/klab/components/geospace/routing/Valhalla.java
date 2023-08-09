@@ -31,16 +31,13 @@ public class Valhalla {
 		String serviceUrl;
 		if (local) serviceUrl = "http://localhost:8002" ;
 		else serviceUrl = "http://192.168.250.240:8002";
-		System.out.println(serviceUrl);
 		new Valhalla(serviceUrl);
 	}
 	
 	public Valhalla(String serviceUrl) {
 		this.service = serviceUrl;
-		System.out.println(this.service);
 		valhalla = new ValhallaRuntimeEnvironment(this.service);
 		isOnline = valhalla.isOnline();
-		System.out.println(isOnline);
 		deserializer = new ValhallaOutputDeserializer();
 	}
 
