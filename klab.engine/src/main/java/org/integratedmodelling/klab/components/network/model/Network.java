@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.components.network.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -149,6 +152,19 @@ public class Network extends Pattern implements INetwork {
 	public void update(IObservation trigger) {
 		// NAH if the emergent is a subject, this can't work, we need to rebuild the
 		// connected components
+	}
+	
+
+	public void export(String format, String filename){
+		
+		try {
+			OutputStream out = new FileOutputStream( new File(filename) );
+			export(format, out);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+			
 	}
 
 }

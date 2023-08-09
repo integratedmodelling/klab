@@ -25,22 +25,20 @@ public class Valhalla {
 
 	public Valhalla() {
 		this("http://192.168.250.240:8002");
+//		this("http://localhost:8002");
 	}
 	
 	public Valhalla(boolean local) {
 		String serviceUrl;
 		if (local) serviceUrl = "http://localhost:8002" ;
 		else serviceUrl = "http://192.168.250.240:8002";
-		System.out.println(serviceUrl);
 		new Valhalla(serviceUrl);
 	}
 	
 	public Valhalla(String serviceUrl) {
 		this.service = serviceUrl;
-		System.out.println(this.service);
 		valhalla = new ValhallaRuntimeEnvironment(this.service);
 		isOnline = valhalla.isOnline();
-		System.out.println(isOnline);
 		deserializer = new ValhallaOutputDeserializer();
 	}
 
@@ -84,41 +82,41 @@ public class Valhalla {
 		// the loaded OSM environment.
 //		String input = "{\"sources\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.524014,\"lon\":1.5263911}],\"targets\":[{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.541735,\"lon\":1.4888}],\"costing\":\"pedestrian\"}";
 
-		String input = "{\"sources\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"targets\":[{\"lat\":40.539735,\"lon\":-103},{\"lat\":40.541735,\"lon\":-103}],\"costing\":\"auto\"}";
-
-		
-		// Call to matrix method with input, the function returns the deserialized JSON
-		// string in a specific format.
-		ValhallaOutputDeserializer.Matrix matrix = valhalla.matrix(input);
-
-		// The adjacency list stores information on the distance/time between each
-		// source and target in a way that is
-		// very friendly for graph creation with JUNG, and probably also with JGraphT.
-		List<Map<String, Number>> list = matrix.getAdjacencyList();
-		System.out.println(list);
-
-		// Instantiate and populate the graph.
-		Graph<String, Double> g = new DirectedSparseGraph<>();
-		for (Map<String, Number> m : list) {
-			Integer source = (Integer) m.get("source");
-			Integer target = (Integer) m.get("target");
-			double time = (double) m.get("time");
-
-			// VertexIds are transformed to strings and prefixed with s or t to easily
-			// differentiate between sources and
-			// targets as the index starts at 0 for both. If needed to use integers ewe can
-			// always do
-			// target_index += max(source_index)
-			String sv = "s" + source.toString();
-			String tv = "t" + target.toString();
-
-			// In this case a time accessibility graph is created.
-			boolean added = g.addEdge(time, sv, tv, EdgeType.DIRECTED);
-
-			if (!added)
-				throw new ValhallaException("Could not add edge to graph");
-		}
-		System.out.println(g);
+//		String input = "{\"sources\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"targets\":[{\"lat\":40.539735,\"lon\":-103},{\"lat\":40.541735,\"lon\":-103}],\"costing\":\"auto\"}";
+//
+//		
+//		// Call to matrix method with input, the function returns the deserialized JSON
+//		// string in a specific format.
+//		ValhallaOutputDeserializer.Matrix matrix = valhalla.matrix(input);
+//
+//		// The adjacency list stores information on the distance/time between each
+//		// source and target in a way that is
+//		// very friendly for graph creation with JUNG, and probably also with JGraphT.
+//		List<Map<String, Number>> list = matrix.getAdjacencyList();
+//		System.out.println(list);
+//
+//		// Instantiate and populate the graph.
+//		Graph<String, Double> g = new DirectedSparseGraph<>();
+//		for (Map<String, Number> m : list) {
+//			Integer source = (Integer) m.get("source");
+//			Integer target = (Integer) m.get("target");
+//			double time = (double) m.get("time");
+//
+//			// VertexIds are transformed to strings and prefixed with s or t to easily
+//			// differentiate between sources and
+//			// targets as the index starts at 0 for both. If needed to use integers ewe can
+//			// always do
+//			// target_index += max(source_index)
+//			String sv = "s" + source.toString();
+//			String tv = "t" + target.toString();
+//
+//			// In this case a time accessibility graph is created.
+//			boolean added = g.addEdge(time, sv, tv, EdgeType.DIRECTED);
+//
+//			if (!added)
+//				throw new ValhallaException("Could not add edge to graph");
+//		}
+//		System.out.println(g);
 
 		/*
 		 * Optimized Route API example.
@@ -127,9 +125,8 @@ public class Valhalla {
 		// This is a back and forth trip in Andorra.
 //		input = "{\"locations\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.544014,\"lon\":1.5163911}],\"costing\":\"auto\"}";
 
-		input = "{\"locations\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"costing\":\"auto\"}";
+		String input = "{\"locations\":[{\"lat\":29.36401001312115,\"lon\":-82.11829577543753},{\"lat\":28.188723345607993,\"lon\":-81.84424001189065}],\"costing\":\"auto\"}";
 
-		
 		// Call to optimized route method with input, the function returns the
 		// deserialized JSON string in a specific format.
 		ValhallaOutputDeserializer.OptimizedRoute route = valhalla.optimized_route(input);
