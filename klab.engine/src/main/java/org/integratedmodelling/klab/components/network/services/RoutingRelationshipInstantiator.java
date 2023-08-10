@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.components.geospace.routing.Valhalla;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaException;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaOutputDeserializer;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -107,7 +108,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
     private Server server = Server.Local;
     private IContextualizationScope scope;
     private Valhalla valhalla; 
-    private Graph<IObjectArtifact, DefaultEdge> graph;
+    private Graph<IObjectArtifact, SpatialEdge> graph;
     private Map<Pair<IDirectObservation,IDirectObservation>,IShape> trajectories; 
 
     
@@ -201,7 +202,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         Collection<IObservation> allTargets = CollectionUtils.joinObservations(targets);
         
 
-        graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        graph = new DefaultDirectedGraph<>(SpatialEdge.class);
         trajectories = new HashMap<>();
 
         Set<IObservation> connected = new HashSet<>();
@@ -266,11 +267,13 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 String valhallaInput = Valhalla.buildValhallaJsonInput((IDirectObservation) source, (IDirectObservation) target, transportType.getType(), geometryCollapser.getType());                
                 ValhallaOutputDeserializer.OptimizedRoute route;
                 IShape trajectory; 
-                Map<String,Double> stats;
+                Map<String, Object> stats;
+                Parameters<String> routeParameters = null;
 				try {
 					route = valhalla.optimized_route(valhallaInput);
 					trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
 	                stats = route.getSummaryStatistics();
+	                routeParameters = new Parameters<String>(stats);  
 	                
 				} catch (ValhallaException e) {
 					// TODO Auto-generated catch block
@@ -282,14 +285,14 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 
 
                 if (
-                		(timeThreshold == null || (stats.get("time") < timeThreshold)) && 
-                		(distanceThreshold == null || (stats.get("length") < distanceThreshold))
+                		(timeThreshold == null || ((Double) stats.get("time") < timeThreshold)) && 
+                		(distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))
                 	
                 	) 
                 {
                 	
                 	if (trajectory != null) {
-                		connect((IDirectObservation) source, (IDirectObservation) target, trajectory);
+                		connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
                 		connected.add((IObservation) target);
                 		trajectories.put(new Pair<IDirectObservation,IDirectObservation>((IDirectObservation)source,(IDirectObservation)target),trajectory);
                 	}
@@ -315,7 +318,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	                .info("creating " + graph.edgeSet().size() + " " + Concepts.INSTANCE.getDisplayName(semantics.getType())
 	                        + " routing relationships.");
         }
-        
         return instantiateRelationships(semantics);
 	}
 
@@ -324,22 +326,27 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         int i = 1;
         List<IObjectArtifact> ret = new ArrayList<>();
         // build from graph
-        for (DefaultEdge edge : graph.edgeSet()) {
+        for (SpatialEdge edge : graph.edgeSet()) {
+        	
             IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
             IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
+            Parameters<String> routeParameters = edge.getParameters();
+            
             IScale scale = Scale.substituteExtent(scope.getScale(), trajectories.get(new Pair<IDirectObservation,IDirectObservation>((IDirectObservation)source,(IDirectObservation)target)));
-            ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, null));
+            
+            ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, new Metadata(routeParameters)));
+       
             i++;
         }
         return ret;
     }
 	
-	private void connect(IDirectObservation source, IDirectObservation target, ISpace spatialConnection) {
+	private void connect(IDirectObservation source, IDirectObservation target, ISpace spatialConnection, Parameters<String> routeParameters) {
 
         // add to graph for bookkeeping unless we don't need it
         graph.addVertex(source);
         graph.addVertex(target);
-        graph.addEdge(source, target, new SpatialEdge(null, spatialConnection == null ? null : spatialConnection.getShape()));
+        graph.addEdge(source, target, new SpatialEdge(null, spatialConnection == null ? null : spatialConnection.getShape(), routeParameters));
     }
 	
 	class SpatialEdge extends DefaultEdge {
@@ -348,13 +355,20 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
         IShape sourceShape;
         IShape targetShape;
+        
+        Parameters<String> routeParameters;
 
         SpatialEdge() {
         }
 
-        SpatialEdge(IShape s, IShape t) {
+        SpatialEdge(IShape s, IShape t, Parameters<String> rp) {
             this.sourceShape = s;
             this.targetShape = t;
+            this.routeParameters = rp;
+        }
+        
+        public Parameters<String> getParameters(){
+        	return this.routeParameters;
         }
 
     }

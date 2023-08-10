@@ -23,11 +23,15 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.klab.components.runtime.observations.Relationship;
+import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.csv.CSVExporter;
+import org.jgrapht.nio.csv.CSVFormat;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.nio.gexf.GEXFExporter;
 import org.jgrapht.nio.gml.GmlExporter;
@@ -48,6 +52,7 @@ public class Network extends Pattern implements INetwork {
 	public Network(Collection<IObservation> observations, IRuntimeScope scope) {
 
 		super(observations, scope);
+		
 		IDirectObservation source=null;
 		IDirectObservation target=null;
 		for (IObservation observation : observations) {
@@ -61,10 +66,8 @@ public class Network extends Pattern implements INetwork {
 			}
 		}
 		
-		String namePattern = scope.getPattern().getName();
-		String nameSource = source.getName();
-		String nameTarget = target.getName();
-		export("json","~/.klab/export/network_pattern_"+namePattern+"_source_"+nameSource+"_target_"+nameTarget+".json");
+		export("json","/home/dibepa/.klab/export/network_test.json");
+		export("csv","/home/dibepa/.klab/export/network_test.csv");
 	}
 	
 
@@ -82,8 +85,19 @@ public class Network extends Pattern implements INetwork {
 		
 		Function<IRelationship, Map<String, Attribute>> edgeAttributeProvider = e -> {
 		    Map<String, Attribute> map = new LinkedHashMap<>();
+		    
 		    String time = e.getScale().getTime().getStart().toRFC3339String();
+		    
+		    IMetadata travelMetadata = e.getMetadata();
+		    String travel_time = ((Double) travelMetadata.get("time")).toString();
+		    String travel_distance = ((Double) travelMetadata.get("length")).toString();
+		    String travel_cost = ((Double) travelMetadata.get("cost")).toString();
+		    
 		    map.put("time", DefaultAttribute.createAttribute(time));
+		    map.put("travel_time", DefaultAttribute.createAttribute(travel_time));
+		    map.put("travel_distance", DefaultAttribute.createAttribute(travel_distance));
+		    map.put("travel_cost", DefaultAttribute.createAttribute(travel_cost));
+		    
 		    return map;
 		};
 		
@@ -112,6 +126,8 @@ public class Network extends Pattern implements INetwork {
 			break;
 		case "csv":
 			CSVExporter<IDirectObservation, IRelationship> csv = new CSVExporter<>();
+			csv.setFormat(CSVFormat.EDGE_LIST);
+			csv.setParameter(CSVFormat.Parameter.EDGE_WEIGHTS, true);
 			csv.setVertexAttributeProvider(vertexAttributeProvider);
 			csv.setEdgeAttributeProvider(edgeAttributeProvider);
 			csv.exportGraph(network, writer);

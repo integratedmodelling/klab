@@ -131,7 +131,7 @@ public class Valhalla {
 		// deserialized JSON string in a specific format.
 		ValhallaOutputDeserializer.OptimizedRoute route = valhalla.optimized_route(input);
 		IShape path = route.getPath();
-		Map<String, Double> stats = route.getSummaryStatistics();
+		Map<String, Object> stats = route.getSummaryStatistics();
 		List<Map<String, Number>> waypoints = route.getWaypoints();
 
 		System.out.println(path);
