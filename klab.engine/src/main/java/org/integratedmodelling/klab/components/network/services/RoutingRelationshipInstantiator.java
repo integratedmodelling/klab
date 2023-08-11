@@ -49,6 +49,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
 	private String sourceArtifact = null;
     private String targetArtifact = null;
+    
     private Double timeThreshold = null;
     private Double distanceThreshold = null; 
 
@@ -124,7 +125,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         this.sourceArtifact = parameters.get("source", String.class);
         this.targetArtifact = parameters.get("target", String.class);
         this.timeThreshold = parameters.get("time_limit", Double.class);
-        this.distanceThreshold = parameters.get("distance_limit", Double.class);
         this.distanceThreshold = parameters.get("distance_limit", Double.class);
          
         if (parameters.containsKey("transport")) {
