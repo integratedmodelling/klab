@@ -74,16 +74,23 @@ public static class Parameters extends TaskParameters {
 				throw new GroupDoesNotExistException("A requested Group does not exist or no groups requested");
 			}
 			
+			Set<String> userGroups = user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
+			        .map(GroupEntry::getGroupName).collect(Collectors.toCollection(HashSet<String>::new));
 			// check dependencies
 			List<String> dependencies = new ArrayList<String>();
 			List<MongoGroup> groups = new ArrayList<MongoGroup>();
 			
 			for (String groupName : param.groupNames) {
 				Optional<MongoGroup> group = groupRepository.findByNameIgnoreCase(groupName);
-				if (group.isPresent()) {
+				if (group.isPresent() && (param.clazz.equals(RemoveGroupTask.class) || !userGroups.contains(group.get().getName()))) {
 					groups.add(group.get());
+					
 					if (param.clazz.equals(GroupRequestTask.class) && group.get().getDependsOn() != null) {
-						dependencies.addAll(group.get().getDependsOn());
+					    for (String dependecy : group.get().getDependsOn()) {
+					        if (!userGroups.contains(dependecy)) {
+					            dependencies.add(dependecy);
+					        }
+					    }
 					}
 				}
 			}

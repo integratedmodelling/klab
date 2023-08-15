@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.hub.groups.services;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 
+import org.integratedmodelling.klab.hub.api.GroupSummary;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.commands.CreateMongoGroup;
 import org.integratedmodelling.klab.hub.commands.DeleteMongoGroup;
@@ -44,6 +46,14 @@ public class GroupServiceImpl implements GroupService {
 	public Collection<String> getGroupNames() {
 		return new GetAllMongoGroupNames(repository).execute();
 	}
+	
+	@Override
+    public Collection<GroupSummary> getGroupsSummary() {
+	    Collection<MongoGroup> groups = new GetAllMongoGroups(repository).execute();
+        Collection<GroupSummary> groupsSummary = new HashSet<>();
+        groups.forEach(g -> groupsSummary.add(new GroupSummary(g.getId(),g.getName(),g.getDescription(),g.getIconUrl(),g.isOptIn())));
+        return groupsSummary;
+    }
 
 	@Override
 	public boolean exists(String groupName) {
