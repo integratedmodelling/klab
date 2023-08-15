@@ -1,22 +1,23 @@
 package org.integratedmodelling.klab.hub.tests;
 
-import static org.mockito.Mockito.when;
-
-import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.AgreementEntry;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.services.UserGroupEntryService;
 import org.integratedmodelling.klab.hub.users.services.UserGroupEntryServiceImpl;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -25,7 +26,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
@@ -49,39 +49,76 @@ public class UserGroupEntryServiceTest {
     @Mock
     private AgreementRepository agreementRepository;
 
-    private AgreementEntry mockAgreementEntry() {
-        AgreementEntry agreementEntry = Mockito.mock(AgreementEntry.class);
-        return agreementEntry;
-    }
-
-    private Agreement mockAgreement() {
-        Agreement agreement = Mockito.mock(Agreement.class);
-        return agreement;
-    }
-
-    private User mockUser() {
-        User user = Mockito.mock(User.class);
-        return user;
-    }
+    private final String USER_NAME = "olentzero";
+    private final String GROUP_NAME = "SCP";
+    private final String DEPENDED_ON_GROUP_NAME = "TIA";
+    public final long EPOCH_YEAR_IN_MILLIS = 31532400000L;
 
     @Test
-    public void addUsersGroupsByNamesTest() {
-        // Mock agreement
-        Agreement agreement = mockAgreement();
-        AgreementEntry agreementEntry = mockAgreementEntry();
-        Mockito.when(agreementEntry.getAgreement()).thenReturn(agreement);
-        // Mock user
-        User user = mockUser();
-        Set<AgreementEntry> agreementEntries = Set.of(agreementEntry);
-        Mockito.when(user.getAgreements()).thenReturn(agreementEntries);
-        // Mock UserRepository
-        Mockito.when(userRepository.findByNameIgnoreCase("hades")).thenReturn(Optional.of(user));
-
+    public void addUsersGroupsByNames_noDependantGroupsNoExpirationDate() {
+        User user = MockitoHelper.mockUserWithAgreements();
+        Mockito.when(userRepository.findByNameIgnoreCase(USER_NAME)).thenReturn(Optional.of(user));
         UpdateUsersGroups updateRequest = Mockito.mock(UpdateUsersGroups.class);
-        Mockito.when(updateRequest.getGroupNames()).thenReturn(Set.of("IM", "ARIES"));
-        Mockito.when(updateRequest.getUsernames()).thenReturn(Set.of("hades"));
+        Mockito.when(updateRequest.getGroupNames()).thenReturn(Set.of(GROUP_NAME));
+        Mockito.when(updateRequest.getUsernames()).thenReturn(Set.of(USER_NAME));
+        MongoGroup mongoGroup = MockitoHelper.mockMongoGroup(GROUP_NAME);
+        Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
 
         userService.addUsersGroupsByNames(updateRequest); 
     }
 
+    @Test
+    public void addUsersGroupsByNames_nonExistingUser() {
+        // Do not add a mocked return for userRepository.findByNameIgnoreCase()
+        UpdateUsersGroups updateRequest = Mockito.mock(UpdateUsersGroups.class);
+        Mockito.when(updateRequest.getGroupNames()).thenReturn(Set.of(GROUP_NAME));
+        Mockito.when(updateRequest.getUsernames()).thenReturn(Set.of(USER_NAME));
+        MongoGroup mongoGroup = MockitoHelper.mockMongoGroup();
+        Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
+
+        Assertions.assertThrows(UserDoesNotExistException.class, () -> {
+            userService.addUsersGroupsByNames(updateRequest); 
+        });
+    }
+
+    @Test
+    public void addUsersGroupsByNames_DependantGroupsNoExpirationDate() {
+        User user = MockitoHelper.mockUserWithAgreements();
+        Mockito.when(userRepository.findByNameIgnoreCase(USER_NAME)).thenReturn(Optional.of(user));
+        UpdateUsersGroups updateRequest = Mockito.mock(UpdateUsersGroups.class);
+        Mockito.when(updateRequest.getGroupNames()).thenReturn(Set.of(GROUP_NAME));
+        Mockito.when(updateRequest.getUsernames()).thenReturn(Set.of(USER_NAME));
+        MongoGroup mongoGroup = MockitoHelper.mockMongoGroup(GROUP_NAME);
+        MongoGroup mongoGroupDependedOn = MockitoHelper.mockMongoGroup(GROUP_NAME);
+        Mockito.when(mongoGroup.getDependsOn()).thenReturn(List.of(DEPENDED_ON_GROUP_NAME));
+        Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
+        Mockito.when(groupRepository.findByNameIn(List.of(DEPENDED_ON_GROUP_NAME))).thenReturn(List.of(mongoGroupDependedOn));
+        Agreement agreement = MockitoHelper.mockAgreement();
+//        AgreementEntry agreementEntry = MockitoHelper.mockAgreementEntry(agreement);
+
+        userService.addUsersGroupsByNames(updateRequest); 
+    }
+
+    @Test
+    public void addUsersGroupsByNames_OnlyDependantGroupsHaveExpirationDate() {
+//        MongoGroup mongoGroupDependedOn = MockitoHelper.mockMongoGroup(DEPENDED_ON_GROUP_NAME, EPOCH_YEAR_IN_MILLIS * 2);
+        MongoGroup mongoGroupDependedOn = MockitoHelper.mockMongoGroup(DEPENDED_ON_GROUP_NAME);
+//        GroupEntry groupEntryDependedOn = MockitoHelper.mockGroupEntry(mongoGroupDependedOn, DEPENDED_ON_GROUP_NAME);
+        GroupEntry groupEntryDependedOn = MockitoHelper.mockGroupEntry();
+//      Agreement agreement = MockitoHelper.mockAgreement(Set.of(groupEntryDependedOn));
+        Agreement agreement = MockitoHelper.mockAgreement();
+        AgreementEntry agreementEntry = MockitoHelper.mockAgreementEntry(agreement);
+        User user = MockitoHelper.mockUser(Set.of(agreementEntry));
+        Mockito.when(userRepository.findByNameIgnoreCase(USER_NAME)).thenReturn(Optional.of(user));
+
+        MongoGroup mongoGroup = MockitoHelper.mockMongoGroup(GROUP_NAME);
+        Mockito.when(mongoGroup.getDependsOn()).thenReturn(List.of(DEPENDED_ON_GROUP_NAME));
+        Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
+        Mockito.when(groupRepository.findByNameIn(List.of(DEPENDED_ON_GROUP_NAME))).thenReturn(List.of(mongoGroupDependedOn));
+
+        UpdateUsersGroups updateRequest = Mockito.mock(UpdateUsersGroups.class);
+        Mockito.when(updateRequest.getGroupNames()).thenReturn(Set.of(GROUP_NAME));
+        Mockito.when(updateRequest.getUsernames()).thenReturn(Set.of(USER_NAME));
+        userService.addUsersGroupsByNames(updateRequest); 
+    }
 }
