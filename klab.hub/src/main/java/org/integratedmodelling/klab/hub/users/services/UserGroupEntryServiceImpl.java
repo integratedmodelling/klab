@@ -7,18 +7,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
-import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
-import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
 import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.commands.UpdateUsers;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
-import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -26,18 +22,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
-	public UserGroupEntryServiceImpl(UserRepository userRepository, MongoGroupRepository groupRepository, AgreementService agreementService, AgreementRepository agreementRepository) {
+	public UserGroupEntryServiceImpl(UserRepository userRepository, MongoGroupRepository groupRepository) {
 		super();
 		this.userRepository = userRepository;
 		this.groupRepository = groupRepository;
-		this.agreementService = agreementService;
-		this.agreementRepository = agreementRepository;
 	}
 
 	private UserRepository userRepository;
 	private MongoGroupRepository groupRepository;
-	private AgreementService agreementService;
-	private AgreementRepository agreementRepository;
 	
 	@Override
 	public void setUsersGroupsByNames(UpdateUsersGroups updateRequest) {
@@ -56,7 +48,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 					.orElseThrow(() ->
 					new UserDoesNotExistException(username))
 			);		
-		}		
+		}
 		
 		new UpdateUsers(users, userRepository).execute();
 	}
@@ -66,7 +58,6 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
-		Set<Agreement> agreements = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
 			users.add(
@@ -74,7 +65,6 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 					.findByNameIgnoreCase(username)
 					.map(user -> {
 						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
-						agreements.add(user.getAgreements().stream().findFirst().get().getAgreement());
 						return user;
 						})
 					.orElseThrow(() ->
@@ -82,28 +72,24 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 			);		
 		}
 		
-		new UpdateAgreement(agreements, agreementRepository).execute();
-		//new UpdateUsers(users, userRepository).execute();
+		new UpdateUsers(users, userRepository).execute();
 	}
 	
 	@Override
 	public void removeUsersGroupsByNames(UpdateUsersGroups updateRequest) {
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
-		Set<Agreement> agreements = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
 			userRepository
 				.findByNameIgnoreCase(username)
 				.ifPresent(user -> {
 					user.getAgreements().stream().findFirst().get().getAgreement().removeGroupEntries(groupEntries);
-					agreements.add(user.getAgreements().stream().findFirst().get().getAgreement());
 					users.add(user);
 				});		
 		}
 		
-		new UpdateAgreement(agreements, agreementRepository).execute();
-		//new UpdateUsers(users, userRepository).execute();
+		new UpdateUsers(users, userRepository).execute();
 	}
 	
     @Override

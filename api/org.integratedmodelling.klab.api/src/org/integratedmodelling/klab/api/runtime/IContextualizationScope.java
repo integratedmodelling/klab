@@ -22,7 +22,6 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
-import org.integratedmodelling.klab.api.engine.IContextScope;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;

@@ -70,7 +70,6 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.ActorReference;
-import org.integratedmodelling.klab.components.runtime.actors.UserActor;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.IValueProxy;
@@ -1273,7 +1272,8 @@ public enum Actors implements IActorsService {
 
     @Override
     public IActorIdentity.Reference createUserActor(IEngineUserIdentity user) {
-        return new ActorReference(createActor(UserActor.create((EngineUser) user), user));
+    	return null;
+//        return new ActorReference(createActor(UserActor.create((EngineUser) user), user));
     }
 
     /**

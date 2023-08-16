@@ -18,6 +18,7 @@ Model:
 	 ('@namespace' package=(PathName|STRING))? &
 	 ('@coverage' scale+=Function (',' scale+=Function)*)? &
 	 ('@context' contextUrn=Urn)?) 
+	defines+=Define*
 	actors+=ActorDefinition*;
 
 terminal ANNOTATION_ID:
@@ -168,6 +169,10 @@ Value:
 	expression=EXPR |
 	table=LookupTable | 
 	enumId=UPPERCASE_ID;
+	
+Define:
+	'define' (class=LOWERCASE_ID)? name=LOWERCASE_ID '=' value=Value ';'
+;	
 	
 Urn:
 // String used when there are strange chars or keywords in the URN.
