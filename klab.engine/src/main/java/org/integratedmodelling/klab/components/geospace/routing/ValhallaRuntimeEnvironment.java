@@ -14,6 +14,8 @@ import java.util.logging.Logger;
 
 public class ValhallaRuntimeEnvironment {
 
+	static final Boolean log_only_critical = true;
+	
     public enum HTTPStatusCode {
         SUCCESS(200),FAIL(400),INVALID_PATH(404),INVALID_MESSAGE(405),SERVER_PROBLEM(500),NOT_IMPLEMENTED(501);
 
@@ -103,8 +105,11 @@ public class ValhallaRuntimeEnvironment {
         // Check the response status code and act accordingly. Note that we don't expect a 201 code
         // as JSON I/O RPC is producing plain 200 with the result in the response body.
         if (status == HTTPStatusCode.SUCCESS) {
-            logger.info("Request to valhalla.test.Valhalla Server has been successful.");
-
+        	
+        	if(!log_only_critical) {
+        		logger.info("Request to valhalla.test.Valhalla Server has been successful.");
+        	}
+            
             // Get the HTTP entity:
             String body = response.body();
 
@@ -119,7 +124,8 @@ public class ValhallaRuntimeEnvironment {
         } else {
 
             switch (status) {
-                case FAIL: logger.severe("Request to valhalla.test.Valhalla Server has failed.");break;
+                case FAIL:
+                	logger.severe("Request to valhalla.test.Valhalla Server has failed.");break;
                 case INVALID_PATH:
                         logger.severe("Request to valhalla.test.Valhalla Server has failed: invalid path.");break;
                 case INVALID_MESSAGE:
@@ -155,9 +161,11 @@ public class ValhallaRuntimeEnvironment {
 
         String url = this.getBaseURI().toString() + ValhallaRequestType.getURLSchema(requestType);
         HttpRequest request = buildRequest(url, input);
-
-        logger.info("Sending synchronous request to valhalla.test.Valhalla server (" + url + ").");
-
+        
+        if (!log_only_critical) {
+        	logger.info("Sending synchronous request to valhalla.test.Valhalla server (" + url + ").");
+        }
+        
         HttpResponse<String> response;
         try {
             response = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
