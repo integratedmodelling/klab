@@ -37,7 +37,6 @@ public class StatsNodeController {
 
     private boolean nodeIsOnlineAndHasAdapter(INodeIdentity node, String adapterName) {
         return node.isOnline() && !node.getAdapters().isEmpty() && node.getAdapters().contains(adapterName);
-        // return node.isOnline() && node.getName().contains(adapterName);
     }
 
     @GetMapping(value = API.STATS.STATS_OUTPUT, produces = {"application/json"})
