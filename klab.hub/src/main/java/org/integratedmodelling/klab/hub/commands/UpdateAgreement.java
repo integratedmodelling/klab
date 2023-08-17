@@ -1,22 +1,25 @@
 package org.integratedmodelling.klab.hub.commands;
 
+import java.util.List;
+import java.util.Set;
+
 import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 
 public class UpdateAgreement implements AgreementCommand {
 
-    private Agreement agreement;
+    private Set<Agreement> agreements;
     private AgreementRepository agreementRepository;
     
-    public UpdateAgreement(Agreement agreement,
+    public UpdateAgreement(Set<Agreement> agreements,
             AgreementRepository agreementRepository) {
-            this.agreement = agreement;
+            this.agreements = agreements;
             this.agreementRepository = agreementRepository;
     }
 
     @Override
-    public Agreement execute() {
-        agreementRepository.save(agreement);      
-        return agreement;
+    public List<Agreement> execute() {
+        return agreementRepository.saveAll(agreements);     
+        
     }
 }
