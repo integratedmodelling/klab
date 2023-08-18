@@ -1,12 +1,20 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.controllers.pagination.GenericPageAndFilterConverter;
 import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
+import org.integratedmodelling.klab.hub.payload.PageRequest;
+import org.integratedmodelling.klab.hub.payload.PageResponse;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,19 +31,30 @@ import net.minidev.json.JSONObject;
 public class UserProfileController {
 	
 	private UserProfileService userService;
+    private final GenericPageAndFilterConverter genericPageAndFilterConverter;
+
 	
 	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 	
 	@Autowired
-	UserProfileController(UserProfileService userService) {
+	UserProfileController(UserProfileService userService, GenericPageAndFilterConverter genericPageAndFilterConverter) {
 		this.userService = userService;
+		this.genericPageAndFilterConverter = genericPageAndFilterConverter;
 	}
 	
 	@GetMapping(API.HUB.USER_BASE)
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<?> getAllUserProfiles() {
-		JSONObject profiles = new JSONObject().appendField("profiles", userService.getAllUserProfiles());
-		return new ResponseEntity<>(profiles,HttpStatus.OK);
+	public ResponseEntity<?> getAllUserProfiles(PageRequest pageRequest) {
+	    PageResponse<User> response = new PageResponse<>();
+        
+        /* Call function to convert pageRequest object in <Query, Pageable> pair, where query has the filters and pageable, the pagination properties*/
+        Pair<Query, Pageable> pair= genericPageAndFilterConverter.genericPageAndFilterConvert(pageRequest);
+        
+        /* Call getPage function, to findAll elements applying the filters and the pagination given in the pageRequest*/
+        Page<User> pg = userService.getPage(pair.getLeft(), pair.getRight());        
+        
+        response.setPageStats(pg, pg.getContent());
+		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	
 	@GetMapping(API.HUB.USER_BASE_ID)

@@ -54,7 +54,7 @@ logging:
     org:
       springframework:
         data:
-         mongodb: DEBUG
+         mongodb: INFO
   
 site:
   callback: http://localhost:8080/#/callback

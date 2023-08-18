@@ -10,6 +10,9 @@ import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -94,5 +97,10 @@ public class UserProfileServiceImpl implements UserProfileService {
 					new UserByEmailDoesNotExistException(email));
 		return getUserSafeProfile(user);
 	}
+
+    @Override
+    public Page<User> getPage(Query query, Pageable pageable) {
+        return userRepository.findAll(query, pageable);
+    }
 
 }

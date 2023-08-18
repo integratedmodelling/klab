@@ -4,6 +4,9 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,5 +19,6 @@ public interface UserProfileService {
 	abstract ProfileResource getRawUserProfile(String username);
 	abstract ProfileResource getCurrentUserProfile(boolean remote);
 	abstract Set<ProfileResource> getAllUserProfiles();
+    abstract Page<User> getPage(Query left, Pageable right);
 
 }
