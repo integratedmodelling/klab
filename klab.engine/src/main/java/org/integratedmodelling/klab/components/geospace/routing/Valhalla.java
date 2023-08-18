@@ -24,7 +24,7 @@ public class Valhalla {
 	public String service = "";
 
 	public Valhalla() {
-		this("http://192.168.250.241:8002");
+		this("https://routing.integratedmodelling.org");
 	}
 	
 	public Valhalla(boolean local) {

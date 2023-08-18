@@ -14,7 +14,7 @@ import java.util.logging.Logger;
 
 public class ValhallaRuntimeEnvironment {
 
-	static final Boolean log_only_critical = true;
+	static final Boolean log_only_critical = false;
 	
     public enum HTTPStatusCode {
         SUCCESS(200),FAIL(400),INVALID_PATH(404),INVALID_MESSAGE(405),SERVER_PROBLEM(500),NOT_IMPLEMENTED(501);
