@@ -56,7 +56,7 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 					.orElseThrow(() ->
 					new UserDoesNotExistException(username))
 			);		
-		}		
+		}
 		
 		new UpdateUsers(users, userRepository).execute();
 	}

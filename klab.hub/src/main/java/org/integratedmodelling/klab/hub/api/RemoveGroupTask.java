@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 		
 		@Autowired
 		private UserRepository userRepository;
+		@Autowired
+        private AgreementRepository agreementRepository;
 		
 		@Override
 		public void executeAccept(Task task) {
@@ -72,9 +75,10 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 				}
 			}
 			if (removed) {
-			    user.getAgreements().stream().findFirst().get().getAgreement().setGroupEntries(currentGroupEntries);
+			    Agreement agreement = user.getAgreements().stream().findFirst().get().getAgreement();
+			    agreement.setGroupEntries(currentGroupEntries);
 				//user.setGroupEntries(currentGroupEntries);
-				userRepository.save(user);
+				agreementRepository.save(agreement);
 				task.setStatus(TaskStatus.accepted);
 			} else {
 				task.setStatus(TaskStatus.error);

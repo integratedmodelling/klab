@@ -144,7 +144,7 @@ public class AgreementServiceImpl implements AgreementService {
     @Override
     public Set<Agreement> updateAgreementValidDate(Set<Agreement> agreements, Date validDate) {
         agreements.stream().forEach(agreement -> {
-            agreement.setValidDate(validDate);            
+            agreement.setValidDate(validDate);
         });
         new UpdateAgreement(agreements, agreementRepository).execute();
         return agreements;

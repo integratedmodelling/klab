@@ -40,8 +40,15 @@ public class GroupsController {
     @PreAuthorize("hasRole('ROLE_ENGINE') or hasRole('ROLE_USER') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity<Object> getGroupNames() {
         JSONObject resp = new JSONObject();
-        //resp.appendField("groups", groupService.getGroupNames());
-        resp.appendField("groups", groupService.getAll());
+        resp.appendField("groups", groupService.getGroupNames());
+        return new ResponseEntity<>(resp, HttpStatus.OK);
+    }
+    
+    @GetMapping(value = API.HUB.GROUPS_BASE, params = API.HUB.PARAMETERS.GROUP_SUMMARY)
+    @PreAuthorize("hasRole('ROLE_ENGINE') or hasRole('ROLE_USER') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
+    public ResponseEntity<Object> getGroupsSummary() {
+        JSONObject resp = new JSONObject();
+        resp.appendField("groups", groupService.getGroupsSummary());
         return new ResponseEntity<>(resp, HttpStatus.OK);
     }
 

@@ -76,9 +76,12 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import io.micrometer.core.instrument.util.JsonUtils;
 
 /**
  * Helper to avoid having to write 10 lines every time I need to do a GET with headers. It can be
@@ -403,7 +406,6 @@ public class Client extends RestTemplate implements IClient {
             }
 
             try {
-
                 return objectMapper.convertValue(response.getBody(), cls);
             } catch (Throwable t) {
                 System.out.println("Unrecognized response: " + response.getBody());

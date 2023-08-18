@@ -477,6 +477,10 @@ public interface API {
              */
             public static final String GROUP_NAMES = "names";
             /**
+             * URL PARAMETER for requesting the summary of groups.
+             */
+            public static final String GROUP_SUMMARY = "summary";
+            /**
              * URL PARAMETER for a user to request groups as a task.
              */
             public static final String USER_REQUEST_GROUPS = "request-groups";
