@@ -100,3 +100,18 @@ export object route
 	class org.integratedmodelling.klab.components.network.services.RoutingRelationshipInstantiator
 
 }
+
+
+
+export object communities 
+	"Detects communities/modules of a complex network using Infomap method."
+{
+	optional import object network
+		"Semantics for the target network"
+		default ""
+
+	class org.integratedmodelling.klab.components.network.services.CommunityInstantiator
+
+}
+
+

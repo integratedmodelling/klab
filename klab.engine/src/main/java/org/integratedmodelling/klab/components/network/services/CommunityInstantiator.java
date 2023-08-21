@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -26,6 +28,8 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IRelationship;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -34,6 +38,7 @@ import org.integratedmodelling.klab.components.network.model.Network;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
 
 public class CommunityInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
@@ -45,6 +50,9 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 	
 	private Network network;
 	private IContextualizationScope scope;
+	
+	String name = null;
+	Map<IDirectObservation, String> communityMap;
 	
 	
 	public CommunityInstantiator() {/* to instantiate as expression - do not remove (or use) */}
@@ -94,50 +102,56 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 		 * Build the data package to be sent to the Infomap server.
 		 * */
 		
-		KlabData.Object.Builder encodedNetwork = KlabData.Object.newBuilder().setName(networkArtifact);
+		KlabData.Object.Builder encodedNetwork = KlabData.Object.newBuilder().setName("test-net");
 		Map<String,String> edgeProperties;
-		Map<String, Object> metadata;
 		
 		for (IRelationship edge : network.getNetwork().edgeSet()) {
 			
-			metadata = ((Map<String, Object>) edge.getMetadata());
-			metadata.replaceAll((key, value) -> value != null ? value.toString(): null);
-			
-			
 			edgeProperties = edge.getMetadata().entrySet()
-													.stream()
-													.collect(Collectors.toMap(
-															e -> e.getKey(),
-															e -> e.getValue() != null ? e.getValue().toString(): null
-													));
-			
+					.stream()
+					.collect(Collectors.toMap(
+							e -> e.getKey(),
+							e -> e.getValue() != null ? e.getValue().toString(): null
+					));
+
 			edgeProperties.put("source", edge.getSource().getName() );
 			edgeProperties.put("target", edge.getTarget().getName() );
 			
 			encodedNetwork.addObjects(
-						KlabData.Object.newBuilder()
-						.putAllProperties(edgeProperties)
-						.build()
-					);
+				KlabData.Object.newBuilder()
+					.putAllProperties(edgeProperties)
+					.build()
+			);
 			
 		}
 		
 		KlabData.Object infomapParams = KlabData.Object.newBuilder()
-										.putProperties(networkArtifact, infomap_url)
-										.build();
-		
+				.putProperties("param1", "1.1")
+				.build();
+
 		KlabData infomapMessage = KlabData.newBuilder()
-											.addObjects(encodedNetwork.build())
-											.addObjects(infomapParams)
-											.build();
+							.addObjects(encodedNetwork.build())
+							.addObjects(infomapParams)
+							.build();
 		
-		HttpResponse<String> response = null;
-		File outputFile = new File(".protobuf-infomap");
+		HttpResponse<InputStream> response = null;
+		Map<String,String> map = null;
+		
 		try {
+			
+			File outputFile = new File("/home/dibepa/protobuf-infomap");
 			FileOutputStream output = new FileOutputStream(outputFile);
 			infomapMessage.writeTo(output);
 			output.close();
+		
 			response = infomapSendRequest(outputFile);
+			KlabData infomapResponse = KlabData.parseFrom(response.body());
+			
+			KlabData.Object communities = infomapResponse.getObjects(0);
+			
+			name = communities.getName();
+			map = communities.getPropertiesMap();
+		
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -146,10 +160,48 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 			e.printStackTrace();
 		}
 		
+		for (IDirectObservation node : network.getNetwork().vertexSet()) {
+			String c = map.get(node.getName());
+			communityMap.put(node, c);
+		}
 		
-		return null;
+		if (communityMap.size()>0) {
+			scope.getMonitor()
+			.info("instantiating the" + communityMap.values().stream().collect(Collectors.toSet()).size() + " communities detected in " + network.getName() + ".");
+		} else {
+			throw new KlabException("The server returned an empty result.");
+		}
+		
+		return instantiateCommunities(semantics);
 	}
 	
+	private List<IObjectArtifact> instantiateCommunities(IObservable observable){
+		
+		int i =1 ;
+		
+		List<IObjectArtifact> ret = new ArrayList<>();
+		
+		Map<String, List<IDirectObservation>> mapInversed = 
+				communityMap.keySet()
+					.stream()
+					.collect( Collectors.groupingBy(k -> communityMap.get(k)) );
+		
+		for (List<IDirectObservation> community : mapInversed.values() ) {
+			
+			List<IShape> locations = community.stream().map( obs -> obs.getScale().getSpace().getShape() ).collect(Collectors.toList());
+			
+			Optional<IShape> shape = locations.stream().reduce( (u,s) -> {return u.union(s);} );
+		
+			// shape.get() throws an Exception is shape is not present.
+			IScale scale = Scale.substituteExtent(scope.getScale(),shape.get());
+			ret.add(scope.newObservation(observable, observable.getName() + "_" + i, scale, null));
+			
+			i++;
+		}
+					
+		return ret;
+		
+	}
 	
 	private HttpRequest infomapBuildRequest(File outputFile) {
 		HttpRequest request = null;
@@ -168,11 +220,11 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 		return request;
 	}
 	
-	private HttpResponse<String> infomapSendRequest(File outputFile) {
+	private HttpResponse<InputStream> infomapSendRequest(File outputFile) {
 		HttpRequest request = infomapBuildRequest(outputFile);
-		HttpResponse<String> response;
+		HttpResponse<InputStream> response;
         try {
-            response = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+            response = HttpClient.newHttpClient().send(request, BodyHandlers.ofInputStream());
         } catch (IOException | InterruptedException ie) {
             throw new ValhallaException(ie);
         }
