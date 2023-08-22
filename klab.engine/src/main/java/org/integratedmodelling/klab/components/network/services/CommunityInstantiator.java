@@ -69,26 +69,34 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope)
 			throws KlabException {
-		
+				
 		IConcept networkConcept = semantics.getType();
 		List<IObservation> networks = new ArrayList<>();
 		
 		if (networkArtifact == null) {
 			networks.addAll(scope.getObservations(networkConcept));
 		} else {
+			
 			IArtifact net = scope.getArtifact(networkArtifact); 
+			System.out.println(scope.getArtifacts(IArtifact.class));
+			System.out.println(scope.getProvenance().getArtifacts());
+			System.out.println(net);
 			if (net instanceof IObservationGroup) {
 				for (IArtifact a : net) {
 					networks.add((IObservation) a);
 				}
+			} else {
+				networks.add((IObservation) net);
 			}
 		}
 		
+
 		switch (networks.size()){
 		case 1:
-			if ( !(networks.get(0) instanceof IDirectObservation) ) {
-				throw new IllegalArgumentException("Network observation is not a direct observation");
-			}
+//			if ( !(networks.get(0) instanceof IDirectObservation) ) {
+//			throw new IllegalArgumentException("Network observation is not a direct observation");
+//		}
+			
 			this.network = (Network) ((IDirectObservation) networks.get(0)).getOriginatingPattern();
 			break;	
 		case 0:
@@ -105,6 +113,7 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 		KlabData.Object.Builder encodedNetwork = KlabData.Object.newBuilder().setName("test-net");
 		Map<String,String> edgeProperties;
 		
+		System.out.println("Encoding network");
 		for (IRelationship edge : network.getNetwork().edgeSet()) {
 			
 			edgeProperties = edge.getMetadata().entrySet()
@@ -124,6 +133,7 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 			);
 			
 		}
+		
 		
 		KlabData.Object infomapParams = KlabData.Object.newBuilder()
 				.putProperties("param1", "1.1")
@@ -160,10 +170,16 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 			e.printStackTrace();
 		}
 		
+		System.out.println("Done. Setting community map");
+		
 		for (IDirectObservation node : network.getNetwork().vertexSet()) {
 			String c = map.get(node.getName());
 			communityMap.put(node, c);
 		}
+		
+		System.out.println(communityMap.size());
+		System.out.println(communityMap);
+		
 		
 		if (communityMap.size()>0) {
 			scope.getMonitor()
