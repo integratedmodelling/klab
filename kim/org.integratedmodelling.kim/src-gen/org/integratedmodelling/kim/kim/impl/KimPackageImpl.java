@@ -2542,20 +2542,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getObservableSemantics_Generic()
-  {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EReference getObservableSemantics_Declaration()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(2);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -2566,7 +2555,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getObservableSemantics_AccordingTo()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -2577,7 +2566,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getObservableSemantics_Unit()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(4);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -2588,7 +2577,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getObservableSemantics_Currency()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(5);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -2599,7 +2588,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getObservableSemantics_ValueOperators()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(6);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -2610,7 +2599,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getObservableSemantics_Optional()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -2621,7 +2610,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getObservableSemantics_From()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(8);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -2632,7 +2621,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getObservableSemantics_To()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(9);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -2643,29 +2632,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getObservableSemantics_Name()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(10);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getObservableSemantics_Global()
-  {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(11);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getObservableSemantics_Exclusive()
-  {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -2676,7 +2643,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getObservableSemantics_Annotations()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(13);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -2687,7 +2654,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getObservableSemantics_Condition()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(14);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -2905,9 +2872,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Main()
+  public EAttribute getConceptDeclaration_Generic()
   {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2916,7 +2883,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptDeclaration_DistributedOfInherency()
+  public EAttribute getConceptDeclaration_Global()
   {
     return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(1);
   }
@@ -2927,40 +2894,40 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getConceptDeclaration_Exclusive()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Main()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_DistributedOfInherency()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getConceptDeclaration_Inherency()
-  {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(2);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EAttribute getConceptDeclaration_DistributedForInherency()
-  {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(3);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getConceptDeclaration_Motivation()
-  {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getConceptDeclaration_Compresent()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(5);
   }
@@ -2971,9 +2938,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Causant()
+  public EAttribute getConceptDeclaration_DistributedForInherency()
   {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -2982,7 +2949,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Adjacent()
+  public EReference getConceptDeclaration_Motivation()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(7);
   }
@@ -2993,7 +2960,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Container()
+  public EReference getConceptDeclaration_Compresent()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(8);
   }
@@ -3004,7 +2971,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Contained()
+  public EReference getConceptDeclaration_Causant()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(9);
   }
@@ -3015,7 +2982,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Caused()
+  public EReference getConceptDeclaration_Adjacent()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(10);
   }
@@ -3026,9 +2993,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptDeclaration_DistributedTemporalInherency()
+  public EReference getConceptDeclaration_Container()
   {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(11);
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -3037,7 +3004,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_During()
+  public EReference getConceptDeclaration_Contained()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(12);
   }
@@ -3048,9 +3015,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptDeclaration_DistributedWithinInherency()
+  public EReference getConceptDeclaration_Caused()
   {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(13);
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -3059,9 +3026,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Context()
+  public EAttribute getConceptDeclaration_DistributedTemporalInherency()
   {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(14);
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -3070,7 +3037,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_RelationshipSource()
+  public EReference getConceptDeclaration_During()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(15);
   }
@@ -3081,9 +3048,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_RelationshipTarget()
+  public EAttribute getConceptDeclaration_DistributedWithinInherency()
   {
-    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(16);
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -3092,9 +3059,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getConceptDeclaration_Operators()
+  public EReference getConceptDeclaration_Context()
   {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(17);
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -3103,7 +3070,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getConceptDeclaration_Operands()
+  public EReference getConceptDeclaration_RelationshipSource()
   {
     return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(18);
   }
@@ -3114,9 +3081,42 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EReference getConceptDeclaration_RelationshipTarget()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(19);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_Operators()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(20);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Operands()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(21);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getConceptDeclaration_Name()
   {
-    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(19);
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(22);
   }
 
   /**
@@ -5852,7 +5852,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     observableSemanticsEClass = createEClass(OBSERVABLE_SEMANTICS);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__VALUE);
-    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__GENERIC);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DECLARATION);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ACCORDING_TO);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__UNIT);
@@ -5862,8 +5861,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__FROM);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__TO);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__NAME);
-    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__GLOBAL);
-    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__EXCLUSIVE);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ANNOTATIONS);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CONDITION);
 
@@ -5888,6 +5885,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(dependencyEClass, DEPENDENCY__NAME);
 
     conceptDeclarationEClass = createEClass(CONCEPT_DECLARATION);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__GENERIC);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__GLOBAL);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__EXCLUSIVE);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__MAIN);
     createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY);
     createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__INHERENCY);
@@ -6405,7 +6405,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(observableSemanticsEClass, ObservableSemantics.class, "ObservableSemantics", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getObservableSemantics_Value(), this.getValue(), null, "value", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getObservableSemantics_Generic(), ecorePackage.getEBoolean(), "generic", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_AccordingTo(), ecorePackage.getEString(), "accordingTo", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Unit(), this.getUnit(), null, "unit", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6415,8 +6414,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getObservableSemantics_From(), this.getNumber(), null, "from", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_To(), this.getNumber(), null, "to", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Name(), ecorePackage.getEString(), "name", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getObservableSemantics_Global(), ecorePackage.getEBoolean(), "global", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getObservableSemantics_Exclusive(), ecorePackage.getEBoolean(), "exclusive", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -6441,6 +6438,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getDependency_Name(), ecorePackage.getEString(), "name", null, 0, 1, Dependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(conceptDeclarationEClass, ConceptDeclaration.class, "ConceptDeclaration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getConceptDeclaration_Generic(), ecorePackage.getEBoolean(), "generic", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_Global(), ecorePackage.getEBoolean(), "global", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_Exclusive(), ecorePackage.getEBoolean(), "exclusive", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Main(), this.getConcept(), null, "main", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getConceptDeclaration_DistributedOfInherency(), ecorePackage.getEBoolean(), "distributedOfInherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getConceptDeclaration_Inherency(), this.getConceptDeclaration(), null, "inherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -38,7 +38,6 @@ import org.integratedmodelling.kim.kim.ValueOperator;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getValue <em>Value</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isGeneric <em>Generic</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getDeclaration <em>Declaration</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAccordingTo <em>According To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getUnit <em>Unit</em>}</li>
@@ -48,8 +47,6 @@ import org.integratedmodelling.kim.kim.ValueOperator;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isGlobal <em>Global</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isExclusive <em>Exclusive</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCondition <em>Condition</em>}</li>
  * </ul>
@@ -67,26 +64,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected Value value;
-
-  /**
-   * The default value of the '{@link #isGeneric() <em>Generic</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isGeneric()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean GENERIC_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isGeneric() <em>Generic</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isGeneric()
-   * @generated
-   * @ordered
-   */
-  protected boolean generic = GENERIC_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getDeclaration() <em>Declaration</em>}' containment reference.
@@ -209,46 +186,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
   protected String name = NAME_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isGlobal() <em>Global</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isGlobal()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean GLOBAL_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isGlobal() <em>Global</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isGlobal()
-   * @generated
-   * @ordered
-   */
-  protected boolean global = GLOBAL_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isExclusive()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean EXCLUSIVE_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isExclusive()
-   * @generated
-   * @ordered
-   */
-  protected boolean exclusive = EXCLUSIVE_EDEFAULT;
-
-  /**
    * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -347,31 +284,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__VALUE, newValue, newValue));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isGeneric()
-  {
-    return generic;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setGeneric(boolean newGeneric)
-  {
-    boolean oldGeneric = generic;
-    generic = newGeneric;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__GENERIC, oldGeneric, generic));
   }
 
   /**
@@ -720,56 +632,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @generated
    */
   @Override
-  public boolean isGlobal()
-  {
-    return global;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setGlobal(boolean newGlobal)
-  {
-    boolean oldGlobal = global;
-    global = newGlobal;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__GLOBAL, oldGlobal, global));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isExclusive()
-  {
-    return exclusive;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setExclusive(boolean newExclusive)
-  {
-    boolean oldExclusive = exclusive;
-    exclusive = newExclusive;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE, oldExclusive, exclusive));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EList<Annotation> getAnnotations()
   {
     if (annotations == null)
@@ -846,8 +708,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     {
       case KimPackage.OBSERVABLE_SEMANTICS__VALUE:
         return getValue();
-      case KimPackage.OBSERVABLE_SEMANTICS__GENERIC:
-        return isGeneric();
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         return getDeclaration();
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
@@ -866,10 +726,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getTo();
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         return getName();
-      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
-        return isGlobal();
-      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
-        return isExclusive();
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return getAnnotations();
       case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
@@ -891,9 +747,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     {
       case KimPackage.OBSERVABLE_SEMANTICS__VALUE:
         setValue((Value)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__GENERIC:
-        setGeneric((Boolean)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         setDeclaration((ConceptDeclaration)newValue);
@@ -923,12 +776,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         setName((String)newValue);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
-        setGlobal((Boolean)newValue);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
-        setExclusive((Boolean)newValue);
-        return;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         getAnnotations().clear();
         getAnnotations().addAll((Collection<? extends Annotation>)newValue);
@@ -952,9 +799,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     {
       case KimPackage.OBSERVABLE_SEMANTICS__VALUE:
         setValue((Value)null);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__GENERIC:
-        setGeneric(GENERIC_EDEFAULT);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         setDeclaration((ConceptDeclaration)null);
@@ -983,12 +827,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         setName(NAME_EDEFAULT);
         return;
-      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
-        setGlobal(GLOBAL_EDEFAULT);
-        return;
-      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
-        setExclusive(EXCLUSIVE_EDEFAULT);
-        return;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         getAnnotations().clear();
         return;
@@ -1011,8 +849,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     {
       case KimPackage.OBSERVABLE_SEMANTICS__VALUE:
         return value != null;
-      case KimPackage.OBSERVABLE_SEMANTICS__GENERIC:
-        return generic != GENERIC_EDEFAULT;
       case KimPackage.OBSERVABLE_SEMANTICS__DECLARATION:
         return declaration != null;
       case KimPackage.OBSERVABLE_SEMANTICS__ACCORDING_TO:
@@ -1031,10 +867,6 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return to != null;
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
-        return global != GLOBAL_EDEFAULT;
-      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
-        return exclusive != EXCLUSIVE_EDEFAULT;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
       case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
@@ -1054,18 +886,12 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (generic: ");
-    result.append(generic);
-    result.append(", accordingTo: ");
+    result.append(" (accordingTo: ");
     result.append(accordingTo);
     result.append(", optional: ");
     result.append(optional);
     result.append(", name: ");
     result.append(name);
-    result.append(", global: ");
-    result.append(global);
-    result.append(", exclusive: ");
-    result.append(exclusive);
     result.append(", condition: ");
     result.append(condition);
     result.append(')');

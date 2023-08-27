@@ -74,6 +74,13 @@ public class KimObservable extends KimStatement implements IKimObservable {
         return null;
     }
 
+    /**
+     * TODO handle patterns - now the quantifiers are in ConceptDeclaration, must be collected 
+     * 
+     * @param declaration
+     * @param parent
+     * @return
+     */
     @SuppressWarnings("unchecked")
     public static KimObservable normalize(ObservableSemantics declaration, IKimStatement parent) {
 
@@ -89,11 +96,11 @@ public class KimObservable extends KimStatement implements IKimObservable {
         }
 
         ret.main = concept;
-        ret.global = declaration.isGlobal();
-        ret.generic = declaration.isGeneric();
+//        ret.global = declaration.isGlobal();
+//        ret.generic = declaration.isGeneric();
         ret.formalName = declaration.getName();
         ret.optional = declaration.isOptional();
-        ret.exclusive = declaration.isExclusive();
+//        ret.exclusive = declaration.isExclusive();
 
         // if (declaration.isDefault()) {
         //

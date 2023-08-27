@@ -593,8 +593,7 @@ public enum Kim {
         } else if (value.getConcept() != null) {
             if (value.getConcept() instanceof ObservableSemantics) {
                 ObservableSemantics observable = (ObservableSemantics) value.getConcept();
-                if (observable.getUnit() == null && observable.getCurrency() == null && observable.getValueOperators().isEmpty()
-                        && !observable.isGeneric() && !observable.isGlobal()) {
+                if (observable.getUnit() == null && observable.getCurrency() == null && observable.getValueOperators().isEmpty()) {
                     return declareConcept(observable.getDeclaration());
                 } else {
                     return declareObservable(observable);

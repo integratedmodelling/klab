@@ -1940,22 +1940,13 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__VALUE = 0;
 
   /**
-   * The feature id for the '<em><b>Generic</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__GENERIC = 1;
-
-  /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__DECLARATION = 2;
+  int OBSERVABLE_SEMANTICS__DECLARATION = 1;
 
   /**
    * The feature id for the '<em><b>According To</b></em>' attribute.
@@ -1964,7 +1955,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ACCORDING_TO = 3;
+  int OBSERVABLE_SEMANTICS__ACCORDING_TO = 2;
 
   /**
    * The feature id for the '<em><b>Unit</b></em>' containment reference.
@@ -1973,7 +1964,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__UNIT = 4;
+  int OBSERVABLE_SEMANTICS__UNIT = 3;
 
   /**
    * The feature id for the '<em><b>Currency</b></em>' containment reference.
@@ -1982,7 +1973,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CURRENCY = 5;
+  int OBSERVABLE_SEMANTICS__CURRENCY = 4;
 
   /**
    * The feature id for the '<em><b>Value Operators</b></em>' containment reference list.
@@ -1991,7 +1982,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__VALUE_OPERATORS = 6;
+  int OBSERVABLE_SEMANTICS__VALUE_OPERATORS = 5;
 
   /**
    * The feature id for the '<em><b>Optional</b></em>' attribute.
@@ -2000,7 +1991,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__OPTIONAL = 7;
+  int OBSERVABLE_SEMANTICS__OPTIONAL = 6;
 
   /**
    * The feature id for the '<em><b>From</b></em>' containment reference.
@@ -2009,7 +2000,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__FROM = 8;
+  int OBSERVABLE_SEMANTICS__FROM = 7;
 
   /**
    * The feature id for the '<em><b>To</b></em>' containment reference.
@@ -2018,7 +2009,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__TO = 9;
+  int OBSERVABLE_SEMANTICS__TO = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2027,25 +2018,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__NAME = 10;
-
-  /**
-   * The feature id for the '<em><b>Global</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__GLOBAL = 11;
-
-  /**
-   * The feature id for the '<em><b>Exclusive</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int OBSERVABLE_SEMANTICS__EXCLUSIVE = 12;
+  int OBSERVABLE_SEMANTICS__NAME = 9;
 
   /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
@@ -2054,7 +2027,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 13;
+  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 10;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -2063,7 +2036,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CONDITION = 14;
+  int OBSERVABLE_SEMANTICS__CONDITION = 11;
 
   /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
@@ -2072,7 +2045,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 15;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 12;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
@@ -2267,13 +2240,40 @@ public interface KimPackage extends EPackage
   int CONCEPT_DECLARATION = 28;
 
   /**
+   * The feature id for the '<em><b>Generic</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__GENERIC = 0;
+
+  /**
+   * The feature id for the '<em><b>Global</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__GLOBAL = 1;
+
+  /**
+   * The feature id for the '<em><b>Exclusive</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__EXCLUSIVE = 2;
+
+  /**
    * The feature id for the '<em><b>Main</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__MAIN = 0;
+  int CONCEPT_DECLARATION__MAIN = 3;
 
   /**
    * The feature id for the '<em><b>Distributed Of Inherency</b></em>' attribute.
@@ -2282,7 +2282,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY = 1;
+  int CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY = 4;
 
   /**
    * The feature id for the '<em><b>Inherency</b></em>' containment reference.
@@ -2291,7 +2291,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__INHERENCY = 2;
+  int CONCEPT_DECLARATION__INHERENCY = 5;
 
   /**
    * The feature id for the '<em><b>Distributed For Inherency</b></em>' attribute.
@@ -2300,7 +2300,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY = 3;
+  int CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY = 6;
 
   /**
    * The feature id for the '<em><b>Motivation</b></em>' containment reference.
@@ -2309,7 +2309,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__MOTIVATION = 4;
+  int CONCEPT_DECLARATION__MOTIVATION = 7;
 
   /**
    * The feature id for the '<em><b>Compresent</b></em>' containment reference.
@@ -2318,7 +2318,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__COMPRESENT = 5;
+  int CONCEPT_DECLARATION__COMPRESENT = 8;
 
   /**
    * The feature id for the '<em><b>Causant</b></em>' containment reference.
@@ -2327,7 +2327,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CAUSANT = 6;
+  int CONCEPT_DECLARATION__CAUSANT = 9;
 
   /**
    * The feature id for the '<em><b>Adjacent</b></em>' containment reference.
@@ -2336,7 +2336,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__ADJACENT = 7;
+  int CONCEPT_DECLARATION__ADJACENT = 10;
 
   /**
    * The feature id for the '<em><b>Container</b></em>' containment reference.
@@ -2345,7 +2345,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTAINER = 8;
+  int CONCEPT_DECLARATION__CONTAINER = 11;
 
   /**
    * The feature id for the '<em><b>Contained</b></em>' containment reference.
@@ -2354,7 +2354,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTAINED = 9;
+  int CONCEPT_DECLARATION__CONTAINED = 12;
 
   /**
    * The feature id for the '<em><b>Caused</b></em>' containment reference.
@@ -2363,7 +2363,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CAUSED = 10;
+  int CONCEPT_DECLARATION__CAUSED = 13;
 
   /**
    * The feature id for the '<em><b>Distributed Temporal Inherency</b></em>' attribute.
@@ -2372,7 +2372,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY = 11;
+  int CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY = 14;
 
   /**
    * The feature id for the '<em><b>During</b></em>' containment reference.
@@ -2381,7 +2381,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DURING = 12;
+  int CONCEPT_DECLARATION__DURING = 15;
 
   /**
    * The feature id for the '<em><b>Distributed Within Inherency</b></em>' attribute.
@@ -2390,7 +2390,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY = 13;
+  int CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY = 16;
 
   /**
    * The feature id for the '<em><b>Context</b></em>' containment reference.
@@ -2399,7 +2399,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTEXT = 14;
+  int CONCEPT_DECLARATION__CONTEXT = 17;
 
   /**
    * The feature id for the '<em><b>Relationship Source</b></em>' containment reference.
@@ -2408,7 +2408,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 15;
+  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 18;
 
   /**
    * The feature id for the '<em><b>Relationship Target</b></em>' containment reference.
@@ -2417,7 +2417,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 16;
+  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 19;
 
   /**
    * The feature id for the '<em><b>Operators</b></em>' attribute list.
@@ -2426,7 +2426,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERATORS = 17;
+  int CONCEPT_DECLARATION__OPERATORS = 20;
 
   /**
    * The feature id for the '<em><b>Operands</b></em>' containment reference list.
@@ -2435,7 +2435,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERANDS = 18;
+  int CONCEPT_DECLARATION__OPERANDS = 21;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2444,7 +2444,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__NAME = 19;
+  int CONCEPT_DECLARATION__NAME = 22;
 
   /**
    * The number of structural features of the '<em>Concept Declaration</em>' class.
@@ -2453,7 +2453,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION_FEATURE_COUNT = 20;
+  int CONCEPT_DECLARATION_FEATURE_COUNT = 23;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl <em>Concept Reference</em>}' class.
@@ -6745,17 +6745,6 @@ public interface KimPackage extends EPackage
   EReference getObservableSemantics_Value();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isGeneric <em>Generic</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Generic</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#isGeneric()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EAttribute getObservableSemantics_Generic();
-
-  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getDeclaration <em>Declaration</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6853,28 +6842,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getObservableSemantics_Name();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isGlobal <em>Global</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Global</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#isGlobal()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EAttribute getObservableSemantics_Global();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isExclusive <em>Exclusive</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Exclusive</em>'.
-   * @see org.integratedmodelling.kim.kim.ObservableSemantics#isExclusive()
-   * @see #getObservableSemantics()
-   * @generated
-   */
-  EAttribute getObservableSemantics_Exclusive();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAnnotations <em>Annotations</em>}'.
@@ -7103,6 +7070,39 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EClass getConceptDeclaration();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isGeneric <em>Generic</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Generic</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#isGeneric()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_Generic();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isGlobal <em>Global</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Global</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#isGlobal()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_Global();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isExclusive <em>Exclusive</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exclusive</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#isExclusive()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_Exclusive();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMain <em>Main</em>}'.
@@ -11307,14 +11307,6 @@ public interface KimPackage extends EPackage
     EReference OBSERVABLE_SEMANTICS__VALUE = eINSTANCE.getObservableSemantics_Value();
 
     /**
-     * The meta object literal for the '<em><b>Generic</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute OBSERVABLE_SEMANTICS__GENERIC = eINSTANCE.getObservableSemantics_Generic();
-
-    /**
      * The meta object literal for the '<em><b>Declaration</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -11385,22 +11377,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute OBSERVABLE_SEMANTICS__NAME = eINSTANCE.getObservableSemantics_Name();
-
-    /**
-     * The meta object literal for the '<em><b>Global</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute OBSERVABLE_SEMANTICS__GLOBAL = eINSTANCE.getObservableSemantics_Global();
-
-    /**
-     * The meta object literal for the '<em><b>Exclusive</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute OBSERVABLE_SEMANTICS__EXCLUSIVE = eINSTANCE.getObservableSemantics_Exclusive();
 
     /**
      * The meta object literal for the '<em><b>Annotations</b></em>' containment reference list feature.
@@ -11575,6 +11551,30 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EClass CONCEPT_DECLARATION = eINSTANCE.getConceptDeclaration();
+
+    /**
+     * The meta object literal for the '<em><b>Generic</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__GENERIC = eINSTANCE.getConceptDeclaration_Generic();
+
+    /**
+     * The meta object literal for the '<em><b>Global</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__GLOBAL = eINSTANCE.getConceptDeclaration_Global();
+
+    /**
+     * The meta object literal for the '<em><b>Exclusive</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__EXCLUSIVE = eINSTANCE.getConceptDeclaration_Exclusive();
 
     /**
      * The meta object literal for the '<em><b>Main</b></em>' containment reference list feature.

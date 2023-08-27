@@ -33,6 +33,9 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isGeneric <em>Generic</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isGlobal <em>Global</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isExclusive <em>Exclusive</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getMain <em>Main</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isDistributedOfInherency <em>Distributed Of Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getInherency <em>Inherency</em>}</li>
@@ -59,6 +62,66 @@ import org.integratedmodelling.kim.kim.KimPackage;
  */
 public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container implements ConceptDeclaration
 {
+  /**
+   * The default value of the '{@link #isGeneric() <em>Generic</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isGeneric()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean GENERIC_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isGeneric() <em>Generic</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isGeneric()
+   * @generated
+   * @ordered
+   */
+  protected boolean generic = GENERIC_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isGlobal() <em>Global</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isGlobal()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean GLOBAL_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isGlobal() <em>Global</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isGlobal()
+   * @generated
+   * @ordered
+   */
+  protected boolean global = GLOBAL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExclusive()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean EXCLUSIVE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExclusive()
+   * @generated
+   * @ordered
+   */
+  protected boolean exclusive = EXCLUSIVE_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getMain() <em>Main</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -328,6 +391,81 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.CONCEPT_DECLARATION;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isGeneric()
+  {
+    return generic;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setGeneric(boolean newGeneric)
+  {
+    boolean oldGeneric = generic;
+    generic = newGeneric;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__GENERIC, oldGeneric, generic));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isGlobal()
+  {
+    return global;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setGlobal(boolean newGlobal)
+  {
+    boolean oldGlobal = global;
+    global = newGlobal;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__GLOBAL, oldGlobal, global));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isExclusive()
+  {
+    return exclusive;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setExclusive(boolean newExclusive)
+  {
+    boolean oldExclusive = exclusive;
+    exclusive = newExclusive;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__EXCLUSIVE, oldExclusive, exclusive));
   }
 
   /**
@@ -1152,6 +1290,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
+      case KimPackage.CONCEPT_DECLARATION__GENERIC:
+        return isGeneric();
+      case KimPackage.CONCEPT_DECLARATION__GLOBAL:
+        return isGlobal();
+      case KimPackage.CONCEPT_DECLARATION__EXCLUSIVE:
+        return isExclusive();
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         return getMain();
       case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY:
@@ -1207,6 +1351,15 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
+      case KimPackage.CONCEPT_DECLARATION__GENERIC:
+        setGeneric((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__GLOBAL:
+        setGlobal((Boolean)newValue);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__EXCLUSIVE:
+        setExclusive((Boolean)newValue);
+        return;
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         getMain().clear();
         getMain().addAll((Collection<? extends Concept>)newValue);
@@ -1284,6 +1437,15 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
+      case KimPackage.CONCEPT_DECLARATION__GENERIC:
+        setGeneric(GENERIC_EDEFAULT);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__GLOBAL:
+        setGlobal(GLOBAL_EDEFAULT);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__EXCLUSIVE:
+        setExclusive(EXCLUSIVE_EDEFAULT);
+        return;
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         getMain().clear();
         return;
@@ -1358,6 +1520,12 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
+      case KimPackage.CONCEPT_DECLARATION__GENERIC:
+        return generic != GENERIC_EDEFAULT;
+      case KimPackage.CONCEPT_DECLARATION__GLOBAL:
+        return global != GLOBAL_EDEFAULT;
+      case KimPackage.CONCEPT_DECLARATION__EXCLUSIVE:
+        return exclusive != EXCLUSIVE_EDEFAULT;
       case KimPackage.CONCEPT_DECLARATION__MAIN:
         return main != null && !main.isEmpty();
       case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY:
@@ -1413,7 +1581,13 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (distributedOfInherency: ");
+    result.append(" (generic: ");
+    result.append(generic);
+    result.append(", global: ");
+    result.append(global);
+    result.append(", exclusive: ");
+    result.append(exclusive);
+    result.append(", distributedOfInherency: ");
     result.append(distributedOfInherency);
     result.append(", distributedForInherency: ");
     result.append(distributedForInherency);

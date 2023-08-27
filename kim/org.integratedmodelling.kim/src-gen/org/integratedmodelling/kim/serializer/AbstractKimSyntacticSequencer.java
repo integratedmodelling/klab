@@ -23,7 +23,7 @@ import org.integratedmodelling.kim.services.KimGrammarAccess;
 public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected KimGrammarAccess grammarAccess;
-	protected AbstractElementAlias match_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a;
+	protected AbstractElementAlias match_AnnotatedObservableSemantics_RequiredKeyword_3_3_1_a;
 	protected AbstractElementAlias match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_4_1_q;
@@ -33,7 +33,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0;
 	protected AbstractElementAlias match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q;
-	protected AbstractElementAlias match_DependencyObservableSemantics_RequiredKeyword_3_4_1_a;
+	protected AbstractElementAlias match_DependencyObservableSemantics_RequiredKeyword_2_4_1_a;
 	protected AbstractElementAlias match_Dependency_RequiredKeyword_1_1_0_4_1_q;
 	protected AbstractElementAlias match_List_CommaKeyword_3_0_q;
 	protected AbstractElementAlias match_Map_CommaKeyword_2_1_0_0_q;
@@ -44,7 +44,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_Namespace_____OutsideKeyword_5_7_1_0_a_ResolveKeyword_5_7_0_0__p_FromKeyword_5_7_0_1_0__p;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_4_0_1_0_q;
-	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_3_3_1_a;
+	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_2_3_1_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_a;
 	protected AbstractElementAlias match_ObserveStatementBody_UsingKeyword_1_0_p;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_1_1_1_q;
@@ -54,7 +54,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (KimGrammarAccess) access;
-		match_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a = new TokenAlias(true, true, grammarAccess.getAnnotatedObservableSemanticsAccess().getRequiredKeyword_4_3_1());
+		match_AnnotatedObservableSemantics_RequiredKeyword_3_3_1_a = new TokenAlias(true, true, grammarAccess.getAnnotatedObservableSemanticsAccess().getRequiredKeyword_3_3_1());
 		match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getRightParenthesisKeyword_1_2()));
 		match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdNoSetAccess().getExclusiveKeyword_1_1_1());
 		match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdNoSetAccess().getExclusiveKeyword_1_4_1());
@@ -64,7 +64,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_ClassifierRHS_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_4_1());
 		match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getConceptAccess().getFromKeyword_3_1_1()), new TokenAlias(false, false, grammarAccess.getConceptAccess().getToKeyword_3_1_0()));
 		match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getDateAccess().getADKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getDateAccess().getCEKeyword_1_1()));
-		match_DependencyObservableSemantics_RequiredKeyword_3_4_1_a = new TokenAlias(true, true, grammarAccess.getDependencyObservableSemanticsAccess().getRequiredKeyword_3_4_1());
+		match_DependencyObservableSemantics_RequiredKeyword_2_4_1_a = new TokenAlias(true, true, grammarAccess.getDependencyObservableSemanticsAccess().getRequiredKeyword_2_4_1());
 		match_Dependency_RequiredKeyword_1_1_0_4_1_q = new TokenAlias(false, true, grammarAccess.getDependencyAccess().getRequiredKeyword_1_1_0_4_1());
 		match_List_CommaKeyword_3_0_q = new TokenAlias(false, true, grammarAccess.getListAccess().getCommaKeyword_3_0());
 		match_Map_CommaKeyword_2_1_0_0_q = new TokenAlias(false, true, grammarAccess.getMapAccess().getCommaKeyword_2_1_0_0());
@@ -75,7 +75,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_Namespace_____OutsideKeyword_5_7_1_0_a_ResolveKeyword_5_7_0_0__p_FromKeyword_5_7_0_1_0__p = new GroupAlias(true, false, new GroupAlias(true, false, new TokenAlias(true, true, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_7_1_0()), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_7_0_0())), new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getFromKeyword_5_7_0_1_0()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_4_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_4_0_1_0());
-		match_ObservableSemantics_RequiredKeyword_3_3_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_3_3_1());
+		match_ObservableSemantics_RequiredKeyword_2_3_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_2_3_1());
 		match_ObserveStatementBody_UsingKeyword_1_0_a = new TokenAlias(true, true, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_ObserveStatementBody_UsingKeyword_1_0_p = new TokenAlias(true, false, grammarAccess.getObserveStatementBodyAccess().getUsingKeyword_1_0());
 		match_TableClassifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_1_1_1());
@@ -119,8 +119,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if (match_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a.equals(syntax))
-				emit_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			if (match_AnnotatedObservableSemantics_RequiredKeyword_3_3_1_a.equals(syntax))
+				emit_AnnotatedObservableSemantics_RequiredKeyword_3_3_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
 				emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q.equals(syntax))
@@ -139,8 +139,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q.equals(syntax))
 				emit_Date___ADKeyword_1_0_or_CEKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_DependencyObservableSemantics_RequiredKeyword_3_4_1_a.equals(syntax))
-				emit_DependencyObservableSemantics_RequiredKeyword_3_4_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_DependencyObservableSemantics_RequiredKeyword_2_4_1_a.equals(syntax))
+				emit_DependencyObservableSemantics_RequiredKeyword_2_4_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Dependency_RequiredKeyword_1_1_0_4_1_q.equals(syntax))
 				emit_Dependency_RequiredKeyword_1_1_0_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_List_CommaKeyword_3_0_q.equals(syntax))
@@ -161,8 +161,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_4_0_1_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_4_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_ObservableSemantics_RequiredKeyword_3_3_1_a.equals(syntax))
-				emit_ObservableSemantics_RequiredKeyword_3_3_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObservableSemantics_RequiredKeyword_2_3_1_a.equals(syntax))
+				emit_ObservableSemantics_RequiredKeyword_2_3_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_1_0_a.equals(syntax))
 				emit_ObserveStatementBody_UsingKeyword_1_0_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ObserveStatementBody_UsingKeyword_1_0_p.equals(syntax))
@@ -276,7 +276,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 
 	 * </pre>
 	 */
-	protected void emit_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_AnnotatedObservableSemantics_RequiredKeyword_3_3_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -505,7 +505,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 
 	 * </pre>
 	 */
-	protected void emit_DependencyObservableSemantics_RequiredKeyword_3_4_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_DependencyObservableSemantics_RequiredKeyword_2_4_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	
@@ -943,7 +943,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 
 	 * </pre>
 	 */
-	protected void emit_ObservableSemantics_RequiredKeyword_3_3_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_ObservableSemantics_RequiredKeyword_2_3_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

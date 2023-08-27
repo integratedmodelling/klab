@@ -17,6 +17,9 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isGeneric <em>Generic</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isGlobal <em>Global</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isExclusive <em>Exclusive</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getMain <em>Main</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedOfInherency <em>Distributed Of Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getInherency <em>Inherency</em>}</li>
@@ -45,6 +48,72 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ConceptDeclaration extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Generic</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Generic</em>' attribute.
+   * @see #setGeneric(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_Generic()
+   * @model
+   * @generated
+   */
+  boolean isGeneric();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isGeneric <em>Generic</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Generic</em>' attribute.
+   * @see #isGeneric()
+   * @generated
+   */
+  void setGeneric(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Global</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Global</em>' attribute.
+   * @see #setGlobal(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_Global()
+   * @model
+   * @generated
+   */
+  boolean isGlobal();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isGlobal <em>Global</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Global</em>' attribute.
+   * @see #isGlobal()
+   * @generated
+   */
+  void setGlobal(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Exclusive</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Exclusive</em>' attribute.
+   * @see #setExclusive(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_Exclusive()
+   * @model
+   * @generated
+   */
+  boolean isExclusive();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isExclusive <em>Exclusive</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Exclusive</em>' attribute.
+   * @see #isExclusive()
+   * @generated
+   */
+  void setExclusive(boolean value);
+
   /**
    * Returns the value of the '<em><b>Main</b></em>' containment reference list.
    * The list contents are of type {@link org.integratedmodelling.kim.kim.Concept}.

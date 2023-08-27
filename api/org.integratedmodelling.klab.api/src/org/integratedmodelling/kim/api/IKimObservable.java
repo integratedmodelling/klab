@@ -120,6 +120,9 @@ public interface IKimObservable extends IKimStatement {
      * Generic observables have "any" prepended and specify the class including their children even
      * if the observable is concrete.
      * 
+     * @deprecated now this is in concepts, the observable should know if it's a pattern and which
+     * elements contribute to it.
+     * 
      * @return
      */
     boolean isGeneric();
@@ -128,6 +131,9 @@ public interface IKimObservable extends IKimStatement {
      * Globalized observables have "all" prepended and are used in classifiers and special
      * classification or expansion situations (not in actual semantics) to indicate that all levels
      * of the hierarchy should be considered.
+     *
+     * @deprecated now this is in concepts, the observable should know if it's a pattern and which
+     * elements contribute to it.
      * 
      * @return
      */
@@ -136,7 +142,10 @@ public interface IKimObservable extends IKimStatement {
     /**
      * Exclusive observables have 'only' prepended and only match themselves, never a subclass, when
      * used for queries.
-     * 
+     *
+     * @deprecated now this is in concepts, the observable should know if it's a pattern and which
+     * elements contribute to it.
+     *
      * @return
      */
     boolean isExclusive();

@@ -358,7 +358,6 @@ ObservableSemantics:
 	// value may be an ID and in that case it can be used in models as an attribute for the URN as long
 	// as the ID is not defined in the namespace.
 	(value=LiteralValueWithConcept 'as')?
-	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
 		('according' 'to' accordingTo=PropertyId)? &
@@ -378,7 +377,6 @@ ObservableSemantics:
  * the level of generality w.r.t. subclasses. Removes 'according to' but leaves value operators
  */
 SimpleObservableSemantics returns ObservableSemantics:
-	(generic?='any' | global?='all' | exclusive?='only')?
 	declaration=ConceptDeclaration
 	( =>
 		( =>
@@ -404,7 +402,6 @@ ValueOperator:
 AnnotatedObservableSemantics returns ObservableSemantics:
 	annotations += Annotation*
 	(value=Value 'as')?
-	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
 		('according' 'to' accordingTo=PropertyId)? &
@@ -438,6 +435,8 @@ Dependency:
 
 ConceptDeclaration:
 	
+	// for observable patterns
+	(generic?='any' | global?='all' | exclusive?='no')?
 	main+=Concept+ 
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
 		(=>
@@ -500,7 +499,7 @@ OPERATOR_TARGET:
 ;
 
 Concept:
-	(negated?=('not'|'no'))? name=ConceptReference 
+	(negated?=('not'))? name=ConceptReference 
 		// if the following is there, the name becomes an alias for the authority concept
 		// DEPRECATED - use AUTHORITY:conceptexpr 
 		(authConcept?='identified' 'as' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))? |
@@ -542,7 +541,7 @@ Factor returns ConceptDeclaration:
  * the 'within' and 'of' remain outer-level unless parenthesesized.
  */
 SimpleConceptDeclaration returns ConceptDeclaration:
-	(name=STRING)? main+=Concept+
+	(name=STRING)? 	(generic?='any' | global?='all' | exclusive?='no')? main+=Concept+
 ;
 
 /*
@@ -991,7 +990,6 @@ terminal ANNOTATION_ID:
 DependencyObservableSemantics returns ObservableSemantics:
 	
 	(value=LiteralValueWithConcept 'as')?
-	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
 		('according' 'to' accordingTo=PropertyId)? &
@@ -1013,7 +1011,6 @@ DependencyObservableSemantics returns ObservableSemantics:
 AlternativeDependencyObservableSemantics returns ObservableSemantics:
 	
 	(value=LiteralValueWithConcept 'as')?
-	(generic?='any')?
 	declaration=ConceptDeclaration
 	(
 		('according' 'to' accordingTo=PropertyId)? &
