@@ -8,10 +8,12 @@ import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.CustomPropertiesRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.controllers.UserCustomPropertyController.UserCustomPropertyRequest;
+import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
 import org.integratedmodelling.klab.rest.CustomProperty;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserCustomPropertyServiceImpl implements UserCustomPropertyService {
     private UserRepository userRepository;
     private CustomPropertiesRepository customPropertiesRepository;

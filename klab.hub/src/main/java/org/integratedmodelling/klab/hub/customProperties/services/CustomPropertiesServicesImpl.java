@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.customProperties.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.api.CustomProperties;
 import org.integratedmodelling.klab.hub.customProperties.commands.NewCustomProperty;
@@ -8,8 +9,6 @@ import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertiesT
 import org.integratedmodelling.klab.hub.repository.CustomPropertiesRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.google.common.base.Optional;
 
 @Service
 public class CustomPropertiesServicesImpl implements CustomPropertiesServices {
