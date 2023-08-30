@@ -1,18 +1,26 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.tuple.Triple;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
 import org.integratedmodelling.klab.hub.controllers.pagination.GenericPageAndFilterConverter;
 import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
 import org.integratedmodelling.klab.hub.payload.PageRequest;
 import org.integratedmodelling.klab.hub.payload.PageResponse;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
+import org.integratedmodelling.klab.hub.service.FilterBuilderService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
@@ -25,21 +33,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import net.minidev.json.JSONObject;
-
 @RestController
 public class UserProfileController {
 	
 	private UserProfileService userService;
     private final GenericPageAndFilterConverter genericPageAndFilterConverter;
-
+    private final FilterBuilderService filterBuilderService;
 	
 	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 	
 	@Autowired
-	UserProfileController(UserProfileService userService, GenericPageAndFilterConverter genericPageAndFilterConverter) {
+	UserProfileController(UserProfileService userService, GenericPageAndFilterConverter genericPageAndFilterConverter, FilterBuilderService filterBuilderService) {
 		this.userService = userService;
 		this.genericPageAndFilterConverter = genericPageAndFilterConverter;
+		this.filterBuilderService = filterBuilderService;
 	}
 	
 	@GetMapping(API.HUB.USER_BASE)
@@ -48,12 +55,36 @@ public class UserProfileController {
 	    PageResponse<User> response = new PageResponse<>();
         
         /* Call function to convert pageRequest object in <Query, Pageable> pair, where query has the filters and pageable, the pagination properties*/
-        Pair<Query, Pageable> pair= genericPageAndFilterConverter.genericPageAndFilterConvert(pageRequest);
+        Triple<Query, List<FilterCondition>, List<FilterCondition>> triple = genericPageAndFilterConverter.genericFilterConvert(pageRequest, "groups");
+        Pageable pageable = filterBuilderService.getPageable(pageRequest.getSize(), pageRequest.getPage(), pageRequest.getOrders());
+        if (triple.getMiddle().isEmpty() && triple.getRight().isEmpty()) {
+            /* Call getPage function, to findAll elements applying the filters and the pagination given in the pageRequest*/
+            Page<User> pg = userService.getPage(triple.getLeft(), pageable);
+            response.setPageStats(pg);
+        } else {
+            List<User> users = userService.getQuery(triple.getLeft());
+            if (!triple.getMiddle().isEmpty()) {
+                ArrayList<String> groupsSearch = triple.getMiddle().stream().map(f -> f.getValue().toString()).collect(Collectors.toCollection(ArrayList<String>::new));
+                users = users.stream().filter(user -> {
+                    List<String> groups = user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
+                            .map(GroupEntry::getGroupName).collect(Collectors.toCollection(ArrayList<String>::new));
+                            return groups.containsAll(groupsSearch);
+                }).collect(Collectors.toCollection(ArrayList<User>::new));
+            }
+            if (!triple.getRight().isEmpty()) {
+                ArrayList<String> groupsSearch = triple.getRight().stream().map(f -> f.getValue().toString()).collect(Collectors.toCollection(ArrayList<String>::new));
+                users = users.stream().filter(user -> {
+                    return user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
+                            .map(GroupEntry::getGroupName).anyMatch(groupsSearch::contains);
+                }).collect(Collectors.toCollection(ArrayList<User>::new));
+            }
+            final int start = (int)pageable.getOffset();
+            final int end = Math.min((start + pageable.getPageSize()), users.size());
+            final List<User> content = users.subList(start, end);
+            final Page<User> page = new PageImpl<>(content, pageable, users.size());
+            response.setPageStats(page);
+        }
         
-        /* Call getPage function, to findAll elements applying the filters and the pagination given in the pageRequest*/
-        Page<User> pg = userService.getPage(pair.getLeft(), pair.getRight());        
-        
-        response.setPageStats(pg, pg.getContent());
 		return new ResponseEntity<>(response,HttpStatus.OK);
 	}
 	

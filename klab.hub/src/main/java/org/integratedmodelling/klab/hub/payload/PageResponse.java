@@ -15,8 +15,8 @@ public class PageResponse<T> {
     private int pageSize;
 
     private List<T> items;
-
-    public void setPageStats(Page pg, List<T> elts) {
+    
+    public void setPageStats(Page<T> pg) {
         first = pg.isFirst();
         last = pg.isLast();
         currentPage = pg.getNumber() + 1;
@@ -24,7 +24,7 @@ public class PageResponse<T> {
         totalPages = pg.getTotalPages();
         totalItems = pg.getTotalElements();
         itemsPerPage = pg.getNumberOfElements();
-        items = elts;
+        items = pg.getContent();
     }
     
     public PageResponse() {

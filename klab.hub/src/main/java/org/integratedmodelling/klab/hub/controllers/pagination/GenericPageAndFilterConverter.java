@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.controllers.pagination;
 import java.util.List;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
 import org.integratedmodelling.klab.hub.payload.PageRequest;
 import org.integratedmodelling.klab.hub.repository.support.GenericFilterCriteriaBuilder;
@@ -31,5 +32,18 @@ public class GenericPageAndFilterConverter {
         
         return Pair.of(query, pageable);
     }
+    
+    public Triple<Query, List<FilterCondition>, List<FilterCondition>> genericFilterConvert(PageRequest pageRequest, String... skipped) {
+        GenericFilterCriteriaBuilder filterCriteriaBuilder = new GenericFilterCriteriaBuilder();
+
+        Pair<List<FilterCondition>, List<FilterCondition>> andConditions = filterBuilderService.createFilterConditionWithSkipped(pageRequest.getFilterAnd(), skipped);
+        Pair<List<FilterCondition>, List<FilterCondition>> orConditions = filterBuilderService.createFilterConditionWithSkipped(pageRequest.getFilterOr(), skipped);
+
+        Query query = filterCriteriaBuilder.addCondition(andConditions.getLeft(), orConditions.getLeft());
+        
+        return Triple.of(query, andConditions.getRight(), orConditions.getRight());
+    }
+    
+    
 
 }

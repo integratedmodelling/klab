@@ -1,10 +1,12 @@
 package org.integratedmodelling.klab.hub.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
 import org.integratedmodelling.klab.hub.enums.FilterOperationEnum;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
@@ -20,6 +22,8 @@ import org.springframework.stereotype.Service;
 public class FilterBuilderService {
 
     private static final int DEFAULT_SIZE_PAGE = 20;
+    private final String FILTER_SHEARCH_DELIMITER = "&";
+    private final String FILTER_CONDITION_DELIMITER = "\\|";
 
 
     /**
@@ -34,9 +38,6 @@ public class FilterBuilderService {
         try {
 
             if (criteria != null && !criteria.isEmpty()) {
-
-                final String FILTER_SHEARCH_DELIMITER = "&";
-                final String FILTER_CONDITION_DELIMITER = "\\|";
 
                 List<String> values = split(criteria, FILTER_SHEARCH_DELIMITER);
                 if (!values.isEmpty()) {
@@ -55,6 +56,42 @@ public class FilterBuilderService {
             throw new BadRequestException("Cannot create condition filter " + ex.getMessage());
         }
 
+    }
+    
+    /**
+     * Prepare filter condition.  extract the different filters used in the controller via @RequestParam
+     *
+     * @param criteria search Criteria.
+     * @return a list of {@link FilterCondition}
+     */
+    public Pair<List<FilterCondition>, List<FilterCondition>> createFilterConditionWithSkipped(String criteria, String... skipped) {
+        List<FilterCondition> filters = new ArrayList<>();
+        List<FilterCondition> skippedFilters = new ArrayList<>();
+        
+        if (skipped == null || skipped.length == 0) {
+            return Pair.of(createFilterCondition(criteria),skippedFilters);
+        } else {
+            try {
+                if (criteria != null && !criteria.isEmpty()) {
+                    List<String> values = split(criteria, FILTER_SHEARCH_DELIMITER);
+                    if (!values.isEmpty()) {
+                        values.forEach(x -> {
+                            List<String> filter = split(x, FILTER_CONDITION_DELIMITER);
+                            if (FilterOperationEnum.fromValue(filter.get(1)) != null) {
+                                if (Arrays.stream(skipped).anyMatch(filter.get(0)::equals)) {
+                                    skippedFilters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), filter.get(2)));
+                                } else {
+                                    filters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), filter.get(2)));
+                                }
+                            }
+                        });
+                    }
+                }
+                return Pair.of(filters,skippedFilters);
+            } catch (Exception ex) {
+                throw new BadRequestException("Cannot create condition filter " + ex.getMessage());
+            }
+        }
     }
 
 

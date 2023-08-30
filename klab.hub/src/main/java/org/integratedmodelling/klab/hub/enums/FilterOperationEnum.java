@@ -16,7 +16,7 @@ public enum FilterOperationEnum {
     GREATER_THAN("gt"),
     GREATER_THAN_OR_EQUAL_TO("gte"),
     LESS_THAN("lt"),
-    LESSTHAN_OR_EQUAL_TO("lte"),
+    LESS_THAN_OR_EQUAL_TO("lte"),
     IN("in"),
     NOT_IN("nin"),
     BETWEEN("btn"),

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -101,6 +102,11 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public Page<User> getPage(Query query, Pageable pageable) {
         return userRepository.findAll(query, pageable);
+    }
+    
+    @Override
+    public List<User> getQuery(Query query) {
+        return userRepository.findAll(query);
     }
 
 }

@@ -73,7 +73,7 @@ public class AgreementController {
         /* Call getPage function, to findAll elements applying the filters and the pagination given in the pageRequest*/
         Page<Agreement> pg = agreementService.getPage(pair.getLeft(), pair.getRight());        
         
-        response.setPageStats(pg, pg.getContent());
+        response.setPageStats(pg);
         
         return new ResponseEntity<>(response, HttpStatus.OK);        
     }

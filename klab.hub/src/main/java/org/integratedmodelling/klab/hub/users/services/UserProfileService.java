@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.ProfileResource;
@@ -19,6 +20,7 @@ public interface UserProfileService {
 	abstract ProfileResource getRawUserProfile(String username);
 	abstract ProfileResource getCurrentUserProfile(boolean remote);
 	abstract Set<ProfileResource> getAllUserProfiles();
-    abstract Page<User> getPage(Query left, Pageable right);
+    abstract Page<User> getPage(Query query, Pageable pageable);
+    abstract List<User> getQuery(Query query);
 
 }
