@@ -820,9 +820,9 @@ public enum Klab implements IRuntimeService {
                 if (node == null) {
                     logger.warning("Stats node was found but null");
                 }
-                this.statisticsServer = node;
-                break;
-            }
+                    this.statisticsServer = node;
+                    break;
+                }
             if (this.statisticsServer == null) {
                 logger.warning("No stats node was found");
             } else {

@@ -1,19 +1,12 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import javax.annotation.processing.Messager;
-
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
-import org.integratedmodelling.klab.api.engine.IScope;
-import org.integratedmodelling.klab.api.engine.ISessionScope;
-import org.integratedmodelling.klab.components.runtime.actors.EmptyKlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
-import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.ReceiveBuilder;
@@ -29,7 +22,7 @@ public class UserActor extends KlabActor {
         String id;
         ActorRef<SessionCreated> replyTo;
 
-        public CreateSession(String id, ISessionScope scope, ActorRef<SessionCreated> replyTo) {
+        public CreateSession(String id/* , ISessionScope scope */, ActorRef<SessionCreated> replyTo) {
             this.id = id;
             this.replyTo = replyTo;
         }
@@ -38,7 +31,7 @@ public class UserActor extends KlabActor {
     public static class CreateApplication extends EmptyKlabMessage {
         String behavior;
         ActorRef<SessionCreated> replyTo;
-        public CreateApplication(String behavior, ISessionScope scope, ActorRef<SessionCreated> replyTo) {
+        public CreateApplication(String behavior/* , ISessionScope scope */, ActorRef<SessionCreated> replyTo) {
             this.behavior = behavior;
             this.replyTo = replyTo;
         }

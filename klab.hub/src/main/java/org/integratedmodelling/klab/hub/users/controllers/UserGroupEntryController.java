@@ -47,7 +47,7 @@ public class UserGroupEntryController {
 	
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	@PutMapping(value = API.HUB.USER_BASE, produces = "application/json", params=API.HUB.PARAMETERS.REMOVE_GROUPS)
-	public ResponseEntity<?> removeUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {	    
+	public ResponseEntity<?> removeUsersGroups(@RequestBody UpdateUsersGroups updateUserGroups) {
 		userService.removeUsersGroupsByNames(updateUserGroups);
 		return ResponseEntity
 				.status(HttpStatus.CREATED)

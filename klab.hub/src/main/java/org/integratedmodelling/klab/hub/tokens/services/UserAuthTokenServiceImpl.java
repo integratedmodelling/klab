@@ -1,12 +1,13 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
 import java.util.List;
+
 import java.util.Optional;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
-import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.commands.CreateUserAuthenticationToken;
