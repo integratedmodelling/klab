@@ -41,6 +41,7 @@ public class UserProfileController {
     private final FilterBuilderService filterBuilderService;
 	
 	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
+	private static final String FILTER_NO_GROUPS = "$NO_GROUPS$";
 	
 	@Autowired
 	UserProfileController(UserProfileService userService, GenericPageAndFilterConverter genericPageAndFilterConverter, FilterBuilderService filterBuilderService) {
@@ -49,7 +50,8 @@ public class UserProfileController {
 		this.filterBuilderService = filterBuilderService;
 	}
 	
-	@GetMapping(API.HUB.USER_BASE)
+	@SuppressWarnings("unlikely-arg-type")
+    @GetMapping(API.HUB.USER_BASE)
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> getAllUserProfiles(PageRequest pageRequest) {
 	    PageResponse<User> response = new PageResponse<>();
@@ -63,20 +65,26 @@ public class UserProfileController {
             response.setPageStats(pg);
         } else {
             List<User> users = userService.getQuery(triple.getLeft());
-            if (!triple.getMiddle().isEmpty()) {
-                ArrayList<String> groupsSearch = triple.getMiddle().stream().map(f -> f.getValue().toString()).collect(Collectors.toCollection(ArrayList<String>::new));
+            ArrayList<String> groupsSearchAnd = triple.getMiddle().stream().map(f -> f.getValue().toString()).collect(Collectors.toCollection(ArrayList<String>::new));
+            ArrayList<String> groupsSearchOr = triple.getRight().stream().map(f -> f.getValue().toString()).collect(Collectors.toCollection(ArrayList<String>::new));
+            
+            if (groupsSearchAnd.contains(FILTER_NO_GROUPS) || groupsSearchOr.contains(FILTER_NO_GROUPS)) {
                 users = users.stream().filter(user -> {
-                    List<String> groups = user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
-                            .map(GroupEntry::getGroupName).collect(Collectors.toCollection(ArrayList<String>::new));
-                            return groups.containsAll(groupsSearch);
+                    return user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().isEmpty();
                 }).collect(Collectors.toCollection(ArrayList<User>::new));
-            }
-            if (!triple.getRight().isEmpty()) {
-                ArrayList<String> groupsSearch = triple.getRight().stream().map(f -> f.getValue().toString()).collect(Collectors.toCollection(ArrayList<String>::new));
-                users = users.stream().filter(user -> {
-                    return user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
-                            .map(GroupEntry::getGroupName).anyMatch(groupsSearch::contains);
-                }).collect(Collectors.toCollection(ArrayList<User>::new));
+            } else {
+                if (!triple.getMiddle().isEmpty()) {
+                    users = users.stream().filter(user -> {
+                        return user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
+                                .map(GroupEntry::getGroupName).collect(Collectors.toCollection(ArrayList<String>::new)).containsAll(groupsSearchAnd);
+                    }).collect(Collectors.toCollection(ArrayList<User>::new));
+                }
+                if (!triple.getRight().isEmpty()) {
+                    users = users.stream().filter(user -> {
+                        return user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
+                                .map(GroupEntry::getGroupName).anyMatch(groupsSearchOr::contains);
+                    }).collect(Collectors.toCollection(ArrayList<User>::new));
+                }
             }
             final int start = (int)pageable.getOffset();
             final int end = Math.min((start + pageable.getPageSize()), users.size());
