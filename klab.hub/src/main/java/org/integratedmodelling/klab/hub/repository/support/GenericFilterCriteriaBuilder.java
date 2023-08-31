@@ -34,6 +34,8 @@ public class GenericFilterCriteriaBuilder {
         FILTER_CRITERIA.put("LESS_THAN_OR_EQUAL_TO", condition -> Criteria.where(condition.getField()).lte(condition.getValue()));
         FILTER_CRITERIA.put("CONTAINS", condition -> Criteria.where(condition.getField()).regex((String) condition.getValue(),"i"));
         FILTER_CRITERIA.put("JOIN", condition ->  Criteria.where(condition.getField()).is(condition.getValue()));
+        FILTER_CRITERIA.put("IS_NULL", condition ->  Criteria.where(condition.getField()).not().ne(null));
+        FILTER_CRITERIA.put("IS_NOT_NULL", condition ->  Criteria.where(condition.getField()).ne(null));
     }
 
 
