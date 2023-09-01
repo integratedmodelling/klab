@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
-import java.time.Duration;
+
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -17,7 +18,7 @@ import jakarta.persistence.Id;
 
 @Document(collection = "AgreementTemplates")
 @TypeAlias("MongoAgreementTemplate")
-public class AgreementTemplate {
+public class AgreementTemplate{
     @Id
     private String id;
 
@@ -32,6 +33,8 @@ public class AgreementTemplate {
     private Boolean defaultTemplate;
 
     private Long defaultDuration;
+        
+    private Date validDate;
 
     @Reference
     private Set<GroupEntry> defaultGroups = new HashSet<GroupEntry>();
@@ -92,5 +95,16 @@ public class AgreementTemplate {
     public void setDefaultGroups(Set<GroupEntry> defaultGroups) {
         this.defaultGroups = defaultGroups;
     }
+
+    public Date getValidDate() {
+        return validDate;
+    }
+
+    public void setValidDate(Date validDate) {
+        this.validDate = validDate;
+    }
+
+    
+    
 
 }

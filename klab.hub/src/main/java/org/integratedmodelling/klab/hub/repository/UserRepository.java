@@ -17,7 +17,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, ObjectId>{		
+public interface UserRepository extends ResourceRepository<User, String>{		
 	
 	Optional<User> findById(String id);
 	
