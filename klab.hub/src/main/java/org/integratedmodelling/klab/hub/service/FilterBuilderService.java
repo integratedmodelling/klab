@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.hub.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -44,7 +46,7 @@ public class FilterBuilderService {
                     values.forEach(x -> {
                         List<String> filter = split(x, FILTER_CONDITION_DELIMITER);
                         if (FilterOperationEnum.fromValue(filter.get(1)) != null) {
-                            filters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), filter.get(2)));
+                            filters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), getValue(filter.get(2))));
                         }
                     });
                 }
@@ -79,9 +81,9 @@ public class FilterBuilderService {
                             List<String> filter = split(x, FILTER_CONDITION_DELIMITER);
                             if (FilterOperationEnum.fromValue(filter.get(1)) != null) {
                                 if (Arrays.stream(skipped).anyMatch(filter.get(0)::equals)) {
-                                    skippedFilters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), filter.get(2)));
+                                    skippedFilters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), getValue(filter.get(2))));
                                 } else {
-                                    filters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), filter.get(2)));
+                                    filters.add(new FilterCondition(filter.get(0), FilterOperationEnum.fromValue(filter.get(1)), getValue(filter.get(2))));
                                 }
                             }
                         });
@@ -98,6 +100,20 @@ public class FilterBuilderService {
     private static List<String> split(String search, String delimiter) {
         return Stream.of(search.split(delimiter))
                 .collect(Collectors.toList());
+    }
+    
+    private static Object getValue(String sValue) {
+        Object value;
+        if (sValue != null) {
+            if (sValue.startsWith("$DATE$")) {
+                value = LocalDate.parse(sValue.substring(6));
+            } else {
+                value = sValue;
+            }
+        } else {
+            return null;
+        }
+        return value;
     }
 
 
