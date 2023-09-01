@@ -446,6 +446,15 @@ public interface API {
          * Base URL path for user resources on the hub.
          */
         public static final String CUSTOM_PROPERTIES = API_BASE + "/custom-properties";
+        /**
+         * Base URL path for custom properties related to users.
+         */
+        public static final String USER_CUSTOM_PROPERTIES = USER_BASE + "/custom-properties";
+        /**
+         * Base URL path for custom properties related to a single user.
+         */
+        public static final String USER_ID_CUSTOM_PROPERTIES = USER_BASE_ID + "/custom-properties";
+
 
         public static interface PARAMETERS {
             /**
