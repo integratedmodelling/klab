@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
@@ -74,20 +75,26 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 		List<IObservation> networks = new ArrayList<>();
 		
 		if (networkArtifact == null) {
-			networks.addAll(scope.getObservations(networkConcept));
+			 
+			// All configurations from the context are recovered, thus this might cause trouble if there are multiple. 
+			networks = new ArrayList<>(scope.getContextObservation().getChildren(IConfiguration.class));
+			
 		} else {
 			
-			IArtifact net = scope.getArtifact(networkArtifact); 
-			System.out.println(scope.getArtifacts(IArtifact.class));
-			System.out.println(scope.getProvenance().getArtifacts());
-			System.out.println(net);
-			if (net instanceof IObservationGroup) {
-				for (IArtifact a : net) {
-					networks.add((IObservation) a);
-				}
-			} else {
-				networks.add((IObservation) net);
-			}
+			
+			// Adding only the configuration with the name of the passed network. This works as long as the semantics are attached to a single network vs. multiple disconnected ones.
+			networks.add(scope.getContextObservation().getChildren(IConfiguration.class).stream().filter(c->c.getName()==networkArtifact).iterator().next());
+			
+			
+//			IArtifact net = scope.getArtifact(networkArtifact); 
+//			
+//			if (net instanceof IObservationGroup) {
+//				for (IArtifact a : net) {
+//					networks.add((IObservation) a);
+//				}
+//			} else {
+//				networks.add((IObservation) net);
+//			}
 		}
 		
 
