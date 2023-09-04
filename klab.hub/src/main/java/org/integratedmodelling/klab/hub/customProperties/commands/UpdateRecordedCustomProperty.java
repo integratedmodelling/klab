@@ -3,15 +3,15 @@ package org.integratedmodelling.klab.hub.customProperties.commands;
 import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 
-public class NewCustomProperty implements RecordedCustomPropertyCommand {
+public class UpdateRecordedCustomProperty implements RecordedCustomPropertyCommand {
 
     private RecordedCustomProperty customProperty;
     private RecordedCustomPropertyRepository customPropertyRepository;
 
-    public NewCustomProperty(RecordedCustomProperty customProperty,
-            RecordedCustomPropertyRepository customPropertiesRepository) {
+    public UpdateRecordedCustomProperty(RecordedCustomProperty customProperty,
+            RecordedCustomPropertyRepository customPropertyRepository) {
         this.customProperty = customProperty;
-        this.customPropertyRepository = customPropertiesRepository;
+        this.customPropertyRepository = customPropertyRepository;
     }
 
     @Override
