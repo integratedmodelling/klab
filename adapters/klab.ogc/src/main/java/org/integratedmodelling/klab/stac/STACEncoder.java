@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.locationtech.jts.geom.Envelope;
@@ -109,10 +110,12 @@ public class STACEncoder implements IResourceEncoder {
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
 
         try {
-
             List<HMStacItem> items = collection.get().setGeometryFilter(poly)
                     .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
                     .searchItems();
+            if (items.isEmpty()) {
+                throw new KlabIllegalStateException("No STAC items found for this context.");
+            }
 
             LogProgressMonitor lpm = new LogProgressMonitor();
             IGrid grid = space.getGrid();
@@ -137,7 +140,7 @@ public class STACEncoder implements IResourceEncoder {
             coverage = outRaster.buildCoverage();
             scope.getMonitor().info("Coverage: " + coverage);
         } catch (Exception e) {
-            scope.getMonitor().error("Cannot create STAC file." + e.getMessage());
+            scope.getMonitor().error("Cannot create STAC file. " + e.getMessage());
         }
 
         encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
