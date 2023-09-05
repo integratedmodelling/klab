@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.customProperties.controllers;
+package org.integratedmodelling.klab.hub.recordedCustomProperty.controllers;
 
 import java.util.List;
 
@@ -6,9 +6,9 @@ import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
-import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
-import org.integratedmodelling.klab.hub.customProperties.payload.RecordedCustomPropertiyRequest;
-import org.integratedmodelling.klab.hub.customProperties.services.RecordedCustomPropertyService;
+import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
+import org.integratedmodelling.klab.hub.recordedCustomProperty.payload.RecordedCustomPropertiyRequest;
+import org.integratedmodelling.klab.hub.recordedCustomProperty.services.RecordedCustomPropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

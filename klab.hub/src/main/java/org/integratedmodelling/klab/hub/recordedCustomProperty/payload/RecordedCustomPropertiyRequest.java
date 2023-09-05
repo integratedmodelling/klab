@@ -1,6 +1,6 @@
-package org.integratedmodelling.klab.hub.customProperties.payload;
+package org.integratedmodelling.klab.hub.recordedCustomProperty.payload;
 
-import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
+import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
 
 public class RecordedCustomPropertiyRequest {
 

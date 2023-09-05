@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.customProperties.commands;
+package org.integratedmodelling.klab.hub.recordedCustomProperty.commands;
 
 import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
 
