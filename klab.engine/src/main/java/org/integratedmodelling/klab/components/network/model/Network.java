@@ -53,8 +53,6 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class Network extends Pattern implements INetwork {
 	
-	private final static String infomap_url = "http://127.0.0.1:5000";
-
 	/*
 	 * export functions use the adapter interface; we redirect to the network
 	 * passing this name in REST calls.
@@ -88,96 +86,9 @@ public class Network extends Pattern implements INetwork {
 		export("json","/home/dibepa/.klab/export/network_test.json");
 		export("csv","/home/dibepa/.klab/export/network_test.csv");
 		
-		/**
-		 * 
-		 * **/
-		System.out.println("Trying to encode graph:");
-		KlabData.Object.Builder encodedNetwork = KlabData.Object.newBuilder().setName("test-net");
-		Map<String,String> edgeProperties;
-		
-		System.out.println("Iterating over relationships:");
-		for (IRelationship edge : network.edgeSet()) {
-			
-			System.out.println("Getting edge properties:");
-			edgeProperties = edge.getMetadata().entrySet()
-													.stream()
-													.collect(Collectors.toMap(
-															e -> e.getKey(),
-															e -> e.getValue() != null ? e.getValue().toString(): null
-													));
-			
-			System.out.println("Adding source and target:");
-			edgeProperties.put("source", edge.getSource().getName() );
-			edgeProperties.put("target", edge.getTarget().getName() );
-			
-			System.out.println("Create builder:");
-			encodedNetwork.addObjects(
-						KlabData.Object.newBuilder()
-						.putAllProperties(edgeProperties)
-						.build()
-					);
-			
-		}
-		System.out.println("Out of loop:");
-		KlabData.Object infomapParams = KlabData.Object.newBuilder()
-										.putProperties("param1", "1.1")
-										.build();
-		
-		KlabData infomapMessage = KlabData.newBuilder()
-											.addObjects(encodedNetwork.build())
-											.addObjects(infomapParams)
-											.build();
-		System.out.println("Preparing message:");
-		HttpResponse<String> response = null;
-		File outputFile = new File("/home/dibepa/protobuf-infomap");
-		try {
-			FileOutputStream output = new FileOutputStream(outputFile);
-			infomapMessage.writeTo(output);
-			output.close();
-			response = infomapSendRequest(outputFile);
-			System.out.println(response.body());
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		/**
-		 * 
-		 * **/
 		
 	}
 	
-	private HttpRequest infomapBuildRequest(File outputFile) {
-		HttpRequest request = null;
-		
-		try {
-			request = HttpRequest.newBuilder()
-			        	.uri(URI.create(infomap_url))
-			        	.header("Content-type", "application/protobuf")
-			        	.POST(BodyPublishers.ofFile(Paths.get(outputFile.getAbsolutePath())))
-			        	.build();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return request;
-	}
-	
-	private HttpResponse<String> infomapSendRequest(File outputFile) {
-		HttpRequest request = infomapBuildRequest(outputFile);
-		HttpResponse<String> response;
-        try {
-            response = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
-        } catch (IOException | InterruptedException ie) {
-            throw new ValhallaException(ie);
-        }
-		return response;
-		
-	}
 	
 
 	/*

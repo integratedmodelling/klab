@@ -13,6 +13,7 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -80,11 +81,12 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 			networks = new ArrayList<>(scope.getContextObservation().getChildren(IConfiguration.class));
 			
 		} else {
-			
+						
+			// TODO: name of the network observation is different than name of the artifact!!
+			String obsName = networkArtifact.substring(networkArtifact.lastIndexOf(':') + 1).replaceAll("(.)(\\p{Lu})", "$1_$2").toLowerCase();
 			
 			// Adding only the configuration with the name of the passed network. This works as long as the semantics are attached to a single network vs. multiple disconnected ones.
-			networks.add(scope.getContextObservation().getChildren(IConfiguration.class).stream().filter(c->c.getName()==networkArtifact).iterator().next());
-			
+			networks.add(scope.getContextObservation().getChildren(IConfiguration.class).stream().filter(c->c.getName().equals(obsName)).iterator().next());			
 			
 //			IArtifact net = scope.getArtifact(networkArtifact); 
 //			
@@ -120,7 +122,6 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 		KlabData.Object.Builder encodedNetwork = KlabData.Object.newBuilder().setName("test-net");
 		Map<String,String> edgeProperties;
 		
-		System.out.println("Encoding network");
 		for (IRelationship edge : network.getNetwork().edgeSet()) {
 			
 			edgeProperties = edge.getMetadata().entrySet()
@@ -154,9 +155,9 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 		HttpResponse<InputStream> response = null;
 		Map<String,String> map = null;
 		
+		File outputFile = new File("/home/dibepa/protobuf-infomap");
 		try {
 			
-			File outputFile = new File("/home/dibepa/protobuf-infomap");
 			FileOutputStream output = new FileOutputStream(outputFile);
 			infomapMessage.writeTo(output);
 			output.close();
@@ -177,20 +178,17 @@ public class CommunityInstantiator extends AbstractContextualizer implements IEx
 			e.printStackTrace();
 		}
 		
-		System.out.println("Done. Setting community map");
 		
+		communityMap = new HashMap<IDirectObservation,String>();
 		for (IDirectObservation node : network.getNetwork().vertexSet()) {
 			String c = map.get(node.getName());
 			communityMap.put(node, c);
 		}
 		
-		System.out.println(communityMap.size());
-		System.out.println(communityMap);
-		
-		
+			
 		if (communityMap.size()>0) {
 			scope.getMonitor()
-			.info("instantiating the" + communityMap.values().stream().collect(Collectors.toSet()).size() + " communities detected in " + network.getName() + ".");
+			.info("instantiating " + communityMap.values().stream().collect(Collectors.toSet()).size() + " communities detected in " + network.getName() + ".");
 		} else {
 			throw new KlabException("The server returned an empty result.");
 		}
