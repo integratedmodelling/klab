@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.customProperties.commands.NewCustomProperty;
-import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertiesType;
+import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
 import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +27,7 @@ public class RecordedCustomPropertyServicesImpl implements RecordedCustomPropert
     }
 
     @Override
-    public List<RecordedCustomProperty> getCustomPropertiesByType(CustomPropertiesType customPropertiesType) throws Exception {
+    public List<RecordedCustomProperty> getCustomPropertiesByType(CustomPropertyType customPropertiesType) throws Exception {
         switch(customPropertiesType) {
         case USER:
             return customPropertyRepository.findByIsForUserIsTrue();
@@ -53,7 +53,7 @@ public class RecordedCustomPropertyServicesImpl implements RecordedCustomPropert
     }
 
     @Override
-    public RecordedCustomProperty createNewCustomProperties(CustomPropertiesType customPropertiesType, String name)
+    public RecordedCustomProperty createNewCustomProperties(CustomPropertyType customPropertiesType, String name)
             throws Exception {
 
         Optional<RecordedCustomProperty> customPropertyOptional = customPropertyRepository.findByName(name);

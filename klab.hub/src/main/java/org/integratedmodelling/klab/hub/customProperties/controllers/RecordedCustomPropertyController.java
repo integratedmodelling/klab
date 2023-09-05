@@ -6,8 +6,8 @@ import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
-import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertiesType;
-import org.integratedmodelling.klab.hub.customProperties.payload.CustomPropertiesRequest;
+import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
+import org.integratedmodelling.klab.hub.customProperties.payload.RecordedCustomPropertiyRequest;
 import org.integratedmodelling.klab.hub.customProperties.services.RecordedCustomPropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +37,7 @@ public class RecordedCustomPropertyController {
             if (type == null) {
                 customProperties = customPropertyService.getAllCustomProperties();
             } else {
-                customProperties = customPropertyService.getCustomPropertiesByType(CustomPropertiesType.valueOf(type));
+                customProperties = customPropertyService.getCustomPropertiesByType(CustomPropertyType.valueOf(type));
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -47,9 +47,9 @@ public class RecordedCustomPropertyController {
 
     @PostMapping(API.HUB.CUSTOM_PROPERTIES)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > createRecordedCustomProperty(@RequestBody CustomPropertiesRequest customPropertiesRequest) {
+    public ResponseEntity< ? > createRecordedCustomProperty(@RequestBody RecordedCustomPropertiyRequest request) {
         try {
-            customPropertyService.createNewCustomProperties(customPropertiesRequest.getCustomPropertiesType(), customPropertiesRequest.getName());
+            customPropertyService.createNewCustomProperties(request.getCustomPropertiesType(), request.getName());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }

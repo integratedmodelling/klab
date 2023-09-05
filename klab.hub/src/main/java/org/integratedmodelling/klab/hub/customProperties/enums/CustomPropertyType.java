@@ -1,5 +1,5 @@
 package org.integratedmodelling.klab.hub.customProperties.enums;
 
-public enum CustomPropertiesType {
+public enum CustomPropertyType {
     GROUP, USER, ALL;
 }
