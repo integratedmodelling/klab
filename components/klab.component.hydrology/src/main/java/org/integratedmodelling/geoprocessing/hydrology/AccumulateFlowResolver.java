@@ -216,7 +216,7 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
          * call downstream after recursion, i.e. in downstream order
          */
         if (downstreamExpression != null) {
-            result.set(cell, (ret = downstreamExpression.eval(context, parameters)));
+            result.set(locator, (ret = downstreamExpression.eval(context, parameters)));
         }
 
         return ret;
