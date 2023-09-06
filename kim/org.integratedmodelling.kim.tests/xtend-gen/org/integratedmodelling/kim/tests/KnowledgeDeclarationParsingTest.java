@@ -24,18 +24,18 @@ import org.junit.runner.RunWith;
 public class KnowledgeDeclarationParsingTest {
   @Inject
   private ParseHelper<Model> parseHelper;
-  
+
   private static String[] testsOK = { "im:Normalized geography:Slope", "count of (im:Tall infrastructure:Building) per m^2", "count of im:Tall infrastructure:Building per m^2", "count of im:Slope", "geography:Slope", "im:SlopeCamel", "geography:SlopeCamel", "im:Normalized geography:SlopeCamel identified as 2122 by GBIF.SPECIES", "im:Normalized geography:Slope named normslope", "(not im:Normalized) geography:Slope", "im:Normalized im:Slope", "im:Potential presence of (not im:Large) infrastructure:City", "count of infrastructure:Building per km^2", "im:Normalized count of im:Tall infrastructure:Building per m^2 1 to 20", "(not im:Normalized) im:Height of materials:Concrete infrastructure:Building in m", "im:Normalized im:Height of materials:Concrete infrastructure:Building in m", "im:Normalized count of (not im:Tall) (materials:Concrete infrastructure:Building) within im:Small infrastructure:City per km^2 by im:Level" };
-  
+
   private static String[] testsBAD = { "count of slope", "geography:slope", "slopeCamel" };
-  
+
   @Test
   public void testGrouping() {
     Assert.assertTrue(
       this.isEquivalent("count of im:Tall infrastructure:Building per m^2", 
         "count of (im:Tall infrastructure:Building) per m^2"));
   }
-  
+
   /**
    * Test that parsing the k.IM definition of a normalized declaration
    * produces an identical definition.
@@ -58,7 +58,7 @@ public class KnowledgeDeclarationParsingTest {
       throw Exceptions.sneakyThrow(_e);
     }
   }
-  
+
   @Test
   public void loadModel() {
     try {
@@ -88,7 +88,7 @@ public class KnowledgeDeclarationParsingTest {
       throw Exceptions.sneakyThrow(_e);
     }
   }
-  
+
   public boolean isEquivalent(final String d1, final String d2) {
     try {
       final KimObservable obs1 = Kim.INSTANCE.declareObservable(this.parseHelper.parse(d1).getObservable());

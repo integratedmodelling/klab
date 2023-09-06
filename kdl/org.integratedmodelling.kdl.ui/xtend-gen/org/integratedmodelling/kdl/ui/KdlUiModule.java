@@ -30,7 +30,7 @@ public class KdlUiModule extends AbstractKdlUiModule {
     return KdlSyntaxHighlighter.class;
   }
 
-  public KdlUiModule(final AbstractUIPlugin arg0) {
-    super(arg0);
+  public KdlUiModule(final AbstractUIPlugin plugin) {
+    super(plugin);
   }
 }

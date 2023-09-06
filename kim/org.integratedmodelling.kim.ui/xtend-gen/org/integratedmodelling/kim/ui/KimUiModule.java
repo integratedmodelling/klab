@@ -100,7 +100,7 @@ public class KimUiModule extends AbstractKimUiModule {
     return KimDocumentationProvider.class;
   }
 
-  public KimUiModule(final AbstractUIPlugin arg0) {
-    super(arg0);
+  public KimUiModule(final AbstractUIPlugin plugin) {
+    super(plugin);
   }
 }
