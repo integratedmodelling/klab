@@ -4,8 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.api.CustomProperties;
-import org.integratedmodelling.klab.hub.repository.CustomPropertiesRepository;
+import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
+import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,25 +18,24 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
 @TestInstance(Lifecycle.PER_CLASS)
-public class CustomPropertiesTests {
-    @Autowired CustomPropertiesRepository repository;
+public class RecordedCustomPropertyTests {
+    @Autowired RecordedCustomPropertyRepository repository;
 
     List<String> exisingNames = List.of("test", "prueba", "froga");
 
     @BeforeAll
-    public void addCustomProperties() {
+    public void addRecordedCustomProperties() {
         for (String name : exisingNames) {
-            CustomProperties cp = new CustomProperties(name);
+            RecordedCustomProperty cp = new RecordedCustomProperty(name);
             repository.insert(cp);
         }
     }
 
     @Test
-    public void getAllCustomPropertiesWithName() {
-        List<CustomProperties> ret = repository.findAllByNameIn(exisingNames);
+    public void getAllRecordedCustomPropertiesWithName() {
+        List<RecordedCustomProperty> ret = repository.findAllByNameIn(exisingNames);
 
         assertTrue(ret.size() == exisingNames.size());
     }
 
-    
 }

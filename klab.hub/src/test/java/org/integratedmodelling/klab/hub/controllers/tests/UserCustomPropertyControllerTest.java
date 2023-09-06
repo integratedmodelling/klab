@@ -6,9 +6,8 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.api.CustomProperties;
 import org.integratedmodelling.klab.hub.api.User;
-import org.integratedmodelling.klab.hub.repository.CustomPropertiesRepository;
+import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
 import org.integratedmodelling.klab.rest.CustomProperty;
@@ -42,7 +41,7 @@ public class UserCustomPropertyControllerTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private CustomPropertiesRepository customPropertiesRepository;
+    private RecordedCustomPropertyRepository customPropertiesRepository;
 
     @LocalServerPort
     int randomServerPort;
