@@ -60,7 +60,7 @@ public class OpenEO {
 
 	private Authorization authorization;
 	private String endpoint;
-	String plan; // TODO expose, link to /me
+	String plan; // TODO expose, link to /me endpoint
 	int budget; // TODO expose, update
 
 	class Job {
@@ -73,11 +73,13 @@ public class OpenEO {
 	private ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 	private Set<Job> jobs = Collections.synchronizedSet(new LinkedHashSet<>());
 
+	// generous 10-minute timeout to accommodate testing. Should be overriddable in
+	// the resource.
+	private int responseTimeoutMs = 10 * 60 * 1000;
+
 	public static class ProcessNode {
 
-	    private static final long serialVersionUID = 5702995280325999073L;
-
-	    private String process_id;
+		private String process_id;
 		private String namespace;
 		private String description;
 		private boolean result;
@@ -122,7 +124,7 @@ public class OpenEO {
 		public void setArguments(Map<String, Object> arguments) {
 			this.arguments = arguments;
 		}
-		
+
 		public String toString() {
 			return process_id + " " + arguments;
 		}
@@ -587,7 +589,7 @@ public class OpenEO {
 		request.put("plan", plan);
 		request.put("budget", budget <= 0 ? null : budget);
 
-		Unirest.post(endpoint + "/result").contentType("application/json")
+		Unirest.post(endpoint + "/result").contentType("application/json").socketTimeout(responseTimeoutMs)
 				.header("Authorization", authorization.getAuthorization()).body(request).thenConsume((rawr) -> {
 					boolean error = false;
 					if (rawr.getStatus() - 400 >= 0) {

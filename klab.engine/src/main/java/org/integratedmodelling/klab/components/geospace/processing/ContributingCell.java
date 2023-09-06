@@ -45,6 +45,7 @@ public class ContributingCell extends Expando {
 	private IState flowdirections = null;
 	private Map<String, IState> states = new HashMap<>();
 	private boolean outlet = false;
+	private ILocator locator = null;
 
 	public ContributingCell(Cell cell) {
 		this.delegate = cell;
@@ -57,11 +58,32 @@ public class ContributingCell extends Expando {
 		this.flowdirections = flowdirections;
 		this.states.putAll(states);
 		this.outlet = isOutlet;
+		this.locator = cell;
+	}
+
+	public ContributingCell(Cell cell, int flowDirection, IState flowdirections, Map<String, IState> states,
+			boolean isOutlet, ILocator locator) {
+		this.delegate = cell;
+		this.d8 = flowDirection;
+		this.flowdirections = flowdirections;
+		this.states.putAll(states);
+		this.outlet = isOutlet;
+		this.locator = locator;
 	}
 
 	public ContributingCell(Cell cell, ContributingCell focal, Orientation orientation) {
 		this.delegate = cell;
 		this.orientation = orientation;
+		this.locator = cell;
+		this.flowdirections = focal.flowdirections;
+		this.d8 = this.flowdirections.get(cell, Double.class).intValue();
+		this.states.putAll(focal.states);
+	}
+
+	public ContributingCell(Cell cell, ContributingCell focal, Orientation orientation, ILocator locator) {
+		this.delegate = cell;
+		this.orientation = orientation;
+		this.locator = locator;
 		this.flowdirections = focal.flowdirections;
 		this.d8 = this.flowdirections.get(cell, Double.class).intValue();
 		this.states.putAll(focal.states);
@@ -145,7 +167,7 @@ public class ContributingCell extends Expando {
 		}
 
 		if (states.containsKey(state)) {
-			return states.get(state).get(this.delegate);
+			return states.get(state).get(this.locator);
 		}
 		return null;
 	}

@@ -127,7 +127,12 @@ public class STACEncoder implements IResourceEncoder {
                     DefaultGeographicCRS.WGS84).transform(outputCrs, true);
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(), (int) grid.getYCells());
             String assetId = resource.getParameters().get("asset", String.class);
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, lpm);
+            
+            
+            // TODO Inigo check this. I think this needs some discussion. Allow transform 
+            // ensures the process to finish, but I would not bet on the resulting data.
+            boolean allowTransform = true;
+            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, true, lpm);
 
             coverage = outRaster.buildCoverage();
             scope.getMonitor().info("Coverage: " + coverage);

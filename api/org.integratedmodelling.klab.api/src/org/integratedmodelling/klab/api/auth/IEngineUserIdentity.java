@@ -14,7 +14,6 @@
 package org.integratedmodelling.klab.api.auth;
 
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
-import org.integratedmodelling.klab.api.engine.IContextScope;
 
 /**
  * The Interface IEngineUserIdentity. TODO must become a IActorIdentity
@@ -39,12 +38,12 @@ public interface IEngineUserIdentity extends IUserIdentity, IActorIdentity<KlabM
      */
     boolean isEngineOwner();
 
-    /**
-     * Get the root scope to operate the engine as a user. Also triggers the construction of the
-     * user agent with potential k.Actors behavior.
-     * 
-     * @return
-     */
-    IContextScope getScope();
+//    /**
+//     * Get the root scope to operate the engine as a user. Also triggers the construction of the
+//     * user agent with potential k.Actors behavior.
+//     * 
+//     * @return
+//     */
+//    IContextScope getScope();
 
 }

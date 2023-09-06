@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistExcepti
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.exception.UserNameOrEmailExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -39,6 +40,13 @@ public class UserControllerAdvice extends ResponseEntityExceptionHandler {
     		UserExistsException ex, WebRequest request) {
     	return new ResponseEntityAdapter<UserExistsException>
     		(HttpStatus.CONFLICT, ex).getResponse();
+    }
+    
+    @ExceptionHandler(UserNameOrEmailExistsException.class)
+    public ResponseEntity<Object> handleUserNameOrEmailExistsException(
+            UserNameOrEmailExistsException ex, WebRequest request) {
+        return new ResponseEntityAdapter<UserNameOrEmailExistsException>
+            (HttpStatus.CONFLICT, ex).getResponse();
     }
     
     @ExceptionHandler(DeletedUserNotFoundException.class)

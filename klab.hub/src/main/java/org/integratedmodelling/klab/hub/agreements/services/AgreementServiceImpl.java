@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.agreements.services;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,8 @@ import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.google.common.collect.Sets;
 
 @Service
 public class AgreementServiceImpl implements AgreementService {
@@ -43,9 +46,10 @@ public class AgreementServiceImpl implements AgreementService {
     }
 
     @Override
-    public Agreement createAgreement(AgreementType agreementType, AgreementLevel agreementLevel) {
+    public List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel) {
         AgreementTemplate agreementTemplate = agreementTemplateService.getAgreementTemplate(agreementType, agreementLevel);
         return createAgreementByAgreementTemplate(agreementTemplate);
+        
     }
 
     /**
@@ -54,7 +58,7 @@ public class AgreementServiceImpl implements AgreementService {
      * @param agreementTemplate
      * @return
      */
-    private Agreement createAgreementByAgreementTemplate(AgreementTemplate agreementTemplate) {
+    private List<Agreement> createAgreementByAgreementTemplate(AgreementTemplate agreementTemplate) {
         Date now = new Date();
         Agreement agreement = new Agreement();
         agreement.setAgreementLevel(agreementTemplate.getAgreementLevel());
@@ -67,7 +71,7 @@ public class AgreementServiceImpl implements AgreementService {
                 ? null
                 : new Date(System.currentTimeMillis() + agreementTemplate.getDefaultDuration()));
 
-        return new CreateAgreement(agreement, agreementRepository).execute();
+        return new CreateAgreement(Sets.newHashSet(agreement), agreementRepository).execute();
     }
 
     /**
@@ -140,14 +144,13 @@ public class AgreementServiceImpl implements AgreementService {
     public Set<Agreement> updateAgreementValidDate(Set<Agreement> agreements, Date validDate) {
         agreements.stream().forEach(agreement -> {
             agreement.setValidDate(validDate);
-            new UpdateAgreement(agreement, agreementRepository).execute();
         });
-
+        new UpdateAgreement(agreements, agreementRepository).execute();
         return agreements;
     }
 
     @Override
-    public Agreement updateAgreement(Agreement agreement) {
-        return new UpdateAgreement(agreement, agreementRepository).execute();
+    public List<Agreement> updateAgreement(Agreement agreement) {
+        return new UpdateAgreement(Sets.newHashSet(agreement), agreementRepository).execute();
     }
 }

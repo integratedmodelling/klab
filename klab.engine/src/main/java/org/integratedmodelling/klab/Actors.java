@@ -1273,6 +1273,7 @@ public enum Actors implements IActorsService {
 
     @Override
     public IActorIdentity.Reference createUserActor(IEngineUserIdentity user) {
+//    	return null;
         return new ActorReference(createActor(UserActor.create((EngineUser) user), user));
     }
 

@@ -86,8 +86,10 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		private final Keyword cContextKeyword_0_11_0 = (Keyword)cGroup_0_11.eContents().get(0);
 		private final Assignment cContextUrnAssignment_0_11_1 = (Assignment)cGroup_0_11.eContents().get(1);
 		private final RuleCall cContextUrnUrnParserRuleCall_0_11_1_0 = (RuleCall)cContextUrnAssignment_0_11_1.eContents().get(0);
-		private final Assignment cActorsAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cActorsActorDefinitionParserRuleCall_1_0 = (RuleCall)cActorsAssignment_1.eContents().get(0);
+		private final Assignment cDefinesAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cDefinesDefineParserRuleCall_1_0 = (RuleCall)cDefinesAssignment_1.eContents().get(0);
+		private final Assignment cActorsAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cActorsActorDefinitionParserRuleCall_2_0 = (RuleCall)cActorsAssignment_2.eContents().get(0);
 		
 		///*
 		// * The root model is the body of the dataflow for the context observation
@@ -105,6 +107,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//     ('@namespace' package=(PathName|STRING))? &
 		//     ('@coverage' scale+=Function (',' scale+=Function)*)? &
 		//     ('@context' contextUrn=Urn)?)
+		//    defines+=Define*
 		//    actors+=ActorDefinition*;
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -120,6 +123,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		// ('@namespace' package=(PathName|STRING))? &
 		// ('@coverage' scale+=Function (',' scale+=Function)*)? &
 		// ('@context' contextUrn=Urn)?)
+		//defines+=Define*
 		//actors+=ActorDefinition*
 		public Group getGroup() { return cGroup; }
 		
@@ -305,11 +309,17 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//Urn
 		public RuleCall getContextUrnUrnParserRuleCall_0_11_1_0() { return cContextUrnUrnParserRuleCall_0_11_1_0; }
 		
+		//defines+=Define*
+		public Assignment getDefinesAssignment_1() { return cDefinesAssignment_1; }
+		
+		//Define
+		public RuleCall getDefinesDefineParserRuleCall_1_0() { return cDefinesDefineParserRuleCall_1_0; }
+		
 		//actors+=ActorDefinition*
-		public Assignment getActorsAssignment_1() { return cActorsAssignment_1; }
+		public Assignment getActorsAssignment_2() { return cActorsAssignment_2; }
 		
 		//ActorDefinition
-		public RuleCall getActorsActorDefinitionParserRuleCall_1_0() { return cActorsActorDefinitionParserRuleCall_1_0; }
+		public RuleCall getActorsActorDefinitionParserRuleCall_2_0() { return cActorsActorDefinitionParserRuleCall_2_0; }
 	}
 	public class AnnotationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Annotation");
@@ -2306,6 +2316,54 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		//UPPERCASE_ID
 		public RuleCall getEnumIdUPPERCASE_IDTerminalRuleCall_7_0() { return cEnumIdUPPERCASE_IDTerminalRuleCall_7_0; }
 	}
+	public class DefineElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Define");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword cDefineKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cClassAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cClassLOWERCASE_IDTerminalRuleCall_1_0 = (RuleCall)cClassAssignment_1.eContents().get(0);
+		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
+		private final Keyword cEqualsSignKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cValueAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cValueValueParserRuleCall_4_0 = (RuleCall)cValueAssignment_4.eContents().get(0);
+		private final Keyword cSemicolonKeyword_5 = (Keyword)cGroup.eContents().get(5);
+		
+		//Define:
+		//    'define' (class=LOWERCASE_ID)? name=LOWERCASE_ID '=' value=Value ';'
+		//;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//'define' (class=LOWERCASE_ID)? name=LOWERCASE_ID '=' value=Value ';'
+		public Group getGroup() { return cGroup; }
+		
+		//'define'
+		public Keyword getDefineKeyword_0() { return cDefineKeyword_0; }
+		
+		//(class=LOWERCASE_ID)?
+		public Assignment getClassAssignment_1() { return cClassAssignment_1; }
+		
+		//LOWERCASE_ID
+		public RuleCall getClassLOWERCASE_IDTerminalRuleCall_1_0() { return cClassLOWERCASE_IDTerminalRuleCall_1_0; }
+		
+		//name=LOWERCASE_ID
+		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
+		
+		//LOWERCASE_ID
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_2_0() { return cNameLOWERCASE_IDTerminalRuleCall_2_0; }
+		
+		//'='
+		public Keyword getEqualsSignKeyword_3() { return cEqualsSignKeyword_3; }
+		
+		//value=Value
+		public Assignment getValueAssignment_4() { return cValueAssignment_4; }
+		
+		//Value
+		public RuleCall getValueValueParserRuleCall_4_0() { return cValueValueParserRuleCall_4_0; }
+		
+		//';'
+		public Keyword getSemicolonKeyword_5() { return cSemicolonKeyword_5; }
+	}
 	public class UrnElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.Urn");
 		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
@@ -3521,6 +3579,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	private final MetadataElements pMetadata;
 	private final ParameterListElements pParameterList;
 	private final ValueElements pValue;
+	private final DefineElements pDefine;
 	private final UrnElements pUrn;
 	private final UrnIdElements pUrnId;
 	private final MapElements pMap;
@@ -3580,6 +3639,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 		this.pMetadata = new MetadataElements();
 		this.pParameterList = new ParameterListElements();
 		this.pValue = new ValueElements();
+		this.pDefine = new DefineElements();
 		this.pUrn = new UrnElements();
 		this.pUrnId = new UrnIdElements();
 		this.pMap = new MapElements();
@@ -3652,6 +3712,7 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	//     ('@namespace' package=(PathName|STRING))? &
 	//     ('@coverage' scale+=Function (',' scale+=Function)*)? &
 	//     ('@context' contextUrn=Urn)?)
+	//    defines+=Define*
 	//    actors+=ActorDefinition*;
 	public ModelElements getModelAccess() {
 		return pModel;
@@ -3956,6 +4017,17 @@ public class KdlGrammarAccess extends AbstractElementFinder.AbstractGrammarEleme
 	
 	public ParserRule getValueRule() {
 		return getValueAccess().getRule();
+	}
+	
+	//Define:
+	//    'define' (class=LOWERCASE_ID)? name=LOWERCASE_ID '=' value=Value ';'
+	//;
+	public DefineElements getDefineAccess() {
+		return pDefine;
+	}
+	
+	public ParserRule getDefineRule() {
+		return getDefineAccess().getRule();
 	}
 	
 	//Urn:

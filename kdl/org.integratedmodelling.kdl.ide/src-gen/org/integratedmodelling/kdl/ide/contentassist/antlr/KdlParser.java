@@ -151,6 +151,7 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getParameterListAccess().getGroup_0_1(), "rule__ParameterList__Group_0_1__0");
 			builder.put(grammarAccess.getParameterListAccess().getGroup_1(), "rule__ParameterList__Group_1__0");
 			builder.put(grammarAccess.getParameterListAccess().getGroup_1_1(), "rule__ParameterList__Group_1_1__0");
+			builder.put(grammarAccess.getDefineAccess().getGroup(), "rule__Define__Group__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup(), "rule__UrnId__Group__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup_8(), "rule__UrnId__Group_8__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup_9(), "rule__UrnId__Group_9__0");
@@ -207,7 +208,8 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelAccess().getScaleAssignment_0_10_1(), "rule__Model__ScaleAssignment_0_10_1");
 			builder.put(grammarAccess.getModelAccess().getScaleAssignment_0_10_2_1(), "rule__Model__ScaleAssignment_0_10_2_1");
 			builder.put(grammarAccess.getModelAccess().getContextUrnAssignment_0_11_1(), "rule__Model__ContextUrnAssignment_0_11_1");
-			builder.put(grammarAccess.getModelAccess().getActorsAssignment_1(), "rule__Model__ActorsAssignment_1");
+			builder.put(grammarAccess.getModelAccess().getDefinesAssignment_1(), "rule__Model__DefinesAssignment_1");
+			builder.put(grammarAccess.getModelAccess().getActorsAssignment_2(), "rule__Model__ActorsAssignment_2");
 			builder.put(grammarAccess.getAnnotationAccess().getNameAssignment_0(), "rule__Annotation__NameAssignment_0");
 			builder.put(grammarAccess.getAnnotationAccess().getParametersAssignment_1_1(), "rule__Annotation__ParametersAssignment_1_1");
 			builder.put(grammarAccess.getActorDefinitionAccess().getConstAssignment_0_0(), "rule__ActorDefinition__ConstAssignment_0_0");
@@ -314,6 +316,9 @@ public class KdlParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getValueAccess().getExpressionAssignment_5(), "rule__Value__ExpressionAssignment_5");
 			builder.put(grammarAccess.getValueAccess().getTableAssignment_6(), "rule__Value__TableAssignment_6");
 			builder.put(grammarAccess.getValueAccess().getEnumIdAssignment_7(), "rule__Value__EnumIdAssignment_7");
+			builder.put(grammarAccess.getDefineAccess().getClassAssignment_1(), "rule__Define__ClassAssignment_1");
+			builder.put(grammarAccess.getDefineAccess().getNameAssignment_2(), "rule__Define__NameAssignment_2");
+			builder.put(grammarAccess.getDefineAccess().getValueAssignment_4(), "rule__Define__ValueAssignment_4");
 			builder.put(grammarAccess.getUrnAccess().getNameAssignment(), "rule__Urn__NameAssignment");
 			builder.put(grammarAccess.getMapAccess().getEntriesAssignment_2_0(), "rule__Map__EntriesAssignment_2_0");
 			builder.put(grammarAccess.getMapAccess().getEntriesAssignment_2_1_1(), "rule__Map__EntriesAssignment_2_1_1");
