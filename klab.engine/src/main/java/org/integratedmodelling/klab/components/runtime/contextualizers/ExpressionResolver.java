@@ -108,7 +108,7 @@ public class ExpressionResolver extends AbstractContextualizer implements IResol
 		 */
 		IObservable targetObservable = context.getTargetSemantics();
 		if (parameters.containsKey(Extensions.TARGET_OBSERVABLE_PARAMETER)) {
-			targetObservable = Observables.INSTANCE.asObservable(context.get(Extensions.TARGET_OBSERVABLE_PARAMETER));
+			targetObservable = Observables.INSTANCE.asObservable(parameters.get(Extensions.TARGET_OBSERVABLE_PARAMETER));
 		}
 
 		boolean forceScalar = parameters.get("scalar", Boolean.FALSE);
