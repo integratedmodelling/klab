@@ -374,13 +374,30 @@ public interface API {
          */
         public static final String GET_AGREEMENT = API_BASE + "/agreements";
         /**
+
+         *URL path for get agreement template.
+         */
+        public static final String GET_AGREEMENT_ID = GET_AGREEMENT + "/{id}";
+        /**
          *URL path for get agreement template.
          */
         public static final String AGREEMENT_TEMPLATE = API_BASE + "/agreement-templates";
         /**
+         *URL path for get agreement template.
+         */
+        public static final String AGREEMENT_TEMPLATE_DELETE = AGREEMENT_TEMPLATE + "/delete";
+        /**
+         *URL path for get agreement template.
+         */
+        public static final String AGREEMENT_TEMPLATE_ID = AGREEMENT_TEMPLATE + "/{id}";
+        /**
          *URL path for get agreement template by type and level.
          */
         public static final String AGREEMENT_TEMPLATE_TYPE_LEVEL = AGREEMENT_TEMPLATE + "/type-level";
+        /**
+         *URL path for get agreement template filtered
+         */
+        public static final String AGREEMENT_TEMPLATE_FILTER= AGREEMENT_TEMPLATE + "/filter";
         /**
          * Base URL path for tag resources on the hub.
          */
@@ -429,6 +446,15 @@ public interface API {
          * Base URL path for user resources on the hub.
          */
         public static final String CUSTOM_PROPERTIES = API_BASE + "/custom-properties";
+        /**
+         * Base URL path for custom properties related to users.
+         */
+        public static final String USER_CUSTOM_PROPERTIES = USER_BASE + "/custom-properties";
+        /**
+         * Base URL path for custom properties related to a single user.
+         */
+        public static final String USER_ID_CUSTOM_PROPERTIES = USER_BASE_ID + "/custom-properties";
+
 
         public static interface PARAMETERS {
             /**

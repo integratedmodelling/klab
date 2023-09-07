@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -33,12 +34,12 @@ public class MongoGroup extends GenericModel {
      *Apples and Apples comparison for the multipart class size method.
      */
     private long maxUpload = 1073741824;
-    private List<String> projectUrls;
+    private List<String> projectUrls = new ArrayList<>();
     @Reference
-    private List<Observable> observables;
-    private Set<CustomProperty> customProperties;
+    private List<Observable> observables = new ArrayList<>();
+    private Set<CustomProperty> customProperties = new HashSet<>();
     /* Name of groups that depending on */
-    private List<String> dependsOn;
+    private List<String> dependsOn = new ArrayList<>();
 
     public MongoGroup() {
     }
