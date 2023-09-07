@@ -5,6 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -130,8 +132,12 @@ public class STACEncoder implements IResourceEncoder {
                     DefaultGeographicCRS.WGS84).transform(outputCrs, true);
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(), (int) grid.getYCells());
             String assetId = resource.getParameters().get("asset", String.class);
-            
-            
+
+            Set<Integer> ESPGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
+            if (ESPGsAtItems.size() > 1) {
+                scope.getMonitor().warn("Multiple ESPGs found on the items " + ESPGsAtItems.toString() + ". The transformation process could affect the data.");
+            }
+
             // TODO Inigo check this. I think this needs some discussion. Allow transform 
             // ensures the process to finish, but I would not bet on the resulting data.
             boolean allowTransform = true;
