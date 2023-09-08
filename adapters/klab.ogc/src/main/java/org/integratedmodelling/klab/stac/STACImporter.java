@@ -79,6 +79,7 @@ public class STACImporter implements IResourceImporter {
 					String collectionId = collection.getId();
 					parameters.put("collectionId", collectionId);
 
+
 					Builder builder = validator.validate(
 							Resources.INSTANCE.createLocalResourceUrn(collectionId, project), new URL(importLocation),
 							parameters, monitor);
@@ -100,7 +101,7 @@ public class STACImporter implements IResourceImporter {
 			catalog.close();
 
 		} catch (Exception e) {
-			monitor.info("STAC catalog import failed: " + e.getMessage());
+			monitor.error("STAC catalog import failed: " + e.getMessage());
 			throw new KlabIOException(e);
 		}
 

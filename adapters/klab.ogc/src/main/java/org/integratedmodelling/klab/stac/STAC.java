@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.stac;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
@@ -34,9 +35,12 @@ public class STAC {
         for (String cock : stac.clients.keySet()) {
             for (HMStacCollection collection : stac.clients.get(cock).getCollections()) {
                 System.out.println("  " + collection.getId() + ": " + collection.getTemporalBounds());
-//                for (HMStacItem item : collection.searchItems()) {
-//                    System.out.println("  " + item.getId() + ": " + item.getGeometry() + ", " + item.getEpsg());
-//                }
+                for (HMStacItem item : collection.searchItems()) {
+                    System.out.println("  " + item.getId() + ": " + item.getGeometry() + ", " + item.getEpsg());
+					for (HMStacAsset asset : item.getAssets()) {
+                    	System.out.println("      " + asset.getAssetUrl());
+                    }
+                }
             }
         }
 
