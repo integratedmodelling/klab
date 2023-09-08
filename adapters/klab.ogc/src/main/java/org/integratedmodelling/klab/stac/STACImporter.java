@@ -30,131 +30,142 @@ import org.integratedmodelling.klab.utils.Triple;
 
 public class STACImporter implements IResourceImporter {
 
-    STACValidator validator = new STACValidator();
+	STACValidator validator = new STACValidator();
 
-    @Override
-    public IResourceImporter withOption(String option, Object value) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IResourceImporter withOption(String option, Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean acceptsMultiple() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean acceptsMultiple() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
-            IMonitor monitor) {
-        List<Builder> ret = new ArrayList<>();
+	@Override
+	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
+			IMonitor monitor) {
+		List<Builder> ret = new ArrayList<>();
 
-        String regex = null;
-        if (userData.contains("regex")) {
-            regex = (String) userData.get(Resources.REGEX_ENTRY);
-            userData.remove(Resources.REGEX_ENTRY);
-        }
+		monitor.info("Beginning STAC catalog import from " + importLocation);
 
-        try {
-            STACService service = STACAdapter.getService(importLocation);
-            
-            HMStacManager catalog = new HMStacManager(importLocation, null);
-            catalog.open();
+		String regex = null;
+		if (userData.contains("regex")) {
+			regex = (String) userData.get(Resources.REGEX_ENTRY);
+			userData.remove(Resources.REGEX_ENTRY);
+		}
+		int nc = 0;
+		try {
+			STACService service = STACAdapter.getService(importLocation);
 
-            List<HMStacCollection> collections = catalog.getCollections();
-            for(HMStacCollection collection : collections) {
-                // Check the regex
-                if (regex != null && !collection.getId().matches(regex)) {
-                    Logging.INSTANCE.info("Collection " + collection.getId() + " doesn't match REGEX, skipped");
-                    continue;
-                }
+			HMStacManager catalog = new HMStacManager(importLocation, null);
+			catalog.open();
 
-                try {
-                    Parameters<String> parameters = new Parameters<>();
-                    parameters.putAll(userData);
-                    parameters.put("catalogUrl", removeLastSlash(importLocation));
+			List<HMStacCollection> collections = catalog.getCollections();
+			for (HMStacCollection collection : collections) {
+				// Check the regex
+				if (regex != null && !collection.getId().matches(regex)) {
+					Logging.INSTANCE.info("Collection " + collection.getId() + " doesn't match REGEX, skipped");
+					continue;
+				}
 
-                    String collectionId = collection.getId();
-                    parameters.put("collectionId", collectionId);
+				try {
+					Parameters<String> parameters = new Parameters<>();
+					parameters.putAll(userData);
+					parameters.put("catalogUrl", removeLastSlash(importLocation));
 
-                    Builder builder = validator.validate(Resources.INSTANCE.createLocalResourceUrn(collectionId, project),
-                            new URL(importLocation), parameters, monitor);
+					String collectionId = collection.getId();
+					parameters.put("collectionId", collectionId);
 
-                    if(builder != null) {
-                        builder.withLocalName(collectionId).setResourceId(collectionId);
-                        ret.add(builder);
-                    }
-                } catch (KlabResourceNotFoundException e) {
-                    Logging.INSTANCE.warn("skipping STAC resource " + collection.getId() + " from service "
-                            + service.getServiceUrl() + ": " + e.getMessage());
-                    continue;
-                }
-            }
-            catalog.close();
+					Builder builder = validator.validate(
+							Resources.INSTANCE.createLocalResourceUrn(collectionId, project), new URL(importLocation),
+							parameters, monitor);
 
-        } catch (Exception e) {
-            throw new KlabIOException(e);
-        }
+					if (builder != null) {
+						builder.withLocalName(collectionId).setResourceId(collectionId);
+						ret.add(builder);
+						nc++;
+						monitor.info("STAC collection " + collectionId + " added");
+					} else {
+						monitor.warn("STAC collection " + collectionId + " is invalid");
+					}
+				} catch (KlabResourceNotFoundException e) {
+					monitor.warn("skipping STAC resource " + collection.getId() + " from service "
+							+ service.getServiceUrl() + ": " + e.getMessage());
+					continue;
+				}
+			}
+			catalog.close();
 
-        return ret;
-    }
+		} catch (Exception e) {
+			monitor.info("STAC catalog import failed: " + e.getMessage());
+			throw new KlabIOException(e);
+		}
 
-    // Removing the last slash makes the URL easier to manage on later steps
-    private String removeLastSlash(String importLocation) {
-        return importLocation.endsWith("/") ? importLocation.substring(0, importLocation.length() - 1) : importLocation;
-    }
+		monitor.info("STAC: imported " + nc + " collections");
 
-    @Override
-    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+		return ret;
+	}
 
-    @Override
-    public boolean canHandle(String importLocation, IParameters<String> userData) {
-        URL url = null;
-        try {
-            url = new URL(importLocation);
-        } catch (MalformedURLException e) {
-            return false;
-        }
-        // TODO make more checks to know if it is a proper STAC endpoint
-        return url != null && url.getProtocol().startsWith("http");
-    }
+	// Removing the last slash makes the URL easier to manage on later steps
+	private String removeLastSlash(String importLocation) {
+		return importLocation.endsWith("/") ? importLocation.substring(0, importLocation.length() - 1) : importLocation;
+	}
 
-    @Override
-    public boolean resourceCanHandle(IResource resource, String importLocation) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
-    }
+	@Override
+	public boolean canHandle(String importLocation, IParameters<String> userData) {
+		URL url = null;
+		try {
+			url = new URL(importLocation);
+		} catch (MalformedURLException e) {
+			return false;
+		}
+		// TODO make more checks to know if it is a proper STAC endpoint
+		return url != null && url.getProtocol().startsWith("http");
+	}
 
-    @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public boolean resourceCanHandle(IResource resource, String importLocation) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public Map<String, String> getExportCapabilities(IResource resource) {
-        return Collections.emptyMap();
-    }
+	@Override
+	public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+		// TODO Auto-generated method stub
+		return Collections.emptyList();
+	}
 
-    @Override
-    public boolean exportResource(File file, IResource resource, String format) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public File exportObservation(File file, IObservation observation, ILocator locator, String format,
+			IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public Map<String, String> getExportCapabilities(IResource resource) {
+		return Collections.emptyMap();
+	}
+
+	@Override
+	public boolean exportResource(File file, IResource resource, String format) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }
