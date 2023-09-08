@@ -79,6 +79,12 @@ public class STACImporter implements IResourceImporter {
 					String collectionId = collection.getId();
 					parameters.put("collectionId", collectionId);
 
+					/**
+					 * TODO should explore assets (for 1+ items) and make a new builder per each COG
+					 * asset (or GeoJSON), storing them as separate resources. Assets of different
+					 * type should end up in resource as data keys, codelists, provenance or other
+					 * info.
+					 */
 
 					Builder builder = validator.validate(
 							Resources.INSTANCE.createLocalResourceUrn(collectionId, project), new URL(importLocation),
