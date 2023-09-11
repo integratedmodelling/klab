@@ -30,7 +30,7 @@ public class KactorsUiModule extends AbstractKactorsUiModule {
     return KactorsHighlightingConfiguration.class;
   }
 
-  public KactorsUiModule(final AbstractUIPlugin plugin) {
-    super(plugin);
+  public KactorsUiModule(final AbstractUIPlugin arg0) {
+    super(arg0);
   }
 }
