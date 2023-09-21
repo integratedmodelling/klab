@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.libs.modules.HMRaster;
@@ -37,7 +36,6 @@ import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -127,9 +125,9 @@ public class STACEncoder implements IResourceEncoder {
                     (int) grid.getXCells(), (int) grid.getYCells());
 
             Integer srid = items.get(0).getEpsg();
-            CoordinateReferenceSystem outputCrs = CrsUtilities.getCrsFromSrid(srid);
+            CrsUtilities.getCrsFromSrid(srid);
             ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
-                    DefaultGeographicCRS.WGS84).transform(outputCrs, true);
+                    space.getProjection().getCoordinateReferenceSystem());
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(), (int) grid.getYCells());
             String assetId = resource.getParameters().get("asset", String.class);
 
@@ -138,10 +136,9 @@ public class STACEncoder implements IResourceEncoder {
                 scope.getMonitor().warn("Multiple ESPGs found on the items " + ESPGsAtItems.toString() + ". The transformation process could affect the data.");
             }
 
-            // TODO Inigo check this. I think this needs some discussion. Allow transform 
-            // ensures the process to finish, but I would not bet on the resulting data.
-            boolean allowTransform = true;
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, true, lpm);
+            // Allow transform ensures the process to finish, but I would not bet on the resulting data.
+            final boolean allowTransform = true;
+            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, lpm);
 
             coverage = outRaster.buildCoverage();
             scope.getMonitor().info("Coverage: " + coverage);
