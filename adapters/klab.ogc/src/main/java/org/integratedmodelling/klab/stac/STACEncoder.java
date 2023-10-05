@@ -122,8 +122,7 @@ public class STACEncoder implements IResourceEncoder {
 					.searchItems();
 
 			if (items.isEmpty()) {
-				scope.getMonitor().warn("STAC resource did not return any items in this context");
-				return;
+				throw new KlabIllegalStateException("No STAC items found for this context.");
 			}
 
 			LogProgressMonitor lpm = new LogProgressMonitor();
@@ -138,16 +137,19 @@ public class STACEncoder implements IResourceEncoder {
 			RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
 					(int) grid.getYCells());
 			String assetId = resource.getParameters().get("asset", String.class);
+			Set<Integer> ESPGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
+			if (ESPGsAtItems.size() > 1) {
+				scope.getMonitor().warn("Multiple ESPGs found on the items " + ESPGsAtItems.toString() + ". The transformation process could affect the data.");
+			}
 
-			// TODO Inigo check this. I think this needs some discussion. Allow transform
-			// ensures the process to finish, but I would not bet on the resulting data.
-			boolean allowTransform = true;
-			HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, true, lpm);
+			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
+			final boolean allowTransform = true;
+			HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, lpm);
 
 			coverage = outRaster.buildCoverage();
 			scope.getMonitor().info("Coverage: " + coverage);
 		} catch (Exception e) {
-			scope.getMonitor().error("Cannot create STAC file." + e.getMessage());
+			scope.getMonitor().error("Cannot create STAC file. " + e.getMessage());
 		}
 
 		encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
