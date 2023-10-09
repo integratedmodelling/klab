@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.stac;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -10,6 +10,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.common.Geometry;
@@ -17,6 +18,12 @@ import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 
 public class STACService {
 
@@ -69,20 +76,22 @@ public class STACService {
                 Projection.getLatLon());
     }
 
-    // For now, we are going to assume that the collection and the assets share the same geometry
-    public IGeometry getGeometry(String collectionId) {
+    public IGeometry getGeometry(IParameters<String> parameters) {
+        String collectionId = parameters.get("collectionId", String.class);
         GeometryBuilder gBuilder = Geometry.builder();
 
-        HMStacCollection collection = collections.stream().filter(c -> c.getId().equals(collectionId)).findFirst().get();
-        ReferencedEnvelope envelope = collection.getSpatialBounds();
-        double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
-        double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};
-        gBuilder.space().boundingBox(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1]);
+        HttpResponse<JsonNode> response = Unirest.get(
+                parameters.get("catalogUrl", String.class) + "/collections/" + collectionId + "/items/" + parameters.get("asset", String.class))
+                .asJson();
+        JSONObject itemInfo = response.getBody().getObject();
 
-        List<Date> temporalBounds = collection.getTemporalBounds();
-        long start = temporalBounds.size() > 0 ? temporalBounds.get(0).getTime() : null;
-        long end = temporalBounds.size() > 1 ? temporalBounds.get(1).getTime() : null;
-        gBuilder.time().covering(start, end);
+        JSONArray bbox = itemInfo.getJSONArray("bbox");
+        JSONObject properties = itemInfo.getJSONObject("properties");
+        String start = properties.getString("start_datetime");
+        String end = properties.getString("end_datetime");
+
+        gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
+        gBuilder.time().covering(Instant.parse(start).toEpochMilli(), Instant.parse(end).toEpochMilli());
 
         Geometry ret = gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE);
         return ret;

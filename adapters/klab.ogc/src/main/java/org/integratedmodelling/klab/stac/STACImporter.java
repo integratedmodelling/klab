@@ -82,20 +82,14 @@ public class STACImporter implements IResourceImporter {
             } else {
                 monitor.warn("STAC collection " + collectionId + " is invalid");
             }
-
-//            Working on using these parameters
-//            JSONArray bbox = i.getJSONArray("bbox");
-//            JSONObject properties = i.getJSONObject("properties");
-//            String start = properties.getString("start_datetime");
-//            String end = properties.getString("end_datetime");
         }
     }
 
-	@Override
-	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
-			IMonitor monitor) {
-		List<Builder> ret = new ArrayList<>();
-		String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
+    @Override
+    public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
+            IMonitor monitor) {
+        List<Builder> ret = new ArrayList<>();
+        String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
 
         String regex = null;
         if (userData.contains("regex")) {
@@ -124,72 +118,6 @@ public class STACImporter implements IResourceImporter {
 
         monitor.info("STAC: imported collection " + locationElements[1]);
         return ret;
-
-//		monitor.info("Beginning STAC bulk import from " + importLocation);
-//
-//		int nc = 0;
-//		try {
-//			STACService service = STACAdapter.getService(importLocation);
-//
-//			HMStacManager catalog = new HMStacManager(importLocation, null);
-//			catalog.open();
-//
-//			List<HMStacCollection> collections = catalog.getCollections();
-//			for (HMStacCollection collection : collections) {
-//				// Check the regex
-//				if (regex != null && !collection.getId().matches(regex)) {
-//					Logging.INSTANCE.info("Collection " + collection.getId() + " doesn't match REGEX, skipped");
-//					continue;
-//				}
-//
-//				try {
-//					Parameters<String> parameters = new Parameters<>();
-//					parameters.putAll(userData);
-//					parameters.put("catalogUrl", removeLastSlash(importLocation));
-//
-//					String collectionId = collection.getId();
-//					parameters.put("collectionId", collectionId);
-//
-//					/**
-//					 * TODO should explore assets (for 1+ items) and make a new builder per each COG
-//					 * asset (or GeoJSON), storing them as separate resources. Assets of different
-//					 * type should end up in resource as data keys, codelists, provenance or other
-//					 * info.
-//					 */
-//
-//					Builder builder = validator.validate(
-//							Resources.INSTANCE.createLocalResourceUrn(collectionId, project), new URL(importLocation),
-//							parameters, monitor);
-//
-//					if (builder != null) {
-//						builder.withLocalName(collectionId).setResourceId(collectionId);
-//						ret.add(builder);
-//						nc++;
-//						monitor.info("STAC collection " + collectionId + " added");
-//					} else {
-//						monitor.warn("STAC collection " + collectionId + " is invalid");
-//					}
-//				} catch (KlabResourceNotFoundException e) {
-//					monitor.warn("skipping STAC resource " + collection.getId() + " from service "
-//							+ service.getServiceUrl() + ": " + e.getMessage());
-//					continue;
-//				}
-//			}
-//			catalog.close();
-//
-//		} catch (Exception e) {
-//			monitor.error("STAC catalog import failed: " + e.getMessage());
-//			throw new KlabIOException(e);
-//		}
-//
-//		monitor.info("STAC: imported " + nc + " collections");
-//
-//		return ret;
-	}
-
-	// Removing the last slash makes the URL easier to manage on later steps
-	private String removeLastSlash(String importLocation) {
-		return importLocation.endsWith("/") ? importLocation.substring(0, importLocation.length() - 1) : importLocation;
 	}
 
 	@Override
