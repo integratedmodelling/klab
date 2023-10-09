@@ -4,7 +4,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.klab.utils.DOIReader;
-
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -39,4 +38,7 @@ public class STACUtils {
         return authors.toString().trim();
     }
 
+    public static String[] extractCatalogAndCollection(String collectionURI) {
+        return collectionURI.split("/collections/");
+    }
 }

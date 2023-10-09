@@ -72,6 +72,7 @@ public class STACService {
                 Projection.getLatLon());
     }
 
+    // For now, we are going to assume that the collection and the assets share the same geometry
     public IGeometry getGeometry(String collectionId) {
         Geometry ret = Geometry.create("S2");
 
