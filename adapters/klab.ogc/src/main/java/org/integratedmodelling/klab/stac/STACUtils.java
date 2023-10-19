@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.stac;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.utils.DOIReader;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
@@ -41,4 +43,13 @@ public class STACUtils {
     public static String[] extractCatalogAndCollection(String collectionURI) {
         return collectionURI.split("/collections/");
     }
+
+    public static String getExtensionName(String identifier) {
+        return StringUtils.substringBetween(identifier, "https://stac-extensions.github.io/", "/v");
+    }
+
+    public static Version getExtensionVersion(String identifier) {
+        return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
+    }
+
 }
