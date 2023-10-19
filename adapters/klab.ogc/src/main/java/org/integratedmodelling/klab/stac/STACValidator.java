@@ -46,17 +46,6 @@ public class STACValidator implements IResourceValidator {
         STACService service = STACAdapter.getService(catalogUrl);
 
         String collectionId = userData.get("collectionId", String.class);
-        Optional<HMStacCollection> collection;
-        try {
-            collection = service.getCollectionById(collectionId);
-        } catch (Exception e) {
-            throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
-        }
-
-        if(collection.isEmpty()) {
-            throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
-        }
-
         HttpResponse<JsonNode> metadata = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
         List<STACExtension> extensions = new ArrayList<>();
         JSONArray extensionArray = metadata.getBody() != null
@@ -93,7 +82,7 @@ public class STACValidator implements IResourceValidator {
         if (doi != null) {
             builder.withMetadata(IMetadata.DC_URL, doi);
             String authors = STACUtils.readDOIAuthors(doi);
-            if(authors != null) {
+            if (authors != null) {
                 builder.withMetadata(IMetadata.DC_CREATOR, authors);
             }
         }

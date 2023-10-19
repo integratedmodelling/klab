@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
@@ -49,7 +48,7 @@ public class STACImporter implements IResourceImporter {
 	}
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
-            throws Exception {
+            throws MalformedURLException {
         String catalogUrl = parameters.get("catalogUrl", String.class);
         String collectionId = parameters.get("collectionId", String.class);
         HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items").asJson();
@@ -91,18 +90,10 @@ public class STACImporter implements IResourceImporter {
         List<Builder> ret = new ArrayList<>();
         String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
 
-        String regex = null;
-        if (userData.contains("regex")) {
-            regex = (String) userData.get(Resources.REGEX_ENTRY);
-            userData.remove(Resources.REGEX_ENTRY);
-        }
-
         if (locationElements.length != 2) {
-            throw new KlabUnsupportedFeatureException("Still working on whole catalog import");
+            throw new KlabUnsupportedFeatureException("Bulk import from a catalog is not supported.");
         }
         try {
-            HMStacManager catalog = new HMStacManager(locationElements[0], null);
-            catalog.open();
             monitor.info("Beginning STAC collection import from " + importLocation);
 
             Parameters<String> parameters = new Parameters<>();
