@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -20,7 +18,6 @@ import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
-import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
@@ -67,7 +64,7 @@ public class STACValidator implements IResourceValidator {
         }
         userData.put("stac_extensions", extensions.stream().map(STACExtension::getName));
 
-        IGeometry geometry = service.getGeometry(collectionId);
+        IGeometry geometry = service.getGeometry(userData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData)
                 .withGeometry(geometry).withSpatialExtent(service.getSpatialExtent());
