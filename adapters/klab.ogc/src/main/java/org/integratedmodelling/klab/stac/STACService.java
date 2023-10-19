@@ -81,18 +81,18 @@ public class STACService {
         // We should prioritize the data from the item. However, it is sometimes provided as a GeoJSON instead of a bbox.
         // In those cases, we can still work with the bbox of the collection.
         if (itemInfo.has("bbox") && !itemInfo.isNull("bbox")) {
-            JSONArray bbox = itemInfo.getJSONArray("bbox");
+            JSONArray bbox = itemInfo.getJSONArray("bbox").getJSONArray(0);
             gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
         } else {
-            JSONArray bbox = collectionMetadata.getObject().getJSONArray("bbox");
+            JSONArray bbox = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
             gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
         }
 
-        JSONArray timeInterval = collectionMetadata.getObject().getJSONArray("interval");
         // For now, we will assume that there is a single interval
         // From the STAC documentation: "The first time interval always describes the overall
         // temporal extent of the data. All subsequent time intervals can be used to provide a more
         // precise description of the extent and identify clusters of data."
+        JSONArray timeInterval = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("temporal").getJSONArray("interval").getJSONArray(0);
         if (!timeInterval.isNull(0)) {
             Instant start = Instant.parse(timeInterval.getString(0));
             gBuilder.time().start(start.toEpochMilli());
