@@ -144,6 +144,7 @@ public class STACEncoder implements IResourceEncoder {
 
 			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
 			final boolean allowTransform = true;
+			// TODO the assetId value should be an optional band that should be requested only if the feature has more than one band
 			HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, lpm);
 
 			coverage = outRaster.buildCoverage();
