@@ -19,13 +19,10 @@ import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
-import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
-import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -45,7 +42,7 @@ public class STACValidator implements IResourceValidator {
         STACService service = STACAdapter.getService(catalogUrl);
 
         String collectionId = userData.get("collectionId", String.class);
-        JsonNode metadata = requestCollectionMetadata(catalogUrl, collectionId);
+        JsonNode metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
 
         Set<String> extensions = readSTACExtensions(metadata);
         userData.put("stac_extensions", extensions);
@@ -53,18 +50,11 @@ public class STACValidator implements IResourceValidator {
         IGeometry geometry = service.getGeometry(userData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData)
-                .withGeometry(geometry).withSpatialExtent(service.getSpatialExtent());
+                // TODO set spatial extent
+                .withGeometry(geometry); //.withSpatialExtent(service.getSpatialExtent());
 
         readMetadata(metadata.getObject(), builder);
         return builder;
-    }
-
-    private JsonNode requestCollectionMetadata(String catalogUrl, String collectionId) {
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
-        if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the resource at " + catalogUrl + "/collections/" + collectionId);
-        }
-        return response.getBody();
     }
 
     private Set<String> readSTACExtensions(JsonNode response) {
