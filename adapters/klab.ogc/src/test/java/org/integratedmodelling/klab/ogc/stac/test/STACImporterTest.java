@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.ogc.stac.test;
 
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.not;
+import static org.hamcrest.Matchers.is;
 
 import java.util.Collection;
 
@@ -36,7 +39,7 @@ public class STACImporterTest {
 
         Collection<Builder> ret = importer.importResources(IMPORT_LOCATION, project, params, monitor);
 
-        assertFalse(ret.isEmpty());
+        assertThat(ret, is(not(empty())));
     }
 
     @Test
