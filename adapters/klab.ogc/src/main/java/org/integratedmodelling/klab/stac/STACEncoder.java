@@ -5,15 +5,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
-import org.hortonmachine.gears.utils.CrsUtilities;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -30,11 +30,11 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -122,8 +122,7 @@ public class STACEncoder implements IResourceEncoder {
 					.searchItems();
 
 			if (items.isEmpty()) {
-				scope.getMonitor().warn("STAC resource did not return any items in this context");
-				return;
+				throw new KlabIllegalStateException("No STAC items found for this context.");
 			}
 
 			LogProgressMonitor lpm = new LogProgressMonitor();
@@ -133,23 +132,24 @@ public class STACEncoder implements IResourceEncoder {
 					space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(),
 					(int) grid.getYCells());
 
-			Integer srid = items.get(0).getEpsg();
-			CoordinateReferenceSystem outputCrs = CrsUtilities.getCrsFromSrid(srid);
-			ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(), DefaultGeographicCRS.WGS84)
-					.transform(outputCrs, true);
+			ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
+					space.getProjection().getCoordinateReferenceSystem());
 			RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
 					(int) grid.getYCells());
-			String assetId = resource.getParameters().get("asset", String.class);
+			Set<Integer> ESPGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
+			if (ESPGsAtItems.size() > 1) {
+				scope.getMonitor().warn("Multiple ESPGs found on the items " + ESPGsAtItems.toString() + ". The transformation process could affect the data.");
+			}
 
-			// TODO Inigo check this. I think this needs some discussion. Allow transform
-			// ensures the process to finish, but I would not bet on the resulting data.
-			boolean allowTransform = true;
-			HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, true, lpm);
+			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
+			final boolean allowTransform = true;
+			String bandName = resource.getParameters().contains("band") ? resource.getParameters().get("band", String.class) : "undefined title";
+			HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, bandName, items, allowTransform, lpm);
 
 			coverage = outRaster.buildCoverage();
 			scope.getMonitor().info("Coverage: " + coverage);
 		} catch (Exception e) {
-			scope.getMonitor().error("Cannot create STAC file." + e.getMessage());
+			scope.getMonitor().error("Cannot create STAC file. " + e.getMessage());
 		}
 
 		encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);

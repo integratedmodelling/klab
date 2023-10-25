@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.stac;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,13 +10,16 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
-import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.rest.SpatialExtent;
+import kong.unirest.JsonNode;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 
 public class STACService {
 
@@ -25,14 +29,7 @@ public class STACService {
     private HMStacManager catalog;
     private List<HMStacCollection> collections = Collections.synchronizedList(new ArrayList<>());
 
-    // envelope in WGS84 from capabilities
-    private IEnvelope wgs84envelope;
-
     private String resourceUrl;
-    private IEnvelope originalEnvelope;
-    private IProjection originalProjection;
-
-
     public STACService(String resourceUrl) {
         this.resourceUrl = resourceUrl;
         LogProgressMonitor lpm = new LogProgressMonitor();
@@ -68,52 +65,44 @@ public class STACService {
         double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
         double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};
 
-        return Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
-                Projection.getLatLon());
+        return Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1], Projection.getLatLon());
     }
 
-    public IGeometry getGeometry(String collectionId) {
-        Geometry ret = Geometry.create("S2");
+    public IGeometry getGeometry(IParameters<String> parameters) {
+        String catalogUrl = parameters.get("catalogUrl", String.class);
+        String collectionId = parameters.get("collectionId", String.class);
+        String item = parameters.get("asset", String.class);
+        GeometryBuilder gBuilder = Geometry.builder();
 
-        HMStacCollection collection = collections.stream().filter(c -> c.getId().equals(collectionId)).findFirst().get();
-        ReferencedEnvelope envelope = collection.getSpatialBounds();
-        double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
-        double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};
+        JsonNode collectionMetadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
+        JsonNode itemMetadata = STACUtils.requestItemMetadata(catalogUrl, collectionId, item);
 
-        wgs84envelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
-                Projection.getLatLon());
-
-        if (originalProjection != null && originalEnvelope != null) {
-            if (originalProjection.flipsCoordinates()) {
-                // use the WGS84
-                ret = ret.withBoundingBox(wgs84envelope.getMinX(), wgs84envelope.getMaxX(), wgs84envelope.getMinY(),
-                        wgs84envelope.getMaxY()).withProjection(Projection.DEFAULT_PROJECTION_CODE);
-            } else {
-                ret = ret.withBoundingBox(originalEnvelope.getMinX(), originalEnvelope.getMaxX(), originalEnvelope.getMinY(),
-                        originalEnvelope.getMaxY()).withProjection(originalProjection.getSimpleSRS());
-            }
-        } else if (wgs84envelope != null) {
-            ret = ret.withBoundingBox(wgs84envelope.getMinX(), wgs84envelope.getMaxX(), wgs84envelope.getMinY(),
-                    wgs84envelope.getMaxY()).withProjection(Projection.DEFAULT_PROJECTION_CODE);
+        JSONObject itemInfo = itemMetadata.getObject();
+        // We should prioritize the data from the item. However, it is sometimes provided as a GeoJSON instead of a bbox.
+        // In those cases, we can still work with the bbox of the collection.
+        if (itemInfo.has("bbox") && !itemInfo.isNull("bbox")) {
+            JSONArray bbox = itemInfo.getJSONArray("bbox").getJSONArray(0);
+            gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
+        } else {
+            JSONArray bbox = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
+            gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
         }
 
-        /**
-         * TODO temporal extents!
-         */
-        
-        return ret;
-    }
-
-    public SpatialExtent getSpatialExtent() {
-
-        if (wgs84envelope == null) {
-            return null;
+        // For now, we will assume that there is a single interval
+        // From the STAC documentation: "The first time interval always describes the overall
+        // temporal extent of the data. All subsequent time intervals can be used to provide a more
+        // precise description of the extent and identify clusters of data."
+        JSONArray timeInterval = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("temporal").getJSONArray("interval").getJSONArray(0);
+        if (!timeInterval.isNull(0)) {
+            Instant start = Instant.parse(timeInterval.getString(0));
+            gBuilder.time().start(start.toEpochMilli());
         }
-        SpatialExtent ret = new SpatialExtent();
-        ret.setWest(wgs84envelope.getMinX());
-        ret.setEast(wgs84envelope.getMaxX());
-        ret.setSouth(wgs84envelope.getMinY());
-        ret.setNorth(wgs84envelope.getMaxY());
+        if (!timeInterval.isNull(1)) {
+            Instant end = Instant.parse(timeInterval.getString(1));
+            gBuilder.time().end(end.toEpochMilli());
+        }
+
+        Geometry ret = gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE);
         return ret;
     }
 

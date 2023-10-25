@@ -10,8 +10,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.hortonmachine.gears.io.stac.HMStacCollection;
-import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
@@ -23,10 +21,15 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
-import org.integratedmodelling.klab.ogc.STACAdapter;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 
 public class STACImporter implements IResourceImporter {
 
@@ -44,81 +47,68 @@ public class STACImporter implements IResourceImporter {
 		return false;
 	}
 
-	@Override
-	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
-			IMonitor monitor) {
-		List<Builder> ret = new ArrayList<>();
+    private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
+            throws MalformedURLException {
+        String catalogUrl = parameters.get("catalogUrl", String.class);
+        String collectionId = parameters.get("collectionId", String.class);
+        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items").asJson();
+        JSONArray features = response.getBody().getObject().getJSONArray("features");
 
-		monitor.info("Beginning STAC catalog import from " + importLocation);
+        String regex = null;
+        if (parameters.contains("regex")) {
+            regex = parameters.get(Resources.REGEX_ENTRY, String.class);
+            parameters.remove(Resources.REGEX_ENTRY);
+        }
 
-		String regex = null;
-		if (userData.contains("regex")) {
-			regex = (String) userData.get(Resources.REGEX_ENTRY);
-			userData.remove(Resources.REGEX_ENTRY);
-		}
-		int nc = 0;
-		try {
-			STACService service = STACAdapter.getService(importLocation);
+        for (Object item : features) {
+            String id  = ((JSONObject)item).getString("id");
 
-			HMStacManager catalog = new HMStacManager(importLocation, null);
-			catalog.open();
+            if (regex != null && !id.matches(regex)) {
+                Logging.INSTANCE.info("Asset " + id + " doesn't match REGEX, skipped");
+                continue;
+            }
 
-			List<HMStacCollection> collections = catalog.getCollections();
-			for (HMStacCollection collection : collections) {
-				// Check the regex
-				if (regex != null && !collection.getId().matches(regex)) {
-					Logging.INSTANCE.info("Collection " + collection.getId() + " doesn't match REGEX, skipped");
-					continue;
-				}
+            parameters.put("asset", id);
+            String resourceUrn = collectionId + "-" + id;
+            Builder builder = validator.validate(
+                    Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(catalogUrl + "/collections/" + collectionId),
+                    parameters, monitor);
 
-				try {
-					Parameters<String> parameters = new Parameters<>();
-					parameters.putAll(userData);
-					parameters.put("catalogUrl", removeLastSlash(importLocation));
+            if (builder != null) {
+                builder.withLocalName(resourceUrn).setResourceId(resourceUrn);
+                ret.add(builder);
+                monitor.info("STAC collection " + collectionId + " added");
+            } else {
+                monitor.warn("STAC collection " + collectionId + " is invalid");
+            }
+        }
+    }
 
-					String collectionId = collection.getId();
-					parameters.put("collectionId", collectionId);
+    @Override
+    public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
+            IMonitor monitor) {
+        List<Builder> ret = new ArrayList<>();
+        String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
 
-					/**
-					 * TODO should explore assets (for 1+ items) and make a new builder per each COG
-					 * asset (or GeoJSON), storing them as separate resources. Assets of different
-					 * type should end up in resource as data keys, codelists, provenance or other
-					 * info.
-					 */
+        if (locationElements.length != 2) {
+            throw new KlabUnsupportedFeatureException("Bulk import from a catalog is not supported.");
+        }
+        try {
+            monitor.info("Beginning STAC collection import from " + importLocation);
 
-					Builder builder = validator.validate(
-							Resources.INSTANCE.createLocalResourceUrn(collectionId, project), new URL(importLocation),
-							parameters, monitor);
+            Parameters<String> parameters = new Parameters<>();
+            parameters.putAll(userData);
+            parameters.put("catalogUrl", locationElements[0]);
+            parameters.put("collectionId", locationElements[1]);
 
-					if (builder != null) {
-						builder.withLocalName(collectionId).setResourceId(collectionId);
-						ret.add(builder);
-						nc++;
-						monitor.info("STAC collection " + collectionId + " added");
-					} else {
-						monitor.warn("STAC collection " + collectionId + " is invalid");
-					}
-				} catch (KlabResourceNotFoundException e) {
-					monitor.warn("skipping STAC resource " + collection.getId() + " from service "
-							+ service.getServiceUrl() + ": " + e.getMessage());
-					continue;
-				}
-			}
-			catalog.close();
+            importCollection(ret, parameters, project, monitor);
+        } catch (Exception e) {
+            monitor.error("STAC collection import failed: " + e.getMessage());
+            throw new KlabIOException(e);
+        }
 
-		} catch (Exception e) {
-			monitor.error("STAC catalog import failed: " + e.getMessage());
-			throw new KlabIOException(e);
-		}
-
-		monitor.info("STAC: imported " + nc + " collections");
-
-		return ret;
-	}
-
-	// Removing the last slash makes the URL easier to manage on later steps
-	private String removeLastSlash(String importLocation) {
-		return importLocation.endsWith("/") ? importLocation.substring(0, importLocation.length() - 1) : importLocation;
+        monitor.info("STAC: imported collection " + locationElements[1]);
+        return ret;
 	}
 
 	@Override

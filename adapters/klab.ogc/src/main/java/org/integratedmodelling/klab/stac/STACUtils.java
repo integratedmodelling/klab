@@ -3,8 +3,14 @@ package org.integratedmodelling.klab.stac;
 import java.util.Optional;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
+import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.DOIReader;
 
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -39,4 +45,31 @@ public class STACUtils {
         return authors.toString().trim();
     }
 
+    public static String[] extractCatalogAndCollection(String collectionURI) {
+        return collectionURI.split("/collections/");
+    }
+
+    public static String getExtensionName(String identifier) {
+        return StringUtils.substringBetween(identifier, "https://stac-extensions.github.io/", "/v");
+    }
+
+    public static Version getExtensionVersion(String identifier) {
+        return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
+    }
+
+    public static JsonNode requestCollectionMetadata(String catalogUrl, String collectionId) {
+        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
+        if (!response.isSuccess() || response.getBody() == null) {
+            throw new KlabResourceAccessException("Cannot access the collection at " + catalogUrl + "/collections/" + collectionId);
+        }
+        return response.getBody();
+    }
+
+    public static JsonNode requestItemMetadata(String catalogUrl, String collectionId, String item) {
+        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
+        if (!response.isSuccess() || response.getBody() == null) {
+            throw new KlabResourceAccessException("Cannot access the item at " + catalogUrl + "/collections/" + collectionId + "/items/" + item);
+        }
+        return response.getBody();
+    }
 }
