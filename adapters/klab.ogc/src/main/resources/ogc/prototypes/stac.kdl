@@ -13,9 +13,6 @@
  	final text 'collectionId'
  		"The ID of the annotated data collection."
  		
- 	final text 'item'
- 		"The item that is going to be requested."
- 		
  	optional text 'band'
  		"The title of a multi-feature query. Leave it empty for resources with a single feature."
  		
