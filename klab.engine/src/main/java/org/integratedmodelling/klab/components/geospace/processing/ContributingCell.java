@@ -293,7 +293,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(cell, this, Orientation.N, locator)
                 : new ContributingCell(cell, this, Orientation.N);
     }
@@ -303,7 +303,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(delegate.S(), this, Orientation.S, locator)
                 : new ContributingCell(delegate.S(), this, Orientation.S);
     }
@@ -313,7 +313,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(delegate.W(), this, Orientation.W, locator)
                 : new ContributingCell(delegate.W(), this, Orientation.W);
     }
@@ -323,7 +323,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(delegate.W(), this, Orientation.E, locator)
                 : new ContributingCell(delegate.W(), this, Orientation.E);
     }
@@ -333,7 +333,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(delegate.NE(), this, Orientation.NE, locator)
                 : new ContributingCell(delegate.NE(), this, Orientation.NE);
     }
@@ -343,7 +343,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(delegate.NW(), this, Orientation.NW, locator)
                 : new ContributingCell(delegate.NW(), this, Orientation.NW);
     }
@@ -353,7 +353,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(delegate.SE(), this, Orientation.SE, locator)
                 : new ContributingCell(delegate.SE(), this, Orientation.SE);
     }
@@ -363,7 +363,7 @@ public class ContributingCell extends Expando {
         if (cell == null) {
             return null;
         }
-        return locator == null
+        return locator != null
                 ? new ContributingCell(delegate.SW(), this, Orientation.SW, locator)
                 : new ContributingCell(delegate.SW(), this, Orientation.SW);
     }
