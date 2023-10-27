@@ -47,12 +47,12 @@ public class STACService {
         return resourceUrl;
     }
 
-    public Optional<HMStacCollection> getCollectionById(String collectionId) throws Exception {
-        HMStacCollection collection = catalog.getCollectionById(collectionId);
-        if (collection == null) {
-            return Optional.empty();
+    public HMStacCollection getCollectionById(String collectionId) {
+        try {
+            return catalog.getCollectionById(collectionId);
+        } catch (Exception e) {
+            return null;
         }
-        return Optional.ofNullable(collection);
     }
 
     public List<HMStacCollection> getCollections() {

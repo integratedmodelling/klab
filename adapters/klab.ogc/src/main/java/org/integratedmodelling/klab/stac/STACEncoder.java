@@ -54,16 +54,8 @@ public class STACEncoder implements IResourceEncoder {
 			return false;
 		}
 
-		Optional<HMStacCollection> collection;
-		try {
-			collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
-		} catch (Exception e) {
-			monitor.error(
-					"Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
-			return false;
-		}
-
-		if (collection.isEmpty()) {
+		HMStacCollection collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
+		if (collection == null) {
 			monitor.error(
 					"Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
 			return false;
@@ -89,11 +81,9 @@ public class STACEncoder implements IResourceEncoder {
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
 		STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
-		Optional<HMStacCollection> collection = null;
-		try {
-			collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
-		} catch (Exception e) {
-			scope.getMonitor().error(
+		HMStacCollection collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
+		if (collection == null) {
+		    scope.getMonitor().error(
 					"Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
 		}
 
@@ -117,7 +107,7 @@ public class STACEncoder implements IResourceEncoder {
 
 		try {
 
-			List<HMStacItem> items = collection.get().setGeometryFilter(poly)
+			List<HMStacItem> items = collection.setGeometryFilter(poly)
 					.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
 					.searchItems();
 
