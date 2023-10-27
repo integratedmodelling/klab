@@ -133,8 +133,8 @@ public class STACEncoder implements IResourceEncoder {
 
 			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
 			final boolean allowTransform = true;
-			String bandName = resource.getParameters().contains("band") ? resource.getParameters().get("band", String.class) : "undefined title";
-			HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, bandName, items, allowTransform, lpm);
+            String assetName = resource.getParameters().contains("asset") ? resource.getParameters().get("asset", String.class) : "undefined title";
+            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetName, items, allowTransform, lpm);
 
 			coverage = outRaster.buildCoverage();
 			scope.getMonitor().info("Coverage: " + coverage);
