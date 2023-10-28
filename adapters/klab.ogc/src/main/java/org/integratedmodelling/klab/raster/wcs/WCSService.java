@@ -21,6 +21,7 @@ import java.util.Set;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.jxpath.JXPathContext;
+import org.hortonmachine.gears.io.wcs.IWebCoverageService;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
@@ -63,7 +64,6 @@ import kong.unirest.Unirest;
  *
  */
 public class WCSService {
-
     private static int CONNECT_TIMEOUT_MS = 5000;
     private static int READ_TIMEOUT_MS = 5000;
 

@@ -40,6 +40,7 @@ import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.geotools.util.factory.Hints;
+import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -102,76 +103,83 @@ public class RasterEncoder implements IResourceEncoder {
         /*
          * Set the data from the transformed coverage
          */
-        RenderedImage image = coverage.getRenderedImage();
-        RandomIter iterator = RandomIterFactory.create(image, null);
-        Dimension space = geometry.getDimension(Type.SPACE);
-        int band = 0;
-        if (urnParameters.containsKey("band")) {
-            band = Integer.parseInt(urnParameters.get("band"));
-        } else if (!resource.getAdapterType().equals("stac")) {
-            resource.getParameters().get("band", 0);
-        }
-        Set<Double> nodata = getNodata(resource, coverage, band);
-        GroovyShell shell = null;
-        Binding binding = null;
-        Script transformation = null;
-
-        if (resource.getParameters().get("transform") != null
-                && !resource.getParameters().get("transform").toString().trim().isEmpty()) {
-            binding = new Binding();
-            shell = new GroovyShell(binding);
-            transformation = shell.parse(resource.getParameters().get("transform").toString());
-        }
-
-        /*
-         * TODO support band mixer if set in resource
-         */
-
-        /*
-         * if so configured, cache the transformed coverage for the space dimension signature
-         * 
-         * TODO use different methods for non-doubles TODO support multi-band expressions
-         */
-
-//        builder = builder.startState(((IRuntimeScope) scope).getTargetName());
-
-        for (long ofs = 0; ofs < space.size(); ofs++) {
-
-            long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-            double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
-
-            // this is cheeky but will catch most of the nodata and
-            // none of the good data
-            // FIXME see if this is really necessary
-            if (value < -1.0E35 || value > 1.0E35) {
-                value = Double.NaN;
-            }
-
-            for (double nd : nodata) {
-                if (NumberUtils.equal(value, nd)) {
-                    value = Double.NaN;
-                    break;
-                }
-            }
-
-            // if (!Double.isNaN(value)) {
-            // System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs
-            // = " + ofs + ")");
-            // }
-
-            if (transformation != null && Observations.INSTANCE.isData(value)) {
-                binding.setVariable("self", value);
-                Object o = transformation.run();
-                if (o instanceof Number) {
-                    value = ((Number) o).doubleValue();
-                } else {
-                    value = Double.NaN;
-                }
-            }
-
-            builder.add(value);
-        }
+    	try(HMRaster raster = HMRaster.fromGridCoverage((GridCoverage2D) coverage)){
+//	        RenderedImage image = coverage.getRenderedImage();
+//	        RandomIter iterator = RandomIterFactory.create(image, null);
+	        Dimension space = geometry.getDimension(Type.SPACE);
+	        int band = 0;
+	        if (urnParameters.containsKey("band")) {
+	            band = Integer.parseInt(urnParameters.get("band"));
+	        } else if (!resource.getAdapterType().equals("stac")) {
+	            resource.getParameters().get("band", 0);
+	        }
+	        Set<Double> nodata = getNodata(resource, coverage, band);
+	        GroovyShell shell = null;
+	        Binding binding = null;
+	        Script transformation = null;
+	
+	        if (resource.getParameters().get("transform") != null
+	                && !resource.getParameters().get("transform").toString().trim().isEmpty()) {
+	            binding = new Binding();
+	            shell = new GroovyShell(binding);
+	            transformation = shell.parse(resource.getParameters().get("transform").toString());
+	        }
+	
+	        /*
+	         * TODO support band mixer if set in resource
+	         */
+	
+	        /*
+	         * if so configured, cache the transformed coverage for the space dimension signature
+	         * 
+	         * TODO use different methods for non-doubles TODO support multi-band expressions
+	         */
+	
+	//        builder = builder.startState(((IRuntimeScope) scope).getTargetName());
+	
+	        for (long ofs = 0; ofs < space.size(); ofs++) {
+	
+	            long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
+	            double value = raster.getValue((int) xy[0], (int) xy[1], band);
+//	            double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
+	
+	            // this is cheeky but will catch most of the nodata and
+	            // none of the good data
+	            // FIXME see if this is really necessary
+	            if (value < -1.0E35 || value > 1.0E35) {
+	                value = Double.NaN;
+	            }
+	
+	            for (double nd : nodata) {
+	                if (NumberUtils.equal(value, nd)) {
+	                    value = Double.NaN;
+	                    break;
+	                }
+	            }
+	
+	            // if (!Double.isNaN(value)) {
+	            // System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs
+	            // = " + ofs + ")");
+	            // }
+	
+	            if (transformation != null && Observations.INSTANCE.isData(value)) {
+	                binding.setVariable("self", value);
+	                Object o = transformation.run();
+	                if (o instanceof Number) {
+	                    value = ((Number) o).doubleValue();
+	                } else {
+	                    value = Double.NaN;
+	                }
+	            }
+	
+	            builder.add(value);
+	        }
+    	}
 //        builder = builder.finishState();
+		 catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {

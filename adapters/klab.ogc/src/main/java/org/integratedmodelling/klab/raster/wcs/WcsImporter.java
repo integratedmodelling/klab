@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.hortonmachine.gears.io.wcs.IWebCoverageService;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
@@ -41,25 +42,28 @@ public class WcsImporter implements IResourceImporter {
 	public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
 			IMonitor monitor) {
 		List<Builder> ret = new ArrayList<>();
-		// TODO parse from parameter string - for now just force it
-		String wcsVersion = "2.0.1";
-		String regex = null;
-		if (userData.contains("regex")) {
-			regex = (String) userData.get(Resources.REGEX_ENTRY);
-			userData.remove(Resources.REGEX_ENTRY);
-		}
 		try {
-			int index = importLocation.indexOf('?');
-			importLocation = importLocation.substring(0, index);
-			WCSService wcs = WcsAdapter.getService(importLocation, Version.create(wcsVersion));
-			for (WCSLayer layer : wcs.getLayers()) {
+			IWebCoverageService wcs = WcsCache.INSTANCE.getOrCreate(importLocation);
+			
+			String wcsVersion = wcs.getVersion(); 
+			String regex = null;
+			if (userData.contains("regex")) {
+				regex = (String) userData.get(Resources.REGEX_ENTRY);
+				userData.remove(Resources.REGEX_ENTRY);
+			}
+//			int index = importLocation.indexOf('?');
+//			importLocation = importLocation.substring(0, index);
+//			WCSService wcs = WcsAdapter.getService(importLocation, Version.create(wcsVersion));
+//			for (WCSLayer layer : wcs.getLayers()) {
+			List<String> coverageIds = wcs.getCoverageIds();
+			for (String layerName : coverageIds) {
 
-				if (layer.isError()) {
-					Logging.INSTANCE.warn("skipping corrupted WCS layer " + layer.getIdentifier());
-					continue;
-				}
-				if (regex != null && !layer.getIdentifier().matches(regex)) {
-					Logging.INSTANCE.info("layer " + layer.getIdentifier() + " doesn't match REGEX, skipped");
+//				if (layer.isError()) {
+//					Logging.INSTANCE.warn("skipping corrupted WCS layer " + layer.getIdentifier());
+//					continue;
+//				}
+				if (regex != null && !layerName.matches(regex)) {
+					Logging.INSTANCE.info("layer " + layerName + " doesn't match REGEX, skipped");
 					continue;
 				}
 				try {
@@ -68,9 +72,9 @@ public class WcsImporter implements IResourceImporter {
 					parameters.putAll(userData);
 					parameters.put("serviceUrl", importLocation);
 					parameters.put("wcsVersion", wcsVersion);
-					parameters.put("wcsIdentifier", layer.getIdentifier());
+					parameters.put("wcsIdentifier", layerName);
 
-					String layerId = layer.getIdentifier().toLowerCase().replaceAll("__", ".");
+					String layerId = layerName.toLowerCase().replaceAll("__", ".");
 
 					Builder builder = validator.validate(Resources.INSTANCE.createLocalResourceUrn(layerId, project),
 							new URL(importLocation), parameters, monitor);
@@ -81,12 +85,12 @@ public class WcsImporter implements IResourceImporter {
 					}
 
 					Logging.INSTANCE.info(
-							"importing WCS resource " + layer.getIdentifier() + " from service " + wcs.getServiceUrl());
+							"importing WCS resource " + layerName + " from service " + wcs.getCapabilitiesUrl());
 
 				} catch (KlabResourceNotFoundException e) {
 
-					Logging.INSTANCE.warn("skipping WCS resource " + layer.getIdentifier() + " from service "
-							+ wcs.getServiceUrl() + ": " + e.getMessage());
+					Logging.INSTANCE.warn("skipping WCS resource " + layerName + " from service "
+							+ wcs.getCapabilitiesUrl() + ": " + e.getMessage());
 				}
 			}
 		} catch (Exception e) {
@@ -97,16 +101,26 @@ public class WcsImporter implements IResourceImporter {
 
 	@Override
 	public boolean canHandle(String importLocation, IParameters<String> userData) {
-
-		URL url = null;
+		
 		try {
-			url = new URL(importLocation);
-		} catch (MalformedURLException e) {
-			return false;
+			IWebCoverageService wcs = WcsCache.INSTANCE.getOrCreate(importLocation);
+			if(wcs != null && wcs.getVersion() != null) {
+				return true;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		String lowurl = importLocation.toLowerCase();
-		return url != null && url.getProtocol().startsWith("http") && lowurl.contains("?")
-				&& lowurl.contains("service=wcs") && lowurl.contains("getcapabilities");
+		return false;
+
+//		URL url = null;
+//		try {
+//			url = new URL(importLocation);
+//		} catch (MalformedURLException e) {
+//			return false;
+//		}
+//		String lowurl = importLocation.toLowerCase();
+//		return url != null && url.getProtocol().startsWith("http") && lowurl.contains("?")
+//				&& lowurl.contains("service=wcs") && lowurl.contains("getcapabilities");
 	}
 
 	@Override

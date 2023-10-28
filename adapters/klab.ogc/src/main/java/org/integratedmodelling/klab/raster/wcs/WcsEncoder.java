@@ -17,15 +17,21 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.gears.io.rasterreader.OmsRasterReader;
 import org.hortonmachine.gears.io.rasterwriter.OmsRasterWriter;
+import org.hortonmachine.gears.io.wcs.ICoverageSummary;
+import org.hortonmachine.gears.io.wcs.IWebCoverageService;
+import org.hortonmachine.gears.io.wcs.readers.CoverageReaderParameters;
+import org.hortonmachine.gears.io.wcs.wcs201.WebCoverageService201;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
@@ -44,6 +50,7 @@ import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -64,27 +71,40 @@ public class WcsEncoder implements IResourceEncoder {
 			Builder builder, IContextualizationScope scope) {
 
 		String interpolation = urnParameters.get("interpolation");
+		
+		String serviceUrl = resource.getParameters().get("serviceUrl", String.class);
+		String coverageId = null;
+		try {
+			IWebCoverageService service = new WebCoverageService201(serviceUrl, "1.0.0");  //WcsCache.INSTANCE.getOrCreate(serviceUrl);
+			coverageId = resource.getParameters().get("wcsIdentifier", String.class);
 
-		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
-				Version.create(resource.getParameters().get("wcsVersion", String.class)));
-		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
-		if (layer != null) {
-			encoder.encodeFromCoverage(resource, urnParameters, getCoverage(layer, resource, geometry, interpolation),
-					geometry, builder, scope);
-		} else {
-			scope.getMonitor().warn(
-					"Problems accessing WCS layer " + resource.getParameters().get("wcsIdentifier", String.class));
+//		WCSService service = WcsAdapter.getService(serviceUrl,
+//				Version.create(resource.getParameters().get("wcsVersion", String.class)));
+//		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
+			ICoverageSummary layer = service.getCoverageSummary(coverageId);
+			if (layer != null) {
+				GridCoverage coverage = getCoverage(service, layer, resource, geometry, interpolation);
+				encoder.encodeFromCoverage(resource, urnParameters, coverage,
+						geometry, builder, scope);
+			} else {
+				scope.getMonitor().warn(
+						"Problems accessing WCS layer " + coverageId);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			scope.getMonitor().error(
+					"An error occurred while accessing WCS layer " + coverageId + "(" + e.getLocalizedMessage() + ")");
 		}
 	}
 
-	private GridCoverage getCoverage(WCSLayer layer, IResource resource, IGeometry geometry, String interpolation) {
+	private GridCoverage getCoverage(IWebCoverageService service, ICoverageSummary layer, IResource resource, IGeometry geometry, String interpolation) {
 
-		File coverageFile = WcsAdapter.getCachedFile(layer.getIdentifier(), geometry.toString());
+		File coverageFile = WcsAdapter.getCachedFile(layer.getCoverageId(), geometry.toString());
 
 		if (coverageFile == null) {
 
 			// forcing v1.0.0 for now, while I figure out the pain of WCS requests
-			URL getCov = layer.getService().buildRetrieveUrl(layer, Version.create("1.0.0"), geometry, interpolation);
+//			URL getCov = layer.getService().buildRetrieveUrl(layer, Version.create("1.0.0"), geometry, interpolation);
 
 			// URLConnection connection = getCov.openConnection();
 			// /*
@@ -99,16 +119,76 @@ public class WcsEncoder implements IResourceEncoder {
 			// connection.setReadTimeout(timeout);
 			// }
 
-			if (Configuration.INSTANCE.isEchoEnabled()) {
-				System.out.println("Opening URL " + getCov);
-			}
-			try (InputStream input = getCov.openStream()) {
-				coverageFile = getAdjustedCoverage(input, geometry);
+//			if (Configuration.INSTANCE.isEchoEnabled()) {
+//				System.out.println("Opening URL " + getCov);
+//			}
+			
+			Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
+	        if (space.shape().length != 2 || !space.isRegular()) {
+	            throw new IllegalArgumentException("cannot retrieve  a grid dataset from WCS in a non-grid context");
+	        }
+
+	        String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+	        Projection crs = Projection.create(rcrs);
+	        double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
+	        int xc = (int) space.shape()[0];
+	        int yc = (int) space.shape()[1];
+
+	        double west = extent[0];
+	        double east = extent[1];
+	        double south = extent[2];
+	        double north = extent[3];
+
+	        /*
+	         * jiggle by the projection's equivalent of a few meters if we're asking for a single point,
+	         * so WCS does not go crazy.
+	         */
+	        if (NumberUtils.equal(west, east)) {
+	            double delta = (crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getMaximumValue()
+	                    - crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(0).getMinimumValue()) / 3900000.0;
+	            west -= delta;
+	            east += delta;
+	        }
+
+	        if (NumberUtils.equal(north, south)) {
+	            double delta = (crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(1).getMaximumValue()
+	                    - crs.getCoordinateReferenceSystem().getCoordinateSystem().getAxis(1).getMinimumValue()) / 3900000.0;
+	            south -= delta;
+	            north += delta;
+	        }
+			
+	        try {
+				coverageFile = File.createTempFile("geo", ".tiff");
+				CoverageReaderParameters params = new CoverageReaderParameters(service, layer.getCoverageId());
+				params.format("image/tiff");
+	
+				String epsg = crs.getSimpleSRS();
+				int srid = Integer.parseInt(epsg.substring(5));
+		        params.bbox(new org.locationtech.jts.geom.Envelope(west, east, south, north), srid);
+		        params.outputSrid(srid);
+		        params.rowsCols(yc, xc);
+		        
+		        // read the actual coverage
+				String urlUsed = service.getCoverage(coverageFile.getAbsolutePath(), params , null);
+				
+				if (Configuration.INSTANCE.isEchoEnabled()) {
+					System.out.println(urlUsed);
+				}
+				System.out.println(coverageFile.getAbsolutePath());
+				
+//				coverageFile = getAdjustedCoverage(coverageFile, geometry);
+				GridCoverage readCoverage = encoder.readCoverage(coverageFile);
+				return readCoverage;
+			
+//			try (InputStream input = getCov.openStream()) {
+//				coverageFile = getAdjustedCoverage(input, geometry);
 			} catch (Throwable e) {
 				throw new KlabIOException(e);
 			}
 		}
+		
 		return encoder.readCoverage(coverageFile);
+		
 	}
 
 	public static File getAdjustedCoverage(String url, IGeometry geometry) {
@@ -122,11 +202,12 @@ public class WcsEncoder implements IResourceEncoder {
 
 	
 	public static File getAdjustedCoverage(InputStream input, IGeometry geometry) {
+		return null;
+	}
+	
+	public static File getAdjustedCoverage(File coverageFile, IGeometry geometry) {
 
 		try {
-
-			File coverageFile = File.createTempFile("geo", ".tiff");
-			FileUtils.copyInputStreamToFile(input, coverageFile);
 
 			Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
 			String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
@@ -176,29 +257,40 @@ public class WcsEncoder implements IResourceEncoder {
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {
 
-		WCSService service = WcsAdapter.getService(resource.getParameters().get("serviceUrl", String.class),
-				Version.create(resource.getParameters().get("wcsVersion", String.class)));
-		if (service == null) {
-			monitor.error("Service " + resource.getParameters().get("serviceUrl", String.class)
-					+ " does not exist: likely the service URL is wrong or offline");
+		String serviceUrl = resource.getParameters().get("serviceUrl", String.class);
+		IWebCoverageService service = null;
+		try {
+			service = WcsCache.INSTANCE.getOrCreate(serviceUrl);
+		
+	//		WCSService service = WcsAdapter.getService(serviceUrl,
+	//				Version.create(resource.getParameters().get("wcsVersion", String.class)));
+			if (service == null) {
+				monitor.error("Service " + serviceUrl
+						+ " does not exist: likely the service URL is wrong or offline");
+				return false;
+			}
+	
+			String wcsIdentifier = resource.getParameters().get("wcsIdentifier", String.class);
+	//		WCSLayer layer = service.getLayer(wcsIdentifier);
+			List<String> coverageIds = service.getCoverageIds();
+	
+			if (!coverageIds.stream().anyMatch(cid -> cid.equals(wcsIdentifier))) {
+				monitor.error("Layer " + wcsIdentifier + " was not found in service "
+						+ resource.getParameters().get("serviceUrl", String.class)
+						+ ": likely the layer ID is wrong or the layer was removed");
+	//		} else if (layer.isError()) {
+	//			monitor.error("Layer " + resource.getParameters().get("wcsIdentifier", String.class)
+	//					+ " has errors: associated message was: " + layer.getMessage());
+				return false;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			monitor.error("Service " + serviceUrl
+					+ " does not exist: likely the service URL is wrong or offline. (" + e.getLocalizedMessage() + ")");
 			return false;
 		}
 
-		WCSLayer layer = service.getLayer(resource.getParameters().get("wcsIdentifier", String.class));
-
-		if (layer == null) {
-			monitor.error("Layer " + resource.getParameters().get("wcsIdentifier", String.class)
-					+ (service.containsIdentifier(resource.getParameters().get("wcsIdentifier", String.class))
-							? "was found in service with a null value"
-							: " was not found in service ")
-					+ resource.getParameters().get("serviceUrl", String.class)
-					+ ": likely the layer ID is wrong or the layer was removed");
-		} else if (layer.isError()) {
-			monitor.error("Layer " + resource.getParameters().get("wcsIdentifier", String.class)
-					+ " has errors: associated message was: " + layer.getMessage());
-		}
-
-		return layer != null && !layer.isError();
+		return true;
 	}
 
 	@Override
