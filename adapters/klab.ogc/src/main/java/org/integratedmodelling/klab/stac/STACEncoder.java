@@ -4,7 +4,6 @@ import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -18,6 +17,7 @@ import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
@@ -30,9 +30,11 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
+import org.integratedmodelling.klab.scale.Scale;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
 
@@ -93,13 +95,21 @@ public class STACEncoder implements IResourceEncoder {
 				.orElseThrow();
 		Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
 
+		// TODO adjust them as needed
 		ITimeInstant start = time.getStart();
 		ITimeInstant end = time.getEnd();
+
+        Scale resourceScale = Scale.create(resource.getGeometry());
+        Time resourceTime = (Time) resourceScale.getDimension(Type.TIME);
 
 		/**
 		 * TODO! Adjust time span depending of context (if generic, adjust to latest
 		 * available, minding the resolution and semantics of request)
 		 */
+        boolean resourceCanContain = resourceTime.contains(time);
+        if (!resourceCanContain && !time.isGeneric()) {
+            throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+        }
 
 		IEnvelope envelope = space.getEnvelope();
 		Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
