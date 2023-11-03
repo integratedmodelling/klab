@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MongoGroupRepository extends MongoRepository<MongoGroup, ObjectId>{
+public interface MongoGroupRepository extends ResourceRepository<MongoGroup, String>{
 	
 	List<MongoGroup> findAll();
 	Optional<MongoGroup> findById(String id);
@@ -22,5 +22,7 @@ public interface MongoGroupRepository extends MongoRepository<MongoGroup, Object
 	
     List<MongoGroup> findByOptInIsTrue();
     List<MongoGroup> findByComplimentaryIsTrue(); 
+
+    List<MongoGroup> findByNameIn(List<String> names);
 	
 }

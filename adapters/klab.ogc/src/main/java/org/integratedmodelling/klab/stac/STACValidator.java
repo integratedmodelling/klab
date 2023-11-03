@@ -2,13 +2,12 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.File;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import org.hortonmachine.gears.io.stac.HMStacCollection;
+import java.util.Set;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -20,13 +19,10 @@ import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
-import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
-import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -46,45 +42,33 @@ public class STACValidator implements IResourceValidator {
         STACService service = STACAdapter.getService(catalogUrl);
 
         String collectionId = userData.get("collectionId", String.class);
-        Optional<HMStacCollection> collection;
-        try {
-            collection = service.getCollectionById(collectionId);
-        } catch (Exception e) {
-            throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
-        }
+        JsonNode metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
 
-        if(collection.isEmpty()) {
-            throw new KlabResourceNotFoundException("STAC collection " + userData.get("collectionId") + " not found on server");
-        }
+        Set<String> extensions = readSTACExtensions(metadata);
+        userData.put("stac_extensions", extensions);
 
-        HttpResponse<JsonNode> metadata = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
-        List<STACExtension> extensions = new ArrayList<>();
-        JSONArray extensionArray = metadata.getBody() != null
-                ? extensionArray = metadata.getBody().getObject().getJSONArray("stac_extensions")
-                : new JSONArray();
-        for (Object ext : extensionArray) {
-            String name = STACExtension.getExtensionName(ext.toString());
-            try {
-                STACExtension extension = STACExtension.valueOfLabel(name);
-                if(extension != null) {
-                    extensions.add(extension);
-                }
-            } catch (Exception e) {
-                monitor.warn("STAC extension " + ext + "unknown. Ignored.");
-            }
-        }
-        if (!extensions.stream().anyMatch(STACExtension::isSupported)) {
-            monitor.warn("This collection does not contain a supported extension");
-        }
-        userData.put("stac_extensions", extensions.stream().map(STACExtension::getName));
-
-        IGeometry geometry = service.getGeometry(collectionId);
+        IGeometry geometry = service.getGeometry(userData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData)
-                .withGeometry(geometry).withSpatialExtent(service.getSpatialExtent());
+                // TODO set spatial extent
+                .withGeometry(geometry); //.withSpatialExtent(service.getSpatialExtent());
 
-        readMetadata(metadata.getBody().getObject(), builder);
+        readMetadata(metadata.getObject(), builder);
         return builder;
+    }
+
+    private Set<String> readSTACExtensions(JsonNode response) {
+        Set<String> extensions = new HashSet<>();
+        if (!response.getObject().has("stac_extensions")) {
+            return extensions;
+        }
+
+        JSONArray extensionArray = response.getObject().getJSONArray("stac_extensions");
+        for (Object ext : extensionArray) {
+            extensions.add(STACUtils.getExtensionName(ext.toString()));
+        }
+
+        return extensions;
     }
 
     private void readMetadata(final JSONObject json, Builder builder) {
@@ -93,7 +77,7 @@ public class STACValidator implements IResourceValidator {
         if (doi != null) {
             builder.withMetadata(IMetadata.DC_URL, doi);
             String authors = STACUtils.readDOIAuthors(doi);
-            if(authors != null) {
+            if (authors != null) {
                 builder.withMetadata(IMetadata.DC_CREATOR, authors);
             }
         }

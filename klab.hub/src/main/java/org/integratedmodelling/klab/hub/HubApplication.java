@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.hub;
 
 import javax.annotation.PreDestroy;
 
+import org.integratedmodelling.klab.hub.repository.ResourceRepositoryImpl;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 /**
  * This will start a hub at http://localhost:8284/klab with the default security
@@ -28,6 +30,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 //		"org.integratedmodelling.klab.hub.listeners",
 //		})
 @SpringBootApplication
+@EnableMongoRepositories(repositoryBaseClass = ResourceRepositoryImpl.class)
 public class HubApplication {
 
 	private static Hub hub;

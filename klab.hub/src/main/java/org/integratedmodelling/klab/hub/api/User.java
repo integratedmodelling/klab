@@ -432,4 +432,7 @@ public class User extends IdentityModel implements UserDetails{
                 .filter(cp -> cp.getKey().equals(key)).findFirst();
     }
 
+    public void removeCustomProperty(String name) {
+        this.customProperties.removeIf(cp -> cp.getKey().equals(name));
+    }
 }

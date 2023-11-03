@@ -309,6 +309,7 @@ public class RuntimeScope extends AbstractRuntimeScope {
         this.globalData = context.globalData;
         this.observer = context.observer;
         this.statistics = context.statistics;
+        this.symbolTable.putAll(context.symbolTable);
     }
 
     private RuntimeScope(ResolutionScope resolutionScope) {

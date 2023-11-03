@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.hub.api.TagNotification;
 import org.springframework.data.mongodb.repository.DeleteQuery;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface TagNotificationRepository extends MongoRepository<TagNotification, String> {
+public interface TagNotificationRepository extends ResourceRepository<TagNotification, String> {
 
     List<TagNotification> findAll();
 

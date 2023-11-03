@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface MongoNodeRepository extends MongoRepository<MongoNode, ObjectId>{
+public interface MongoNodeRepository extends ResourceRepository<MongoNode, String>{
 	
 	Optional<MongoNode> findById(String id);
 	
