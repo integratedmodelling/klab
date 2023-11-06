@@ -75,7 +75,8 @@ public class WcsEncoder implements IResourceEncoder {
 		String serviceUrl = resource.getParameters().get("serviceUrl", String.class);
 		String coverageId = null;
 		try {
-			IWebCoverageService service = new WebCoverageService201(serviceUrl, "1.0.0");  //WcsCache.INSTANCE.getOrCreate(serviceUrl);
+			IWebCoverageService service = WcsCache.INSTANCE.getOrCreate(serviceUrl);
+//			IWebCoverageService service = new WebCoverageService201(serviceUrl);  
 			coverageId = resource.getParameters().get("wcsIdentifier", String.class);
 
 //		WCSService service = WcsAdapter.getService(serviceUrl,
@@ -166,7 +167,7 @@ public class WcsEncoder implements IResourceEncoder {
 				int srid = Integer.parseInt(epsg.substring(5));
 		        params.bbox(new org.locationtech.jts.geom.Envelope(west, east, south, north), srid);
 		        params.outputSrid(srid);
-		        params.rowsCols(yc, xc);
+		        params.rowsCols(xc, yc);
 		        
 		        // read the actual coverage
 				String urlUsed = service.getCoverage(coverageFile.getAbsolutePath(), params , null);
