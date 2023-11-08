@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
@@ -79,6 +80,21 @@ public class STACEncoder implements IResourceEncoder {
 		return null;
 	}
 
+    private Time refitTime(Time contextTime, Time resourceTime) {
+        if (resourceTime.getCoveredExtent() < contextTime.getCoveredExtent()) {
+            throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+        }
+        if (contextTime.getStart().isBefore(resourceTime.getStart())) {
+            ITimeInstant newEnd = TimeInstant.create(resourceTime.getStart().getMilliseconds() + contextTime.getLength());
+            return Time.create(resourceTime.getStart().getMilliseconds(), newEnd.getMilliseconds());
+        }
+        if (contextTime.getEnd().isAfter(resourceTime.getEnd())) {
+            ITimeInstant newStart = TimeInstant.create(resourceTime.getEnd().getMilliseconds() - contextTime.getLength());
+            return Time.create(newStart.getMilliseconds(), resourceTime.getEnd().getMilliseconds());
+        }
+        throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+    }
+
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
@@ -94,21 +110,21 @@ public class STACEncoder implements IResourceEncoder {
 		Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst()
 				.orElseThrow();
 		Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
-
-		// TODO adjust them as needed
 		ITimeInstant start = time.getStart();
 		ITimeInstant end = time.getEnd();
 
         Scale resourceScale = Scale.create(resource.getGeometry());
         Time resourceTime = (Time) resourceScale.getDimension(Type.TIME);
 
-		/**
-		 * TODO! Adjust time span depending of context (if generic, adjust to latest
-		 * available, minding the resolution and semantics of request)
-		 */
-        boolean resourceCanContain = resourceTime.contains(time);
-        if (!resourceCanContain && !time.isGeneric()) {
-            throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+        boolean contextTimeContainedInResource = resourceTime.contains(time);
+        if (!contextTimeContainedInResource) {
+            if (time.isGeneric()) {
+                Time refittedTime = refitTime(time, resourceTime);
+                start = refittedTime.getStart();
+                end = refittedTime.getEnd();
+            } else {
+                throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+            }
         }
 
 		IEnvelope envelope = space.getEnvelope();
