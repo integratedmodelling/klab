@@ -9,7 +9,7 @@ public class STACCollectionParser {
         if (collection.has("item_assets")) {
             return collection.getJSONObject("item_assets");
         }
-        // TODO read the assets from an item
+        // TODO - https://integratedmodelling.atlassian.net/browse/IM-215
         throw new KlabUnimplementedException();
     }
 
