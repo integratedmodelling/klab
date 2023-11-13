@@ -55,8 +55,6 @@ public class STACImporter implements IResourceImporter {
         JSONObject collectionJson = response.getBody().getObject();
         JSONObject assets = STACCollectionParser.readAssets(collectionJson);
 
-        String collectionTitle = STACCollectionParser.readTitle(collectionJson);
-
         String regex = null;
         if (parameters.contains("regex")) {
             regex = parameters.get(Resources.REGEX_ENTRY, String.class);
@@ -72,8 +70,6 @@ public class STACImporter implements IResourceImporter {
             }
 
             JSONObject assetData = STACAssetMapParser.getAsset(assets, assetId);
-            String assetTitle = STACAssetParser.readTitle(assetData);
-
             if (!STACAssetParser.isSupportedMediaType(assetData)) {
                 Logging.INSTANCE.info("Asset " + assetId + " doesn't have a supported media type, skipped");
                 continue;
