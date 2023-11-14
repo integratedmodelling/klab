@@ -94,6 +94,11 @@ public class STACValidator implements IResourceValidator {
         if (title != null) {
             builder.withMetadata(IMetadata.DC_TITLE, title);
         }
+
+        String license = STACUtils.readLicense(json);
+        if (license != null) {
+            builder.withMetadata(IMetadata.DC_RIGHTS, license);
+        }
     }
 
     @Override

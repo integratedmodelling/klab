@@ -72,4 +72,26 @@ public class STACUtils {
         }
         return response.getBody();
     }
+
+    public static String readLicense(JSONObject collection) {
+        if (!collection.has("links")) {
+            return null;
+        }
+        JSONArray links = collection.getJSONArray("links");
+        for (int i = 0; i < links.length(); i++) {
+            JSONObject link = links.getJSONObject(i);
+            if (!link.has("rel") || !link.getString("rel").equals("license")) {
+                continue;
+            }
+            // A link to the license is preferred
+            if (link.has("href")) {
+                return link.getString("href");
+            }
+            if (link.has("title")) {
+                link.getString("title");
+            }
+        }
+        return null;
+    }
+
 }
