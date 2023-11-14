@@ -26,8 +26,6 @@ import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
@@ -51,9 +49,19 @@ public class STACImporter implements IResourceImporter {
             throws MalformedURLException {
         String catalogUrl = parameters.get("catalogUrl", String.class);
         String collectionId = parameters.get("collectionId", String.class);
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
-        JSONObject collectionJson = response.getBody().getObject();
-        JSONObject assets = STACCollectionParser.readAssets(collectionJson);
+        JSONObject collectionData = Unirest.get(catalogUrl + "/collections/" + collectionId)
+                .asJson().getBody().getObject();
+
+        // item_assets is a shortcut for obtaining information about the assets
+        // https://github.com/stac-extensions/item-assets
+        JSONObject assets = null;
+        if (collectionData.has("item_assets")) {
+            STACCollectionParser.readItemAssets(collectionData);
+        } else {
+            JSONObject itemsData = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items")
+                    .asJson().getBody().getObject();
+            STACCollectionParser.readAssets(itemsData);
+        }
 
         String regex = null;
         if (parameters.contains("regex")) {
@@ -62,7 +70,6 @@ public class STACImporter implements IResourceImporter {
         }
 
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
-
         for(String assetId : assetIds) {
             if (regex != null && !assetId.matches(regex)) {
                 Logging.INSTANCE.info("Asset " + assetId + " doesn't match REGEX, skipped");
