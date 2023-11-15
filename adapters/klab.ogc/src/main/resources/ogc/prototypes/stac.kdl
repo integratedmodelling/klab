@@ -14,6 +14,6 @@
  		"The ID of the annotated data collection."
  		
  	final text 'asset'
- 		"The id of the asset to be read"
- 		
+ 		"The asset that is going to be retrieved from the items."
+
  }
