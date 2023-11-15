@@ -68,6 +68,7 @@ public class STACService {
     public IGeometry getGeometry(IParameters<String> parameters) {
         String catalogUrl = parameters.get("catalogUrl", String.class);
         String collectionId = parameters.get("collectionId", String.class);
+
         GeometryBuilder gBuilder = Geometry.builder();
 
         JsonNode collectionMetadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
