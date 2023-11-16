@@ -56,11 +56,11 @@ public class STACImporter implements IResourceImporter {
         // https://github.com/stac-extensions/item-assets
         JSONObject assets = null;
         if (collectionData.has("item_assets")) {
-            STACCollectionParser.readItemAssets(collectionData);
+            assets = STACCollectionParser.readItemAssets(collectionData);
         } else {
             JSONObject itemsData = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items")
                     .asJson().getBody().getObject();
-            STACCollectionParser.readAssets(itemsData);
+            assets =  STACCollectionParser.readAssets(itemsData);
         }
 
         String regex = null;
