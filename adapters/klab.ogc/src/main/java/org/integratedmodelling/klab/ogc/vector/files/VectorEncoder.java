@@ -31,6 +31,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.factory.GeoTools;
+import org.hortonmachine.gears.utils.geometry.GeometryHelper;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Resources;
@@ -56,7 +57,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
-import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -66,9 +66,7 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Utils;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
-import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -142,7 +140,7 @@ public class VectorEncoder implements IResourceEncoder {
         Filter filter = null;
         FilterFactory2 ff = CommonFactoryFinder.getFilterFactory2(GeoTools.getDefaultHints());
         Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
-        
+
         /*
          * merge urn params with resource params: if attr=x, use filter, if just value=x and we have
          * a nameAttribute filter, else add to parameters
@@ -230,7 +228,7 @@ public class VectorEncoder implements IResourceEncoder {
         IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
 
         ReferencedEnvelope bboxRefEnv = ((Envelope) envelopeInOriginalProjection).getJTSEnvelope();
-		Filter bbfilter = ff.bbox(ff.property(geomName), bboxRefEnv);
+        Filter bbfilter = ff.bbox(ff.property(geomName), bboxRefEnv);
         if (filter != null) {
             bbfilter = ff.and(bbfilter, filter);
         }
@@ -238,19 +236,15 @@ public class VectorEncoder implements IResourceEncoder {
         Rasterizer<Object> rasterizer = null;
         double cellWidth = -1.0;
         Polygon polygonEnv = null;
-        PreparedGeometry preparedEnv = null;
         if (rasterize) {
-//            String name = scope.getTargetName();
-//            String unit = scope.getTargetSemantics() != null && scope.getTargetSemantics().getUnit() != null
-//                    ? scope.getTargetSemantics().getUnit().toString()
-//                    : null;
-//            builder = builder.startState(name, unit, scope);
-        	IGrid grid = ((Space) requestScale.getSpace()).getGrid();
-			rasterizer = new Rasterizer<Object>(grid);
+            IGrid grid = ((Space) requestScale.getSpace()).getGrid();
+            rasterizer = new Rasterizer<Object>(grid);
 
-			cellWidth = grid.getCellWidth();
-			polygonEnv = GeometryUtilities.createPolygonFromEnvelope(bboxRefEnv);
-			preparedEnv = PreparedGeometryFactory.prepare(polygonEnv);
+            cellWidth = grid.getCellWidth();
+            polygonEnv = GeometryUtilities.createPolygonFromEnvelope(bboxRefEnv);
+//                       preparedEnv = PreparedGeometryFactory.prepare(polygonEnv);
+
+            rasterizer = new Rasterizer<Object>(((Space) requestScale.getSpace()).getGrid());
         }
 
         String nameAttribute = resource.getParameters().get("nameAttribute", String.class);
@@ -259,130 +253,112 @@ public class VectorEncoder implements IResourceEncoder {
         }
 
 //        SpatialDisplay display = new SpatialDisplay(requestScale);
+        
         int n = 1;
         FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
 
             if (presence) {
                 builder = builder.withMetadata("presence", Boolean.TRUE);
                 it.close();
                 return;
             }
-            
+
             SimpleFeature feature = it.next();
-            Geometry featureGeom = (Geometry) feature.getDefaultGeometry();
-            if (rasterize) {
-            	featureGeom = TopologyPreservingSimplifier.simplify(featureGeom, cellWidth);
-            	featureGeom = featureGeom.buffer(0);
-			}
+            Geometry shape = (Geometry) feature.getDefaultGeometry();
+
+            if (shape.isEmpty()) {
+                continue;
+            }
+
+            if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
+                // shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
+                if (!shape.isValid()) {
+                    shape = shape.buffer(0);
+                }
+            }
             
-            
-//            Object shape = feature.getDefaultGeometryProperty().getValue();
-            int numGeometries = featureGeom.getNumGeometries();
-			for (int i = 0; i < numGeometries; i++) {
-				Geometry shape = null;
-				try {
-					shape = featureGeom.getGeometryN(i);
 
-					if (shape.isEmpty()) {
-						continue;
-					}
-					
-					if(preparedEnv!=null) {
-						try {
-							if (!preparedEnv.intersects(shape)) {
-								continue;
-							}
-//							shape = polygonEnv.intersection(shape);
-						} catch (Exception e) {
-							try {
-								shape = TopologyPreservingSimplifier.simplify(shape, 0.0001);
-//								shape = polygonEnv.intersection(shape);
-							} catch (Exception e1) {
-								throw new KlabValidationException(
-										"Unable to intersect geometry properly. TopologyException.");
-							}
-						}
-					}
-
-					if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
-						// shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
-						if (!((org.locationtech.jts.geom.Geometry) shape).isValid()) {
-							shape = ((org.locationtech.jts.geom.Geometry) shape).buffer(0);
-						}
-					}
-
-					IShape objectShape = Shape.create((org.locationtech.jts.geom.Geometry) shape, originalProjection)
-							.transform(requestScale.getSpace().getProjection());
-
-					if (intersect) {
-						objectShape = objectShape.intersection(requestScale.getSpace().getShape());
-					}
+            IShape objectShape = null;
+            if(rasterize) {
+                // do always intersect
+                try {
+                    Geometry intersection = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
+                    objectShape = Shape.create(intersection, originalProjection)
+                            .transform(requestScale.getSpace().getProjection());
+                } catch (Exception e) {
+                    throw new KlabIOException(e);
+                }
+                
+            }else {
+                objectShape = Shape.create(shape, originalProjection)
+                        .transform(requestScale.getSpace().getProjection());
+    
+                if (intersect) {
+                    objectShape = objectShape.intersection(requestScale.getSpace().getShape());
+                }
+            }
 
 //                display.add(objectShape);
 
-					if (objectShape.isEmpty()) {
-						continue;
-					}
+            if (objectShape.isEmpty()) {
+                continue;
+            }
 
-					if (rasterize) {
+            if (rasterize) {
 
-						Object value = Boolean.TRUE;
+                Object value = Boolean.TRUE;
 
-						if (idRequested != null) {
-							String attrName = attributeNames.get(idRequested);
-							if (attrName != null) {
-								value = feature.getAttribute(attrName);
-							}
-						}
+                if (idRequested != null) {
+                    String attrName = attributeNames.get(idRequested);
+                    if (attrName != null) {
+                        value = feature.getAttribute(attrName);
+                    }
+                }
 
-						value = Utils.asType(value, Utils.getClassForType(resource.getType()));
+                value = Utils.asType(value, Utils.getClassForType(resource.getType()));
 
-						final Object vval = value;
-						rasterizer.add(objectShape, (s) -> vval);
+                final Object vval = value;
+                rasterizer.add(objectShape, (s) -> vval);
 
-					} else if (!presence) {
+            } else if (!presence) {
 
-						IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
-						String objectName = null;
-						if (nameAttribute != null) {
-							Object nattr = feature.getAttribute(nameAttribute);
-							if (nattr == null) {
-								nattr = feature.getAttribute(nameAttribute.toUpperCase());
-							}
-							if (nattr == null) {
-								nattr = feature.getAttribute(nameAttribute.toLowerCase());
-							}
-							if (nattr != null) {
-								objectName = nattr.toString();
-							}
-						}
-						if (objectName /* still */ == null) {
-							objectName = fc.getSchema().getTypeName() + "_" + (n++);
-						}
+                IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
+                String objectName = null;
+                if (nameAttribute != null) {
+                    Object nattr = feature.getAttribute(nameAttribute);
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(nameAttribute.toUpperCase());
+                    }
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(nameAttribute.toLowerCase());
+                    }
+                    if (nattr != null) {
+                        objectName = nattr.toString();
+                    }
+                }
+                if (objectName /* still */ == null) {
+                    objectName = fc.getSchema().getTypeName() + "_" + (n++);
+                }
 
-						builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
-						for (String key : attributes.keySet()) {
-							Object nattr = feature.getAttribute(key);
-							if (nattr == null) {
-								nattr = feature.getAttribute(key.toUpperCase());
-							}
-							if (nattr == null) {
-								nattr = feature.getAttribute(key.toLowerCase());
-							}
-							if (nattr != null) {
-								builder.withMetadata(key.toLowerCase(), nattr);
-							}
-						}
+                builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
+                for(String key : attributes.keySet()) {
+                    Object nattr = feature.getAttribute(key);
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(key.toUpperCase());
+                    }
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(key.toLowerCase());
+                    }
+                    if (nattr != null) {
+                        builder.withMetadata(key.toLowerCase(), nattr);
+                    }
+                }
 
-						builder = builder.finishObject();
+                builder = builder.finishObject();
 
-					}
-				} catch (Exception e) {
-					throw new KlabValidationException("Unable to handle geometry properly.");
-				}
-				
-			}
+            }
+
         }
 
         it.close();

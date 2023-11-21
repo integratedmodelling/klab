@@ -3,8 +3,10 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -20,9 +22,11 @@ import org.geotools.geojson.GeoJSON;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.hortonmachine.gears.utils.geometry.GeometryHelper;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Encoding;
@@ -38,6 +42,7 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -47,6 +52,7 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.FeaturesToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.GridToShape;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -68,12 +74,14 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygonal;
+import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
+import org.locationtech.jts.operation.overlay.snap.SnapIfNeededOverlayOp;
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
 /**
@@ -322,7 +330,17 @@ public class Shape extends AbstractSpatialAbstractExtent implements IShape {
 				return empty();
 			}
 		}
-		return create(fix(shapeGeometry).intersection(fix(((Shape) other).shapeGeometry)), projection);
+		Geometry fixedShape = fix(shapeGeometry);
+		Geometry fixedOther = fix(((Shape) other).shapeGeometry);
+		Geometry intersection = null;
+        try {
+            
+            intersection = fixedShape.intersection(fixedOther);
+        } catch (Exception e) {
+            GeotoolsUtils.INSTANCE.dumpFailingOperationGeometries("intersection", shapeGeometry, ((Shape) other).shapeGeometry);
+            e.printStackTrace();
+        }
+        return create(intersection, projection);
 	}
 
 	public Shape fixInvalid() {
