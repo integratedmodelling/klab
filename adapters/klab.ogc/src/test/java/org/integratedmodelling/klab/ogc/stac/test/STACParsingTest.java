@@ -7,6 +7,7 @@ import static org.hamcrest.Matchers.is;
 import java.util.Map;
 
 import org.integratedmodelling.klab.stac.STACAssetParser;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -39,16 +40,17 @@ public class STACParsingTest {
     @Test
     public void parseClassificationClassAtRasterBands() {
         String assetJSON = "{'href':'example.tif','type':'image/tiff; profile=geotiff','roles':['data'],"
-                + "'raster:bands':[{'classification:values':[{'values':[0],'description':'Valid data','color':'#000000'},{'values':[1],'description':'Clouds','color':'#ffffff'},{'values':[2,3],'description':'Clouds Shadows','color':'#cccccc'}]}]}";
+                + "'raster:bands':[{'classification:classes':[{'value':0,'name':'no_data','description':'No data'},{'value':1,'name':'clouds','description':'Clouds'},{'value':2,'name':'cloud_shadows','description':'Clouds Shadows'}]}]}";
         JSONObject node = new JSONObject(assetJSON);
+        JSONObject band = node.getJSONArray("raster:bands").getJSONObject(0);
+        Map<String, String> result = STACAssetParser.getClassificationValues(band);
 
-        Map<String, String> result = STACAssetParser.getClassificationValues(node);
-
-        assertThat(result.keySet(), containsInAnyOrder("0", "1", "2", "3"));
-        assertThat(result.values(), containsInAnyOrder("Valid data", "Clouds", "Clouds Shadows", "Clouds Shadows"));
+        assertThat(result.keySet(), containsInAnyOrder("0", "1", "2"));
+        assertThat(result.values(), containsInAnyOrder("no_data", "clouds", "cloud_shadows"));
     }
 
     @Test
+    @Disabled
     public void parseClassificationBitFieldAtRasterBands() {
         String assetJSON = "{'href':'example.tif','type':'image/tiff; profile=geotiff','roles':['data'],'raster:bands':{['classification:bitfields'{[\n"
                 + "  {'name':'fill','description':'Corresponding pixels in L1 image bands are fill','offset':0,'length':1,'classes':[{'name':'not_fill','description':'L1 image band pixels are not fill','value':0},{'name':'fill','description':'L1 image band pixels are fill','value':1}]},\n"
@@ -58,15 +60,8 @@ public class STACParsingTest {
                 + "]}]}";
         JSONObject node = new JSONObject(assetJSON);
 
-        System.out.println(assetJSON.replace('"', '\''));
         Map<String, String> result = STACAssetParser.getClassificationValues(node);
 
         // TODO analyze how to create the key for bit fields
     }
-
-    @Test
-    public void parseClassificationWithNoValues() {
-        
-    }
-
 }

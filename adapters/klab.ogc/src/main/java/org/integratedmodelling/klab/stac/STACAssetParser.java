@@ -45,9 +45,15 @@ public class STACAssetParser {
     }
 
     // https://github.com/stac-extensions/classification#class-object
-    private static Map<String, String> getClassificationClasses(JSONObject asset) {
-        
-        return Map.of();
+    private static Map<String, String> getClassificationClasses(JSONArray classes) {
+        Map<String, String> ret = new HashMap<>();
+        classes.forEach(c -> {
+            JSONObject entry = (JSONObject) c;
+            String value = entry.getString("value");
+            String name = entry.getString("name");
+            ret.put(value, name);
+        });
+        return ret;
     }
 
     // https://github.com/stac-extensions/classification#bit-field-object
@@ -64,7 +70,7 @@ public class STACAssetParser {
      */
     public static Map<String, String> getClassificationValues(JSONObject asset) {
         if (asset.has("classification:classes")) {
-            return getClassificationClasses(asset);
+            return getClassificationClasses(asset.getJSONArray("classification:classes"));
         }
 
         if (asset.has("classification:bitfields")) {
