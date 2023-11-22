@@ -4,8 +4,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacManager;
@@ -19,7 +17,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
-import kong.unirest.json.JSONObject;
 
 public class STACService {
 
@@ -47,12 +44,12 @@ public class STACService {
         return resourceUrl;
     }
 
-    public Optional<HMStacCollection> getCollectionById(String collectionId) throws Exception {
-        HMStacCollection collection = catalog.getCollectionById(collectionId);
-        if (collection == null) {
-            return Optional.empty();
+    public HMStacCollection getCollectionById(String collectionId) {
+        try {
+            return catalog.getCollectionById(collectionId);
+        } catch (Exception e) {
+            return null;
         }
-        return Optional.ofNullable(collection);
     }
 
     public List<HMStacCollection> getCollections() {
@@ -71,22 +68,12 @@ public class STACService {
     public IGeometry getGeometry(IParameters<String> parameters) {
         String catalogUrl = parameters.get("catalogUrl", String.class);
         String collectionId = parameters.get("collectionId", String.class);
-        String item = parameters.get("asset", String.class);
+
         GeometryBuilder gBuilder = Geometry.builder();
 
         JsonNode collectionMetadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
-        JsonNode itemMetadata = STACUtils.requestItemMetadata(catalogUrl, collectionId, item);
-
-        JSONObject itemInfo = itemMetadata.getObject();
-        // We should prioritize the data from the item. However, it is sometimes provided as a GeoJSON instead of a bbox.
-        // In those cases, we can still work with the bbox of the collection.
-        if (itemInfo.has("bbox") && !itemInfo.isNull("bbox")) {
-            JSONArray bbox = itemInfo.getJSONArray("bbox").getJSONArray(0);
-            gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
-        } else {
-            JSONArray bbox = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
-            gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
-        }
+        JSONArray bbox = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
+        gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
 
         // For now, we will assume that there is a single interval
         // From the STAC documentation: "The first time interval always describes the overall

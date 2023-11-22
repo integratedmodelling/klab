@@ -49,9 +49,7 @@ public class STACValidator implements IResourceValidator {
 
         IGeometry geometry = service.getGeometry(userData);
 
-        Builder builder = new ResourceBuilder(urn).withParameters(userData)
-                // TODO set spatial extent
-                .withGeometry(geometry); //.withSpatialExtent(service.getSpatialExtent());
+        Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 
         readMetadata(metadata.getObject(), builder);
         return builder;
@@ -95,6 +93,11 @@ public class STACValidator implements IResourceValidator {
         String title = STACUtils.readTitle(json);
         if (title != null) {
             builder.withMetadata(IMetadata.DC_TITLE, title);
+        }
+
+        String license = STACUtils.readLicense(json);
+        if (license != null) {
+            builder.withMetadata(IMetadata.DC_RIGHTS, license);
         }
     }
 
