@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.stac;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACAssetParser {
@@ -17,5 +20,27 @@ public class STACAssetParser {
             return false;
         }
         return SUPPORTED_MEDIA_TYPE.contains(asset.getString("type").replace(" ", "").toLowerCase());
+    }
+
+    /**
+     * Check if the asset has file:values data and extract the value mapping.
+     * https://github.com/stac-extensions/file#asset--link-object-fields
+     * @param asset as JSON
+     * @return A map where each value has its own summary.
+     */
+    public static Map<String, String> getFileValues(JSONObject asset) {
+        if (!asset.has("file:values")) {
+            return Map.of();
+        }
+
+        Map<String, String> ret = new HashMap<>();
+        asset.getJSONArray("file:values").forEach(e -> {
+            JSONObject entry = (JSONObject) e;
+            JSONArray values = entry.getJSONArray("values");
+            String summary = entry.getString("summary");
+
+            values.forEach(value -> ret.put(value.toString(), summary));
+        });
+        return ret;
     }
 }
