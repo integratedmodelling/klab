@@ -43,4 +43,34 @@ public class STACAssetParser {
         });
         return ret;
     }
+
+    // https://github.com/stac-extensions/classification#class-object
+    private static Map<String, String> getClassificationClasses(JSONObject asset) {
+        
+        return Map.of();
+    }
+
+    // https://github.com/stac-extensions/classification#bit-field-object
+    private static Map<String, String> getClassificationBitfields(JSONObject asset) {
+        return Map.of();
+    }
+
+    /**
+     * NOTE: the classification extension is still in the pilot phase and may be subject to change.
+     * https://github.com/stac-extensions/classification
+     * This extension can be used at the asset objects, raster:bands and item_assets.
+     * @param asset as JSON
+     * @return A map where each value has its own summary.
+     */
+    public static Map<String, String> getClassificationValues(JSONObject asset) {
+        if (asset.has("classification:classes")) {
+            return getClassificationClasses(asset);
+        }
+
+        if (asset.has("classification:bitfields")) {
+            return getClassificationBitfields(asset);
+        }
+
+        return Map.of();
+    }
 }
