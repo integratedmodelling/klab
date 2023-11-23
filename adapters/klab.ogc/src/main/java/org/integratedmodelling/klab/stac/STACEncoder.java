@@ -15,12 +15,14 @@ import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
@@ -29,6 +31,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -95,9 +98,40 @@ public class STACEncoder implements IResourceEncoder {
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
     }
 
+    /**
+     * The aggregation strategy for the rasters obtained via STAC
+     */
+    enum AggregationStrategy {
+        MEAN,
+        SUM,
+        LAST_VALUE,
+    }
+
+    private AggregationStrategy chooseAggregationStrategy(IObservable targetSemantics) {
+        if (targetSemantics == null) {
+            return AggregationStrategy.MEAN;
+        }
+        switch(targetSemantics.getArtifactType()) {
+        case CONCEPT:
+        case BOOLEAN:
+            return AggregationStrategy.LAST_VALUE;
+        case NUMBER:
+            return Observables.INSTANCE.isExtensive(targetSemantics) ? AggregationStrategy.SUM : AggregationStrategy.LAST_VALUE;
+        default:
+            return AggregationStrategy.MEAN;
+        }
+    }
+
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
+        IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
+                ? ((Observation) scope.getTargetArtifact()).getObservable()
+                : null;
+
+        @SuppressWarnings("unused")
+        AggregationStrategy strategy = chooseAggregationStrategy(targetSemantics);
+
 		STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
 		HMStacCollection collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
 		if (collection == null) {
