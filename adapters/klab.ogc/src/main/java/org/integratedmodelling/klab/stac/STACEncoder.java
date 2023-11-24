@@ -12,6 +12,7 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
@@ -160,7 +161,10 @@ public class STACEncoder implements IResourceEncoder {
 			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
 			final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, lpm);
+            
+            // TODO bring this to parameters, currently default to AVERAGE
+            HMRaster.MergeMode mergeMode = MergeMode.AVG;
+            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
 
 			coverage = outRaster.buildCoverage();
 			scope.getMonitor().info("Coverage: " + coverage);
