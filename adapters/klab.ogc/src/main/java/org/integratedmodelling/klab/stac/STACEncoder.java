@@ -98,27 +98,18 @@ public class STACEncoder implements IResourceEncoder {
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
     }
 
-    /**
-     * The aggregation strategy for the rasters obtained via STAC
-     */
-    enum AggregationStrategy {
-        MEAN,
-        SUM,
-        LAST_VALUE,
-    }
-
-    private AggregationStrategy chooseAggregationStrategy(IObservable targetSemantics) {
+    private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics) {
         if (targetSemantics == null) {
-            return AggregationStrategy.MEAN;
+            return HMRaster.MergeMode.AVG;
         }
         switch(targetSemantics.getArtifactType()) {
         case CONCEPT:
         case BOOLEAN:
-            return AggregationStrategy.LAST_VALUE;
+            return HMRaster.MergeMode.SUBSTITUTE;
         case NUMBER:
-            return Observables.INSTANCE.isExtensive(targetSemantics) ? AggregationStrategy.SUM : AggregationStrategy.LAST_VALUE;
+            return Observables.INSTANCE.isExtensive(targetSemantics) ? HMRaster.MergeMode.SUM : HMRaster.MergeMode.SUBSTITUTE;
         default:
-            return AggregationStrategy.MEAN;
+            return HMRaster.MergeMode.AVG;
         }
     }
 
@@ -128,8 +119,7 @@ public class STACEncoder implements IResourceEncoder {
         IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                 ? ((Observation) scope.getTargetArtifact()).getObservable()
                 : null;
-
-        AggregationStrategy strategy = chooseAggregationStrategy(targetSemantics);
+        HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics);
 
 		STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
 		HMStacCollection collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
@@ -193,10 +183,7 @@ public class STACEncoder implements IResourceEncoder {
 			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
 			final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, lpm);
-            if (strategy == AggregationStrategy.MEAN) {
-                outRaster.applyCountAverage(lpm);
-            }
+            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
 			coverage = outRaster.buildCoverage();
 			scope.getMonitor().info("Coverage: " + coverage);
 		} catch (Exception e) {

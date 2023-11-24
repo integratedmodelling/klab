@@ -43,4 +43,26 @@ public class STACAssetParser {
         });
         return ret;
     }
+
+    /**
+     * NOTE: the classification extension is still in the pilot phase and may be subject to change.
+     * https://github.com/stac-extensions/classification#class-object
+     * This extension can be used at the asset objects, raster:bands and item_assets.
+     * @param asset or raster:bands as a JSON
+     * @return A map where each value has its own value.
+     */
+    public static Map<Integer, String> getClassificationClasses(JSONObject json) {
+        if (!json.has("classification:classes")) {
+            return Map.of();
+        }
+
+        Map<Integer, String> ret = new HashMap<>();
+        json.getJSONArray("classification:classes").forEach(c -> {
+            JSONObject entry = (JSONObject) c;
+            int value = entry.getInt("value");
+            String name = entry.getString("name");
+            ret.put(value, name);
+        });
+        return ret;
+    }
 }
