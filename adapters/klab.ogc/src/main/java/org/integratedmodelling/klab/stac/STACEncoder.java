@@ -129,7 +129,6 @@ public class STACEncoder implements IResourceEncoder {
                 ? ((Observation) scope.getTargetArtifact()).getObservable()
                 : null;
 
-        @SuppressWarnings("unused")
         AggregationStrategy strategy = chooseAggregationStrategy(targetSemantics);
 
 		STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
@@ -195,7 +194,9 @@ public class STACEncoder implements IResourceEncoder {
 			final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
             HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, lpm);
-
+            if (strategy == AggregationStrategy.MEAN) {
+                outRaster.applyCountAverage(lpm);
+            }
 			coverage = outRaster.buildCoverage();
 			scope.getMonitor().info("Coverage: " + coverage);
 		} catch (Exception e) {
