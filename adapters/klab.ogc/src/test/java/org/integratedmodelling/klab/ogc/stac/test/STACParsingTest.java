@@ -35,4 +35,16 @@ public class STACParsingTest {
 
         assertThat(result.values(), is(empty()));
     }
+
+    @Test
+    public void parseClassificationClassAtRasterBands() {
+        String assetJSON = "{'href':'example.tif','type':'image/tiff; profile=geotiff','roles':['data'],"
+                + "'raster:bands':[{'classification:classes':[{'value':0,'name':'no_data','description':'No data'},{'value':1,'name':'clouds','description':'Clouds'},{'value':2,'name':'cloud_shadows','description':'Clouds Shadows'}]}]}";
+        JSONObject node = new JSONObject(assetJSON);
+        JSONObject band = node.getJSONArray("raster:bands").getJSONObject(0);
+        Map<Integer, String> result = STACAssetParser.getClassificationClasses(band);
+
+        assertThat(result.keySet(), containsInAnyOrder(0, 1, 2));
+        assertThat(result.values(), containsInAnyOrder("no_data", "clouds", "cloud_shadows"));
+    }
 }
