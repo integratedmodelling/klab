@@ -124,9 +124,8 @@ public class StacTest {
 
         int cols = 979, rows = 676;
         RegionMap regionMap = RegionMap.fromEnvelopeAndGrid(env, cols, rows);
-        HMRaster raster = HMStacCollection.readRasterBandOnRegion(regionMap, stacBand, items, true, lpm);
+        HMRaster raster = HMStacCollection.readRasterBandOnRegion(regionMap, stacBand, items, true, HMRaster.MergeMode.AVG, lpm);
         lpm.message("Raster: " + raster + "\n-------\n");
-        raster.applyCountAverage(lpm);
 
         manager.close();
     }
