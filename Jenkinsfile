@@ -7,7 +7,7 @@ def kmodelers = [
 ]
 
 pipeline {
-    agent { label "mvn-java-agent"}
+    agent { label "maven-3-9-5-eclipse-temurin-17"}
     options { skipDefaultCheckout(true) }
     environment {
         VERSION_DATE = sh(
@@ -15,11 +15,11 @@ pipeline {
             returnStdout: true).trim()
         MAVEN_OPTS="--illegal-access=permit"
         REGISTRY = "registry.integratedmodelling.org"
-        STAT_CONTAINER = "stat-server-16"
-        ENGINE_CONTAINER = "engine-server-16"
-        HUB_CONTAINER = "hub-server-16"
-        NODE_CONTAINER = "node-server-16"
-        BASE_CONTAINER = "klab-base-16:bc344fa9a66e93edaa3a2b528a65e7efa2e55a6f"
+        STAT_CONTAINER = "stat-server-17"
+        ENGINE_CONTAINER = "engine-server-17"
+        HUB_CONTAINER = "hub-server-17"
+        NODE_CONTAINER = "node-server-17"
+        BASE_CONTAINER = "klab-base-17:04da07762c87f77f2a3c04c880815327f94643c3"
         PRODUCTS_GEN = shouldPushProducts(env.BRANCH_NAME)
         TAG = "${env.BRANCH_NAME.replace('/','-')}"
         MINIO_HOST = "http://192.168.250.224:9000"
@@ -88,19 +88,19 @@ pipeline {
         stage('Maven install with jib') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh 'export JAVA_HOME=/opt/java16/openjdk && mvn clean install -U -DskipTests jib:build -Djib.httpTimeout=60000'
+                    sh 'mvn clean install -U -DskipTests jib:build -Djib.httpTimeout=60000'
                 }
             }
         }
 
-        stage('Push products') {
-            when {
-                expression { env.PRODUCTS_GEN == "yes" }
-            }
-            steps {
-                pushProducts(productsFolderName(env.BRANCH_NAME), kmodelers)
-            }
-        }
+        // stage('Push products') {
+        //     when {
+        //         expression { env.PRODUCTS_GEN == "yes" }
+        //     }
+        //     steps {
+        //         pushProducts(productsFolderName(env.BRANCH_NAME), kmodelers)
+        //     }
+        // }
     }
 }
 
