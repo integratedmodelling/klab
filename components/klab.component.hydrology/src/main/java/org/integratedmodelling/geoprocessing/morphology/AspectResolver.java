@@ -45,9 +45,8 @@ public class AspectResolver extends AbstractContextualizer implements IResolver<
         aspect.pm = taskMonitor;
         aspect.doProcess = true;
         aspect.doReset = false;
-//        aspect.doRound = true;
+        aspect.doRound = true;
         aspect.doRadiants = false;
-//        context.getMonitor().info("Running algorithm...");
         try {
             aspect.process();
         } catch (Exception e) {

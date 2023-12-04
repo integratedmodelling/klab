@@ -37,7 +37,7 @@ public class GradientResolver extends AbstractContextualizer implements IResolve
         
 
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
-        taskMonitor.setTaskName("Aspect");
+        taskMonitor.setTaskName("Gradient");
 
         OmsGradient gradient = new OmsGradient();
         gradient.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
