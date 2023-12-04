@@ -113,6 +113,13 @@ public class STACEncoder implements IResourceEncoder {
         }
     }
 
+    private void sortByDate(List<HMStacItem> items) {
+        if (items.stream().anyMatch(i -> i.getTimestamp() == null)) {
+            throw new KlabIllegalStateException("STAC items are lacking a timestamp and could not be sorted by date.");
+        }
+        items.sort((i1, i2) -> i1.getTimestamp().compareTo(i2.getTimestamp()));
+    }
+
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
@@ -159,6 +166,10 @@ public class STACEncoder implements IResourceEncoder {
 			List<HMStacItem> items = collection.setGeometryFilter(poly)
 					.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
 					.searchItems();
+
+            if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
+                sortByDate(items);
+            }
 
 			if (items.isEmpty()) {
 				throw new KlabIllegalStateException("No STAC items found for this context.");
