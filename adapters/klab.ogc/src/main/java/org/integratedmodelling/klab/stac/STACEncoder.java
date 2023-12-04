@@ -12,16 +12,17 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.libs.modules.HMRaster;
-import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
@@ -30,6 +31,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -96,9 +98,36 @@ public class STACEncoder implements IResourceEncoder {
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
     }
 
+    private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics) {
+        if (targetSemantics == null) {
+            return HMRaster.MergeMode.AVG;
+        }
+        switch(targetSemantics.getArtifactType()) {
+        case CONCEPT:
+        case BOOLEAN:
+            return HMRaster.MergeMode.SUBSTITUTE;
+        case NUMBER:
+            return Observables.INSTANCE.isExtensive(targetSemantics) ? HMRaster.MergeMode.SUM : HMRaster.MergeMode.SUBSTITUTE;
+        default:
+            return HMRaster.MergeMode.AVG;
+        }
+    }
+
+    private void sortByDate(List<HMStacItem> items) {
+        if (items.stream().anyMatch(i -> i.getTimestamp() == null)) {
+            throw new KlabIllegalStateException("STAC items are lacking a timestamp and could not be sorted by date.");
+        }
+        items.sort((i1, i2) -> i1.getTimestamp().compareTo(i2.getTimestamp()));
+    }
+
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
+        IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
+                ? ((Observation) scope.getTargetArtifact()).getObservable()
+                : null;
+        HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics);
+
 		STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
 		HMStacCollection collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
 		if (collection == null) {
@@ -138,6 +167,10 @@ public class STACEncoder implements IResourceEncoder {
 					.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
 					.searchItems();
 
+            if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
+                sortByDate(items);
+            }
+
 			if (items.isEmpty()) {
 				throw new KlabIllegalStateException("No STAC items found for this context.");
 			}
@@ -161,11 +194,7 @@ public class STACEncoder implements IResourceEncoder {
 			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
 			final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
-            
-            // TODO bring this to parameters, currently default to AVERAGE
-            HMRaster.MergeMode mergeMode = MergeMode.AVG;
             HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
-
 			coverage = outRaster.buildCoverage();
 			scope.getMonitor().info("Coverage: " + coverage);
 		} catch (Exception e) {
