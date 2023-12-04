@@ -68,3 +68,30 @@ export object findmaxima
 		
 	class org.integratedmodelling.geoprocessing.morphology.MaximaFinderInstantiator
 }
+
+export number aspect
+    "Estimates the aspect (i.e. the inclination angle of the gradient)
+     by considering a reference system which puts the zero towards the
+     north and the rotation angle anticlockwise. Hence, aspect is 0 in 
+     the North direction and increases clockwise."
+    label 'Aspect'
+{
+    import number elevation
+        "The digital elevation model."
+
+    geometry S2
+
+    class org.integratedmodelling.geoprocessing.morphology.AspectResolver
+}
+
+export number gradient
+    "Estimates the gradient in each site, defined as the module of the gradient vector."
+    label 'Gradient'
+{
+    import number elevation
+        "The digital elevation model."
+
+    geometry S2
+
+    class org.integratedmodelling.geoprocessing.morphology.GradientResolver
+}
