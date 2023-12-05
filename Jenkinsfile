@@ -93,14 +93,14 @@ pipeline {
             }
         }
 
-        // stage('Push products') {
-        //     when {
-        //         expression { env.PRODUCTS_GEN == "yes" }
-        //     }
-        //     steps {
-        //         pushProducts(productsFolderName(env.BRANCH_NAME), kmodelers)
-        //     }
-        // }
+        stage('Push products') {
+            when {
+                expression { env.PRODUCTS_GEN == "yes" }
+            }
+            steps {
+                pushProducts(productsFolderName(env.BRANCH_NAME), kmodelers)
+            }
+        }
     }
 }
 
