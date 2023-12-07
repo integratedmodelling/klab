@@ -104,8 +104,8 @@
 		<hortonmachine.version>0.10.8-SNAPSHOT</hortonmachine.version>
 		<jts.version>1.18.1</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
 		<tycho-version>2.7.3</tycho-version>
 		<xtextVersion>2.27.0</xtextVersion>
 		<mweVersion>2.13.0</mweVersion>
