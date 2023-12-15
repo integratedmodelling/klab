@@ -101,7 +101,6 @@ public class SummarizingTableCompiler implements ITableCompiler {
     private List<DimensionConfig> colSelectors;
     private String statistic;
     private IContextualizationScope scope;
-	private boolean targetIsExtensive;
 
     class DimensionConfig {
 
@@ -464,6 +463,26 @@ public class SummarizingTableCompiler implements ITableCompiler {
                     }
                 }
                 results.add(total);
+                break;
+            case "mean":
+                /*
+                 * compute the other dimensions' total
+                 */
+                double mean = 0;
+                int n = 0;
+                for (String myId : (dimension == Dimension.ROW ? rowIds : colIds)) {
+                    Object value = dimension == Dimension.ROW
+                            ? builder.getCellValue(myId, otherId)
+                            : builder.getCellValue(otherId, myId);
+                    if (Observations.INSTANCE.isData(value) && value instanceof Number) {
+                        mean += ((Number) value).doubleValue();
+                        n ++;
+                    }
+                }
+                if (n > 0) {
+                	mean /= (double)n;
+                }
+                results.add(mean);
                 break;
             case "change":
                 label = "Net change";
