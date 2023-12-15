@@ -101,6 +101,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
     private List<DimensionConfig> colSelectors;
     private String statistic;
     private IContextualizationScope scope;
+	private boolean targetIsExtensive;
 
     class DimensionConfig {
 
@@ -203,6 +204,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
         }
         // true, false -> if true, force extensive measurement and must be value. Ignored if a unit
         // is passed.
+        boolean targetIsExtensive = Observables.INSTANCE.isExtensive(this.target.getObservable());
         this.extensive = parameters.get("extensive", false);
         if (this.extensive && this.unit == null) {
             this.unit = sourceState.getObservable().getUnit();
@@ -220,7 +222,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
         this.rowSummary = parameters.get("rowsummary");
         this.colSummary = parameters.get("colsummary");
         this.scope = scope;
-
+        
     }
 
     private void processStructure(Object rowSpecs, Dimension dimension, IContextualizationScope scope) {
@@ -670,7 +672,11 @@ public class SummarizingTableCompiler implements ITableCompiler {
          */
 
         if (object instanceof Collection) {
-            object = ((Collection<?>) object).iterator().next();
+        	String ret = "";
+        	for (Object o : ((Collection<?>)object)) {     		
+        		ret += (ret.isEmpty() ? "" : ", ") + getLabel(o);
+        	}
+        	return ret;
         }
 
         if (OWL.INSTANCE.getNothing().equals(object)) {
