@@ -47,10 +47,12 @@ public class STACValidatorTest {
         });
     }
 
-    // A brief disclaimer about this: I know implementation should not be tested.
-    // However, if we want to know if the validation process has been successful, we have to finish the build process.
-    // The main issue with this approach is that the implementation tries read the projects using a singleton, so we have to mock
-    // many elements that are not relevant for our tests. See: ResourceBuilder.getLocalFile(String filename).
+    /**
+     * Disclaimer: It is known that testing the implementation itself is not a recommended practice.
+     * However, to check the success of the `validate` method, the build process has to be finished.
+     * The primary challenge in this approach lies in the implementation's attempt to read projects using a singleton,
+     * necessitating the need to mock several elements that may not be relevant to our tests.
+     */
     private void mockResourcesSingleton() {
         File file =  Mockito.mock(File.class);
         Mockito.when(file.getParentFile()).thenReturn(Paths.get("src/test/resources/temp").toAbsolutePath().toFile());
