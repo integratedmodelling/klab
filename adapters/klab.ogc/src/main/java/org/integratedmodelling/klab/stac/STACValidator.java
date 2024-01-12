@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -20,7 +22,10 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.ogc.STACAdapter;
+import org.integratedmodelling.klab.rest.CodelistReference;
+import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.utils.Pair;
 
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
@@ -51,8 +56,36 @@ public class STACValidator implements IResourceValidator {
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 
+        String assetId = userData.get("asset", String.class);
+        JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
+        JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
+
+        // Currently, only files:values is supported. If needed, the classification extension could be used too.
+        Map<String, String> vals = STACAssetParser.getFileValues(asset);
+        if (!vals.isEmpty()) {
+            CodelistReference codelist = populateCodelist(assetId, vals);
+            builder.addCodeList(codelist);
+        }
+
         readMetadata(metadata.getObject(), builder);
         return builder;
+    }
+
+    private CodelistReference populateCodelist(String assetId, Map<String, String> vals) {
+        CodelistReference codelist = new CodelistReference();
+        codelist.setId(assetId.toUpperCase());
+        codelist.setName(assetId);
+        codelist.setAuthority(false);
+        codelist.setVersion("0.0.1");
+        MappingReference direct = new MappingReference();
+        MappingReference inverse = new MappingReference();
+        for (Entry<String, String> code : vals.entrySet()) {
+            direct.getMappings().add(new Pair<>(code.getKey(), code.getValue()));
+            codelist.getCodeDescriptions().put(code.getKey(), code.getValue());
+        }
+        codelist.setDirectMapping(direct);
+        codelist.setInverseMapping(inverse);
+        return codelist;
     }
 
     private Set<String> readSTACExtensions(JsonNode response) {
@@ -127,7 +160,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId");
+        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId") && parameters.contains("asset");
     }
 
     @Override
