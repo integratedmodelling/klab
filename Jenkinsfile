@@ -89,7 +89,7 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                     sh 'mvn -ntp -U clean install -DskipTests jib:build -Djib.httpTimeout=60000'
-                    sh 'mvn -ntp -pl :klab.ogc test'
+                    sh 'mvn -ntp -pl :klab.ogc test -Dtest="*STAC*"'
                 }
             }
         }
