@@ -14,15 +14,12 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.common.GeometryBuilder.SpaceBuilder;
-import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
@@ -33,7 +30,6 @@ import org.integratedmodelling.klab.openeo.OpenEO.Schema;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 public class OpenEOResourceValidator implements IResourceValidator {

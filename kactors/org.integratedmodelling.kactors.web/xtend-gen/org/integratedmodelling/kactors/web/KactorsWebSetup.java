@@ -15,7 +15,6 @@ import org.integratedmodelling.kactors.ide.KactorsIdeModule;
  */
 @SuppressWarnings("all")
 public class KactorsWebSetup extends KactorsStandaloneSetup {
-  @Override
   public Injector createInjector() {
     KactorsRuntimeModule _kactorsRuntimeModule = new KactorsRuntimeModule();
     KactorsIdeModule _kactorsIdeModule = new KactorsIdeModule();

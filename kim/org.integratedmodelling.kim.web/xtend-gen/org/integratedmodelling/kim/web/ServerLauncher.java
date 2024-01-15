@@ -27,17 +27,19 @@ public class ServerLauncher {
     InetSocketAddress _inetSocketAddress = new InetSocketAddress("localhost", 8032);
     final Server server = new Server(_inetSocketAddress);
     WebAppContext _webAppContext = new WebAppContext();
-    final Procedure1<WebAppContext> _function = (WebAppContext it) -> {
-      it.setResourceBase("WebRoot");
-      it.setWelcomeFiles(new String[] { "index.html" });
-      it.setContextPath("/");
-      AnnotationConfiguration _annotationConfiguration = new AnnotationConfiguration();
-      WebXmlConfiguration _webXmlConfiguration = new WebXmlConfiguration();
-      WebInfConfiguration _webInfConfiguration = new WebInfConfiguration();
-      MetaInfConfiguration _metaInfConfiguration = new MetaInfConfiguration();
-      it.setConfigurations(new Configuration[] { _annotationConfiguration, _webXmlConfiguration, _webInfConfiguration, _metaInfConfiguration });
-      it.setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, ".*/org\\.integratedmodelling\\.kim\\.web/.*,.*\\.jar");
-      it.setInitParameter("org.mortbay.jetty.servlet.Default.useFileMappedBuffer", "false");
+    final Procedure1<WebAppContext> _function = new Procedure1<WebAppContext>() {
+      public void apply(final WebAppContext it) {
+        it.setResourceBase("WebRoot");
+        it.setWelcomeFiles(new String[] { "index.html" });
+        it.setContextPath("/");
+        AnnotationConfiguration _annotationConfiguration = new AnnotationConfiguration();
+        WebXmlConfiguration _webXmlConfiguration = new WebXmlConfiguration();
+        WebInfConfiguration _webInfConfiguration = new WebInfConfiguration();
+        MetaInfConfiguration _metaInfConfiguration = new MetaInfConfiguration();
+        it.setConfigurations(new Configuration[] { _annotationConfiguration, _webXmlConfiguration, _webInfConfiguration, _metaInfConfiguration });
+        it.setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, ".*/org\\.integratedmodelling\\.kim\\.web/.*,.*\\.jar");
+        it.setInitParameter("org.mortbay.jetty.servlet.Default.useFileMappedBuffer", "false");
+      }
     };
     WebAppContext _doubleArrow = ObjectExtensions.<WebAppContext>operator_doubleArrow(_webAppContext, _function);
     server.setHandler(_doubleArrow);
@@ -49,17 +51,19 @@ public class ServerLauncher {
       String _plus = ("Server started " + _uRI);
       String _plus_1 = (_plus + "...");
       log.info(_plus_1);
-      final Runnable _function_1 = () -> {
-        try {
-          log.info("Press enter to stop the server...");
-          final int key = System.in.read();
-          if ((key != (-1))) {
-            server.stop();
-          } else {
-            log.warn("Console input is not available. In order to stop the server, you need to cancel process manually.");
+      final Runnable _function_1 = new Runnable() {
+        public void run() {
+          try {
+            log.info("Press enter to stop the server...");
+            final int key = System.in.read();
+            if ((key != (-1))) {
+              server.stop();
+            } else {
+              log.warn("Console input is not available. In order to stop the server, you need to cancel process manually.");
+            }
+          } catch (Throwable _e) {
+            throw Exceptions.sneakyThrow(_e);
           }
-        } catch (Throwable _e) {
-          throw Exceptions.sneakyThrow(_e);
         }
       };
       new Thread(_function_1).start();

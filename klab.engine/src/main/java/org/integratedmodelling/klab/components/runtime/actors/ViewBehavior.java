@@ -675,7 +675,7 @@ public class ViewBehavior {
 
         private String appId;
         // add to this
-        private ViewComponent group;
+//        private ViewComponent group;
         // keep this for resetting
         private ViewComponent originalGroup;
 
@@ -683,8 +683,8 @@ public class ViewBehavior {
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, null, scope, sender, callId);
             this.appId = appId;
-            this.group = copyComponent(scope.getViewScope().getCurrentComponent());
-            this.originalGroup = copyComponent(this.group);
+            this.component = copyComponent(scope.getViewScope().getCurrentComponent());
+            this.originalGroup = copyComponent(this.component);
         }
 
         @Override
@@ -696,7 +696,7 @@ public class ViewBehavior {
                     arg = ((KActorsValue) arg).evaluate(scope, identity, false);
                 }
                 if (arg instanceof Constructor) {
-                    this.sender.tell(new AddComponentToGroup(group, ((Constructor) arg).getComponent(),
+                    this.sender.tell(new AddComponentToGroup(this.component, ((Constructor) arg).getComponent(),
                             ((Constructor) arg).getArguments(), scope));
                 }
             } else if ("remove".equals(message.getMessage())) {
@@ -713,7 +713,7 @@ public class ViewBehavior {
 
             if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage) message).getMessage())) {
                 KActorsMessage mess = (KActorsMessage) message;
-                this.group = copyComponent(this.originalGroup);
+                this.component = copyComponent(this.originalGroup);
                 ViewAction action = new ViewAction(this.originalGroup);
                 action.setApplicationId(mess.getAppId());
                 action.setData(getMetadata(mess.getArguments(), scope));

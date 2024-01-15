@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
@@ -25,10 +26,6 @@ import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACImporter implements IResourceImporter {
@@ -51,8 +48,6 @@ public class STACImporter implements IResourceImporter {
             throws MalformedURLException {
         String catalogUrl = parameters.get("catalogUrl", String.class);
         String collectionId = parameters.get("collectionId", String.class);
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items").asJson();
-        JSONArray features = response.getBody().getObject().getJSONArray("features");
 
         String regex = null;
         if (parameters.contains("regex")) {
@@ -60,16 +55,22 @@ public class STACImporter implements IResourceImporter {
             parameters.remove(Resources.REGEX_ENTRY);
         }
 
-        for (Object item : features) {
-            String id  = ((JSONObject)item).getString("id");
-
-            if (regex != null && !id.matches(regex)) {
-                Logging.INSTANCE.info("Asset " + id + " doesn't match REGEX, skipped");
+        JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
+        Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
+        for(String assetId : assetIds) {
+            if (regex != null && !assetId.matches(regex)) {
+                Logging.INSTANCE.info("Asset " + assetId + " doesn't match REGEX, skipped");
                 continue;
             }
 
-            parameters.put("asset", id);
-            String resourceUrn = collectionId + "-" + id;
+            JSONObject assetData = STACAssetMapParser.getAsset(assets, assetId);
+            if (!STACAssetParser.isSupportedMediaType(assetData)) {
+                Logging.INSTANCE.info("Asset " + assetId + " doesn't have a supported media type, skipped");
+                continue;
+            }
+            parameters.put("asset", assetId);
+            String resourceUrn = collectionId + "-" + assetId;
+
             Builder builder = validator.validate(
                     Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(catalogUrl + "/collections/" + collectionId),
                     parameters, monitor);
