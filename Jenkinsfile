@@ -49,7 +49,7 @@ pipeline {
 
               		env.SNAPSHOT = sh(
                         returnStdout: true,
-                        script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate ' +
+                        script: './mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate ' +
                                 '-Dexpression=project.version -q -DforceStdout ' +
                                 '--batch-mode -U -e -Dsurefire.useFile=false'
                         ).trim()
@@ -88,8 +88,8 @@ pipeline {
         stage('Maven install with jib') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh 'mvn -ntp -U clean install -DskipTests jib:build -Djib.httpTimeout=60000'
-                    sh 'mvn -ntp -pl :klab.ogc test -Dtest="*STAC*"'
+                    sh './mvnw -U clean install -DskipTests jib:build -Djib.httpTimeout=60000'
+                    sh './mvnw -pl :klab.ogc test -Dtest="*STAC*"'
                 }
             }
         }
