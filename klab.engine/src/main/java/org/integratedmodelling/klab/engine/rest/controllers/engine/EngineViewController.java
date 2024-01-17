@@ -217,7 +217,7 @@ public class EngineViewController {
                     file = zipFile;
                 }
 
-                IObservation context = session.getObservation(observation);
+                IObservation context = session.getState().getCurrentContext();
             	ActivityBuilder stats = ((IRuntimeScope)context.getScope()).getStatistics().forTarget(file, context.getObservable().getDefinition());
                 try (InputStream input = new FileInputStream(file)) {
                     response.setContentType(outputFormat);
