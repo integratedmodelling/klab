@@ -97,7 +97,7 @@ pipeline {
         stage('Maven deploy') {
             steps {
                 configFileProvider([configFile(fileId: '1f5f24a2-9839-4194-b2ad-0613279f9fba', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh './mvnw --settings $MAVEN_SETTINGS_XML deploy'
+                    sh './mvnw --settings $MAVEN_SETTINGS_XML deploy -pl :api -DskipTests'
                 }
             }
         }
