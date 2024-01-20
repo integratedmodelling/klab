@@ -208,6 +208,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         Set<IObservation> connected = new HashSet<>();
 
         int nullTrajectories = 0;
+        int outOfLimitTrajectories = 0;
         
         for (IObservation source : allSources) {
 
@@ -283,25 +284,29 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 					trajectory = null;
 				}
                 
+				if (trajectory != null && stats != null) {
 
-                if (
-                		(timeThreshold == null || ((Double) stats.get("time") < timeThreshold)) && 
-                		(distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))
+	                if (
+	                		(timeThreshold == null || ((Double) stats.get("time") < timeThreshold)) && 
+	                		(distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))
+	                	
+	                	) 
+	                {
                 	
-                	) 
-                {
-                	
-                	if (trajectory != null) {
                 		connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
                 		connected.add((IObservation) target);
                 		trajectories.put(new Pair<IDirectObservation,IDirectObservation>((IDirectObservation)source,(IDirectObservation)target),trajectory);
                 	}
-                	else {
-                		
-                		nullTrajectories += 1; 
-                		
-                	}
+	                else {
+	                	outOfLimitTrajectories += 1;
+	                }
+                	
                 } 	
+				else {
+            		
+            		nullTrajectories += 1; 
+            		
+            	}
                   
             }
         }
