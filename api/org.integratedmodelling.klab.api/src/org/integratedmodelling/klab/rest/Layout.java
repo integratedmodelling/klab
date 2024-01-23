@@ -24,8 +24,8 @@ Si struttura in 5 aree:
     Footer (max 1 elemento)
 
 Attributi
-Guardando la definizione che usa Quasar di Layout (che è la cosa corrispondente) ci sono 2 cose interessanti che magari verrebbero bene più avanti:
-- Un Layout puó essere un container quindi puó passare ad essere pure lui un componente. Nel caso di Quasar, questo fa sí che le dimensioni facciano riferimento alla página intera o al Panel dove è messo (per maggiori dettagli mi dici). Per noi questo potrebbe essere utile pensando a una view generale che sostituisca l'explorer come ben dicevi tu
+Guardando la definizione che usa Quasar di Layout (che ï¿½ la cosa corrispondente) ci sono 2 cose interessanti che magari verrebbero bene piï¿½ avanti:
+- Un Layout puï¿½ essere un container quindi puï¿½ passare ad essere pure lui un componente. Nel caso di Quasar, questo fa sï¿½ che le dimensioni facciano riferimento alla pï¿½gina intera o al Panel dove ï¿½ messo (per maggiori dettagli mi dici). Per noi questo potrebbe essere utile pensando a una view generale che sostituisca l'explorer come ben dicevi tu
 - Usano una serie di lettere per gestire le sovrapposizioni:
 Fondamentalmente si gestisce se i pannelli laterali coprono o no l'header e il footer
 
@@ -33,17 +33,17 @@ Panel
 Header
 Footer
 Non so se Header e Footer sono rimasugli di altre implementazioni, pero credo che non sono necessari.
-Quasar ha dei componenti specifici però fondamentalmente gestisce dettagli estetici. Un panel messo nella proprietà header di View non penso abbia bisogno di ulteriori dettagli, quindi mi centrerei in Panel
-Panel è un contenitore di elementi eterogenei posizionati a seconda di come si definiscono e del layout previsto per il pannello,
-Un pannello puó contenere altri pannelli e cosí successivamente
-Personalmente credo che tutti i componenti dovrebbero essere contenuti in un pannello e non possano essere lasciati soli, più che altro per essere un po' coerenti
+Quasar ha dei componenti specifici perï¿½ fondamentalmente gestisce dettagli estetici. Un panel messo nella proprietï¿½ header di View non penso abbia bisogno di ulteriori dettagli, quindi mi centrerei in Panel
+Panel ï¿½ un contenitore di elementi eterogenei posizionati a seconda di come si definiscono e del layout previsto per il pannello,
+Un pannello puï¿½ contenere altri pannelli e cosï¿½ successivamente
+Personalmente credo che tutti i componenti dovrebbero essere contenuti in un pannello e non possano essere lasciati soli, piï¿½ che altro per essere un po' coerenti
 Attributi
-visible: visibilità che púo essere legata a una variabile
-layout: qualche descrizione sul tipo di layout. Qua ci si puó mettere di tutto, però in un principio con orizzontale, verticale ed indicare se puoi andare a capo dovrebbe essere sufficiente. La storia del a capo è per sapere se si cambia la dimensione degli elementi per starci o quando non ci si sta si va a nuova linea. 
-Magari si puó anche pensare in un GridLayout o in un Flex più avanti.
+visible: visibilitï¿½ che pï¿½o essere legata a una variabile
+layout: qualche descrizione sul tipo di layout. Qua ci si puï¿½ mettere di tutto, perï¿½ in un principio con orizzontale, verticale ed indicare se puoi andare a capo dovrebbe essere sufficiente. La storia del a capo ï¿½ per sapere se si cambia la dimensione degli elementi per starci o quando non ci si sta si va a nuova linea. 
+Magari si puï¿½ anche pensare in un GridLayout o in un Flex piï¿½ avanti.
 
 Group
-Un gruppo credo dovrebbe essere qualcosa di omogeneo per poter gestire elementi come se fossero una unità. È necessario per i radioButton e i checkButton
+Un gruppo credo dovrebbe essere qualcosa di omogeneo per poter gestire elementi come se fossero una unitï¿½. ï¿½ necessario per i radioButton e i checkButton
 Attributi
 Credo che possono essere gli stessi di un componente:
 
@@ -60,13 +60,13 @@ In quanto ad attributi, metterei quelli fissi che possono essere validi anche pe
 align
 width: qui userei o percentuale o cose fisse senza dimensioni specifiche (xs, s, m, etc) e poi lo stile li definisce
 Ed in questo momento non mi viene in mente alto
-E poi lascerei una serie di attributi come un Map visto che il funzionamento di ogni componente avrà le sue necessita specifiche
+E poi lascerei una serie di attributi come un Map visto che il funzionamento di ogni componente avrï¿½ le sue necessita specifiche
 
 Alert
 Confirm
 Questi due li stiamo trattando in una maniera speciale, penso che potranno avere un panel e dentro ci sia quello che vuoi
-Sarebbero piú simili ad una View pero con una parte dove metti il panel con il contenuto, e una parte con i bottoni specifici (alert solo ok, confirm ok e cancel)
-Oppure un tipo Dialog que puó avere delle implementazioni per alert e confirm
+Sarebbero piï¿½ simili ad una View pero con una parte dove metti il panel con il contenuto, e una parte con i bottoni specifici (alert solo ok, confirm ok e cancel)
+Oppure un tipo Dialog que puï¿½ avere delle implementazioni per alert e confirm
 --------------------------------------------------------------------------------------------------------
  * </pre>
  * 
@@ -83,6 +83,7 @@ public class Layout extends ViewComponent {
 
         private String text; // a slash is used to define nested menus
         private String id;
+        private String url;
 
         public String getText() {
             return text;
@@ -96,7 +97,12 @@ public class Layout extends ViewComponent {
         public void setId(String id) {
             this.id = id;
         }
-
+		public String getUrl() {
+			return url;
+		}
+		public void setUrl(String url) {
+			this.url = url;
+		}
     }
 
     private List<ViewPanel> panels = new ArrayList<>();
