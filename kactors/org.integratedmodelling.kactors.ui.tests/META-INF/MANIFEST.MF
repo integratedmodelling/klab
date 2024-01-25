@@ -13,6 +13,7 @@ Require-Bundle: org.integratedmodelling.kactors.ui,
  org.eclipse.core.runtime,
  org.eclipse.xtext.ui.testing,
  org.eclipse.ui.workbench;resolution:=optional,
- org.eclipse.xtext.junit4
+ org.eclipse.xtext.junit4,
+ org.eclipse.xtext.xbase.ui.testing
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.integratedmodelling.kactors.ui.tests;x-internal=true

@@ -132,7 +132,7 @@
 						<dependency>
 						    <groupId>org.eclipse.platform</groupId>
 						    <artifactId>org.eclipse.equinox.common</artifactId>
-						    <version>3.13.0</version>
+						    <version>3.16.200</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -250,7 +250,7 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<!-- 
+					<!--
 						Can be removed after first generator execution
 						https://bugs.eclipse.org/bugs/show_bug.cgi?id=480097
 					-->
