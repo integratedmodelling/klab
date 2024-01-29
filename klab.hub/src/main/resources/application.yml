@@ -73,7 +73,8 @@ email:
       hostname: mail.privateemail.com
       port: 587
       username: info@integratedmodelling.org
-      password: tinyhipposarefriend
+#      password: tinyhipposarefriend
+      password: PybONopOdEtH
 
    replyable:
       replyable:
