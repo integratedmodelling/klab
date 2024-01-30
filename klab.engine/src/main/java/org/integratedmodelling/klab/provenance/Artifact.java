@@ -247,13 +247,7 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 	 */
 	@Override
 	public boolean is(Class<?> cls) {
-        if (this instanceof DirectObservation) {
-            Class< ? > clazz = ((DirectObservation) this).getOriginatingPattern().getClass();
-            if (cls.isAssignableFrom(clazz)) {
-                return true;
-            }
-        }
-        return false;
+        return peers.get(cls) != null;
 	}
 
 	/**
@@ -263,9 +257,6 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T as(Class<?> cls) {
-        if (this instanceof DirectObservation) {
-            return (T) ((DirectObservation)this).getOriginatingPattern();
-        }
         return (T) peers.get(cls);
 	}
 
