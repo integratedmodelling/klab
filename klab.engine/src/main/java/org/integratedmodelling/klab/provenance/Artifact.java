@@ -12,13 +12,13 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.data.Metadata;
 
 import com.google.common.collect.Lists;
@@ -247,7 +247,13 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 	 */
 	@Override
 	public boolean is(Class<?> cls) {
-		return peers.get(cls) != null;
+        if (this instanceof DirectObservation) {
+            Class< ? > clazz = ((DirectObservation) this).getOriginatingPattern().getClass();
+            if (cls.isAssignableFrom(clazz)) {
+                return true;
+            }
+        }
+        return false;
 	}
 
 	/**
@@ -257,7 +263,10 @@ public abstract class Artifact extends GroovyObjectSupport implements IArtifact 
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T as(Class<?> cls) {
-		return (T)peers.get(cls);
+        if (this instanceof DirectObservation) {
+            return (T) ((DirectObservation)this).getOriginatingPattern();
+        }
+        return (T) peers.get(cls);
 	}
 
 	/*
