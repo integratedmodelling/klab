@@ -150,13 +150,18 @@ public class ViewBehavior {
                     action = new ViewAction(this.component = copyComponent(this.initializedComponent));
                     break;
                 default:
-                    action = new ViewAction(this.component = setComponent(mess, scope));
+                	ViewComponent ret = setComponent(mess, scope);
+                	if (ret != null) {
+                		action = new ViewAction(this.component = setComponent(mess, scope));
+                	}
                 }
-                action.setApplicationId(mess.getAppId());
-                action.setData(getMetadata(mess.getArguments(), scope));
-                action.setComponentTag(this.getName());
-                session.getState().updateView(this.component);
-                session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+                if (action != null) {
+                	action.setApplicationId(mess.getAppId());
+                    action.setData(getMetadata(mess.getArguments(), scope));
+                    action.setComponentTag(this.getName());
+                    session.getState().updateView(this.component);
+                    session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+                }
             }
         }
 
