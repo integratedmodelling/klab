@@ -7,7 +7,6 @@ Bundle-Version: 0.11.0.qualifier
 Bundle-SymbolicName: org.integratedmodelling.kactors.ui.tests; singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.integratedmodelling.kactors.ui,
- junit-jupiter-api;bundle-version="[5.9.0,6.0.0)",
  org.eclipse.xtext.testing,
  org.eclipse.xtext.xbase.testing,
  org.eclipse.xtext.xbase.junit,
