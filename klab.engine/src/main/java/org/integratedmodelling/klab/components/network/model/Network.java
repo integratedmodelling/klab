@@ -81,12 +81,6 @@ public class Network extends Pattern implements INetwork {
 				}
 			}
 		}
-		
-		
-		export("json","/home/dibepa/.klab/export/network_test.json");
-		export("csv","/home/dibepa/.klab/export/network_test.csv");
-		
-		
 	}
 	
 	
