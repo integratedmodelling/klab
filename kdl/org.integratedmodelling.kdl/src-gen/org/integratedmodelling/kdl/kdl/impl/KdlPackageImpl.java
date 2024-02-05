@@ -17,6 +17,7 @@ import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
+import org.integratedmodelling.kdl.kdl.Define;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlFactory;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
@@ -150,6 +151,13 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   private EClass valueEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass defineEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -440,9 +448,20 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   @Override
-  public EReference getModel_Actors()
+  public EReference getModel_Defines()
   {
     return (EReference)modelEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getModel_Actors()
+  {
+    return (EReference)modelEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -1518,6 +1537,50 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
    * @generated
    */
   @Override
+  public EClass getDefine()
+  {
+    return defineEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getDefine_Class()
+  {
+    return (EAttribute)defineEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getDefine_Name()
+  {
+    return (EAttribute)defineEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getDefine_Value()
+  {
+    return (EReference)defineEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getUrn()
   {
     return urnEClass;
@@ -2029,6 +2092,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEAttribute(modelEClass, MODEL__PACKAGE);
     createEReference(modelEClass, MODEL__SCALE);
     createEReference(modelEClass, MODEL__CONTEXT_URN);
+    createEReference(modelEClass, MODEL__DEFINES);
     createEReference(modelEClass, MODEL__ACTORS);
 
     annotationEClass = createEClass(ANNOTATION);
@@ -2142,6 +2206,11 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     createEReference(valueEClass, VALUE__TABLE);
     createEAttribute(valueEClass, VALUE__ENUM_ID);
 
+    defineEClass = createEClass(DEFINE);
+    createEAttribute(defineEClass, DEFINE__CLASS);
+    createEAttribute(defineEClass, DEFINE__NAME);
+    createEReference(defineEClass, DEFINE__VALUE);
+
     urnEClass = createEClass(URN);
     createEAttribute(urnEClass, URN__NAME);
 
@@ -2242,6 +2311,7 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEAttribute(getModel_Package(), ecorePackage.getEString(), "package", null, 0, 1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Scale(), this.getFunction(), null, "scale", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_ContextUrn(), this.getUrn(), null, "contextUrn", null, 0, 1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getModel_Defines(), this.getDefine(), null, "defines", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Actors(), this.getActorDefinition(), null, "actors", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(annotationEClass, Annotation.class, "Annotation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2354,6 +2424,11 @@ public class KdlPackageImpl extends EPackageImpl implements KdlPackage
     initEAttribute(getValue_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_EnumId(), ecorePackage.getEString(), "enumId", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(defineEClass, Define.class, "Define", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDefine_Class(), ecorePackage.getEString(), "class", null, 0, 1, Define.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDefine_Name(), ecorePackage.getEString(), "name", null, 0, 1, Define.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getDefine_Value(), this.getValue(), null, "value", null, 0, 1, Define.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(urnEClass, Urn.class, "Urn", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getUrn_Name(), ecorePackage.getEString(), "name", null, 0, 1, Urn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

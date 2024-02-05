@@ -1,14 +1,27 @@
 package org.integratedmodelling.klab.components.network.model;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -17,23 +30,29 @@ import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.geospace.routing.ValhallaException;
+import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.WeightedMultigraph;
 import org.jgrapht.nio.Attribute;
 import org.jgrapht.nio.DefaultAttribute;
 import org.jgrapht.nio.csv.CSVExporter;
+import org.jgrapht.nio.csv.CSVFormat;
 import org.jgrapht.nio.dot.DOTExporter;
 import org.jgrapht.nio.gexf.GEXFExporter;
 import org.jgrapht.nio.gml.GmlExporter;
 import org.jgrapht.nio.graphml.GraphMLExporter;
 import org.jgrapht.nio.json.JSONExporter;
 import org.jgrapht.nio.lemon.LemonExporter;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class Network extends Pattern implements INetwork {
-
+	
 	/*
 	 * export functions use the adapter interface; we redirect to the network
 	 * passing this name in REST calls.
@@ -42,23 +61,67 @@ public class Network extends Pattern implements INetwork {
 
 	Graph<IDirectObservation, IRelationship> network = new DefaultDirectedGraph<>(IRelationship.class);
 
+	public Graph<IDirectObservation, IRelationship> getNetwork() {
+		return network;
+	}
+	
 	public Network(Collection<IObservation> observations, IRuntimeScope scope) {
 
 		super(observations, scope);
-
+		
+		IDirectObservation source=null;
+		IDirectObservation target=null;
 		for (IObservation observation : observations) {
 			for (IArtifact artifact : observation) {
 				if (artifact instanceof IRelationship) {
-					IDirectObservation source = scope.getSourceSubject((IRelationship) artifact);
-					IDirectObservation target = scope.getTargetSubject((IRelationship) artifact);
+					source = scope.getSourceSubject((IRelationship) artifact);
+					target = scope.getTargetSubject((IRelationship) artifact);
 					network.addVertex(source); network.addVertex(target);
 					network.addEdge(source, target, (IRelationship) artifact);
 				}
 			}
 		}
+		
+		
+		export("json","/home/dibepa/.klab/export/network_test.json");
+		export("csv","/home/dibepa/.klab/export/network_test.csv");
+		
+		
 	}
 	
+	
 
+	/*
+	 * Utility method to facilitate the export of networks with multiple edge parameters in CSV format. CSV export only exports weights as edge attributes thus 
+	 * a weighted multigraph is built from the relationships graph and the weight of each edge between a pair of nodes is extracted from the relationship metadata. 
+	 * */
+	public static WeightedMultigraph<IDirectObservation, Pair<Integer,String>> asWeightedMultigraph(Graph<IDirectObservation, IRelationship> network){
+		
+		WeightedMultigraph<IDirectObservation, Pair<Integer,String>> wmg = new WeightedMultigraph<>(Pair.class);
+		
+		Integer i = 0;
+		for (IRelationship e : network.edgeSet()) {
+			
+			i += 1; 
+			
+			IDirectObservation source = e.getSource();
+		    IDirectObservation target = e.getTarget();
+		    wmg.addVertex(source); wmg.addVertex(target);
+		    
+		    for (Entry<String, Object> entry: e.getMetadata().entrySet()) {
+		    	Pair<Integer, String> edge = new Pair<Integer, String>(i, entry.getKey());
+		    	wmg.addEdge(source, target, edge);
+		    	wmg.setEdgeWeight(edge, (Double) entry.getValue());
+		    }	    
+		    
+		}
+		
+		return wmg;
+		
+	}
+	
+	
+	
 	@Override
 	public void export(String format, OutputStream output) {
 
@@ -73,13 +136,20 @@ public class Network extends Pattern implements INetwork {
 		
 		Function<IRelationship, Map<String, Attribute>> edgeAttributeProvider = e -> {
 		    Map<String, Attribute> map = new LinkedHashMap<>();
+		    
 		    String time = e.getScale().getTime().getStart().toRFC3339String();
 		    map.put("time", DefaultAttribute.createAttribute(time));
+		    
+		    // Adding relationship metadata as edge attributes.
+		    for (Entry<String, Object> entry: e.getMetadata().entrySet()) {
+		    	map.put(entry.getKey(), DefaultAttribute.createAttribute( ((Double) entry.getValue()).toString()) );
+		    }
+		       
 		    return map;
 		};
 		
 		Writer writer = new OutputStreamWriter(output);
-
+		
 		switch (format) {
 		case "json":
 			JSONExporter<IDirectObservation, IRelationship> json = new JSONExporter<>();
@@ -102,10 +172,12 @@ public class Network extends Pattern implements INetwork {
 			graphml.exportGraph(network, writer);
 			break;
 		case "csv":
-			CSVExporter<IDirectObservation, IRelationship> csv = new CSVExporter<>();
+			WeightedMultigraph<IDirectObservation, Pair<Integer,String>> wmg = Network.asWeightedMultigraph(network);
+			CSVExporter<IDirectObservation, Pair<Integer,String>> csv = new CSVExporter<>();
+			csv.setFormat(CSVFormat.EDGE_LIST);
+			csv.setParameter(CSVFormat.Parameter.EDGE_WEIGHTS, true);
 			csv.setVertexAttributeProvider(vertexAttributeProvider);
-			csv.setEdgeAttributeProvider(edgeAttributeProvider);
-			csv.exportGraph(network, writer);
+			csv.exportGraph(wmg, writer);
 			break;
 		case "dot":
 			DOTExporter<IDirectObservation, IRelationship> dot = new DOTExporter<>();
@@ -134,6 +206,30 @@ public class Network extends Pattern implements INetwork {
 		}
 	}
 
+	
+	public void export(String format, String filename){ 
+		try { 
+			OutputStream out = new FileOutputStream( new File(filename) ); 
+			export(format, out); 
+		} catch (FileNotFoundException e) { 
+			// TODO Auto-generated catch block 
+			e.printStackTrace(); 
+		} 
+			 
+	} 
+	
+	public void JSONGraphToCSV(String inFile, String outFile) {
+		
+		@SuppressWarnings("unchecked")
+		Map<String,Object> map = JsonUtils.load(new File(inFile), Map.class);
+		
+		Object nodes = map.get("nodes");
+		
+		Object edges = map.get("edges");
+		
+		System.out.println(JsonUtils.printAsJson(nodes));
+		System.out.println(JsonUtils.printAsJson(edges));
+	}
 	
 	@Override
 	public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {

@@ -93,12 +93,11 @@ public class RecreationIDBAdapter implements IUrnAdapter {
         IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 
         if (scale.getSpace() != null) {
-        	
-        	RecreationIDB ridb = new RecreationIDB();
-            String input = buildRecreationIDBInput(parameters);
-            RecreationIDBOutputDeserializer.RecreationAreas recreationAreas = ridb.recreationAreas(input,apiKey);
-            List<Map<String, Object>> data = recreationAreas.getData();
-                        
+            RecreationIDB ridb = new RecreationIDB();
+            List<String> inputs = buildRecreationIDBInput(parameters);
+            List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+            inputs.forEach(input -> data.addAll(ridb.recreationAreas(input,apiKey).getData()));
+
             IShape shape;
             
             for (Map<String,Object> area : data) {
@@ -127,13 +126,26 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 	
 	}
 	
-	private String buildRecreationIDBInput(Map<String,String> parameters) {
-		ArrayList<String> query = new ArrayList<>();
-		for(Map.Entry<String, String> entry : parameters.entrySet()) {
-			query.add(entry.getKey()+"="+entry.getValue());
-		}
-		return String.join("&", query);	
-	}
+    // TODO: There's a limit of 1000 entries hardcoded in the API. To make sure that we retrieve everything and with the ad hoc knowledge that 
+    // there's always less than 1000 recreation sites per US state, when there are N states passed as arguments create N different GET calls to 
+    // the API one per each state and assemble later all the responses. In the case no state parameter is specified default is retrieving from 
+    // the entire US territory, in that case have a list of all the states hardcoded and create one GET message per state. Eventually it would 
+    // be ideal to identify automatically the states involved and also reject responses out of the geographical scope of the context.
+    private final List<String> USA_STATES = Arrays.asList("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID",
+            "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM",
+            "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY");
+    private List<String> buildRecreationIDBInput(Map<String,String> parameters) {
+        ArrayList<String> query = new ArrayList<>();
+        List<String> states = parameters.containsKey(STATE) ? Arrays.asList(parameters.get(STATE).split(",")) : USA_STATES;
+        for(Map.Entry<String, String> entry : parameters.entrySet()) {
+            if (entry.getKey().equals(STATE)) {
+                continue;
+            }
+            query.add(entry.getKey()+"="+entry.getValue());
+        }
+        String finalQuery = String.join("&", query);
+        return states.stream().map(state -> finalQuery + "&" + STATE + "=" + state).toList();
+    }
 
 	
 	private IGeometry makeScale(Urn urn, IShape shape, IContextualizationScope scope) {

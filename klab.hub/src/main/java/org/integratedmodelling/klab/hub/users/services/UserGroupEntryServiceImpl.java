@@ -1,35 +1,53 @@
 package org.integratedmodelling.klab.hub.users.services;
 
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
+import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
+import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
+import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
 import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.commands.UpdateUsers;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
+import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.utils.DateConversionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
-	public UserGroupEntryServiceImpl(UserRepository userRepository, MongoGroupRepository groupRepository) {
+	public UserGroupEntryServiceImpl(UserRepository userRepository, MongoGroupRepository groupRepository, AgreementService agreementService, AgreementRepository agreementRepository) {
 		super();
 		this.userRepository = userRepository;
 		this.groupRepository = groupRepository;
+		this.agreementService = agreementService;
+		this.agreementRepository = agreementRepository;
 	}
 
 	private UserRepository userRepository;
 	private MongoGroupRepository groupRepository;
+	private AgreementService agreementService;
+	private AgreementRepository agreementRepository;
 	
 	@Override
 	public void setUsersGroupsByNames(UpdateUsersGroups updateRequest) {
@@ -52,44 +70,120 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		
 		new UpdateUsers(users, userRepository).execute();
 	}
+
+    private List<MongoGroup> getDependendOnGroups(String groupName) {
+        List<String> dependedOnGroupNames = groupRepository.findByNameIgnoreCase(groupName)
+                .orElseThrow(() -> new GroupDoesNotExistException(groupName))
+                .getDependsOn();
+
+        if(dependedOnGroupNames.isEmpty()) {
+            return List.of();
+        }
+        return groupRepository.findByNameIn(dependedOnGroupNames);
+    }
+
+    private Collection<Agreement> getAgreementsOfUserWithGroup(User user, String groupName) {
+        return user.getAgreements().stream()
+                .map(AgreementEntry::getAgreement)
+                .filter(ag -> ag.isValid() && ag.getGroupEntries().contains(groupName))
+                .collect(Collectors.toUnmodifiableSet());
+    }
 	
+    private Optional<Date> calculateMaxExpirationOfGroupForUser(User user, MongoGroup group) {
+        Collection<Agreement> agreementsWithGroup = getAgreementsOfUserWithGroup(user, group.getName());
+        if (agreementsWithGroup.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // Groups that do not expire do not need to be taken into account for the calculation
+        boolean isNonExpiringGroup = agreementsWithGroup.stream()
+                .anyMatch(a -> !a.isExpirable());
+        if (isNonExpiringGroup) {
+            return Optional.empty();
+        }
+
+        // No need for null/empty checks as the previous step removes them
+        Date maxFoundExpiration = agreementsWithGroup.stream()
+                .map(Agreement::getExpirationDate)
+                .max(Date::compareTo).get();
+
+        long defaultExpirationDateOfGroup = group.getDefaultExpirationTime();
+        if (defaultExpirationDateOfGroup != 0) {
+            Date defaultExpiration = new Date(LocalDateTime.now().toEpochSecond(ZoneOffset.UTC) + defaultExpirationDateOfGroup);
+            maxFoundExpiration = maxFoundExpiration.before(defaultExpiration) 
+                    ? maxFoundExpiration
+                    : defaultExpiration;
+        }
+        return Optional.of(maxFoundExpiration);
+    }
+
+    private Optional<Date> calculateGroupExpirationTime(User user, String groupName) {
+        List<MongoGroup> dependedOnGroups = getDependendOnGroups(groupName);
+
+        Map<String, Date> groupMaxDate = new HashMap<>();
+        for (MongoGroup group : dependedOnGroups) {
+            Optional<Date> expirationDate = calculateMaxExpirationOfGroupForUser(user, group);
+            if (expirationDate.isPresent()) {
+                groupMaxDate.put(groupName, expirationDate.get());
+            }
+        }
+
+        if (groupMaxDate.isEmpty()) {
+            return Optional.empty();
+        }
+        return groupMaxDate.values().stream().min(Date::compareTo);
+    }
+
+    private void setExpirationTime(User user, GroupEntry group) {
+        Optional<Date> expirationDate = calculateGroupExpirationTime(user, group.getGroupName());
+        if (expirationDate.isPresent()) {
+            group.setExpiration(DateConversionUtils.dateToLocalDateTime(expirationDate.get()));
+        }
+    }
+
 	@Override
 	public void addUsersGroupsByNames(UpdateUsersGroups updateRequest) {
-		
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
+		Set<Agreement> agreements = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
 			users.add(
 				userRepository
 					.findByNameIgnoreCase(username)
 					.map(user -> {
+					    Set<GroupEntry> groupsToAdd = groupEntries;
+					    groupsToAdd.stream().forEach(g -> setExpirationTime(user, g));
+
 						user.getAgreements().stream().findFirst().get().getAgreement().addGroupEntries(groupEntries);
+						agreements.add(user.getAgreements().stream().findFirst().get().getAgreement());
 						return user;
 						})
-					.orElseThrow(() ->
-					new UserDoesNotExistException(username))
+					.orElseThrow(() -> new UserDoesNotExistException(username))
 			);		
 		}
 		
-		new UpdateUsers(users, userRepository).execute();
+		new UpdateAgreement(agreements, agreementRepository).execute();
 	}
-	
+
 	@Override
 	public void removeUsersGroupsByNames(UpdateUsersGroups updateRequest) {
 		Set<GroupEntry> groupEntries = createGroupEntries(updateRequest.getGroupNames(), updateRequest.getExpiration());
 		Set<User> users = new HashSet<>();
+		Set<Agreement> agreements = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
 			userRepository
 				.findByNameIgnoreCase(username)
 				.ifPresent(user -> {
 					user.getAgreements().stream().findFirst().get().getAgreement().removeGroupEntries(groupEntries);
+					agreements.add(user.getAgreements().stream().findFirst().get().getAgreement());
 					users.add(user);
 				});		
 		}
 		
-		new UpdateUsers(users, userRepository).execute();
+		new UpdateAgreement(agreements, agreementRepository).execute();
+		//new UpdateUsers(users, userRepository).execute();
 	}
 	
     @Override

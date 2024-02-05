@@ -159,13 +159,14 @@ public class EngineAuthResponeFactory {
 	        }
 	    } else {
 	        try {
-	        agreement = agreementService.getAgreement(idAgreement);
+	            agreement = agreementService.getAgreement(idAgreement);
 	        } catch (Exception e) {
 	            HubNotificationMessage msg = HubNotificationMessage.MessageClass
 	                    .ADMINSTRATOR_MESSAGE.build("Certificate's agreement doesn't exist. Please download a new certificate and replace it.", new Parameters((Pair<ExtendedInfo, Object>[])(new Pair[] {
 	                            new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.SHORT_MESSAGE, "Agreement not exists.")
 	                          })));
 	            messages.add(msg);
+	            throw new NoValidAgreementException(profile.getUsername(), "no agreement with this id");
             }
 	    }
 	    

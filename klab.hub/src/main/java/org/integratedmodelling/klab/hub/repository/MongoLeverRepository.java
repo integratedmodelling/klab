@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MongoLeverRepository extends MongoRepository<MongoLever, ObjectId>{
+public interface MongoLeverRepository extends ResourceRepository<MongoLever, String>{
 	Optional<MongoLever> findById(String id);
 	Optional<MongoLever> findByNameIgnoreCase(String id);
 	public List<MongoLever> findAll();

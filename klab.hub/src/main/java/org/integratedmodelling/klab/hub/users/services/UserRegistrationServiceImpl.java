@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.exception.UserNameOrEmailExistsException;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.listeners.NewUserAdded;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
@@ -96,7 +97,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                     agreement.getAgreement().getAgreementLevel().equals(agreementLevel)).toList();        
         
         if (agreements.isEmpty()) {
-            Agreement agreement = agreementService.createAgreement(agreementType, agreementLevel);
+            Agreement agreement = agreementService.createAgreement(agreementType, agreementLevel).stream().findFirst().get();
             user = addAgreement(user, agreement);
         }   
         
@@ -116,14 +117,18 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     }
 
     private Optional<User> checkIfUserPending(String username, String email) {
-        boolean existInMongo = userRepository.findByNameIgnoreCaseOrEmailIgnoreCase(username, email).isPresent();
+        boolean usernameExists = userRepository.findByNameIgnoreCase(username).isPresent();
+        boolean emailExists = userRepository.findByEmailIgnoreCase(email).isPresent();
 
-        if (existInMongo) {
-            boolean usernameExists = userRepository.findByNameIgnoreCase(username).isPresent();
-
-            boolean emailExists = userRepository.findByEmailIgnoreCase(email).isPresent();
-
-            boolean ldapExists = ldapUserExists(username, email);
+        if (usernameExists || emailExists) {
+            
+            boolean ldapExists = false;
+            try {
+                ldapExists = ldapUserExists(username, email);
+            } catch (BadRequestException bre) {
+                throw new UserNameOrEmailExistsException();
+            }
+            
 
             if (ldapExists && usernameExists && emailExists) {
                 throw new UserExistsException(username);
@@ -204,7 +209,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         LdapQuery userEmailQuery = query().where("objectclass").is("person").and("mail").is(email);
         List<Object> personByEmail = ldapTemplate.search(userEmailQuery, new UserAttributesMapper());
 
-        if (!personByEmail.equals(personByName)) {
+        if (!personByEmail.isEmpty() && !personByName.isEmpty() && !personByEmail.equals(personByName)) {
             throw new BadRequestException("Username or email address already in use.");
         }
 

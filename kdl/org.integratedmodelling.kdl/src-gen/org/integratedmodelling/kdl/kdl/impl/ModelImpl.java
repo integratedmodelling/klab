@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kdl.kdl.ActorDefinition;
+import org.integratedmodelling.kdl.kdl.Define;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.Model;
@@ -47,6 +48,7 @@ import org.integratedmodelling.kdl.kdl.Urn;
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ModelImpl#getPackage <em>Package</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ModelImpl#getScale <em>Scale</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ModelImpl#getContextUrn <em>Context Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ModelImpl#getDefines <em>Defines</em>}</li>
  *   <li>{@link org.integratedmodelling.kdl.kdl.impl.ModelImpl#getActors <em>Actors</em>}</li>
  * </ul>
  *
@@ -243,6 +245,16 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * @ordered
    */
   protected Urn contextUrn;
+
+  /**
+   * The cached value of the '{@link #getDefines() <em>Defines</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDefines()
+   * @generated
+   * @ordered
+   */
+  protected EList<Define> defines;
 
   /**
    * The cached value of the '{@link #getActors() <em>Actors</em>}' containment reference list.
@@ -566,6 +578,21 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
    * @generated
    */
   @Override
+  public EList<Define> getDefines()
+  {
+    if (defines == null)
+    {
+      defines = new EObjectContainmentEList<Define>(Define.class, this, KdlPackage.MODEL__DEFINES);
+    }
+    return defines;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<ActorDefinition> getActors()
   {
     if (actors == null)
@@ -593,6 +620,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
         return ((InternalEList<?>)getScale()).basicRemove(otherEnd, msgs);
       case KdlPackage.MODEL__CONTEXT_URN:
         return basicSetContextUrn(null, msgs);
+      case KdlPackage.MODEL__DEFINES:
+        return ((InternalEList<?>)getDefines()).basicRemove(otherEnd, msgs);
       case KdlPackage.MODEL__ACTORS:
         return ((InternalEList<?>)getActors()).basicRemove(otherEnd, msgs);
     }
@@ -633,6 +662,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
         return getScale();
       case KdlPackage.MODEL__CONTEXT_URN:
         return getContextUrn();
+      case KdlPackage.MODEL__DEFINES:
+        return getDefines();
       case KdlPackage.MODEL__ACTORS:
         return getActors();
     }
@@ -690,6 +721,10 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
       case KdlPackage.MODEL__CONTEXT_URN:
         setContextUrn((Urn)newValue);
         return;
+      case KdlPackage.MODEL__DEFINES:
+        getDefines().clear();
+        getDefines().addAll((Collection<? extends Define>)newValue);
+        return;
       case KdlPackage.MODEL__ACTORS:
         getActors().clear();
         getActors().addAll((Collection<? extends ActorDefinition>)newValue);
@@ -744,6 +779,9 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
       case KdlPackage.MODEL__CONTEXT_URN:
         setContextUrn((Urn)null);
         return;
+      case KdlPackage.MODEL__DEFINES:
+        getDefines().clear();
+        return;
       case KdlPackage.MODEL__ACTORS:
         getActors().clear();
         return;
@@ -785,6 +823,8 @@ public class ModelImpl extends MinimalEObjectImpl.Container implements Model
         return scale != null && !scale.isEmpty();
       case KdlPackage.MODEL__CONTEXT_URN:
         return contextUrn != null;
+      case KdlPackage.MODEL__DEFINES:
+        return defines != null && !defines.isEmpty();
       case KdlPackage.MODEL__ACTORS:
         return actors != null && !actors.isEmpty();
     }

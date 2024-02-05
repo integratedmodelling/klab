@@ -1265,6 +1265,9 @@ public enum Resources implements IResourceService {
                         if (descriptor.getMaxTimeMs() < elapsed) {
                             descriptor.setMaxTimeMs(elapsed);
                         }
+                        
+                        scope.getMonitor().debug("Resource " + urn + " contextualized in " + Time.INSTANCE.printPeriod(elapsed));
+                        
                         descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                     }
                     return ret;
@@ -1308,6 +1311,9 @@ public enum Resources implements IResourceService {
                         if (descriptor.getMaxTimeMs() < elapsed) {
                             descriptor.setMaxTimeMs(elapsed);
                         }
+
+                        scope.getMonitor().debug("Resource " + urn + " contextualized in " + Time.INSTANCE.printPeriod(elapsed));
+
                         descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                     }
 
@@ -1347,6 +1353,7 @@ public enum Resources implements IResourceService {
                     if (descriptor.getMaxTimeMs() < elapsed) {
                         descriptor.setMaxTimeMs(elapsed);
                     }
+                    scope.getMonitor().debug("Resource " + urn + " contextualized in " + Time.INSTANCE.printPeriod(elapsed));
                     descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                 }
 

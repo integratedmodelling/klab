@@ -13,7 +13,7 @@
   	<module>klab.component.mca</module>
   	<module>klab.component.hydrology</module>
   	<module>klab.component.ml</module>
-  	<module>klab.component.alignment</module>
+<!-- <module>klab.component.alignment</module> -->  	
   	<module>klab.component.tables</module>
   	<module>klab.components.cdm</module>
   	<module>klab.component.ecology</module>

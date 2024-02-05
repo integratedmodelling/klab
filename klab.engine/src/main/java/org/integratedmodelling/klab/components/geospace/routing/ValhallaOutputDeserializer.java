@@ -202,10 +202,10 @@ public class ValhallaOutputDeserializer {
         public List<Map<String,Number>> getWaypoints(){
             return this.trip.getWaypointCoordinates();
         }
-        public Map<String,Double> getSummaryStatistics(){
+        public Map<String, Object> getSummaryStatistics(){
             return this.trip.summary.exportSummaryStatisticsAsMap();
         }
-        public List<Map<String,Double>> getSummaryStatisticsByLeg(){
+        public List<Map<String,Object>> getSummaryStatisticsByLeg(){
             return this.trip.legs.stream().map(navigation -> navigation.summary.exportSummaryStatisticsAsMap()).collect(Collectors.toList());
         }
         public String getUnits(){
@@ -379,7 +379,7 @@ public class ValhallaOutputDeserializer {
                             Map.entry( "cost", cost)
                     );
                 }
-                public Map<String,Double> exportSummaryStatisticsAsMap(){
+                public Map<String, Object> exportSummaryStatisticsAsMap(){
                     return Map.of("time", time, "length", length, "cost", cost);
                 }
             }

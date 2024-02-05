@@ -1,0 +1,20 @@
+name: Build and test
+
+on:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+    - uses: actions/checkout@v3
+    - name: Java setup
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+        cache: 'maven'
+    - name: Build with maven
+      run: |
+        ./mvnw -U clean install -DskipTests
+        ./mvnw -pl :klab.ogc test -Dtest="*STAC*"

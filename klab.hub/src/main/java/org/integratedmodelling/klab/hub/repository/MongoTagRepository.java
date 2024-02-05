@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface MongoTagRepository extends MongoRepository<MongoTag, String> {
+public interface MongoTagRepository extends ResourceRepository<MongoTag, String> {
 
     List<MongoTag> findAll();
 

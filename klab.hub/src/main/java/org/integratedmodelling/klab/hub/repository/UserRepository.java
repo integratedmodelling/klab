@@ -1,23 +1,21 @@
 package org.integratedmodelling.klab.hub.repository;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.integratedmodelling.klab.auth.Role;
-import org.integratedmodelling.klab.hub.api.Agreement;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.stats.controllers.GroupUsersByDate;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.integratedmodelling.klab.hub.api.User.AccountStatus;
-import org.integratedmodelling.klab.hub.enums.AgreementLevel;
-import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserRepository extends MongoRepository<User, ObjectId>{		
+public interface UserRepository extends ResourceRepository<User, String>{		
 	
 	Optional<User> findById(String id);
 	
@@ -30,6 +28,8 @@ public interface UserRepository extends MongoRepository<User, ObjectId>{
 	Optional<User> findByEmailIgnoreCase(String email);
 	
 	Optional<User> findByNameIgnoreCaseOrEmailIgnoreCase(String username, String email);
+	
+	Collection<User> findByNameInIgnoreCase(Collection<String> username);
 	
     Boolean existsByNameIgnoreCase(String username);
 

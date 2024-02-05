@@ -71,15 +71,6 @@ public class StacTest {
         }
     }
 
-    private String getStacBand() {
-        String band = EarthAwsElement84Sentinel2Bands.green.name();
-        for(EarthAwsElement84Sentinel2Bands sentinelBand: EarthAwsElement84Sentinel2Bands.values()) {
-            if(sentinelBand.name().equals(band)) {
-                return sentinelBand.getRealName();
-            }
-        }
-        return band;
-    }
 
     // No value present
     static String sShape = "EPSG:4326 POLYGON ((-1.6875986268981849 48.34801777460501, -2.346778314398184 48.34801777460501, -2.346778314398184 48.803906413093586, -1.6875986268981849 48.803906413093586, -1.6875986268981849 48.34801777460501))";
@@ -119,14 +110,12 @@ public class StacTest {
         int percentage = (int) Math.round(coveredArea * 100 / roiArea);
         lpm.message("Region of interest is covered by data in amout of " + percentage + "%");
 
-        String stacBand = getStacBand();
-        lpm.message("Stac Band: " + stacBand);
+        String stacBand = "green";
 
         int cols = 979, rows = 676;
         RegionMap regionMap = RegionMap.fromEnvelopeAndGrid(env, cols, rows);
-        HMRaster raster = HMStacCollection.readRasterBandOnRegion(regionMap, stacBand, items, lpm);
+        HMRaster raster = HMStacCollection.readRasterBandOnRegion(regionMap, stacBand, items, true, HMRaster.MergeMode.AVG, lpm);
         lpm.message("Raster: " + raster + "\n-------\n");
-        raster.applyCountAverage(lpm);
 
         manager.close();
     }

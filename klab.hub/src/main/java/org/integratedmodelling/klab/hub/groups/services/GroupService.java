@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.groups.services;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.hub.api.GroupSummary;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.service.GenericHubService;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface GroupService extends GenericHubService<MongoGroup>{
 	public abstract Collection<String> getGroupNames();
+	public abstract Collection<GroupSummary> getGroupsSummary();
 //	public abstract boolean groupExists(String groupName);
 //	public abstract MongoGroup createGroup(MongoGroup group);
 //	public abstract void updateGroup(MongoGroup group);

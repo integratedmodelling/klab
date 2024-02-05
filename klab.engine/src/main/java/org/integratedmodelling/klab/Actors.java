@@ -265,6 +265,7 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("type");
         layoutMetadata.add("active");
         layoutMetadata.add("timeout");
+        layoutMetadata.add("opened");
 
         isoLanguages = new HashSet<>();
         for (String isoLanguage : Locale.getISOLanguages()) {
@@ -1273,6 +1274,7 @@ public enum Actors implements IActorsService {
 
     @Override
     public IActorIdentity.Reference createUserActor(IEngineUserIdentity user) {
+//    	return null;
         return new ActorReference(createActor(UserActor.create((EngineUser) user), user));
     }
 

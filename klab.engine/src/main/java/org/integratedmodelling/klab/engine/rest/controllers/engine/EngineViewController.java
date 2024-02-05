@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.INetwork;
@@ -43,6 +44,7 @@ import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.ZipUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
@@ -217,7 +219,7 @@ public class EngineViewController {
                     file = zipFile;
                 }
 
-                IObservation context = session.getObservation(observation);
+                IObservation context = session.getState().getCurrentContext();
             	ActivityBuilder stats = ((IRuntimeScope)context.getScope()).getStatistics().forTarget(file, context.getObservable().getDefinition());
                 try (InputStream input = new FileInputStream(file)) {
                     response.setContentType(outputFormat);
@@ -367,8 +369,19 @@ public class EngineViewController {
             }else {
                 out = File.createTempFile("klab", "." + outputFormat);
             }
-            // TODO support explicit adapter
-            out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null, session.getMonitor());
+
+            if (obs instanceof IConfiguration && ((IConfiguration) obs).is(INetwork.class)) {
+                INetwork network = ((IConfiguration) obs).as(INetwork.class);
+                for (Triple<String, String, String> capabilities : network.getExportCapabilities(obs)) {
+                    if (capabilities.getFirst().equals(outputFormat)) {
+                        network.export(outputFormat, FileUtils.openOutputStream(out));
+                    }
+                }
+            } else {
+                // TODO support explicit adapter
+                out = Observations.INSTANCE.export(obs, loc, out, outputFormat, null, session.getMonitor());
+            }
+
             if (out != null) {	
                 response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
                 try (InputStream in = new FileInputStream(out)) {
