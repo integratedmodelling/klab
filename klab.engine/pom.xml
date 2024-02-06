@@ -183,6 +183,10 @@
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.jetbrains.kotlin</groupId>
+					<artifactId>kotlin-stdlib</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 
@@ -301,6 +305,22 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		
+       <dependency>
+            <groupId>org.hortonmachine</groupId>
+            <artifactId>hm-gears</artifactId>
+            <version>${hortonmachine.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.measure</groupId>
+                    <artifactId>jsr-275</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mongodb</groupId>
+                    <artifactId>mongo-java-driver</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
 		<!-- all of a sudden, WCS parsing stops working unless this is added. -->
 		<dependency>
@@ -581,7 +601,14 @@
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-core </artifactId>
-			<version>1.1.0</version>
+			<version>1.5.2</version>
+		</dependency>
+		
+		<!-- graph I/O -->
+		<dependency>
+    		<groupId>org.jgrapht</groupId>
+    		<artifactId>jgrapht-io</artifactId>
+    		<version>1.5.2</version>
 		</dependency>
 
 		<!-- OWL and DL reasoning -->
@@ -730,7 +757,7 @@
 		<dependency>
 			<groupId>org.jgrapht</groupId>
 			<artifactId>jgrapht-ext</artifactId>
-			<version>1.1.0</version>
+			<version>1.5.2</version>
 		</dependency>
 
 		<dependency>
@@ -741,6 +768,10 @@
 				<exclusion>
 					<groupId>org.scala-lang</groupId>
 					<artifactId>scala-library</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.jetbrains.kotlin</groupId>
+					<artifactId>kotlin-stdlib</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -762,7 +793,7 @@
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
-			<version>28.0-jre</version>
+			<version>32.1.1-jre</version>
 		</dependency>
 
 		<dependency>
@@ -843,6 +874,36 @@
 			<artifactId>commons-exec</artifactId>
 			<version>1.2</version>
 		</dependency>
+	
+		<!-- https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-stdlib -->
+		<dependency>
+				<groupId>org.jetbrains.kotlin</groupId>
+				<artifactId>kotlin-stdlib</artifactId>
+				<version>1.9.0</version>
+		</dependency>
+	
+		<!-- https://mvnrepository.com/artifact/io.minio/minio -->
+		<dependency>
+				<groupId>io.minio</groupId>
+				<artifactId>minio</artifactId>
+				<version>8.5.4</version>
+				<exclusions>
+					<exclusion>
+						<groupId>com.google.guava</groupId>
+						<artifactId>guava</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.jetbrains.kotlin</groupId>
+						<artifactId>kotlin-stdlib</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>org.junit.jupiter</groupId>
+				<artifactId>junit-jupiter-api</artifactId>
+				<version>${junit5.version}</version>
+				<scope>test</scope>
+			</dependency>
 
 	</dependencies>
 </project>

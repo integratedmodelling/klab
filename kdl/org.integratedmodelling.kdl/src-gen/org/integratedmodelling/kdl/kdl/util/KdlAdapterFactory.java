@@ -16,6 +16,7 @@ import org.integratedmodelling.kdl.kdl.ClassifierRHS;
 import org.integratedmodelling.kdl.kdl.Computation;
 import org.integratedmodelling.kdl.kdl.Currency;
 import org.integratedmodelling.kdl.kdl.DataflowBody;
+import org.integratedmodelling.kdl.kdl.Define;
 import org.integratedmodelling.kdl.kdl.Function;
 import org.integratedmodelling.kdl.kdl.KdlPackage;
 import org.integratedmodelling.kdl.kdl.KeyValuePair;
@@ -173,6 +174,11 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseValue(Value object)
       {
         return createValueAdapter();
+      }
+      @Override
+      public Adapter caseDefine(Define object)
+      {
+        return createDefineAdapter();
       }
       @Override
       public Adapter caseUrn(Urn object)
@@ -467,6 +473,21 @@ public class KdlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createValueAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kdl.kdl.Define <em>Define</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kdl.kdl.Define
+   * @generated
+   */
+  public Adapter createDefineAdapter()
   {
     return null;
   }

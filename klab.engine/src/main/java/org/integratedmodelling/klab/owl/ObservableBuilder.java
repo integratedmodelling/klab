@@ -923,6 +923,16 @@ public class ObservableBuilder implements IObservable.Builder {
                 OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
             }
 
+            if ((concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY))) {
+                Object unit1 = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
+                Object unit2 = Units.INSTANCE.SECONDS;
+                if (unit1 != null) {
+                    String unit = unit1 + "/" + unit2;
+                    ax.add(Axiom.AnnotationAssertion(conceptId, NS.SI_UNIT_PROPERTY, unit));
+                }
+            }
+
+            
         }
 
         return ontology.getConcept(conceptId);

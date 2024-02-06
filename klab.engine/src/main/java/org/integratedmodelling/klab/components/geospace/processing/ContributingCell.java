@@ -8,6 +8,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
 import groovy.util.Expando;
@@ -45,6 +47,7 @@ public class ContributingCell extends Expando {
 	private IState flowdirections = null;
 	private Map<String, IState> states = new HashMap<>();
 	private boolean outlet = false;
+	private ILocator locator = null;
 
 	public ContributingCell(Cell cell) {
 		this.delegate = cell;
@@ -57,13 +60,34 @@ public class ContributingCell extends Expando {
 		this.flowdirections = flowdirections;
 		this.states.putAll(states);
 		this.outlet = isOutlet;
+		this.locator = cell;
+	}
+
+	public ContributingCell(Cell cell, int flowDirection, IState flowdirections, Map<String, IState> states,
+			boolean isOutlet, ILocator locator) {
+		this.delegate = cell;
+		this.d8 = flowDirection;
+		this.flowdirections = flowdirections;
+		this.states.putAll(states);
+		this.outlet = isOutlet;
+		this.locator = locator;
 	}
 
 	public ContributingCell(Cell cell, ContributingCell focal, Orientation orientation) {
 		this.delegate = cell;
 		this.orientation = orientation;
+		this.locator = cell;
 		this.flowdirections = focal.flowdirections;
 		this.d8 = this.flowdirections.get(cell, Double.class).intValue();
+		this.states.putAll(focal.states);
+	}
+
+	public ContributingCell(Cell cell, ContributingCell focal, Orientation orientation, ILocator locator) {
+		this.delegate = cell;
+		this.orientation = orientation;
+		this.locator = locator;
+		this.flowdirections = focal.flowdirections;
+		this.d8 = this.flowdirections.get(locator, Double.class).intValue();
 		this.states.putAll(focal.states);
 	}
 
@@ -71,8 +95,11 @@ public class ContributingCell extends Expando {
 		List<ContributingCell> ret = new ArrayList<>();
 		if (flowdirections != null) {
 			for (Pair<Cell, Orientation> upstream : Geospace.getUpstreamCellsWithOrientation(delegate, flowdirections,
-					null)) {
-				ret.add(new ContributingCell(upstream.getFirst(), this, upstream.getSecond()));
+					locator instanceof IScale ? ((IScale) locator).getTime() : null, null)) {
+				ret.add(locator instanceof IScale
+						? new ContributingCell(upstream.getFirst(), this, upstream.getSecond(),
+								Scale.substituteExtent((IScale) locator, upstream.getFirst()))
+						: new ContributingCell(upstream.getFirst(), this, upstream.getSecond()));
 			}
 		}
 		return ret;
@@ -82,7 +109,10 @@ public class ContributingCell extends Expando {
 		if (flowdirections != null) {
 			Pair<Cell, Orientation> downstream = Geospace.getDownstreamCellWithOrientation(delegate, flowdirections);
 			if (downstream != null) {
-				return new ContributingCell(downstream.getFirst(), this, downstream.getSecond());
+				return locator instanceof IScale
+						? new ContributingCell(downstream.getFirst(), this, downstream.getSecond(),
+								Scale.substituteExtent((IScale) locator, downstream.getFirst()))
+						: new ContributingCell(downstream.getFirst(), this, downstream.getSecond());
 			}
 		}
 		return null;
@@ -93,7 +123,10 @@ public class ContributingCell extends Expando {
 		for (Orientation orientation : Orientation.values()) {
 			Cell neighbor = delegate.getNeighbor(orientation);
 			if (neighbor != null) {
-				ret.add(new ContributingCell(neighbor, this, orientation));
+				ret.add(locator instanceof IScale
+						? new ContributingCell(neighbor, this, orientation,
+								Scale.substituteExtent((IScale) locator, neighbor))
+						: new ContributingCell(neighbor, this, orientation));
 			}
 		}
 		return ret;
@@ -145,7 +178,7 @@ public class ContributingCell extends Expando {
 		}
 
 		if (states.containsKey(state)) {
-			return states.get(state).get(this.delegate);
+			return states.get(state).get(this.locator);
 		}
 		return null;
 	}
@@ -160,7 +193,10 @@ public class ContributingCell extends Expando {
 		if (orientation != null) {
 			Cell opposite = delegate.getNeighbor(orientation.getOpposite());
 			if (opposite != null) {
-				return new ContributingCell(opposite, this, orientation.getOpposite());
+				return locator == null
+						? new ContributingCell(opposite, this, orientation.getOpposite(),
+								Scale.substituteExtent((IScale) locator, opposite))
+						: new ContributingCell(opposite, this, orientation.getOpposite());
 			}
 		}
 		return null;
@@ -264,7 +300,9 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(cell, this, Orientation.N);
+		return locator != null
+				? new ContributingCell(cell, this, Orientation.N, Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(cell, this, Orientation.N);
 	}
 
 	public ContributingCell S() {
@@ -272,7 +310,10 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(delegate.S(), this, Orientation.S);
+		return locator != null
+				? new ContributingCell(delegate.S(), this, Orientation.S,
+						Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(delegate.S(), this, Orientation.S);
 	}
 
 	public ContributingCell W() {
@@ -280,7 +321,10 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(delegate.W(), this, Orientation.W);
+		return locator != null
+				? new ContributingCell(delegate.W(), this, Orientation.W,
+						Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(delegate.W(), this, Orientation.W);
 	}
 
 	public ContributingCell E() {
@@ -288,7 +332,10 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(delegate.W(), this, Orientation.E);
+		return locator != null
+				? new ContributingCell(delegate.W(), this, Orientation.E,
+						Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(delegate.W(), this, Orientation.E);
 	}
 
 	public ContributingCell NE() {
@@ -296,7 +343,10 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(delegate.NE(), this, Orientation.NE);
+		return locator != null
+				? new ContributingCell(delegate.NE(), this, Orientation.NE,
+						Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(delegate.NE(), this, Orientation.NE);
 	}
 
 	public ContributingCell NW() {
@@ -304,7 +354,10 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(delegate.NW(), this, Orientation.NW);
+		return locator != null
+				? new ContributingCell(delegate.NW(), this, Orientation.NW,
+						Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(delegate.NW(), this, Orientation.NW);
 	}
 
 	public ContributingCell SE() {
@@ -312,7 +365,10 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(delegate.SE(), this, Orientation.SE);
+		return locator != null
+				? new ContributingCell(delegate.SE(), this, Orientation.SE,
+						Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(delegate.SE(), this, Orientation.SE);
 	}
 
 	public ContributingCell SW() {
@@ -320,7 +376,10 @@ public class ContributingCell extends Expando {
 		if (cell == null) {
 			return null;
 		}
-		return new ContributingCell(delegate.SW(), this, Orientation.SW);
+		return locator != null
+				? new ContributingCell(delegate.SW(), this, Orientation.SW,
+						Scale.substituteExtent((IScale) locator, cell))
+				: new ContributingCell(delegate.SW(), this, Orientation.SW);
 	}
 
 	public double getWidth() {
@@ -382,7 +441,7 @@ public class ContributingCell extends Expando {
 	public double getDistance(ISpace extent) {
 		return delegate.getStandardizedDistance(extent);
 	}
-	
+
 	public double getDistance(ContributingCell extent) {
 		return delegate.getStandardizedDistance(extent.delegate);
 	}

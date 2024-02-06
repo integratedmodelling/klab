@@ -159,6 +159,15 @@ public interface KdlFactory extends EFactory
   Value createValue();
 
   /**
+   * Returns a new object of class '<em>Define</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Define</em>'.
+   * @generated
+   */
+  Define createDefine();
+
+  /**
    * Returns a new object of class '<em>Urn</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

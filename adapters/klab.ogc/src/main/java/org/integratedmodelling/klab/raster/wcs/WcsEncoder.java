@@ -156,7 +156,7 @@ public class WcsEncoder implements IResourceEncoder {
 				RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
 				HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
 						.setCrs(crs.getCoordinateReferenceSystem()).setNoValue(raster.getNovalue()).build();
-				paddedRaster.mapRaster(null, raster);
+				paddedRaster.mapRaster(null, raster, null);
 				coverage = paddedRaster.buildCoverage();
 				OmsRasterWriter.writeRaster(coverageFile.getAbsolutePath(), coverage);
 			}

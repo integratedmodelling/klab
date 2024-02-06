@@ -178,7 +178,7 @@ public class EnginePublicController implements API.PUBLIC {
 		if (s == null) {
 			throw new KlabIllegalStateException("observe in context: invalid session ID");
 		}
-
+		response.setCharacterEncoding("UTF-8");
 		boolean done = false;
 		IObservation obs = s.getObservation(observation);
 

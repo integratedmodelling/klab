@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface TokenRepository extends MongoRepository<TokenAuthentication, ObjectId> {
+public interface TokenRepository extends ResourceRepository<TokenAuthentication, String> {
 
     List<TokenAuthentication> findByUsername(String username);
     Optional<TokenAuthentication> findByTokenString(String tokenString);

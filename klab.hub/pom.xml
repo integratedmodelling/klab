@@ -173,8 +173,15 @@
 					<artifactId>javax.annotation-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>	
+		
 		<!-- ////////////////////////////////////////////////////////////////// -->
+		<dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+            <version>1.18.28</version>
+        </dependency>
 
 		<!-- This section is for Spring Security Dependencies -->
 		<dependency>
@@ -254,5 +261,26 @@
 		</dependency>
 		<!-- ////////////////////////////////////////////////////////////////// -->
 
+		<!--Dependencies for the unit tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- ////////////////////////////////////////////////////////////////// -->
+		
 	</dependencies>
 </project>

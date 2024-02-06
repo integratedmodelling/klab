@@ -42,6 +42,7 @@ import org.integratedmodelling.ml.legacy.riskwiz.bn.BNEdge;
 import org.integratedmodelling.ml.legacy.riskwiz.bn.BNNode;
 import org.integratedmodelling.ml.legacy.riskwiz.bn.BeliefNetwork;
 import org.integratedmodelling.ml.legacy.riskwiz.graph.algorithm.Algorithm;
+import org.jgrapht.Graph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 
@@ -57,7 +58,7 @@ public class PartialOrder extends Algorithm<BNNode, BNEdge> {
      * 
      */
     public PartialOrder() {
-        super();
+        super(BNEdge.class);
 		 
     }
 	
@@ -65,7 +66,7 @@ public class PartialOrder extends Algorithm<BNNode, BNEdge> {
         oredredSets = new Vector<Set<BNNode>>();
         oredredDecisionNodes = new Vector< BNNode>();
 		 
-        for (TopologicalOrderIterator it = new TopologicalOrderIterator(bn); it.hasNext();) {
+        for (TopologicalOrderIterator it = new TopologicalOrderIterator((Graph) bn); it.hasNext();) {
             BNNode node = (BNNode) it.next();
 
             if (node.isDecision()) {

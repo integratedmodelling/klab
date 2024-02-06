@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
@@ -29,6 +30,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.data.storage.BasicFileMappedStorage;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Point;
@@ -110,8 +112,12 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
         IExpression upstreamExpression = null;
 
         for (Pair<String, IState> a : context.getArtifacts(IState.class)) {
-            states.put(a.getFirst(), a.getSecond());
+//        	if (context.getScale().getTime() != null) {
+//        		a.setSecond(a.getSecond().at(context.getScale().getTime()));
+//        	}
+        	states.put(a.getFirst(), a.getSecond());
         }
+        
         if (accumulateDescriptor != null) {
             // // check inputs and see if the expr is worth anything in this context
             // for (String input : accumulateDescriptor.getIdentifiers()) {
@@ -152,7 +158,7 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
                 long xy = grid.getOffsetFromWorldCoordinates(point.getX(), point.getY());
                 Cell start = grid.getCell(xy);
                 compute(start, flowdirection, target, states, downstreamExpression, upstreamExpression, true, null,
-                        positionCache);
+                        positionCache, context);
             }
         }
 
@@ -165,7 +171,7 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
      */
     private Object compute(Cell cell, IState flowdirection, IState result, Map<String, IState> states,
             IExpression downstreamExpression, IExpression upstreamExpression, boolean isOutlet, Object previousValue,
-            BasicFileMappedStorage<Boolean> positionCache) {
+            BasicFileMappedStorage<Boolean> positionCache, IContextualizationScope scope) {
 
         Object ret = previousValue;
 
@@ -178,34 +184,39 @@ public class AccumulateFlowResolver extends AbstractContextualizer implements IR
         Parameters<String> parameters = Parameters.create();
         parameters.put("current", previousValue);
 
+        ILocator locator = cell;
+        if (scope.getScale().getTime() != null) {
+        	locator = Scale.create(scope.getScale().getTime(), cell);
+        }
+        
         /*
          * collect values of all states @ self
          */
         for (String state : states.keySet()) {
-            parameters.put(state, states.get(state).get(cell));
+            parameters.put(state, states.get(state).get(locator));
         }
 
         /*
          * build the cell descriptor to give us access to the neighborhood
          */
         parameters.put("cell",
-                new ContributingCell(cell, ((Number) flowdirection.get(cell)).intValue(), flowdirection, states, isOutlet));
+                new ContributingCell(cell, ((Number) flowdirection.get(cell)).intValue(), flowdirection, states, isOutlet, locator));
 
         // call upstream before recursion, in upstream order
         if (upstreamExpression != null) {
-            result.set(cell, (ret = upstreamExpression.eval(context, parameters)));
+            result.set(cell, (ret = upstreamExpression.eval(scope, parameters)));
         }
 
         List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirection, null);
         for (Cell upstream : upstreamCells) {
-            compute(upstream, flowdirection, result, states, downstreamExpression, upstreamExpression, false, ret, positionCache);
+            compute(upstream, flowdirection, result, states, downstreamExpression, upstreamExpression, false, ret, positionCache, scope);
         }
 
         /*
          * call downstream after recursion, i.e. in downstream order
          */
         if (downstreamExpression != null) {
-            result.set(cell, (ret = downstreamExpression.eval(context, parameters)));
+            result.set(locator, (ret = downstreamExpression.eval(context, parameters)));
         }
 
         return ret;

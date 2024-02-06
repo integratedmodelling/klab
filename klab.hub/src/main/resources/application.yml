@@ -2,7 +2,8 @@ server:
   port: 8284
   servlet:
     contextPath: /hub  
-
+  error:
+      include-message: always  
 spring:
   cloud:
     bus:
@@ -19,6 +20,8 @@ spring:
         enabled: false
   profiles:
     default: true
+  main:
+    allow-bean-definition-overriding: true
   security:
     oauth2:
       client:
@@ -46,11 +49,12 @@ ldap:
   
 logging:
   file: hub.log
-  #level:
-  #  org:
-  #    springframework:
-  #      data:
-  #       mongodb: DEBUG
+  data:
+  level:
+    org:
+      springframework:
+        data:
+         mongodb: INFO
   
 site:
   callback: http://localhost:8080/#/callback

@@ -15,7 +15,6 @@ import org.integratedmodelling.kdl.ide.KdlIdeModule;
  */
 @SuppressWarnings("all")
 public class KdlWebSetup extends KdlStandaloneSetup {
-  @Override
   public Injector createInjector() {
     KdlRuntimeModule _kdlRuntimeModule = new KdlRuntimeModule();
     KdlIdeModule _kdlIdeModule = new KdlIdeModule();

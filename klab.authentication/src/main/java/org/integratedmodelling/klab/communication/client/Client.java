@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,9 +77,12 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+
+import io.micrometer.core.instrument.util.JsonUtils;
 
 /**
  * Helper to avoid having to write 10 lines every time I need to do a GET with headers. It can be
@@ -104,7 +108,7 @@ public class Client extends RestTemplate implements IClient {
 
     ObjectMapper objectMapper;
     String authToken;
-    MediaType contentType = MediaType.APPLICATION_JSON;
+    MediaType contentType = new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8);
     RestTemplate basicTemplate;
     private Set<String> endpoints = new HashSet<>();
 
@@ -403,7 +407,6 @@ public class Client extends RestTemplate implements IClient {
             }
 
             try {
-
                 return objectMapper.convertValue(response.getBody(), cls);
             } catch (Throwable t) {
                 System.out.println("Unrecognized response: " + response.getBody());

@@ -15,8 +15,18 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 
+@Builder
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Accessors(chain = true)
 @Document(collection="Agreements")
 @TypeAlias("MongoAgreement")
 public class Agreement {

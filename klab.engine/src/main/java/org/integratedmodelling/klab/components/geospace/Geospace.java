@@ -11,17 +11,18 @@ import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.components.geospace.utils.AdditionalEpsg;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-
 import org.locationtech.jts.geom.GeometryFactory;
 
 @Component(id = "org.integratedmodelling.geospace", version = Version.CURRENT)
 public class Geospace {
 
     public static final double AUTHALIC_EARTH_RADIUS_M = 6371007.2;
-    
-	public static GeometryFactory gFactory = new GeometryFactory();
+
+    public static GeometryFactory gFactory = new GeometryFactory();
 
     static {
     }
@@ -34,8 +35,7 @@ public class Geospace {
         System.setProperty("org.geotools.referencing.forceXY", "true");
         Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
         javax.imageio.spi.IIORegistry.getDefaultInstance().registerApplicationClasspathSpis();
-        
-        
+
         /**
          * enable additional epsg codes
          */
@@ -120,7 +120,7 @@ public class Geospace {
         return Double.NaN;
 
     }
-    
+
     /**
      * Translate D8 code to insane ArcGIS output format, for the corporate lovers.
      * 
@@ -131,55 +131,60 @@ public class Geospace {
         return (int) Math.pow(2, (8 - d8 + 1) % 8);
     }
 
+    public static List<Cell> getUpstreamCells(Cell cell, IState flowDirectionsD8, Function<Cell, Boolean> check) {
+        return getUpstreamCells(cell, flowDirectionsD8, null, check);
+    }
+
     /**
-     * Util: return a list of all the cells that flow into the passed one.
+     * Util: return a list of all the cells that flow into the passed one. Use when time is explicit
+     * in the context.
      * 
      * @param cell
      * @param flowDirectionsD8 the flow direction as exponent to 2 in the standard scheme (values
      *        1-8)
      * @return
      */
-    public static List<Cell> getUpstreamCells(Cell cell, IState flowDirectionsD8, Function<Cell, Boolean> check) {
+    public static List<Cell> getUpstreamCells(Cell cell, IState flowDirectionsD8, ITime time, Function<Cell, Boolean> check) {
 
         List<Cell> ret = new ArrayList<>();
-        
+
         Cell neighbor = cell.getNeighbor(Orientation.NW);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 8) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 8) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
         neighbor = cell.getNeighbor(Orientation.N);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 7) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 7) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
         neighbor = cell.getNeighbor(Orientation.NE);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 6) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 6) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
         neighbor = cell.getNeighbor(Orientation.E);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 5) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 5) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
         neighbor = cell.getNeighbor(Orientation.SE);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 4) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 4) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
         neighbor = cell.getNeighbor(Orientation.S);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 3) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 3) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
         neighbor = cell.getNeighbor(Orientation.SW);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 2) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 2) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
         neighbor = cell.getNeighbor(Orientation.W);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 1) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 1) {
             if (check == null || check.apply(neighbor))
                 ret.add(neighbor);
         }
@@ -196,47 +201,47 @@ public class Geospace {
      * @return
      */
     public static List<Pair<Cell, Orientation>> getUpstreamCellsWithOrientation(Cell cell, IState flowDirectionsD8,
-            Function<Cell, Boolean> check) {
+            ITime time, Function<Cell, Boolean> check) {
 
         List<Pair<Cell, Orientation>> ret = new ArrayList<>();
 
         Cell neighbor = cell.getNeighbor(Orientation.NW);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 8) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 8) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.NW));
         }
         neighbor = cell.getNeighbor(Orientation.N);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 7) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 7) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.N));
         }
         neighbor = cell.getNeighbor(Orientation.NE);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 6) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 6) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.NE));
         }
         neighbor = cell.getNeighbor(Orientation.E);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 5) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 5) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.E));
         }
         neighbor = cell.getNeighbor(Orientation.SE);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 4) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 4) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.SE));
         }
         neighbor = cell.getNeighbor(Orientation.S);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 3) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 3) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.S));
         }
         neighbor = cell.getNeighbor(Orientation.SW);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 2) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 2) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.SW));
         }
         neighbor = cell.getNeighbor(Orientation.W);
-        if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 1) {
+        if (neighbor != null && flowDirectionsD8.get(time == null ? neighbor : Scale.create(time, neighbor), Double.class) == 1) {
             if (check == null || check.apply(neighbor))
                 ret.add(new Pair<>(neighbor, Orientation.W));
         }
