@@ -15,165 +15,193 @@ import java.util.logging.Logger;
 public class ValhallaRuntimeEnvironment {
 
 	static final Boolean log_only_critical = false;
-	
-    public enum HTTPStatusCode {
-        SUCCESS(200),FAIL(400),INVALID_PATH(404),INVALID_MESSAGE(405),SERVER_PROBLEM(500),NOT_IMPLEMENTED(501);
 
-        private int code;
+	public enum HTTPStatusCode {
+		SUCCESS(200), FAIL(400), INVALID_PATH(404), INVALID_MESSAGE(405), SERVER_PROBLEM(500), NOT_IMPLEMENTED(501);
 
-        HTTPStatusCode(int code){
-            this.code = code;
-        }
+		private int code;
 
-        final public int getCode() {
-            return this.code;
-        }
+		HTTPStatusCode(int code) {
+			this.code = code;
+		}
 
-        static public HTTPStatusCode getStatus(int code){
-            HTTPStatusCode status = null;
-            switch (code){
-                case 200: status = HTTPStatusCode.SUCCESS;break;
-                case 400: status = HTTPStatusCode.FAIL;break;
-                case 404: status = HTTPStatusCode.INVALID_PATH;break;
-                case 405: status = HTTPStatusCode.INVALID_MESSAGE;break;
-                case 500: status = HTTPStatusCode.SERVER_PROBLEM;break;
-                case 501: status = HTTPStatusCode.NOT_IMPLEMENTED;break;
-            }
-            return status;
-        }
-    }
+		final public int getCode() {
+			return this.code;
+		}
 
-    public enum ValhallaRequestType{
-        ROUTE, OPTIMIZE, MATRIX, ISOCHRONE;
+		static public HTTPStatusCode getStatus(int code) {
+			HTTPStatusCode status = null;
+			switch (code) {
+			case 200:
+				status = HTTPStatusCode.SUCCESS;
+				break;
+			case 400:
+				status = HTTPStatusCode.FAIL;
+				break;
+			case 404:
+				status = HTTPStatusCode.INVALID_PATH;
+				break;
+			case 405:
+				status = HTTPStatusCode.INVALID_MESSAGE;
+				break;
+			case 500:
+				status = HTTPStatusCode.SERVER_PROBLEM;
+				break;
+			case 501:
+				status = HTTPStatusCode.NOT_IMPLEMENTED;
+				break;
+			}
+			return status;
+		}
+	}
 
-        static public String getURLSchema(ValhallaRequestType requestType) throws ValhallaException {
-            String urlSchema;
-            switch (requestType) {
-                case ROUTE: urlSchema = "/route?json=";break;
-                case OPTIMIZE: urlSchema = "/optimized_route?json=";break;
-                case MATRIX: urlSchema = "/sources_to_targets?json=";break;
-                case ISOCHRONE: urlSchema = "/isochrone?json=";break;
-                default: throw new ValhallaException("Request type does not exist: " + requestType +".");
-            }
-            return urlSchema;
-        }
-    }
+	public enum ValhallaRequestType {
+		ROUTE, OPTIMIZE, MATRIX, ISOCHRONE;
 
-    private boolean isOnline = true;
+		static public String getURLSchema(ValhallaRequestType requestType) throws ValhallaException {
+			String urlSchema;
+			switch (requestType) {
+			case ROUTE:
+				urlSchema = "/route?json=";
+				break;
+			case OPTIMIZE:
+				urlSchema = "/optimized_route?json=";
+				break;
+			case MATRIX:
+				urlSchema = "/sources_to_targets?json=";
+				break;
+			case ISOCHRONE:
+				urlSchema = "/isochrone?json=";
+				break;
+			default:
+				throw new ValhallaException("Request type does not exist: " + requestType + ".");
+			}
+			return urlSchema;
+		}
+	}
 
-    private URI baseURI;
+	private boolean isOnline = true;
 
-    private static Logger logger = Logger.getLogger(ValhallaRuntimeEnvironment.class.getName());
+	private URI baseURI;
 
-    public ValhallaRuntimeEnvironment() throws URISyntaxException {
-        this.setBaseURI(new URI("http", null, "localhost", 8002, null, null, null));
-    }
+	private static Logger logger = Logger.getLogger(ValhallaRuntimeEnvironment.class.getName());
 
-    public ValhallaRuntimeEnvironment(String baseURI) {
-        try {
-            this.setBaseURI(new URI(baseURI));
-        } catch (URISyntaxException e) {
-            isOnline = false;
-        }
-    }
+	public ValhallaRuntimeEnvironment() throws URISyntaxException {
+		this.setBaseURI(new URI("http", null, "localhost", 8002, null, null, null));
+	}
 
-    public boolean isOnline(){
-        return isOnline;
-    }
+	public ValhallaRuntimeEnvironment(String baseURI) {
+		try {
+			this.setBaseURI(new URI(baseURI));
+		} catch (URISyntaxException e) {
+			isOnline = false;
+		}
+	}
 
-    public URI getBaseURI() {
-        return this.baseURI;
-    }
-    public void setBaseURI(URI baseURI) {
-        this.baseURI = baseURI;
-    }
+	public boolean isOnline() {
+		return isOnline;
+	}
 
-    private HttpRequest buildRequest(String URL,  String input) {
-        return HttpRequest.newBuilder()
-                .uri(URI.create(URL))
-                .header("Content-type", "application/json")
-                .POST(BodyPublishers.ofString(input))
-                .build();
-    }
+	public URI getBaseURI() {
+		return this.baseURI;
+	}
 
-    private String valhallaResponseHandler(HttpResponse<String> response) throws ValhallaException {
+	public void setBaseURI(URI baseURI) {
+		this.baseURI = baseURI;
+	}
 
-        // Get the response status code:
-        int statusCode = response.statusCode();
-        HTTPStatusCode status = HTTPStatusCode.getStatus(statusCode);
+	private HttpRequest buildRequest(String URL, String input) {
+		return HttpRequest.newBuilder().uri(URI.create(URL)).header("Content-type", "application/json")
+				.POST(BodyPublishers.ofString(input)).build();
+	}
 
-        // Check the response status code and act accordingly. Note that we don't expect a 201 code
-        // as JSON I/O RPC is producing plain 200 with the result in the response body.
-        if (status == HTTPStatusCode.SUCCESS) {
-        	
-        	if(!log_only_critical) {
-        		logger.info("Request to valhalla.test.Valhalla Server has been successful.");
-        	}
-            
-            // Get the HTTP entity:
-            String body = response.body();
+	private String valhallaResponseHandler(HttpResponse<String> response) throws ValhallaException {
 
-            // Check the HTTP entity:
-            if (body == null) {
-                logger.severe("No content received from valhalla.test.Valhalla Server.");
-                throw new ValhallaException("No content received from valhalla.test.Valhalla Server.");
-            }
+		// Get the response status code:
+		int statusCode = response.statusCode();
+		HTTPStatusCode status = HTTPStatusCode.getStatus(statusCode);
 
-            return body;
+		// Check the response status code and act accordingly. Note that we don't expect
+		// a 201 code
+		// as JSON I/O RPC is producing plain 200 with the result in the response body.
+		if (status == HTTPStatusCode.SUCCESS) {
 
-        } else {
+			if (!log_only_critical) {
+				logger.info("Request to valhalla.test.Valhalla Server has been successful.");
+			}
 
-            switch (status) {
-                case FAIL:
-                	logger.severe("Request to valhalla.test.Valhalla Server has failed.");break;
-                case INVALID_PATH:
-                        logger.severe("Request to valhalla.test.Valhalla Server has failed: invalid path.");break;
-                case INVALID_MESSAGE:
-                        logger.severe("Request to valhalla.test.Valhalla Server has failed: invalid message.");break;
-                case SERVER_PROBLEM:
-                        logger.severe("Request to valhalla.test.Valhalla Server has failed: server problem.");break;
-                case NOT_IMPLEMENTED:
-                        logger.severe("Request to valhalla.test.Valhalla Server has failed: not implemented.");break;
-                default:
-                        {logger.severe("Unrecognized response from the valhalla.test.Valhalla Server: " + statusCode);
-                        throw new ValhallaException("Unrecognized response from the valhalla.test.Valhalla Server: " + statusCode);}
-            }
+			// Get the HTTP entity:
+			String body = response.body();
 
-            String message;
-            String body = response.body();
-            if (body == null) {
-                logger.severe("No content received from valhalla.test.Valhalla Server.");
-                message = "No content received from valhalla.test.Valhalla Server.";
-            } else {
-                try {
-                    message = body;
-                } catch (RuntimeException e) {
-                    logger.severe("Cannot read the output from valhalla.test.Valhalla server response.");
-                    throw new ValhallaException("Cannot read the output from valhalla.test.Valhalla server response.", e);
-                }
-            }
-            logger.severe("Bad request: " + message);
-            throw new ValhallaException("Bad Request: " + message);
-        }
-    }
+			// Check the HTTP entity:
+			if (body == null) {
+				logger.severe("No content received from valhalla.test.Valhalla Server.");
+				throw new ValhallaException("No content received from valhalla.test.Valhalla Server.");
+			}
 
-    public String valhallaSendRequest(String input, ValhallaRequestType requestType) throws ValhallaException{
+			return body;
 
-        String url = this.getBaseURI().toString() + ValhallaRequestType.getURLSchema(requestType);
-        HttpRequest request = buildRequest(url, input);
-        
-        if (!log_only_critical) {
-        	logger.info("Sending synchronous request to valhalla.test.Valhalla server (" + url + ").");
-        }
-        
-        HttpResponse<String> response;
-        try {
-            response = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
-        } catch (IOException | InterruptedException ie) {
-            throw new ValhallaException(ie);
-        }
+		} else {
 
-        return valhallaResponseHandler(response);
-    }
+			switch (status) {
+			case FAIL:
+				logger.severe("Request to valhalla.test.Valhalla Server has failed.");
+				break;
+			case INVALID_PATH:
+				logger.severe("Request to valhalla.test.Valhalla Server has failed: invalid path.");
+				break;
+			case INVALID_MESSAGE:
+				logger.severe("Request to valhalla.test.Valhalla Server has failed: invalid message.");
+				break;
+			case SERVER_PROBLEM:
+				logger.severe("Request to valhalla.test.Valhalla Server has failed: server problem.");
+				break;
+			case NOT_IMPLEMENTED:
+				logger.severe("Request to valhalla.test.Valhalla Server has failed: not implemented.");
+				break;
+			default: {
+				logger.severe("Unrecognized response from the valhalla.test.Valhalla Server: " + statusCode);
+				throw new ValhallaException(
+						"Unrecognized response from the valhalla.test.Valhalla Server: " + statusCode);
+			}
+			}
+
+			String message;
+			String body = response.body();
+			if (body == null) {
+				logger.severe("No content received from valhalla.test.Valhalla Server.");
+				message = "No content received from valhalla.test.Valhalla Server.";
+			} else {
+				try {
+					message = body;
+				} catch (RuntimeException e) {
+					logger.severe("Cannot read the output from valhalla.test.Valhalla server response.");
+					throw new ValhallaException("Cannot read the output from valhalla.test.Valhalla server response.",
+							e);
+				}
+			}
+			logger.severe("Bad request: " + message);
+			throw new ValhallaException("Bad Request: " + message);
+		}
+	}
+
+	public String valhallaSendRequest(String input, ValhallaRequestType requestType) throws ValhallaException {
+
+		String url = this.getBaseURI().toString() + ValhallaRequestType.getURLSchema(requestType);
+		HttpRequest request = buildRequest(url, input);
+
+		if (!log_only_critical) {
+			logger.info("Sending synchronous request to valhalla.test.Valhalla server (" + url + ").");
+		}
+
+		HttpResponse<String> response;
+		try {
+			response = HttpClient.newHttpClient().send(request, BodyHandlers.ofString());
+		} catch (IOException | InterruptedException ie) {
+			throw new ValhallaException(ie);
+		}
+
+		return valhallaResponseHandler(response);
+	}
 
 }

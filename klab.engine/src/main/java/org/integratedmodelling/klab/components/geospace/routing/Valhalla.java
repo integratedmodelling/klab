@@ -26,14 +26,16 @@ public class Valhalla {
 	public Valhalla() {
 		this("https://routing.integratedmodelling.org");
 	}
-	
+
 	public Valhalla(boolean local) {
 		String serviceUrl;
-		if (local) serviceUrl = "http://localhost:8002" ;
-		else serviceUrl = "http://192.168.250.240:8002";
+		if (local)
+			serviceUrl = "http://localhost:8002";
+		else
+			serviceUrl = "http://192.168.250.240:8002";
 		new Valhalla(serviceUrl);
 	}
-	
+
 	public Valhalla(String serviceUrl) {
 		this.service = serviceUrl;
 		valhalla = new ValhallaRuntimeEnvironment(this.service);
@@ -83,7 +85,6 @@ public class Valhalla {
 
 		String input = "{\"sources\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"targets\":[{\"lat\":40.539735,\"lon\":-103},{\"lat\":40.541735,\"lon\":-103}],\"costing\":\"auto\"}";
 
-		
 		// Call to matrix method with input, the function returns the deserialized JSON
 		// string in a specific format.
 		ValhallaOutputDeserializer.Matrix matrix = valhalla.matrix(input);
@@ -126,7 +127,6 @@ public class Valhalla {
 
 		input = "{\"locations\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"costing\":\"auto\"}";
 
-		
 		// Call to optimized route method with input, the function returns the
 		// deserialized JSON string in a specific format.
 		ValhallaOutputDeserializer.OptimizedRoute route = valhalla.optimized_route(input);
@@ -141,20 +141,21 @@ public class Valhalla {
 
 	public static String buildValhallaJsonInput(IDirectObservation source, IDirectObservation target,
 			String transportType, String geometryCollapser) {
-		
+
 		double[] sourceCoordinates = null;
 		double[] targetCoordinates = null;
-		
+
 		// Using a switch statement for generality when more methods will be supported.
-		switch(geometryCollapser) {
+		switch (geometryCollapser) {
 		case "centroid":
 			sourceCoordinates = source.getSpace().getStandardizedCentroid();
 			targetCoordinates = target.getSpace().getStandardizedCentroid();
 			break;
-		default: 
-			throw new KlabException("Invalid method for geometry collapse: " + geometryCollapser +". Supported: \"centroid\".");
+		default:
+			throw new KlabException(
+					"Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
 		}
-		
+
 		double sourceLat = sourceCoordinates[1];
 		double sourceLon = sourceCoordinates[0];
 		double targetLat = targetCoordinates[1];
