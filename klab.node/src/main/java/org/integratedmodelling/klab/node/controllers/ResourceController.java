@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -123,11 +125,12 @@ public class ResourceController {
 	 */
 	@PostMapping(value = API.NODE.RESOURCE.GET_DATA, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal) {
+	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal,  HttpServletResponse response) {
 		IGeometry geometry = Geometry.create(request.getGeometry());
 		if (!resourceManager.canAccess(request.getUrn(), (EngineAuthorization) principal)) {
 			throw new SecurityException(request.getUrn());
 		}
+		response.setCharacterEncoding("UTF-8");
 		// TODO also check that the principal can access the adapter
 
 		/*
