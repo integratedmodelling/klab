@@ -7,15 +7,15 @@ public class RecreationIDB {
 	private boolean isOnline = false;
 	RecreationIDBRuntimeEnvironment ribd;
 	RecreationIDBOutputDeserializer deserializer;
-	public String service = "";
+	private String serviceURL = "";
 
 	public RecreationIDB() {
 		this("https://ridb.recreation.gov/api/v1");
 	}
 
 	public RecreationIDB(String serviceUrl) {
-		this.service = serviceUrl;
-		ribd = new RecreationIDBRuntimeEnvironment(service);
+		this.serviceURL = serviceUrl;
+		ribd = new RecreationIDBRuntimeEnvironment(serviceURL);
 		isOnline = ribd.isOnline();
 		deserializer = new RecreationIDBOutputDeserializer();
 
@@ -23,6 +23,10 @@ public class RecreationIDB {
 
 	public boolean isOnline() {
 		return isOnline;
+	}
+
+	public String getServiceURL() {
+		return serviceURL;
 	}
 
 	public RecreationIDBOutputDeserializer.RecreationAreas recreationAreas(String input, String apiKey)

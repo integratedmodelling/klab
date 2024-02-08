@@ -89,16 +89,17 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 			parameters.put(RADIUS, "0.0");
 		}
 
-		ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials("https://ridb.recreation.gov/api/v1");
-		if (credentials == null) {
-			throw new KlabMissingCredentialsException("API key for RecreationIDB is missing.");
-		}
-		String apiKey = credentials.getCredentials().get(0);
 
 		IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 
 		if (scale.getSpace() != null) {
 			RecreationIDB ridb = new RecreationIDB();
+			ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(ridb.getServiceURL());
+			if (credentials == null) {
+				throw new KlabMissingCredentialsException("API key for RecreationIDB is missing.");
+			}
+			String apiKey = credentials.getCredentials().get(0);
+
 			List<String> inputs = buildRecreationIDBInput(parameters);
 			List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 			inputs.forEach(input -> data.addAll(ridb.recreationAreas(input, apiKey).getData()));
