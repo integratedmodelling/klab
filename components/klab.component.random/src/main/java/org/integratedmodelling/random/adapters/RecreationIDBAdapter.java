@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -24,6 +25,8 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
+import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -86,13 +89,17 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 			parameters.put(RADIUS, "0.0");
 		}
 
-		// API key must be defined as parameter in the URN
-		String apiKey = urn.getParameters().containsKey(APIKEY) ? urn.getParameters().get(APIKEY) : null;
 
 		IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 
 		if (scale.getSpace() != null) {
 			RecreationIDB ridb = new RecreationIDB();
+			ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(ridb.getServiceURL());
+			if (credentials == null) {
+				throw new KlabMissingCredentialsException("API key for the Recreation Information Database is missing.");
+			}
+			String apiKey = credentials.getCredentials().get(0);
+
 			List<String> inputs = buildRecreationIDBInput(parameters);
 			List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 			inputs.forEach(input -> data.addAll(ridb.recreationAreas(input, apiKey).getData()));
