@@ -1,5 +1,8 @@
 package org.integratedmodelling.random.adapters;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +29,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
@@ -100,7 +104,13 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 			}
 			String apiKey = credentials.getCredentials().get(0);
 
-			List<String> inputs = buildRecreationIDBInput(parameters);
+			List<String> inputs = new ArrayList<>();
+			try {
+				inputs = buildRecreationIDBInput(parameters);
+			} catch (UnsupportedEncodingException e) {
+				throw new KlabValidationException("Failed to encode the parameters.");
+			}
+
 			List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
 			inputs.forEach(input -> data.addAll(ridb.recreationAreas(input, apiKey).getData()));
 
@@ -138,7 +148,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 			"NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA",
 			"WA", "WV", "WI", "WY");
 
-	private List<String> buildRecreationIDBInput(Map<String, String> parameters) {
+	private List<String> buildRecreationIDBInput(Map<String, String> parameters) throws UnsupportedEncodingException {
 		ArrayList<String> query = new ArrayList<>();
 		List<String> states = parameters.containsKey(STATE) ? Arrays.asList(parameters.get(STATE).split(","))
 				: USA_STATES;
@@ -146,7 +156,8 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 			if (entry.getKey().equals(STATE)) {
 				continue;
 			}
-			query.add(entry.getKey() + "=" + entry.getValue());
+			String parameter = entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString());
+			query.add(parameter);
 		}
 		String finalQuery = String.join("&", query);
 		return states.stream().map(state -> finalQuery + "&" + STATE + "=" + state).toList();
