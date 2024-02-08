@@ -96,7 +96,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 			RecreationIDB ridb = new RecreationIDB();
 			ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(ridb.getServiceURL());
 			if (credentials == null) {
-				throw new KlabMissingCredentialsException("API key for RecreationIDB is missing.");
+				throw new KlabMissingCredentialsException("API key for the Recreation Information Database is missing.");
 			}
 			String apiKey = credentials.getCredentials().get(0);
 
