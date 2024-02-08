@@ -478,6 +478,14 @@ public interface API {
              */
             public static final String USER_VERIFICATION = "verify";
             /**
+             * URL PARAMETER for user requesting a new email.
+             */
+            public static final String USER_REQUEST_EMAIL = "request-new-email";
+            /**
+             * URL PARAMETER for user setting a new email.
+             */
+            public static final String USER_NEW_EMAIL = "new-email";
+            /**
              * URL PARAMETER for user to request a new certificate.
              */
             public static final String USER_CERTIFICATE = "certificate";
