@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.hub.exception.UserNameOrEmailExistsException
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.listeners.NewUserAdded;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.service.implementation.LdapServiceImpl;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -45,26 +46,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
-    private MongoTemplate mongoTemplate;
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;
-    private LdapTemplate ldapTemplate;
+    private PasswordEncoder passwordEncoder;    
+    private LdapServiceImpl ldapService;
     private LdapUserDetailsManager ldapUserDetailsManager;
     private HubEventPublisher<NewUserAdded> publisher;
     private AgreementService agreementService;
 
     @Autowired
-    public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, LdapTemplate ldapTemplate,
+    public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, LdapServiceImpl ldapServiceImpl,
             LdapUserDetailsManager ldapUserDetailsManager, HubEventPublisher<NewUserAdded> publisher,
-            AgreementService agreementService, MongoTemplate mongoTemplate) {
+            AgreementService agreementService) {
         super();
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.ldapTemplate = ldapTemplate;
         this.ldapUserDetailsManager = ldapUserDetailsManager;
         this.publisher = publisher;
         this.agreementService = agreementService;
-        this.mongoTemplate = mongoTemplate;
+        this.ldapService = ldapServiceImpl;
     }
 
     @Override
@@ -124,7 +123,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             
             boolean ldapExists = false;
             try {
-                ldapExists = ldapUserExists(username, email);
+                ldapExists = ldapService.userExists(username, email);
             } catch (BadRequestException bre) {
                 throw new UserNameOrEmailExistsException();
             }
@@ -178,7 +177,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                     u -> u.getAccountStatus().equals(AccountStatus.verified) | u.getAccountStatus().equals(AccountStatus.active))
                     .orElseThrow(() -> new BadRequestException("User not active or verified"));
 
-            if (user.getAccountStatus().equals(AccountStatus.verified) | !ldapUserExists(user.getUsername(), user.getEmail())) {
+            if (user.getAccountStatus().equals(AccountStatus.verified) | !ldapService.userExists(user.getUsername(), user.getEmail())) {
                 user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
                 user = new CreateLdapUser(user, ldapUserDetailsManager).execute();
                 user.setAccountStatus(AccountStatus.active);
@@ -200,37 +199,6 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             throw new BadRequestException("Password not accepted");
         }
         return password.equals(confirm);
-    }
-
-    private boolean ldapUserExists(String username, String email) {
-        LdapQuery userNameQuery = query().where("objectclass").is("person").and("uid").is(username);
-        List<Object> personByName = ldapTemplate.search(userNameQuery, new UserAttributesMapper());
-
-        LdapQuery userEmailQuery = query().where("objectclass").is("person").and("mail").is(email);
-        List<Object> personByEmail = ldapTemplate.search(userEmailQuery, new UserAttributesMapper());
-
-        if (!personByEmail.isEmpty() && !personByName.isEmpty() && !personByEmail.equals(personByName)) {
-            throw new BadRequestException("Username or email address already in use.");
-        }
-
-        if (personByEmail.isEmpty() && personByName.isEmpty()) {
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    private class UserAttributesMapper implements AttributesMapper<Object> {
-        public HashMap<String, String> mapFromAttributes(Attributes attributes) throws NamingException {
-            HashMap<String, String> userAttributes = new HashMap<String, String>();
-            try {
-                userAttributes.put("uid", attributes.get("uid").get().toString());
-                userAttributes.put("mail", attributes.get("mail").get().toString());
-            } catch (NamingException e) {
-                return new HashMap<String, String>();
-            }
-            return userAttributes;
-        }
     }
 
 }
