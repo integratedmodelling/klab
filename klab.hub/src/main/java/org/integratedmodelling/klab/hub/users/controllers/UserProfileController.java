@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
@@ -28,6 +30,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -121,6 +124,19 @@ public class UserProfileController {
 	public ResponseEntity<?> updateUserProfile(@PathVariable String id, @RequestBody UpdateUserRequest updateRequest) {
 		ProfileResource profile = userService.updateUserByProfile(updateRequest.getProfile());
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
+	}
+	
+	@PostMapping(value = API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_REQUEST_EMAIL)
+	@PreAuthorize("authentication.getPrincipal() == #id")
+	public ResponseEntity<?> updateUserEmail(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_REQUEST_EMAIL) String requestNewEmail) {		
+		ProfileResource profile;
+		try {
+			profile = userService.verifyEmail(id, requestNewEmail);
+		} catch (MessagingException e) {
+			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(e.getMessage());
+		}
+		return new ResponseEntity<>(profile, HttpStatus.ACCEPTED);
+
 	}
 	
 	@GetMapping(value= API.HUB.USER_BASE_ID, params = "remote-login")

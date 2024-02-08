@@ -11,12 +11,9 @@ public class TokenVerifyEmailClickback extends TokenClickback {
 		super(username);
 	}
 
-    public void setNewEmailAddress(String newEmailAddress) {
-    }
-
 	@Override
 	public ClickbackAction getClickbackAction() {
-		return null;
+		return ClickbackAction.changeEmail;
 	}
 	
 }

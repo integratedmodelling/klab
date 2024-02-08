@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
+import org.integratedmodelling.klab.hub.api.CreateVerifyEmailToken;
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.TokenClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
@@ -34,6 +35,8 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 			return new CreateChangePasswordToken(repository, username, linkConfig).execute();
 		} else if(type.equals(TokenType.lostPassword)) {
 			return new CreateLostPasswordToken(repository, username, linkConfig).execute();
+		} else if(type.equals(TokenType.verifyEmail)) {
+			return new CreateVerifyEmailToken(repository, username, linkConfig).execute();
 		} else {
 			return null;
 		}
@@ -50,6 +53,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 
 	@Override
 	public boolean verifyToken(String username, String id, TokenType type) {
+		TokenAuthentication hola = repository.findByTokenString(id).get();
 		return repository.findByTokenString(id)
 			.filter(token -> token.getPrincipal().equals(username))
 			.map(TokenClickback.class::cast)
