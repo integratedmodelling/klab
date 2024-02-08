@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.resources.ContextualizedResource;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
+import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.ResourceReference.AvailabilityReference;
@@ -54,6 +55,7 @@ import org.integratedmodelling.klab.utils.Parameters;
  */
 public class MergedResource implements IResource {
 
+	@SuppressWarnings("unused")
 	private static final long serialVersionUID = 85315842352320711L;
 
 	String id;
@@ -306,7 +308,7 @@ public class MergedResource implements IResource {
 			if (set.resolution != null) {
 				Integer count = rcounts.get(set.resolution.getType());
 				if (count == null) {
-					count = new Integer(1);
+					count = Integer.valueOf(1);
 				} else {
 					count = count + 1;
 				}
@@ -562,12 +564,14 @@ public class MergedResource implements IResource {
 					 */
 					scope.notifyInspector(scope, IInspector.Asset.RESOURCE, IInspector.Event.SELECTION,
 							set.getValue().resources.get(0), artifact, scale.getTime());
-
+					// add only used resources of MergedResource to report
+					for (Pair<IResource, Map<String, String>> pr : set.getValue().resources) {
+						((Report) scope.getReport()).include(pr.getFirst());
+					}
 					ret.addAll(set.getValue().resources);
 				}
 			}
 		}
-
 		return new ContextualizedResource(this, ret);
 	}
 
