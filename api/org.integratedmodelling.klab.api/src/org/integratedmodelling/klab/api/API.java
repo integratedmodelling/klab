@@ -325,6 +325,14 @@ public interface API {
          */
         public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
         /**
+         * Base URL path for user resources on the hub with no authentication.
+         */
+        public static final String USER_BASE_NOAUTH = USER_BASE + "/noAuth";
+        /**
+         * Base URL path for user resources on the hub with no authentication.
+         */
+        public static final String USER_BASE_ID_NOAUTH = USER_BASE_NOAUTH + "/{id}";
+        /**
          * Base URL path for user resources on the hub.
          */
         public static final String USER_BASE_ID = USER_BASE + "/{id}";
@@ -478,13 +486,17 @@ public interface API {
              */
             public static final String USER_VERIFICATION = "verify";
             /**
+             * URL PARAMETER for user get user profile by token.
+             */
+            public static final String USER_GET = "get-user";
+            /**
              * URL PARAMETER for user requesting a new email.
              */
             public static final String USER_REQUEST_EMAIL = "request-new-email";
             /**
-             * URL PARAMETER for user setting a new email.
+             * URL PARAMETER for user setting a new email from set email token.
              */
-            public static final String USER_NEW_EMAIL = "new-email";
+            public static final String USER_SET_EMAIL = "new-email";
             /**
              * URL PARAMETER for user to request a new certificate.
              */

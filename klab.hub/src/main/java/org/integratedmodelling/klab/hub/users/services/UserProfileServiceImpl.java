@@ -108,6 +108,26 @@ public class UserProfileServiceImpl implements UserProfileService {
 		return getUserSafeProfile(user);
 	}
 	
+	/**
+	 * Check if email is changed. 
+	 * If email changes send and email to the user to verified this action
+	 * @param user
+	 * @throws MessagingException 
+	 */
+	@Override
+	public ProfileResource createNewEmailRequest(String username, String email) throws MessagingException {
+		ProfileResource profile = getUserProfile(username);
+		profile.setAddressToVerify(email);
+		if(profile.getEmail() != email) {
+			TokenVerifyEmailClickback token = (TokenVerifyEmailClickback)
+					tokenService.createToken(username, TokenType.verifyEmail);
+
+			emailManager.sendVerifyEmailClickback(email, token.getCallbackUrl());			
+		}
+		return profile;
+
+	}
+	
 	@Override
 	public ProfileResource updateUserEmail(ProfileResource profile) {
 		User user = updateUserFromProfileResource(profile);

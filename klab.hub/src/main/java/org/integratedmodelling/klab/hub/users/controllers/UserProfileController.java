@@ -11,14 +11,18 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
 import org.integratedmodelling.klab.hub.controllers.pagination.GenericPageAndFilterConverter;
+import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
 import org.integratedmodelling.klab.hub.payload.PageRequest;
 import org.integratedmodelling.klab.hub.payload.PageResponse;
+import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.service.FilterBuilderService;
+import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,6 +32,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,21 +41,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.minidev.json.JSONObject;
+
 @RestController
 public class UserProfileController {
 	
 	private UserProfileService userService;
     private final GenericPageAndFilterConverter genericPageAndFilterConverter;
     private final FilterBuilderService filterBuilderService;
+	private RegistrationTokenService tokenService;
 	
 	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 	private static final String FILTER_NO_GROUPS = "$NO_GROUPS$";
 	
 	@Autowired
-	UserProfileController(UserProfileService userService, GenericPageAndFilterConverter genericPageAndFilterConverter, FilterBuilderService filterBuilderService) {
+	UserProfileController(UserProfileService userService, GenericPageAndFilterConverter genericPageAndFilterConverter,
+			FilterBuilderService filterBuilderService, RegistrationTokenService tokenService) {
 		this.userService = userService;
 		this.genericPageAndFilterConverter = genericPageAndFilterConverter;
 		this.filterBuilderService = filterBuilderService;
+		this.tokenService = tokenService;
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
@@ -106,6 +116,17 @@ public class UserProfileController {
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
 	}
 	
+	@GetMapping(value=API.HUB.USER_BASE_ID_NOAUTH, params = API.HUB.PARAMETERS.USER_GET)
+	public ResponseEntity<?> getUserProfileByToken(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_GET) String setEmail) {
+		TokenType[] types = { TokenType.verifyEmail};
+		if (!tokenService.verifyTokens(id, setEmail, types)) {
+			throw new ActivationTokenFailedException("User Verification token failed");
+		}
+		ProfileResource profile = userService.getUserProfile(id);
+		return new ResponseEntity<>(profile, HttpStatus.OK);
+
+	}
+
 	@GetMapping(API.HUB.CURRENT_PROFILE)
 	// TODO this is call from single user, not need PreAuthorize
 	// @PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
@@ -128,10 +149,10 @@ public class UserProfileController {
 	
 	@PostMapping(value = API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_REQUEST_EMAIL)
 	@PreAuthorize("authentication.getPrincipal() == #id")
-	public ResponseEntity<?> updateUserEmail(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_REQUEST_EMAIL) String requestNewEmail) {		
+	public ResponseEntity<?> requestNewUserEmail(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_REQUEST_EMAIL) String requestNewEmail) {		
 		ProfileResource profile;
 		try {
-			profile = userService.verifyEmail(id, requestNewEmail);
+			profile = userService.createNewEmailRequest(id, requestNewEmail);
 		} catch (MessagingException e) {
 			return ResponseEntity.status(HttpStatus.NOT_MODIFIED).body(e.getMessage());
 		}
@@ -139,7 +160,23 @@ public class UserProfileController {
 
 	}
 	
-	@GetMapping(value= API.HUB.USER_BASE_ID, params = "remote-login")
+//	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_PASSWORD)
+//	public ResponseEntity<?> updateUserEmail(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_SET_PASSWORD) String setPassword,
+//			@RequestBody PasswordChangeRequest passwordRequest) {
+//		TokenType[] types = { TokenType.newUser, TokenType.password, TokenType.lostPassword };
+//		if (!tokenService.verifyTokens(id, setPassword, types)) {
+//			throw new ActivationTokenFailedException("User Verification token failed");
+//		}
+//		//User user = userService.setPassword(id, passwordRequest.getNewPassword(), passwordRequest.getConfirm());
+//		if(user != null) {
+//			tokenService.deleteToken(setPassword);
+//		}
+//		JSONObject resp = new JSONObject();
+//		resp.appendField("Message", "User password updated");
+//		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
+//	}
+
+	@GetMapping(value = API.HUB.USER_BASE_ID, params = "remote-login")
 	@PreAuthorize("authentication.getPrincipal() == #id")
 	public ResponseEntity<?> getFullUserProfile(@PathVariable String id) {
 		ProfileResource profile = userService.getRawUserProfile(id);

@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
+import java.util.Optional;
+
 import org.integratedmodelling.klab.hub.api.CreateVerifyEmailToken;
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.TokenClickback;
@@ -53,7 +55,7 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 
 	@Override
 	public boolean verifyToken(String username, String id, TokenType type) {
-		TokenAuthentication hola = repository.findByTokenString(id).get();
+		Optional<TokenAuthentication> hola = repository.findByTokenString(id);
 		return repository.findByTokenString(id)
 			.filter(token -> token.getPrincipal().equals(username))
 			.map(TokenClickback.class::cast)
