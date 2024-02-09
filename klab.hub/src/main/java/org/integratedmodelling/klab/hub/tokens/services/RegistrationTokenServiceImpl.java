@@ -43,6 +43,15 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 			return null;
 		}
 	}
+	
+	@Override
+	public TokenClickback createToken(String username, String email, TokenType type) {
+		if(type.equals(TokenType.verifyEmail)) {
+			return new CreateVerifyEmailToken(repository, username, email, linkConfig).execute();
+		} else {
+			return null;
+		}
+	}
 
 	@Override
 	public TokenClickback createChildToken(String username, String parentToken, TokenType type) {
@@ -55,13 +64,22 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 
 	@Override
 	public boolean verifyToken(String username, String id, TokenType type) {
-		Optional<TokenAuthentication> hola = repository.findByTokenString(id);
 		return repository.findByTokenString(id)
 			.filter(token -> token.getPrincipal().equals(username))
 			.map(TokenClickback.class::cast)
 			.filter(token -> token.getClickbackAction().getTokenType().equals(type))
 			.map(token -> setAuthentication(token))
 			.isPresent();
+	}
+	
+	@Override
+	public TokenAuthentication getAndVerifyToken(String username, String id, TokenType type) {
+		Optional<TokenAuthentication> hola = repository.findByTokenString(id);
+		return repository.findByTokenString(id)
+			.filter(token -> token.getPrincipal().equals(username))
+			.map(TokenClickback.class::cast)
+			.filter(token -> token.getClickbackAction().getTokenType().equals(type)).orElseGet(null);
+		
 	}
 	
 	@Override

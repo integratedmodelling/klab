@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.api.TokenVerifyEmailClickback;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
 import org.integratedmodelling.klab.hub.controllers.pagination.GenericPageAndFilterConverter;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
 import org.integratedmodelling.klab.hub.payload.PageRequest;
 import org.integratedmodelling.klab.hub.payload.PageResponse;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
+import org.integratedmodelling.klab.hub.payload.UpdateEmailResponse;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.service.FilterBuilderService;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
@@ -117,13 +119,14 @@ public class UserProfileController {
 	}
 	
 	@GetMapping(value=API.HUB.USER_BASE_ID_NOAUTH, params = API.HUB.PARAMETERS.USER_GET)
-	public ResponseEntity<?> getUserProfileByToken(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_GET) String setEmail) {
-		TokenType[] types = { TokenType.verifyEmail};
-		if (!tokenService.verifyTokens(id, setEmail, types)) {
+	public ResponseEntity<?> getUserDataByToken(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_GET) String setEmail) {
+		TokenVerifyEmailClickback token = (TokenVerifyEmailClickback) tokenService.getAndVerifyToken(id, setEmail, TokenType.verifyEmail);
+		if (token == null) {
 			throw new ActivationTokenFailedException("User Verification token failed");
 		}
 		ProfileResource profile = userService.getUserProfile(id);
-		return new ResponseEntity<>(profile, HttpStatus.OK);
+		UpdateEmailResponse response = new UpdateEmailResponse(profile.getEmail(), token.getNotVerifiedEmail());
+		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
 

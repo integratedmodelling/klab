@@ -109,19 +109,19 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 	
 	/**
-	 * Check if email is changed. 
+	 * Create TokenVerifyEmailClickback if email is changed. 
 	 * If email changes send and email to the user to verified this action
 	 * @param user
+	 * @param email
 	 * @throws MessagingException 
 	 */
 	@Override
 	public ProfileResource createNewEmailRequest(String username, String email) throws MessagingException {
 		ProfileResource profile = getUserProfile(username);
-		profile.setAddressToVerify(email);
 		if(profile.getEmail() != email) {
 			TokenVerifyEmailClickback token = (TokenVerifyEmailClickback)
-					tokenService.createToken(username, TokenType.verifyEmail);
-
+					tokenService.createToken(username, email, TokenType.verifyEmail);
+			
 			emailManager.sendVerifyEmailClickback(email, token.getCallbackUrl());			
 		}
 		return profile;
@@ -135,25 +135,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 		User updatedUser = new UpdateUser(user, userRepository).execute();
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
 		return updatedProfile.getSafeProfile();
-	}
-
-	/**
-	 * Check if email is changed. 
-	 * If email changes send and email to the user to verified this action
-	 * @param user
-	 * @throws MessagingException 
-	 */
-	@Override
-	public ProfileResource verifyEmail(String username, String email) throws MessagingException {
-		ProfileResource profile = getUserProfile(username);
-		if(profile.getEmail() != email) {
-			TokenVerifyEmailClickback token = (TokenVerifyEmailClickback)
-					tokenService.createToken(username, TokenType.verifyEmail);
-
-			emailManager.sendVerifyEmailClickback(email, token.getCallbackUrl());			
-		}
-		return profile;
-
 	}
 	
 	private User updateUserFromProfileResource(ProfileResource profile) {

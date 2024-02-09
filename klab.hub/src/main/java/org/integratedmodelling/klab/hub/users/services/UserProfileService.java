@@ -29,7 +29,7 @@ public interface UserProfileService {
 	 * @param user
 	 * @throws MessagingException 
 	 */
-	ProfileResource verifyEmail(String username, String email) throws MessagingException;
+	
     abstract Page<User> getPage(Query query, Pageable pageable);
     abstract List<User> getQuery(Query query);
 	abstract ProfileResource createNewEmailRequest(String id, String requestNewEmail) throws MessagingException;

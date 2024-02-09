@@ -43,8 +43,6 @@ public class ProfileResource implements OAuth2User{
     public String initials;
 
 	public String address;
-	
-	public String addressToVerify;
 
 	public String jobTitle;
 
@@ -181,14 +179,6 @@ public class ProfileResource implements OAuth2User{
 
 	public void setLastConnection(LocalDateTime lastConnection) {
 		this.lastConnection = lastConnection;
-	}
-	
-    public String getAddressToVerify() {
-		return addressToVerify;
-	}
-
-	public void setAddressToVerify(String addressToVerify) {
-		this.addressToVerify = addressToVerify;
 	}
 
 	public List<String> getGroupsIds() {
