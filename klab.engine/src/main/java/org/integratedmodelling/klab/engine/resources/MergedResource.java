@@ -147,12 +147,12 @@ public class MergedResource implements IResource {
 			}
 			scale = Scale.create(resource.getGeometry());
 			this.type = resource.getType();
-
+			this.metadata = resource.getMetadata();
 			this.logicalTime = scale.getTime() != null && scale.getTime().isGeneric();
 			if (this.logicalTime) {
 				this.resolution = scale.getTime().getCoverageResolution();
 			}
-
+			
 			resourceParameters.put(uurn.getUrn(), uurn.getParameters());
 
 			getResourceSet(scale).resources.add(new Pair<>(resource, uurn.getParameters()));
