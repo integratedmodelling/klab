@@ -254,4 +254,15 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 //		return configurationCache;
 //	}
 
+    @Override
+    public boolean is(Class< ? > cls) {
+        Class< ? > clazz = getOriginatingPattern().getClass();
+        return cls.isAssignableFrom(clazz);
+    }
+	
+    @Override
+    @SuppressWarnings("unchecked")
+    public <T> T as(Class< ? > cls) {
+        return (T) getOriginatingPattern();
+    }
 }

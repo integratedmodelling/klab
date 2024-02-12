@@ -199,6 +199,25 @@ public class Report implements IReport {
 		ReportSection section = getMainSection(((TemplateImpl) template).getRole());
 		template.compile(section, context, getTemplateVariables(template));
 	}
+	
+	/**
+	 * Add a resource to the report.
+	 * Used when the IContextualizable is a MergedResource so is called
+	 * when it is contextualized
+	 * @param resource
+	 */
+	public void include(IResource resource) {
+
+	    if (resource.isEmpty()) {
+	        return;
+	    }
+	    
+		if (resource.getUrn() != null) {
+			IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
+			resources.add(res);
+			addComputable(res);
+		}
+	}
 
 	public void include(IContextualizable resource, Actuator actuator) {
 

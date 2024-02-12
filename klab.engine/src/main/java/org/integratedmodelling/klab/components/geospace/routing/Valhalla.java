@@ -24,19 +24,21 @@ public class Valhalla {
 	public String service = "";
 
 	public Valhalla() {
-		this("http://localhost:8002");
+		this("https://routing.integratedmodelling.org");
 	}
-	
-	public Valhalla(boolean remote) {
+
+	public Valhalla(boolean local) {
 		String serviceUrl;
-		if (remote) serviceUrl = "http://192.168.250.240:8002";
-		else serviceUrl = "http://localhost:8002";
+		if (local)
+			serviceUrl = "http://localhost:8002";
+		else
+			serviceUrl = "http://192.168.250.240:8002";
 		new Valhalla(serviceUrl);
 	}
-	
+
 	public Valhalla(String serviceUrl) {
 		this.service = serviceUrl;
-		valhalla = new ValhallaRuntimeEnvironment(service);
+		valhalla = new ValhallaRuntimeEnvironment(this.service);
 		isOnline = valhalla.isOnline();
 		deserializer = new ValhallaOutputDeserializer();
 	}
@@ -79,7 +81,9 @@ public class Valhalla {
 		// costing parameter which essentially
 		// is the means of transport. For testing make sure that coordinates are within
 		// the loaded OSM environment.
-		String input = "{\"sources\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.524014,\"lon\":1.5263911}],\"targets\":[{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.541735,\"lon\":1.4888}],\"costing\":\"pedestrian\"}";
+//		String input = "{\"sources\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.524014,\"lon\":1.5263911}],\"targets\":[{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.541735,\"lon\":1.4888}],\"costing\":\"pedestrian\"}";
+
+		String input = "{\"sources\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"targets\":[{\"lat\":40.539735,\"lon\":-103},{\"lat\":40.541735,\"lon\":-103}],\"costing\":\"auto\"}";
 
 		// Call to matrix method with input, the function returns the deserialized JSON
 		// string in a specific format.
@@ -119,13 +123,15 @@ public class Valhalla {
 		 */
 
 		// This is a back and forth trip in Andorra.
-		input = "{\"locations\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.544014,\"lon\":1.5163911}],\"costing\":\"auto\"}";
+//		input = "{\"locations\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.544014,\"lon\":1.5163911}],\"costing\":\"auto\"}";
+
+		input = "{\"locations\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"costing\":\"auto\"}";
 
 		// Call to optimized route method with input, the function returns the
 		// deserialized JSON string in a specific format.
 		ValhallaOutputDeserializer.OptimizedRoute route = valhalla.optimized_route(input);
 		IShape path = route.getPath();
-		Map<String, Double> stats = route.getSummaryStatistics();
+		Map<String, Object> stats = route.getSummaryStatistics();
 		List<Map<String, Number>> waypoints = route.getWaypoints();
 
 		System.out.println(path);
@@ -135,20 +141,21 @@ public class Valhalla {
 
 	public static String buildValhallaJsonInput(IDirectObservation source, IDirectObservation target,
 			String transportType, String geometryCollapser) {
-		
+
 		double[] sourceCoordinates = null;
 		double[] targetCoordinates = null;
-		
+
 		// Using a switch statement for generality when more methods will be supported.
-		switch(geometryCollapser) {
+		switch (geometryCollapser) {
 		case "centroid":
 			sourceCoordinates = source.getSpace().getStandardizedCentroid();
 			targetCoordinates = target.getSpace().getStandardizedCentroid();
 			break;
-		default: 
-			throw new KlabException("Invalid method for geometry collapse: " + geometryCollapser +". Supported: \"centroid\".");
+		default:
+			throw new KlabException(
+					"Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
 		}
-		
+
 		double sourceLat = sourceCoordinates[1];
 		double sourceLon = sourceCoordinates[0];
 		double targetLat = targetCoordinates[1];
