@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +108,7 @@ public class Client extends RestTemplate implements IClient {
 
     ObjectMapper objectMapper;
     String authToken;
-    MediaType contentType = MediaType.APPLICATION_JSON;
+    MediaType contentType = new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8);
     RestTemplate basicTemplate;
     private Set<String> endpoints = new HashSet<>();
 

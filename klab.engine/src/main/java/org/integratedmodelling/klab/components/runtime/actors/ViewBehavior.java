@@ -150,13 +150,18 @@ public class ViewBehavior {
                     action = new ViewAction(this.component = copyComponent(this.initializedComponent));
                     break;
                 default:
-                    action = new ViewAction(this.component = setComponent(mess, scope));
+                	ViewComponent ret = setComponent(mess, scope);
+                	if (ret != null) {
+                		action = new ViewAction(this.component = setComponent(mess, scope));
+                	}
                 }
-                action.setApplicationId(mess.getAppId());
-                action.setData(getMetadata(mess.getArguments(), scope));
-                action.setComponentTag(this.getName());
-                session.getState().updateView(this.component);
-                session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+                if (action != null) {
+                	action.setApplicationId(mess.getAppId());
+                    action.setData(getMetadata(mess.getArguments(), scope));
+                    action.setComponentTag(this.getName());
+                    session.getState().updateView(this.component);
+                    session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+                }
             }
         }
 
@@ -675,7 +680,7 @@ public class ViewBehavior {
 
         private String appId;
         // add to this
-        private ViewComponent group;
+//        private ViewComponent group;
         // keep this for resetting
         private ViewComponent originalGroup;
 
@@ -683,8 +688,8 @@ public class ViewBehavior {
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, null, scope, sender, callId);
             this.appId = appId;
-            this.group = copyComponent(scope.getViewScope().getCurrentComponent());
-            this.originalGroup = copyComponent(this.group);
+            this.component = copyComponent(scope.getViewScope().getCurrentComponent());
+            this.originalGroup = copyComponent(this.component);
         }
 
         @Override
@@ -696,7 +701,7 @@ public class ViewBehavior {
                     arg = ((KActorsValue) arg).evaluate(scope, identity, false);
                 }
                 if (arg instanceof Constructor) {
-                    this.sender.tell(new AddComponentToGroup(this.group, ((Constructor) arg).getComponent(),
+                    this.sender.tell(new AddComponentToGroup(this.component, ((Constructor) arg).getComponent(),
                             ((Constructor) arg).getArguments(), scope));
                 }
             } else if ("remove".equals(message.getMessage())) {
