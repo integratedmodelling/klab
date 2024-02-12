@@ -44,6 +44,7 @@ public enum DataflowDocumentation {
 	public static final String ACTUATOR_TEMPLATE = "actuator";
 	public static final String FUNCTION_TEMPLATE = "service";
 	public static final String RESOURCE_TEMPLATE = "resource";
+	public static final String MERGED_RESOURCE_TEMPLATE = "merged";
 	public static final String TABLE_TEMPLATE = "table";
 	public static final String CLASSIFICATION_TEMPLATE = "classification";
 	public static final String EXPRESSION_TEMPLATE = "expression";
@@ -191,6 +192,17 @@ public enum DataflowDocumentation {
 
 		return null;
 	}
+	
+	private String formatResourceDescription(IResource resource) {
+		String description = resource.getMetadata().get(IMetadata.DC_COMMENT, String.class);
+		// format from Markdown
+		if (description == null) {
+			description = "No description";
+		} else {
+			description = MarkdownUtils.INSTANCE.format(description.trim());
+		}
+		return description;
+	}
 
 	private VelocityContext getContext(Pair<IServiceCall, IContextualizable> resource, IContextualizationScope scope) {
 
@@ -205,30 +217,18 @@ public enum DataflowDocumentation {
 			}
 		} else if (resource.getSecond().getUrn() != null) {
 			IResource res = Resources.INSTANCE.resolveResource(resource.getSecond().getUrn());
+			
 			if (res != null) {
 				List<IResource> resources = new ArrayList<>();
-				String description = res.getMetadata().get(IMetadata.DC_COMMENT, String.class);
-				// format from Markdown
-				if (description == null) {
-					description = "No description";
-				} else {
-					description = MarkdownUtils.INSTANCE.format(description.trim());
-				}
-				ret.put("description", description);
 				if (res instanceof MergedResource) {
-					/*
-					 * select the used ones unless we know nothing
-					 */
-					if (scope == null || scope.getReport() == null) {
-						for (IResource r : ((MergedResource) res).getResources()) {
-							resources.add(r);
-						}
-					} else {
-						resources.addAll(
-								((Report) scope.getReport()).getContextualizedResources(resource.getSecond().getUrn()));
+					for (IResource r : ((MergedResource) res).getResources()) {
+						ret.put("description", formatResourceDescription(res));
+						resources.add(r);
 					}
+				} else {
+					ret.put("description", formatResourceDescription(res));
+					resources.add(res);
 				}
-				resources.add(res);
 				ret.put("resources", resources);
 			}
 		} else if (resource.getSecond().getExpression() != null) {
