@@ -61,7 +61,7 @@ import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifac
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Grid;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
-import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
+import org.integratedmodelling.klab.documentation.extensions.table.AbstractTableArtifact;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -580,7 +580,7 @@ public class RuntimeBehavior {
                     try {
                         File file = null;
                         if (dtabs) {
-                            file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
+                            file = AbstractTableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
                                     file);
                         } else {
                             file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
