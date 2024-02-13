@@ -125,12 +125,11 @@ public class ResourceController {
 	 */
 	@PostMapping(value = API.NODE.RESOURCE.GET_DATA, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
-	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal,  HttpServletResponse response) {
+	public KlabData getUrnData(@RequestBody ResourceDataRequest request, Principal principal) {
 		IGeometry geometry = Geometry.create(request.getGeometry());
 		if (!resourceManager.canAccess(request.getUrn(), (EngineAuthorization) principal)) {
 			throw new SecurityException(request.getUrn());
 		}
-		response.setCharacterEncoding("UTF-8");
 		// TODO also check that the principal can access the adapter
 
 		/*
