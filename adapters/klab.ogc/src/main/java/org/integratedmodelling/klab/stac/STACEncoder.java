@@ -153,7 +153,7 @@ public class STACEncoder implements IResourceEncoder {
                 start = refittedTime.getStart();
                 end = refittedTime.getEnd();
             } else {
-                throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+                throw new KlabContextualizationException("Current observation is outside the temporal bounds of the STAC resource and cannot be reffitted.");
             }
         }
 
