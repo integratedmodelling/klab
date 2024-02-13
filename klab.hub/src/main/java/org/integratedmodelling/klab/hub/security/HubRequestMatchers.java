@@ -19,6 +19,11 @@ public final class HubRequestMatchers {
 			API.HUB.USER_BASE+"$"
 	};
 	
+	private static final String[] usersPut = new String[] {
+			API.HUB.USER_BASE+".*" + API.HUB.PARAMETERS.USER_SET_EMAIL + ".*",			
+			API.HUB.USER_BASE+"$"
+	};
+	
 	private static final String[] agreements = new String[] {
 	        API.HUB.AGREEMENT_TEMPLATE_TYPE_LEVEL+"*"            
     };
@@ -42,6 +47,10 @@ public final class HubRequestMatchers {
 
 	public static String[] getUsersGet() {
 		return usersGet;
+	}
+
+	public static String[] getUsersPut() {
+		return usersPut;
 	}
 
 	

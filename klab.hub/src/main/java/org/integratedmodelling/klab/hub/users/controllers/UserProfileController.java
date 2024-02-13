@@ -18,13 +18,16 @@ import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
 import org.integratedmodelling.klab.hub.controllers.pagination.GenericPageAndFilterConverter;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
+import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.PageRequest;
 import org.integratedmodelling.klab.hub.payload.PageResponse;
 import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
+import org.integratedmodelling.klab.hub.payload.UpdateEmailRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateEmailResponse;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.service.FilterBuilderService;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
+import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -52,17 +55,19 @@ public class UserProfileController {
     private final GenericPageAndFilterConverter genericPageAndFilterConverter;
     private final FilterBuilderService filterBuilderService;
 	private RegistrationTokenService tokenService;
+	private UserAuthTokenService userAuthService;
 	
 	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 	private static final String FILTER_NO_GROUPS = "$NO_GROUPS$";
 	
 	@Autowired
 	UserProfileController(UserProfileService userService, GenericPageAndFilterConverter genericPageAndFilterConverter,
-			FilterBuilderService filterBuilderService, RegistrationTokenService tokenService) {
+			FilterBuilderService filterBuilderService, RegistrationTokenService tokenService, UserAuthTokenService userAuthService) {
 		this.userService = userService;
 		this.genericPageAndFilterConverter = genericPageAndFilterConverter;
 		this.filterBuilderService = filterBuilderService;
 		this.tokenService = tokenService;
+		this.userAuthService = userAuthService;
 	}
 	
 	@SuppressWarnings("unlikely-arg-type")
@@ -163,21 +168,33 @@ public class UserProfileController {
 
 	}
 	
-//	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_PASSWORD)
-//	public ResponseEntity<?> updateUserEmail(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_SET_PASSWORD) String setPassword,
-//			@RequestBody PasswordChangeRequest passwordRequest) {
+	@PutMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_EMAIL)
+	//@PreAuthorize("authentication.getPrincipal() == #id")
+	public ResponseEntity<?> updateUserEmail(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_SET_EMAIL) String setPassword,
+			@RequestBody UpdateEmailRequest updateEmailRequest) {
 //		TokenType[] types = { TokenType.newUser, TokenType.password, TokenType.lostPassword };
 //		if (!tokenService.verifyTokens(id, setPassword, types)) {
 //			throw new ActivationTokenFailedException("User Verification token failed");
 //		}
-//		//User user = userService.setPassword(id, passwordRequest.getNewPassword(), passwordRequest.getConfirm());
+		//User user = userService.setPassword(id, passwordRequest.getNewPassword(), passwordRequest.getConfirm());
 //		if(user != null) {
 //			tokenService.deleteToken(setPassword);
 //		}
-//		JSONObject resp = new JSONObject();
-//		resp.appendField("Message", "User password updated");
-//		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
-//	}
+		
+		try {
+			userAuthService.getAuthResponse(updateEmailRequest.getUsername(), updateEmailRequest.getPassword(), updateEmailRequest.isRemote());
+		} catch (Exception e) {
+			JSONObject resp = new JSONObject();
+			resp.appendField("Message", "Incorrect password.");
+			return new ResponseEntity<JSONObject>(resp,HttpStatus.UNAUTHORIZED);
+		}
+		
+		userService.updateUserEmail(id, updateEmailRequest.getEmail());
+		JSONObject resp = new JSONObject();
+		resp.appendField("Message", "User email updated");
+		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
+	}
+
 
 	@GetMapping(value = API.HUB.USER_BASE_ID, params = "remote-login")
 	@PreAuthorize("authentication.getPrincipal() == #id")

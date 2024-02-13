@@ -144,6 +144,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.permitAll()
 			.regexMatchers(HttpMethod.GET, HubRequestMatchers.getUsersGet())
             .permitAll()
+            .regexMatchers(HttpMethod.PUT, HubRequestMatchers.getUsersPut())
+            .permitAll()
 		.anyRequest()
 			.authenticated()
 			.and()

@@ -22,16 +22,16 @@ public interface UserProfileService {
 	abstract ProfileResource getRawUserProfile(String username);
 	abstract ProfileResource getCurrentUserProfile(boolean remote);
 	abstract Set<ProfileResource> getAllUserProfiles();
-	ProfileResource updateUserEmail(ProfileResource profile);
-	/**
+    abstract Page<User> getPage(Query query, Pageable pageable);
+    abstract List<User> getQuery(Query query);
+    /**
 	 * Check if email is changed. 
 	 * If email changes send and email to the user to verified this action
 	 * @param user
 	 * @throws MessagingException 
 	 */
-	
-    abstract Page<User> getPage(Query query, Pageable pageable);
-    abstract List<User> getQuery(Query query);
 	abstract ProfileResource createNewEmailRequest(String id, String requestNewEmail) throws MessagingException;
+	
+	abstract ProfileResource updateUserEmail(String id, String email);
 
 }
