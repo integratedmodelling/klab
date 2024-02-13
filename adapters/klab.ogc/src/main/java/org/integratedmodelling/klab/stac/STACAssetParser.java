@@ -28,16 +28,16 @@ public class STACAssetParser {
      * @param asset as JSON
      * @return A map where each value has its own summary.
      */
-    public static Map<String, String> getFileValues(JSONObject asset) {
+    public static Map<String, Object> getFileValues(JSONObject asset) {
         if (!asset.has("file:values")) {
             return Map.of();
         }
 
-        Map<String, String> ret = new HashMap<>();
+        Map<String, Object> ret = new HashMap<>();
         asset.getJSONArray("file:values").forEach(e -> {
             JSONObject entry = (JSONObject) e;
             JSONArray values = entry.getJSONArray("values");
-            String summary = entry.getString("summary");
+            Object summary = entry.get("summary");
 
             values.forEach(value -> ret.put(value.toString(), summary));
         });

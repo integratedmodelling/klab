@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
@@ -61,7 +62,7 @@ public class STACValidator implements IResourceValidator {
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
         // Currently, only files:values is supported. If needed, the classification extension could be used too.
-        Map<String, String> vals = STACAssetParser.getFileValues(asset);
+        Map<String, Object> vals = STACAssetParser.getFileValues(asset);
         if (!vals.isEmpty()) {
             CodelistReference codelist = populateCodelist(assetId, vals);
             builder.addCodeList(codelist);
@@ -71,7 +72,15 @@ public class STACValidator implements IResourceValidator {
         return builder;
     }
 
-    private CodelistReference populateCodelist(String assetId, Map<String, String> vals) {
+    private Type getCodelistType(Object value) {
+        if (value instanceof Number) {
+            return Type.NUMBER;
+        }
+        // As we are reading a JSON, text is our safest default option
+        return Type.TEXT;
+    }
+
+    private CodelistReference populateCodelist(String assetId, Map<String, Object> vals) {
         CodelistReference codelist = new CodelistReference();
         codelist.setId(assetId.toUpperCase());
         codelist.setName(assetId);
@@ -79,10 +88,11 @@ public class STACValidator implements IResourceValidator {
         codelist.setVersion("0.0.1");
         MappingReference direct = new MappingReference();
         MappingReference inverse = new MappingReference();
-        for (Entry<String, String> code : vals.entrySet()) {
-            direct.getMappings().add(new Pair<>(code.getKey(), code.getValue()));
-            codelist.getCodeDescriptions().put(code.getKey(), code.getValue());
-        }
+        vals.entrySet().forEach(code -> {
+            codelist.setType(getCodelistType(code.getValue()));
+            direct.getMappings().add(new Pair<>(code.getKey(), (String)code.getValue()));
+            codelist.getCodeDescriptions().put(code.getKey(), (String)code.getValue());
+        });
         codelist.setDirectMapping(direct);
         codelist.setInverseMapping(inverse);
         return codelist;
