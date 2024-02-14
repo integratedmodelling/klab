@@ -41,7 +41,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 	public static final String CDS_USER_NUMBER_PROPERTY = "klab.copernicus.cds.user";
 	public static final String CDS_API_KEY_PROPERTY = "klab.copernicus.cds.apikey";
-	public static final String CDS_API_VERSION = "1_1";
+	public static final String CDS_API_VERSION_1_0 = "1_0";
+	public static final String CDS_API_VERSION_1_1 = "1_1";
 	private int TIMEOUT_SECONDS = 30;
 	private static Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
 
@@ -126,7 +127,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		body.put("year", "" + date.getYear());
 		body.put("month", this.monts[(date.getMonth() - 1) / 3]);
 		body.put("day", this.days);
-		body.put("version", CDS_API_VERSION);
+		body.put("version", CDS_API_VERSION_1_0);
 
 		configureRequest(variable, body);
 
