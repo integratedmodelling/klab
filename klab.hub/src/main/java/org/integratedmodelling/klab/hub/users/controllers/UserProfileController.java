@@ -18,10 +18,8 @@ import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
 import org.integratedmodelling.klab.hub.controllers.pagination.GenericPageAndFilterConverter;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
-import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.PageRequest;
 import org.integratedmodelling.klab.hub.payload.PageResponse;
-import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateEmailRequest;
 import org.integratedmodelling.klab.hub.payload.UpdateEmailResponse;
 import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
@@ -37,7 +35,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.token.TokenService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -125,7 +122,12 @@ public class UserProfileController {
 	
 	@GetMapping(value=API.HUB.USER_BASE_ID_NOAUTH, params = API.HUB.PARAMETERS.USER_GET)
 	public ResponseEntity<?> getUserDataByToken(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_GET) String setEmail) {
-		TokenVerifyEmailClickback token = (TokenVerifyEmailClickback) tokenService.getAndVerifyToken(id, setEmail, TokenType.verifyEmail);
+		TokenVerifyEmailClickback token = null;
+		try {
+			token = (TokenVerifyEmailClickback) tokenService.getAndVerifyToken(id, setEmail, TokenType.verifyEmail);
+		} catch (Exception e) {
+			throw new ActivationTokenFailedException("User Verification token failed");
+		}
 		if (token == null) {
 			throw new ActivationTokenFailedException("User Verification token failed");
 		}
@@ -169,29 +171,33 @@ public class UserProfileController {
 	}
 	
 	@PutMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_EMAIL)
-	//@PreAuthorize("authentication.getPrincipal() == #id")
 	public ResponseEntity<?> updateUserEmail(@PathVariable String id, @RequestParam(API.HUB.PARAMETERS.USER_SET_EMAIL) String setPassword,
 			@RequestBody UpdateEmailRequest updateEmailRequest) {
-//		TokenType[] types = { TokenType.newUser, TokenType.password, TokenType.lostPassword };
-//		if (!tokenService.verifyTokens(id, setPassword, types)) {
-//			throw new ActivationTokenFailedException("User Verification token failed");
-//		}
-		//User user = userService.setPassword(id, passwordRequest.getNewPassword(), passwordRequest.getConfirm());
-//		if(user != null) {
-//			tokenService.deleteToken(setPassword);
-//		}
 		
+		/* Check user and password are correct */
 		try {
 			userAuthService.getAuthResponse(updateEmailRequest.getUsername(), updateEmailRequest.getPassword(), updateEmailRequest.isRemote());
 		} catch (Exception e) {
-			JSONObject resp = new JSONObject();
-			resp.appendField("Message", "Incorrect password.");
-			return new ResponseEntity<JSONObject>(resp,HttpStatus.UNAUTHORIZED);
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password.");
 		}
 		
-		userService.updateUserEmail(id, updateEmailRequest.getEmail());
+		/* Check token is correct */
+		TokenVerifyEmailClickback token = (TokenVerifyEmailClickback) tokenService.getAndVerifyToken(id, updateEmailRequest.getToken(), TokenType.verifyEmail);
+		if (token == null) {
+			throw new ActivationTokenFailedException("User Verification token failed");
+		}		
+		
+		/* Update user email */
+		try {
+			userService.updateUserEmail(id, updateEmailRequest.getEmail());
+		} catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
+		
+		/* If all process is ok delete token */
+		tokenService.deleteToken(token.getTokenString());
+		
 		JSONObject resp = new JSONObject();
-		resp.appendField("Message", "User email updated");
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 

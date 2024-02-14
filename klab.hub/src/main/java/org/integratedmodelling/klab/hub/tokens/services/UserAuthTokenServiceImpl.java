@@ -103,7 +103,7 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 
 	@SuppressWarnings("rawtypes")
     @Override
-	public LoginResponse getAuthResponse(String username, String password, boolean remote) {
+	public LoginResponse<?> getAuthResponse(String username, String password, boolean remote) {
 		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
 		if (remote) {

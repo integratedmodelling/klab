@@ -22,9 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.token.TokenService;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +31,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 	
 	private UserRepository userRepository;
 	private LdapServiceImpl ldapServiceImpl;
-	private LdapUserDetailsManager ldapUserDetailsManager;
 	
 	private ObjectMapper objectMapper;
 	
@@ -43,15 +39,13 @@ public class UserProfileServiceImpl implements UserProfileService {
 	private RegistrationTokenService tokenService;
 	
 	
-	public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, EmailManager emailManager, RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl,
-			LdapUserDetailsManager ldapUserDetailsManager) {
+	public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, EmailManager emailManager, RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl) {
 		super();
 		this.userRepository = userRepository;
 		this.objectMapper = objectMapper;
 		this.emailManager = emailManager;
 		this.tokenService = tokenService;
 		this.ldapServiceImpl = ldapServiceImpl;
-		this.ldapUserDetailsManager = ldapUserDetailsManager;
 	}
 
 	@Override
@@ -146,10 +140,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 		/* update mongo repository */
 		User updatedUser = new UpdateUser(user, userRepository).execute();
 		/* update ldap */
-		//UserDetails ldapUser = ldapUserDetailsManager.loadUserByUsername(username);
-		//ldapUser.s
-		ldapServiceImpl.updateUserEmailAddress(username, email);
-		//UserDetails ldapUser = ldapUserDetailsManager.loadUserByUsername(username);
+		ldapServiceImpl.updateUserEmailAddress(username, email);		
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
 		return updatedProfile.getSafeProfile();
 	}
