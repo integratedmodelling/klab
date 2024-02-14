@@ -90,9 +90,28 @@ export object route
 		values Centroid
 		default "Centroid"		
 
+	optional enum server
+		"Specify whether the contextualizer uses a local installation of the routing service or the remote installation in k.LAB's infrastructure."
+		values Local, Remote
+		default Local
 	
 //	TODO configuration to use 
 
 	class org.integratedmodelling.klab.components.network.services.RoutingRelationshipInstantiator
 
 }
+
+
+
+export object communities 
+	"Detects communities/modules of a complex network using Infomap method."
+{
+	optional import object network
+		"Semantics for the target network"
+		default ""
+
+	class org.integratedmodelling.klab.components.network.services.CommunityInstantiator
+
+}
+
+
