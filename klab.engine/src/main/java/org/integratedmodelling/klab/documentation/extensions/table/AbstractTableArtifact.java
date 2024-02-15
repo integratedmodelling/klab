@@ -21,8 +21,8 @@ public abstract class AbstractTableArtifact extends Artifact implements IKnowled
 	
 	public static final String EXCEL_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	public static final String HTML_MEDIA_TYPE = "text/html";
-    public static final String TEXT_PLAIN_MEDIA_TYPE = "text/markdown";
-    public static final String MARKDOWN_MEDIA_TYPE = "text/plain";
+    public static final String TEXT_PLAIN_MEDIA_TYPE = "text/plain";
+    public static final String MARKDOWN_MEDIA_TYPE = "text/markdown";
     
 	protected abstract IDocumentationView getCompiledView(ITableView view, int sheetId);
 	
