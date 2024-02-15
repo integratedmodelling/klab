@@ -266,7 +266,6 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("active");
         layoutMetadata.add("timeout");
         layoutMetadata.add("opened");
-        layoutMetadata.add("tooltip");
 
         isoLanguages = new HashSet<>();
         for (String isoLanguage : Locale.getISOLanguages()) {
