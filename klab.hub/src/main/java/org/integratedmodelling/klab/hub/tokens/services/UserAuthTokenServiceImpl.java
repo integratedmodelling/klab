@@ -1,13 +1,12 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
 import java.util.List;
-
 import java.util.Optional;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.JwtToken;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.TokenType;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.commands.CreateUserAuthenticationToken;
@@ -20,6 +19,8 @@ import org.integratedmodelling.klab.hub.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,9 +30,12 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoException;
 
 @Service
 public class UserAuthTokenServiceImpl implements UserAuthTokenService{
+	
+	protected static final Logger logger = LoggerFactory.getLogger(UserAuthTokenServiceImpl.class);
 	
 	private AuthenticationManager authenticationManager;
 	
@@ -69,7 +73,12 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 
 	@Override
 	public void deleteToken(String tokenString) {
-		new DeleteAuthenticationToken(tokenRepository, tokenString).execute();
+		try {
+			new DeleteAuthenticationToken(tokenRepository, tokenString).execute();
+		} catch (MongoException e) {
+			logger.error(e.getMessage(), e);
+			throw new KlabException("Error deleting token, " + e.getMessage(), e);
+		}
 	}
 	
 	private void deleteExpiredTokens(String username) {

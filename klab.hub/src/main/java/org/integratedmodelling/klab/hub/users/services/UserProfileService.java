@@ -31,7 +31,12 @@ public interface UserProfileService {
 	 * @throws MessagingException 
 	 */
 	abstract ProfileResource createNewEmailRequest(String id, String requestNewEmail) throws MessagingException;
-	
+	/**
+	 * Update the email	 of user in mongo and ldap 
+	 * @param id
+	 * @param email
+	 * @return
+	 */
 	abstract ProfileResource updateUserEmail(String id, String email);
 
 }

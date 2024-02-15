@@ -18,6 +18,9 @@ import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.service.implementation.LdapServiceImpl;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
@@ -29,17 +32,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Service
 public class UserProfileServiceImpl implements UserProfileService {
 	
+	protected static final Logger logger = LoggerFactory.getLogger(UserProfileServiceImpl.class);
+
 	private UserRepository userRepository;
 	private LdapServiceImpl ldapServiceImpl;
-	
+
 	private ObjectMapper objectMapper;
-	
-	private EmailManager emailManager;	
-	
+
+	private EmailManager emailManager;
+
 	private RegistrationTokenService tokenService;
-	
-	
-	public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, EmailManager emailManager, RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl) {
+
+	public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, EmailManager emailManager,
+			RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl) {
 		super();
 		this.userRepository = userRepository;
 		this.objectMapper = objectMapper;
@@ -55,7 +60,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
 		return updatedProfile.getSafeProfile();
 	}
-	
+
 	@Override
 	public ProfileResource getUserSafeProfile(User user) {
 		if (user == null) {
@@ -67,21 +72,17 @@ public class UserProfileServiceImpl implements UserProfileService {
 
 	@Override
 	public ProfileResource getUserProfile(String username) {
-		User user = userRepository.findByNameIgnoreCase(username)
-				.orElseThrow(() ->  
-					new UserDoesNotExistException());
+		User user = userRepository.findByNameIgnoreCase(username).orElseThrow(() -> new UserDoesNotExistException());
 		return getUserSafeProfile(user);
 	}
 
 	@Override
 	public ProfileResource getCurrentUserProfile(boolean remote) {
 		String username = SecurityContextHolder.getContext().getAuthentication().getName();
-		User user = userRepository.findByNameIgnoreCase(username)
-				.orElseThrow(() ->  
-					new UserDoesNotExistException());
+		User user = userRepository.findByNameIgnoreCase(username).orElseThrow(() -> new UserDoesNotExistException());
 		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
 		if (remote) {
-		    return profile;
+			return profile;
 		}
 		return profile.getSafeProfile();
 	}
@@ -89,16 +90,14 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public Set<ProfileResource> getAllUserProfiles() {
 		Set<ProfileResource> profiles = new HashSet<>();
-		userRepository.findAll().forEach(user -> profiles.add(
-				objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()));
+		userRepository.findAll()
+				.forEach(user -> profiles.add(objectMapper.convertValue(user, ProfileResource.class).getSafeProfile()));
 		return profiles;
 	}
 
 	@Override
 	public ProfileResource getRawUserProfile(String username) {
-		User user = userRepository.findByNameIgnoreCase(username)
-				.orElseThrow(() ->  
-					new UserDoesNotExistException());
+		User user = userRepository.findByNameIgnoreCase(username).orElseThrow(() -> new UserDoesNotExistException());
 		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
 		return profile;
 	}
@@ -106,62 +105,90 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public ProfileResource getUserProfileByEmail(String email) {
 		User user = userRepository.findByEmailIgnoreCase(email)
-				.orElseThrow(() ->  
-					new UserByEmailDoesNotExistException(email));
+				.orElseThrow(() -> new UserByEmailDoesNotExistException(email));
 		return getUserSafeProfile(user);
 	}
-	
+
 	/**
-	 * Create TokenVerifyEmailClickback if email is changed. 
-	 * If email changes send and email to the user to verified this action
+	 * Create TokenVerifyEmailClickback if email is changed. If email changes send
+	 * and email to the user to verified this action
+	 * 
 	 * @param user
 	 * @param email
-	 * @throws MessagingException 
+	 * @throws MessagingException
 	 */
 	@Override
 	public ProfileResource createNewEmailRequest(String username, String email) throws MessagingException {
 		ProfileResource profile = getUserProfile(username);
-		if(profile.getEmail() != email) {
-			TokenVerifyEmailClickback token = (TokenVerifyEmailClickback)
-					tokenService.createToken(username, email, TokenType.verifyEmail);
-			
-			emailManager.sendVerifyEmailClickback(email, token.getCallbackUrl());			
+		if (profile.getEmail().equals(email)) {
+			throw new KlabException("Not modified email.");
 		}
+		if (userRepository.existsByEmailIgnoreCase(email)) {
+			throw new KlabException("Duplicated key. Email is already exists");
+		}
+		TokenVerifyEmailClickback token = (TokenVerifyEmailClickback) tokenService.createToken(username, email,
+				TokenType.verifyEmail);
+
+		try {
+			emailManager.sendVerifyEmailClickback(email, token.getCallbackUrl());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			tokenService.deleteToken(token.getTokenString());
+			throw new KlabException("Error sending mail.");
+		}
+
 		return profile;
 
 	}
-	
+
 	@Override
-	public ProfileResource updateUserEmail(String username, String email) {
+	public ProfileResource updateUserEmail(String username, String email)  {
 		User user = userRepository.findByNameIgnoreCase(username)				
 				.orElseThrow(() ->  
 					new KlabException("Current User doesn't exist"));
 		user.setEmail(email);
-		/* update mongo repository */
-		User updatedUser = new UpdateUser(user, userRepository).execute();
+		
+		/* update mongo repository */		
+		User updatedUser;
+		
+		try {
+			updatedUser = new UpdateUser(user, userRepository).execute();
+		} catch (DuplicateKeyException e) {
+			logger.error(e.getMessage());
+			throw new KlabException("Duplicated key, email is already in use." );
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new KlabException("Error updating mongo user: " + e.getMessage(), e);
+		}
+		
 		/* update ldap */
-		ldapServiceImpl.updateUserEmailAddress(username, email);		
+		try {
+		ldapServiceImpl.updateUserEmailAddress(username, email);
+		} catch (Exception e) {
+			logger.error(e.getMessage(), e);
+			throw new KlabException("Error updating ldap user: " + e.getMessage(), e);
+		}
+		
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
 		return updatedProfile.getSafeProfile();
 	}
-	
+
 	private User updateUserFromProfileResource(ProfileResource profile) {
 		User user = userRepository.findByNameIgnoreCase(profile.getUsername())
 				.filter(u -> u.getUsername().equals(profile.getUsername()))
-				.orElseThrow(() ->  
-					new KlabException("Current User context does match updated profile username"));
+				.orElseThrow(() -> new KlabException("Current User context does match updated profile username"));
 		user.updateFromProfileResource(profile);
 		return user;
 	}
 
-    @Override
-    public Page<User> getPage(Query query, Pageable pageable) {
-        return userRepository.findAll(query, pageable);
-    }
-    
-    @Override
-    public List<User> getQuery(Query query) {
-        return userRepository.findAll(query);
-    }
+	@Override
+	public Page<User> getPage(Query query, Pageable pageable) {
+		return userRepository.findAll(query, pageable);
+	}
+
+	@Override
+	public List<User> getQuery(Query query) {
+		return userRepository.findAll(query);
+	}
 
 }
