@@ -14,7 +14,9 @@ public enum TokenType {
 	lostPassword(
 			TokenLostPasswordClickback.class),
 	lever(
-			TokenLever.class);
+			TokenLever.class), 
+	verifyEmail(
+			TokenVerifyEmailClickback.class);
 
     private final Class<? extends TokenAuthentication> clazz;
 
