@@ -203,6 +203,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
         }
         // true, false -> if true, force extensive measurement and must be value. Ignored if a unit
         // is passed.
+        boolean targetIsExtensive = Observables.INSTANCE.isExtensive(this.target.getObservable());
         this.extensive = parameters.get("extensive", false);
         if (this.extensive && this.unit == null) {
             this.unit = sourceState.getObservable().getUnit();
@@ -220,7 +221,7 @@ public class SummarizingTableCompiler implements ITableCompiler {
         this.rowSummary = parameters.get("rowsummary");
         this.colSummary = parameters.get("colsummary");
         this.scope = scope;
-
+        
     }
 
     private void processStructure(Object rowSpecs, Dimension dimension, IContextualizationScope scope) {
@@ -463,6 +464,26 @@ public class SummarizingTableCompiler implements ITableCompiler {
                 }
                 results.add(total);
                 break;
+            case "mean":
+                /*
+                 * compute the other dimensions' total
+                 */
+                double mean = 0;
+                int n = 0;
+                for (String myId : (dimension == Dimension.ROW ? rowIds : colIds)) {
+                    Object value = dimension == Dimension.ROW
+                            ? builder.getCellValue(myId, otherId)
+                            : builder.getCellValue(otherId, myId);
+                    if (Observations.INSTANCE.isData(value) && value instanceof Number) {
+                        mean += ((Number) value).doubleValue();
+                        n ++;
+                    }
+                }
+                if (n > 0) {
+                	mean /= (double)n;
+                }
+                results.add(mean);
+                break;
             case "change":
                 label = "Net change";
                 Object first = dimension == Dimension.ROW
@@ -670,7 +691,11 @@ public class SummarizingTableCompiler implements ITableCompiler {
          */
 
         if (object instanceof Collection) {
-            object = ((Collection<?>) object).iterator().next();
+        	String ret = "";
+        	for (Object o : ((Collection<?>)object)) {     		
+        		ret += (ret.isEmpty() ? "" : ", ") + getLabel(o);
+        	}
+        	return ret;
         }
 
         if (OWL.INSTANCE.getNothing().equals(object)) {

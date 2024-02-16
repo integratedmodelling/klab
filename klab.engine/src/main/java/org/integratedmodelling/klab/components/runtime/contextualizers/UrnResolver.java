@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -112,11 +113,14 @@ public class UrnResolver extends AbstractContextualizer implements IExpression, 
         }
 
         try {
+            long start = System.currentTimeMillis();
             IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope, observation);
+            scope.getMonitor().info("Resource " + urn + " contextualized in " + Time.INSTANCE.printPeriod(System.currentTimeMillis() - start));
 
             if (Configuration.INSTANCE.isEchoEnabled()) {
                 System.err.println("DONE " + this.resource.getUrn());
             }
+
 
             if (data == null) {
                 scope.getMonitor().error("Cannot extract data from resource " + resource.getUrn());

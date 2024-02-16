@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
+import org.integratedmodelling.klab.hub.api.CreateVerifyEmailToken;
 import org.integratedmodelling.klab.hub.api.TokenAuthentication;
 import org.integratedmodelling.klab.hub.api.TokenClickback;
 import org.integratedmodelling.klab.hub.api.TokenType;
@@ -34,6 +35,17 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 			return new CreateChangePasswordToken(repository, username, linkConfig).execute();
 		} else if(type.equals(TokenType.lostPassword)) {
 			return new CreateLostPasswordToken(repository, username, linkConfig).execute();
+		} else if(type.equals(TokenType.verifyEmail)) {
+			return new CreateVerifyEmailToken(repository, username, linkConfig).execute();
+		} else {
+			return null;
+		}
+	}
+	
+	@Override
+	public TokenClickback createToken(String username, String email, TokenType type) {
+		if(type.equals(TokenType.verifyEmail)) {
+			return new CreateVerifyEmailToken(repository, username, email, linkConfig).execute();
 		} else {
 			return null;
 		}
@@ -56,6 +68,15 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 			.filter(token -> token.getClickbackAction().getTokenType().equals(type))
 			.map(token -> setAuthentication(token))
 			.isPresent();
+	}
+	
+	@Override
+	public TokenAuthentication getAndVerifyToken(String username, String id, TokenType type) {
+		return repository.findByTokenString(id)
+			.filter(token -> token.getPrincipal().equals(username))
+			.map(TokenClickback.class::cast)
+			.filter(token -> token.getClickbackAction().getTokenType().equals(type)).orElseGet(null);
+		
 	}
 	
 	@Override

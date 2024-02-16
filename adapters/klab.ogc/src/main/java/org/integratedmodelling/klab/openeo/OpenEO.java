@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.Authorization;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
-import org.integratedmodelling.klab.openeo.OpenEO.Process;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.JsonUtils;

@@ -11,6 +11,9 @@ import java.util.Set;
 import javax.naming.Name;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
+import javax.naming.directory.BasicAttribute;
+import javax.naming.directory.DirContext;
+import javax.naming.directory.ModificationItem;
 
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.service.LdapService;
@@ -121,5 +124,12 @@ public class LdapServiceImpl implements LdapService{
 			}
 			return userAttributes;
 		}
+	}
+	
+	@Override
+	public void updateUserEmailAddress(String username, String newEmailAddress) {
+	    Name dn = buildDn(username);
+	    ModificationItem modificationItem = new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("mail", newEmailAddress));
+	    ldapTemplate.modifyAttributes(dn, new ModificationItem[] { modificationItem });
 	}
 }

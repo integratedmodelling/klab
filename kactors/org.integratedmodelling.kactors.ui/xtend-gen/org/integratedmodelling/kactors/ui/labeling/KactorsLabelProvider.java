@@ -32,7 +32,7 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
   public KactorsLabelProvider(final AdapterFactoryLabelProvider delegate) {
     super(delegate);
   }
-
+  
   public String text(final Statement statement) {
     MessageCall _verb = statement.getVerb();
     boolean _tripleNotEquals = (_verb != null);
@@ -71,16 +71,16 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
     }
     return null;
   }
-
+  
   public String text(final Metadata metadata) {
     return "Metadata";
   }
-
+  
   public String text(final Definition definition) {
     String _name = definition.getName();
     return ("Message " + _name);
   }
-
+  
   public String text(final StatementList list) {
     String _xblockexpression = null;
     {
@@ -93,15 +93,15 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
     }
     return _xblockexpression;
   }
-
+  
   public String text(final Match match) {
     return "Match";
   }
-
+  
   public String text(final Actions action) {
     return "Message actions";
   }
-
+  
   public String text(final StatementGroup group) {
     String _xblockexpression = null;
     {
@@ -114,7 +114,7 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
     }
     return _xblockexpression;
   }
-
+  
   public String text(final MessageCall call) {
     return call.getName();
   }

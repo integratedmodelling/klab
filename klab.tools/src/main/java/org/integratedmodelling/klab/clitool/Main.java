@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.clitool;
 
-import org.apache.commons.lang.StringUtils;
 import org.integratedmodelling.klab.clitool.console.SysConsole;
 import org.integratedmodelling.klab.clitool.console.TermConsole;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
  * A CLI-driven k.LAB modeler.

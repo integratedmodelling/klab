@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Parameters;
 
 
-/*
+/**
  *  Resolver for Ordered Weighted Averages (OWA) of multiple observations. OWAs are used in multi-criteria analysis
  *  to guide decision making in spatially distributed contexts by associating a degree of importance, risk or 
  *  vulnerability to each location in a certain scope based on the relative relevance of a set of observables and the

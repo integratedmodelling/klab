@@ -92,13 +92,13 @@ public class KimStatement extends KimScope implements IKimStatement {
     protected void setCode(EObject statement) {
         this.eObject = statement;
         ICompositeNode node = NodeModelUtils.findActualNodeFor(statement);
+        sourceCode = node.getText().trim();
         this.firstLine = node.getStartLine();
         this.lastLine = node.getEndLine();
         this.firstCharOffset = node.getOffset();
         this.lastCharOffset = node.getEndOffset();
         this.uri = EcoreUtil.getURI(statement);
         this.resource = statement.eResource() == null ? "" : statement.eResource().getURI().path();
-        sourceCode = node.getText().trim();
     }
 
     public EObject getEObject() {

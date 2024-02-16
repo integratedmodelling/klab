@@ -15,7 +15,6 @@ import org.integratedmodelling.kim.ide.KimIdeModule;
  */
 @SuppressWarnings("all")
 public class KimWebSetup extends KimStandaloneSetup {
-  @Override
   public Injector createInjector() {
     KimRuntimeModule _kimRuntimeModule = new KimRuntimeModule();
     KimIdeModule _kimIdeModule = new KimIdeModule();

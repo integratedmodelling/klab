@@ -29,7 +29,10 @@ import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.factory.GeoTools;
+import org.hortonmachine.gears.utils.geometry.GeometryHelper;
+import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
@@ -41,6 +44,7 @@ import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -53,7 +57,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
-import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -61,6 +64,9 @@ import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Utils;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -221,18 +227,23 @@ public class VectorEncoder implements IResourceEncoder {
         Projection originalProjection = Projection.create(crs);
         IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
 
-        Filter bbfilter = ff.bbox(ff.property(geomName), ((Envelope) envelopeInOriginalProjection).getJTSEnvelope());
+        ReferencedEnvelope bboxRefEnv = ((Envelope) envelopeInOriginalProjection).getJTSEnvelope();
+        Filter bbfilter = ff.bbox(ff.property(geomName), bboxRefEnv);
         if (filter != null) {
             bbfilter = ff.and(bbfilter, filter);
         }
 
         Rasterizer<Object> rasterizer = null;
+        double cellWidth = -1.0;
+        Polygon polygonEnv = null;
         if (rasterize) {
-//            String name = scope.getTargetName();
-//            String unit = scope.getTargetSemantics() != null && scope.getTargetSemantics().getUnit() != null
-//                    ? scope.getTargetSemantics().getUnit().toString()
-//                    : null;
-//            builder = builder.startState(name, unit, scope);
+            IGrid grid = ((Space) requestScale.getSpace()).getGrid();
+            rasterizer = new Rasterizer<Object>(grid);
+
+            cellWidth = grid.getCellWidth();
+            polygonEnv = GeometryUtilities.createPolygonFromEnvelope(bboxRefEnv);
+//                       preparedEnv = PreparedGeometryFactory.prepare(polygonEnv);
+
             rasterizer = new Rasterizer<Object>(((Space) requestScale.getSpace()).getGrid());
         }
 
@@ -245,97 +256,109 @@ public class VectorEncoder implements IResourceEncoder {
         
         int n = 1;
         FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
 
             if (presence) {
                 builder = builder.withMetadata("presence", Boolean.TRUE);
                 it.close();
                 return;
             }
-            
+
             SimpleFeature feature = it.next();
-            Object shape = feature.getDefaultGeometryProperty().getValue();
-            if (shape instanceof org.locationtech.jts.geom.Geometry) {
+            Geometry shape = (Geometry) feature.getDefaultGeometry();
 
-                if (((org.locationtech.jts.geom.Geometry) shape).isEmpty()) {
-                    continue;
+            if (shape.isEmpty()) {
+                continue;
+            }
+
+            if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
+                // shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
+                if (!shape.isValid()) {
+                    shape = shape.buffer(0);
                 }
+            }
+            
 
-                if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
-                    // shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
-                    if (!((org.locationtech.jts.geom.Geometry) shape).isValid()) {
-                        shape = ((org.locationtech.jts.geom.Geometry) shape).buffer(0);
-                    }
+            IShape objectShape = null;
+            if(rasterize) {
+                // do always intersect
+                try {
+                    Geometry intersection = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
+                    objectShape = Shape.create(intersection, originalProjection)
+                            .transform(requestScale.getSpace().getProjection());
+                } catch (Exception e) {
+                    throw new KlabIOException(e);
                 }
-
-                IShape objectShape = Shape.create((org.locationtech.jts.geom.Geometry) shape, originalProjection)
+                
+            }else {
+                objectShape = Shape.create(shape, originalProjection)
                         .transform(requestScale.getSpace().getProjection());
-
+    
                 if (intersect) {
                     objectShape = objectShape.intersection(requestScale.getSpace().getShape());
                 }
+            }
 
 //                display.add(objectShape);
-                
 
-                if (objectShape.isEmpty()) {
-                    continue;
-                }
-
-                if (rasterize) {
-
-                    Object value = Boolean.TRUE;
-
-                    if (idRequested != null) {
-                        String attrName = attributeNames.get(idRequested);
-                        if (attrName != null) {
-                            value = feature.getAttribute(attrName);
-                        }
-                    }
-
-                    value = Utils.asType(value, Utils.getClassForType(resource.getType()));
-
-                    final Object vval = value;
-                    rasterizer.add(objectShape, (s) -> vval);
-
-                } else if (!presence) {
-
-                    IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
-                    String objectName = null;
-                    if (nameAttribute != null) {
-                        Object nattr = feature.getAttribute(nameAttribute);
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(nameAttribute.toUpperCase());
-                        }
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(nameAttribute.toLowerCase());
-                        }
-                        if (nattr != null) {
-                            objectName = nattr.toString();
-                        }
-                    }
-                    if (objectName /* still */ == null) {
-                        objectName = fc.getSchema().getTypeName() + "_" + (n++);
-                    }
-
-                    builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
-                    for (String key : attributes.keySet()) {
-                        Object nattr = feature.getAttribute(key);
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(key.toUpperCase());
-                        }
-                        if (nattr == null) {
-                            nattr = feature.getAttribute(key.toLowerCase());
-                        }
-                        if (nattr != null) {
-                            builder.withMetadata(key.toLowerCase(), nattr);
-                        }
-                    }
-
-                    builder = builder.finishObject();
-
-                }
+            if (objectShape.isEmpty()) {
+                continue;
             }
+
+            if (rasterize) {
+
+                Object value = Boolean.TRUE;
+
+                if (idRequested != null) {
+                    String attrName = attributeNames.get(idRequested);
+                    if (attrName != null) {
+                        value = feature.getAttribute(attrName);
+                    }
+                }
+
+                value = Utils.asType(value, Utils.getClassForType(resource.getType()));
+
+                final Object vval = value;
+                rasterizer.add(objectShape, (s) -> vval);
+
+            } else if (!presence) {
+
+                IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
+                String objectName = null;
+                if (nameAttribute != null) {
+                    Object nattr = feature.getAttribute(nameAttribute);
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(nameAttribute.toUpperCase());
+                    }
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(nameAttribute.toLowerCase());
+                    }
+                    if (nattr != null) {
+                        objectName = nattr.toString();
+                    }
+                }
+                if (objectName /* still */ == null) {
+                    objectName = fc.getSchema().getTypeName() + "_" + (n++);
+                }
+
+                builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
+                for(String key : attributes.keySet()) {
+                    Object nattr = feature.getAttribute(key);
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(key.toUpperCase());
+                    }
+                    if (nattr == null) {
+                        nattr = feature.getAttribute(key.toLowerCase());
+                    }
+                    if (nattr != null) {
+                        builder.withMetadata(key.toLowerCase(), nattr);
+                    }
+                }
+
+                builder = builder.finishObject();
+
+            }
+
         }
 
         it.close();

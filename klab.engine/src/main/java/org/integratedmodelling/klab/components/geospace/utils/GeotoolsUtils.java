@@ -10,6 +10,7 @@ import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.RasterSymbolizer;
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.geotools.util.factory.Hints;
+import org.hortonmachine.gears.utils.files.FileUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -58,6 +60,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -934,6 +937,38 @@ public enum GeotoolsUtils {
             } catch (Exception e) {
                 e.printStackTrace();
                 scope.getMonitor().error(e.getMessage());
+            }
+        }
+    }
+    
+    public void dumpFailingOperationGeometries(String operationName, org.locationtech.jts.geom.Geometry... geometries) {
+        String dumpIntermediate = Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_MODEL_DUMP_INTERMEDIATE, "false");
+        boolean doDump = Boolean.parseBoolean(dumpIntermediate);
+        if (doDump) {
+            File klabFolder = Configuration.INSTANCE.getDataPath();
+            File dumpFolder = new File(klabFolder, "failing_operations_geometries");
+            if (!dumpFolder.exists()) {
+                dumpFolder.mkdirs();
+            }
+            
+
+            SimpleDateFormat f = new SimpleDateFormat("yyyyMMdd_HHmmss_SSS");            
+            String dateStr = f.format(new Date());
+            String fileName = dateStr + "_" + operationName + ".csv";
+
+            File outFolder = new File(dumpFolder, dateStr);
+            if (!outFolder.exists()) {
+                outFolder.mkdir();
+            }
+            File outfile = new File(outFolder, fileName);
+            StringBuilder sb = new StringBuilder("wkt;\n");
+            for(org.locationtech.jts.geom.Geometry geometry : geometries) {
+                sb.append(geometry.toText()).append(";\n");
+            }
+            try {
+                FileUtilities.writeFile(sb.toString(), outfile);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

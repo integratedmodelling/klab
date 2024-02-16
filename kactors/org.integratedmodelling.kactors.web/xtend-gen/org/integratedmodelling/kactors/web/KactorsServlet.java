@@ -16,8 +16,7 @@ import org.eclipse.xtext.xbase.lib.Exceptions;
 @SuppressWarnings("all")
 public class KactorsServlet extends XtextServlet {
   private DisposableRegistry disposableRegistry;
-
-  @Override
+  
   public void init() {
     try {
       super.init();
@@ -27,8 +26,7 @@ public class KactorsServlet extends XtextServlet {
       throw Exceptions.sneakyThrow(_e);
     }
   }
-
-  @Override
+  
   public void destroy() {
     if ((this.disposableRegistry != null)) {
       this.disposableRegistry.dispose();

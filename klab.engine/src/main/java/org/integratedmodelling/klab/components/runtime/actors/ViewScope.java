@@ -230,6 +230,7 @@ public class ViewScope implements IKActorsBehavior.ViewScope {
                 Layout.MenuItem menuItem = new Layout.MenuItem();
                 menuItem.setId("menu." + action.getId());
                 menuItem.setText(menu.containsKey("title") ? scope.localize(menu.get("title").toString()) : "Unnamed menu");
+                menuItem.setUrl(menu.containsKey("url") ? menu.get("url").toString() : null);
                 ret.getMenu().add(menuItem);
             }
         }
