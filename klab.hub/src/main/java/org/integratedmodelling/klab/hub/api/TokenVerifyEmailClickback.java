@@ -7,13 +7,13 @@ import org.springframework.data.annotation.TypeAlias;
 public class TokenVerifyEmailClickback extends TokenClickback {
 	
 	private static final long serialVersionUID = 2577854654763037014L;
-	private String notVerifiedEmail;
+	private String newEmail;
 	
 	
 
-	public TokenVerifyEmailClickback(String username, String notVerifiedEmail) {
+	public TokenVerifyEmailClickback(String username, String newEmail) {
 		super(username);
-		this.notVerifiedEmail = notVerifiedEmail;
+		this.newEmail = newEmail;
 	}
 
 
@@ -28,12 +28,12 @@ public class TokenVerifyEmailClickback extends TokenClickback {
 		return ClickbackAction.changeEmail;
 	}
 
-	public String getNotVerifiedEmail() {
-		return notVerifiedEmail;
+	public String getNewEmail() {
+		return newEmail;
 	}	
 
-	public void setNotVerifiedEmail(String notVerifiedEmail) {
-		this.notVerifiedEmail = notVerifiedEmail;
+	public void setNewEmail(String newEmail) {
+		this.newEmail = newEmail;
 	}
 	
 	

@@ -3,17 +3,17 @@ package org.integratedmodelling.klab.hub.payload;
 public class UpdateEmailResponse {
 	
 	private String email;
-	private String notVerifiedEmail;
+	private String newEmail;
 	
 	
 	public UpdateEmailResponse() {
 		super();
 	}
 	
-	public UpdateEmailResponse(String email, String notVerifiedEmail) {
+	public UpdateEmailResponse(String email, String newEmail) {
 		super();
 		this.email = email;
-		this.notVerifiedEmail = notVerifiedEmail;
+		this.newEmail = newEmail;
 	}
 	
 	public String getEmail() {
@@ -22,11 +22,11 @@ public class UpdateEmailResponse {
 	public void setEmail(String email) {
 		this.email = email;
 	}
-	public String getNotVerifiedEmail() {
-		return notVerifiedEmail;
+	public String getNewEmail() {
+		return newEmail;
 	}
-	public void setNotVerifiedEmail(String notVerifiedEmail) {
-		this.notVerifiedEmail = notVerifiedEmail;
+	public void setNewEmail(String newEmail) {
+		this.newEmail = newEmail;
 	}
 	
 	

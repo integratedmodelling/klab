@@ -144,7 +144,7 @@ public class UserProfileController {
 		}
 
 		ProfileResource profile = userService.getUserProfile(id);
-		UpdateEmailResponse response = new UpdateEmailResponse(profile.getEmail(), token.getNotVerifiedEmail());
+		UpdateEmailResponse response = new UpdateEmailResponse(profile.getEmail(), token.getNewEmail());
 		return new ResponseEntity<>(response, HttpStatus.OK);
 
 	}
