@@ -61,7 +61,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     
     @Override
     protected Collection<String> getMappingBasePackages(){
-        return Arrays.asList("org.integratedmodelling.klab.hub.api","org.integratedmodelling.klab.hub.tokens.dto" 
+        return Arrays.asList("org.integratedmodelling.klab.hub.api","org.integratedmodelling.klab.hub.tokens.dto","org.integratedmodelling.klab.hub.licenses.dto"
         		);
     }
     
