@@ -45,8 +45,8 @@ public class STACUtils {
         return authors.toString().trim();
     }
 
-    public static String[] extractCatalogAndCollection(String collectionURI) {
-        return collectionURI.split("/collections/");
+    public static String[] extractCatalogAndCollection(String collectionUrl) {
+        return collectionUrl.split("/collections/");
     }
 
     public static String getExtensionName(String identifier) {
@@ -57,18 +57,18 @@ public class STACUtils {
         return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
-    public static JsonNode requestCollectionMetadata(String catalogUrl, String collectionId) {
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
+    public static JsonNode requestCollectionMetadata(String collectionUrl) {
+        HttpResponse<JsonNode> response = Unirest.get(collectionUrl).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the collection at " + catalogUrl + "/collections/" + collectionId);
+            throw new KlabResourceAccessException("Cannot access the collection at " + collectionUrl);
         }
         return response.getBody();
     }
 
-    public static JsonNode requestItemMetadata(String catalogUrl, String collectionId, String item) {
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
+    public static JsonNode requestItemMetadata(String collectionUrl, String item) {
+        HttpResponse<JsonNode> response = Unirest.get(collectionUrl).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the item at " + catalogUrl + "/collections/" + collectionId + "/items/" + item);
+            throw new KlabResourceAccessException("Cannot access the item at " + collectionUrl + "/items/" + item);
         }
         return response.getBody();
     }

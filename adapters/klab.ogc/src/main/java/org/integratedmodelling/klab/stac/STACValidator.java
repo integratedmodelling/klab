@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
-
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -48,7 +46,9 @@ public class STACValidator implements IResourceValidator {
         STACService service = STACAdapter.getService(catalogUrl);
 
         String collectionId = userData.get("collectionId", String.class);
-        JsonNode metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
+        String collectionUrl = catalogUrl + "/collections/" + collectionId;
+        userData.put("collectionUrl", collectionUrl);
+        JsonNode metadata = STACUtils.requestCollectionMetadata(collectionUrl);
 
         Set<String> extensions = readSTACExtensions(metadata);
         userData.put("stac_extensions", extensions);
@@ -56,6 +56,7 @@ public class STACValidator implements IResourceValidator {
         IGeometry geometry = service.getGeometry(userData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
+        builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
         String assetId = userData.get("asset", String.class);
         JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);

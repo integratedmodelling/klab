@@ -66,12 +66,11 @@ public class STACService {
     }
 
     public IGeometry getGeometry(IParameters<String> parameters) {
-        String catalogUrl = parameters.get("catalogUrl", String.class);
-        String collectionId = parameters.get("collectionId", String.class);
+        String collectionUrl = parameters.get("collectionUrl", String.class);
 
         GeometryBuilder gBuilder = Geometry.builder();
 
-        JsonNode collectionMetadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
+        JsonNode collectionMetadata = STACUtils.requestCollectionMetadata(collectionUrl);
         JSONArray bbox = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
         gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
 
