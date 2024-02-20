@@ -4,9 +4,9 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.commands.CreateMongoGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.users.commands.CreateMongoGroup;
+import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
 import org.integratedmodelling.klab.utils.FileCatalog;
 
 public class CreateIntialGroups {

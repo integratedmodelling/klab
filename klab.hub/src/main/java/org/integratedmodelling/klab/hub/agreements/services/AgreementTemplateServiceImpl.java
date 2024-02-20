@@ -9,11 +9,11 @@ import org.integratedmodelling.klab.hub.agreements.commands.DeleteAgreementTempl
 import org.integratedmodelling.klab.hub.agreements.commands.ExistsAgreementTemplate;
 import org.integratedmodelling.klab.hub.agreements.commands.GetAgreementTemplateById;
 import org.integratedmodelling.klab.hub.agreements.commands.UpdateAgreementTemplate;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementTemplate;
 import org.integratedmodelling.klab.hub.agreements.exceptions.AgreementTemplateDoesNotExistException;
 import org.integratedmodelling.klab.hub.agreements.exceptions.AgreementTemplateExistException;
 import org.integratedmodelling.klab.hub.agreements.listeners.RemoveAgreementTemplate;
 import org.integratedmodelling.klab.hub.agreements.payload.RequestAgreementTemplate;
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;

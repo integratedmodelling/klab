@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.List;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.api.MongoTag;
-import org.integratedmodelling.klab.hub.api.TagEntry;
-import org.integratedmodelling.klab.hub.api.TagNotification;
+import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
+import org.integratedmodelling.klab.hub.tags.dto.TagEntry;
+import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
 import org.springframework.stereotype.Service;
 
 /**

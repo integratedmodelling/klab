@@ -5,8 +5,8 @@ import java.util.Set;
 
 import javax.mail.MessagingException;
 
-import org.integratedmodelling.klab.hub.api.ProfileResource;
-import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
+import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
