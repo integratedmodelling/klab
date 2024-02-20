@@ -67,6 +67,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.dataflow.Flowchart;
+import org.integratedmodelling.klab.documentation.extensions.table.AbstractTableArtifact;
 import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
 import org.integratedmodelling.klab.engine.debugger.Inspector;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -1104,22 +1105,22 @@ public class SessionState extends Parameters<String> implements ISessionState {
         return this.roles;
     }
 
-    /**
-     * Return all the table artifacts produced in this state.
-     * 
-     * @return
-     */
-    public Collection<TableArtifact> getTables() {
-        List<TableArtifact> ret = new ArrayList<>();
-        if (!this.context.isEmpty()) {
-            for (IKnowledgeView view : ((IRuntimeScope) ((Subject) getCurrentContext()).getScope()).getViews()) {
-                if (view instanceof TableArtifact) {
-                    ret.add((TableArtifact) view);
-                }
-            }
-        }
-        return ret;
-    }
+    /** 
+     * Return all the table artifacts produced in this state. 
+     *  
+     * @return 
+     */ 
+    public Collection<AbstractTableArtifact> getTables() { 
+        List<AbstractTableArtifact> ret = new ArrayList<>(); 
+        if (!this.context.isEmpty()) { 
+            for (IKnowledgeView view : ((IRuntimeScope) ((Subject) getCurrentContext()).getScope()).getViews()) { 
+                if (view instanceof AbstractTableArtifact) { 
+                    ret.add((AbstractTableArtifact) view); 
+                } 
+            } 
+        } 
+        return ret; 
+    } 
 
     @Override
     public String stageDownload(File file) {
