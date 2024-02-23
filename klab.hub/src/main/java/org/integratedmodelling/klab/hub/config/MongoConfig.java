@@ -26,7 +26,6 @@ import com.mongodb.client.MongoClients;
 @Profile("production")
 @Configuration
 @EnableMongoRepositories(basePackages = "org.integratedmodelling.klab.hub.repository")
-@EnableMongoAuditing
 public class MongoConfig extends AbstractMongoClientConfiguration {
 	
     @Value("${mongo.hostname}")
