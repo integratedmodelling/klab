@@ -19,8 +19,6 @@
 		<module>org.integratedmodelling.kim.ide</module>
 		<module>org.integratedmodelling.kim.ui</module>
 		<module>org.integratedmodelling.kim.target</module>
-		<!-- <module>org.integratedmodelling.kim.tests</module>  -->
-		<!-- <module>org.integratedmodelling.kim.ui.tests</module> -->
 		<module>org.integratedmodelling.kim.updatesite</module>
 		<module>org.integratedmodelling.kim.sdk</module>
 	</modules>

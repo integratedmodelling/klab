@@ -12,13 +12,7 @@ Workflow {
 			project = StandardProjectConfig {
 				baseName = "org.integratedmodelling.kactors"
 				rootPath = rootPath
-				runtimeTest = {
-					enabled = true
-				}
 				eclipsePlugin = {
-					enabled = true
-				}
-				eclipsePluginTest = {
 					enabled = true
 				}
 				createEclipseMetaData = true
