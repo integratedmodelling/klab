@@ -23,7 +23,6 @@
 		<!-- <module>org.integratedmodelling.kim.ui.tests</module> -->
 		<module>org.integratedmodelling.kim.updatesite</module>
 		<module>org.integratedmodelling.kim.sdk</module>
-		<!-- <module>org.integratedmodelling.kim.web</module> -->
 	</modules>
 	<build>
 		<plugins>

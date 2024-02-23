@@ -22,7 +22,6 @@
 		<module>org.integratedmodelling.kactors</module>
 		<module>org.integratedmodelling.kactors.ide</module>
 		<module>org.integratedmodelling.kactors.ui</module>
-		<!--<module>org.integratedmodelling.kactors.web</module>-->
 		<module>org.integratedmodelling.kactors.target</module>
 		<module>org.integratedmodelling.kactors.feature</module>
 		<module>org.integratedmodelling.kactors.repository</module>
