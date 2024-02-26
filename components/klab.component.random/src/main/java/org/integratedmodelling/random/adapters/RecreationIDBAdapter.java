@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -21,18 +20,23 @@ import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
+
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONObject;
 
 @UrnAdapter(type = "recreationidb", version = Version.CURRENT)
 public class RecreationIDBAdapter implements IUrnAdapter {
@@ -95,6 +99,8 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
 
 		IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
+        IEnvelope envelope = space.getEnvelope();
 
 		if (scale.getSpace() != null) {
 			RecreationIDB ridb = new RecreationIDB();
@@ -106,7 +112,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
 			List<String> inputs = new ArrayList<>();
 			try {
-				inputs = buildRecreationIDBInput(parameters);
+                inputs = buildRecreationIDBInput(parameters, envelope);
 			} catch (UnsupportedEncodingException e) {
 				throw new KlabValidationException("Failed to encode the parameters.");
 			}
@@ -148,10 +154,22 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 			"NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA",
 			"WA", "WV", "WI", "WY");
 
-	private List<String> buildRecreationIDBInput(Map<String, String> parameters) throws UnsupportedEncodingException {
-		ArrayList<String> query = new ArrayList<>();
-		List<String> states = parameters.containsKey(STATE) ? Arrays.asList(parameters.get(STATE).split(","))
-				: USA_STATES;
+    private List<String> buildRecreationIDBInput(Map<String, String> parameters, IEnvelope envelope)
+            throws UnsupportedEncodingException {
+        double west = envelope.getMinX();
+        double east = envelope.getMaxX();
+        double south = envelope.getMinY();
+        double north = envelope.getMaxY();
+        JSONObject statesData = Unirest.get("https://integratedmodelling.org/aux-geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=urban_heat_modelling:gadm_level_1_usa&bbox="
+                + west +"," + south + "," + east + "," + north
+                + ",EPSG:4326&outputFormat=application/json")
+                .asJson().getBody().getObject();
+
+        List<String> states = statesData.getJSONArray("features").toList().stream().map(
+                feature -> ((JSONObject) feature).getJSONObject("properties").getString("iso_1").replaceFirst("US-", "")).toList();
+        ArrayList<String> query = new ArrayList<>();
+        // TODO revise this zombie code before making a PR. It might be useful
+        // states = parameters.containsKey(STATE) ? Arrays.asList(parameters.get(STATE).split(",")) : USA_STATES;
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
 			if (entry.getKey().equals(STATE)) {
 				continue;
