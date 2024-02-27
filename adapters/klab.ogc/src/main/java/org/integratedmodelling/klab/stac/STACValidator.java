@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
-
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -18,6 +16,7 @@ import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IActivity.Description;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
@@ -60,18 +59,54 @@ public class STACValidator implements IResourceValidator {
         JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
+        Type type = readRasterDataType(asset);
         // Currently, only files:values is supported. If needed, the classification extension could be used too.
-        Map<String, String> vals = STACAssetParser.getFileValues(asset);
+        Map<String, Object> vals = STACAssetParser.getFileValues(asset);
         if (!vals.isEmpty()) {
             CodelistReference codelist = populateCodelist(assetId, vals);
+            if (type == null) {
+                type = codelist.getType();
+            }
             builder.addCodeList(codelist);
         }
 
+        if (type != null) {
+            builder.withType(type);
+        }
         readMetadata(metadata.getObject(), builder);
         return builder;
     }
 
-    private CodelistReference populateCodelist(String assetId, Map<String, String> vals) {
+    private Type readRasterDataType(JSONObject asset) {
+        if (!asset.has("raster:bands")) {
+            return null;
+        }
+        if (asset.getJSONArray("raster:bands").isEmpty() || asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
+            return null;
+        }
+        String type = asset.getJSONArray("raster:bands").getJSONObject(0).getString("data_type");
+        // https://github.com/stac-extensions/raster?tab=readme-ov-file#data-types
+        final Set<String> NUMERIC_DATA_TYPES = Set.of("int8", "int16", "int32", "int64", "uint8", "unit16", "uint32", "uint64", "float16", "float32", "float64");
+        if (NUMERIC_DATA_TYPES.contains(type)) {
+            return Type.NUMBER;
+        }
+        // The rest of possible values are either complex numbers or a generic "other"
+        return null;
+    }
+
+    private Type getCodelistType(Object value) {
+        if (value instanceof Number) {
+            return Type.NUMBER;
+        } else if (value instanceof String) {
+            return Type.TEXT;
+        } else if (value instanceof Boolean) {
+            return Type.BOOLEAN;
+        }
+        // As we are reading a JSON, text is our safest default option
+        return Type.TEXT;
+    }
+
+    private CodelistReference populateCodelist(String assetId, Map<String, Object> vals) {
         CodelistReference codelist = new CodelistReference();
         codelist.setId(assetId.toUpperCase());
         codelist.setName(assetId);
@@ -79,10 +114,12 @@ public class STACValidator implements IResourceValidator {
         codelist.setVersion("0.0.1");
         MappingReference direct = new MappingReference();
         MappingReference inverse = new MappingReference();
-        for (Entry<String, String> code : vals.entrySet()) {
-            direct.getMappings().add(new Pair<>(code.getKey(), code.getValue()));
-            codelist.getCodeDescriptions().put(code.getKey(), code.getValue());
-        }
+        vals.entrySet().forEach(code -> {
+            direct.getMappings().add(new Pair<>(code.getKey(), (String)code.getValue()));
+            codelist.getCodeDescriptions().put(code.getKey(), (String)code.getValue());
+        });
+        Type type = getCodelistType(vals.entrySet().stream().findFirst().get());
+        codelist.setType(type);
         codelist.setDirectMapping(direct);
         codelist.setInverseMapping(inverse);
         return codelist;

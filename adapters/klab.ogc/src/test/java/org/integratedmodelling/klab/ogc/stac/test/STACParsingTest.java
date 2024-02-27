@@ -20,7 +20,7 @@ public class STACParsingTest {
                 + "'file:values':[{'values':[0],'summary':'No Data'},{'values':[1],'summary':'Water'},{'values':[2, 3],'summary':'Trees'},{'values':[4],'summary':'Flooded vegetation'},{'values':[5],'summary':'Crops'}]}";
         JSONObject node = new JSONObject(assetJSON);
 
-        Map<String, String> result = STACAssetParser.getFileValues(node);
+        Map<String, Object> result = STACAssetParser.getFileValues(node);
 
         assertThat(result.keySet(), containsInAnyOrder("0", "1", "2", "3", "4", "5"));
         assertThat(result.values(), containsInAnyOrder("No Data", "Water", "Trees", "Trees", "Flooded vegetation", "Crops"));
@@ -31,7 +31,7 @@ public class STACParsingTest {
         String assetJSON = "{'type':'image/tiff; application=geotiff; profile=cloud-optimized','roles':['data'],'title':'Global land cover data'}";
         JSONObject node = new JSONObject(assetJSON);
 
-        Map<String, String> result = STACAssetParser.getFileValues(node);
+        Map<String, Object> result = STACAssetParser.getFileValues(node);
 
         assertThat(result.values(), is(empty()));
     }
