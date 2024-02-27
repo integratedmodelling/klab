@@ -377,7 +377,7 @@ public enum Authentication implements IAuthenticationService {
                 hub.setOnline(true);
                 NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(), hub);
 
-                ret = new KlabUser(authentication.getUserData(), networkSession);
+                ret = new KlabUser(authentication.getUserData(), authentication.getAuthentication(), networkSession);
 
                 Network.INSTANCE.buildNetwork(authentication);
 

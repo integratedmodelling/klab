@@ -377,6 +377,10 @@ public interface API {
          */
         public static final String LOCKED_USERS = USER_BASE + "/locked-users";
         /**
+         * Base URL path for send email from users.
+         */
+        public static final String USER_SEND_EMAIL = USER_BASE + "/email";
+        /**
 
          *URL path for get agreement template.
          */

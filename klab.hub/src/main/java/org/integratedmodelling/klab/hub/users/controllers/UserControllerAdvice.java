@@ -5,7 +5,9 @@ import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.hub.exception.DeletedUserNotFoundException;
 import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
+import org.integratedmodelling.klab.hub.exception.MailAddressNotAllowedException;
 import org.integratedmodelling.klab.hub.exception.ResponseEntityAdapter;
+import org.integratedmodelling.klab.hub.exception.SendEmailException;
 import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
@@ -76,5 +78,20 @@ public class UserControllerAdvice extends ResponseEntityExceptionHandler {
     	return new ResponseEntityAdapter<MessagingException>
     		(HttpStatus.INTERNAL_SERVER_ERROR, ex).getResponse();
     }
+    
+    @ExceptionHandler(MailAddressNotAllowedException.class)
+    public ResponseEntity<Object> handleMailAddressNotAllowedError(
+    		MailAddressNotAllowedException ex, WebRequest request) {
+    	return new ResponseEntityAdapter<MailAddressNotAllowedException>
+    		(HttpStatus.BAD_REQUEST, ex).getResponse();
+    }
+    
+    @ExceptionHandler(SendEmailException.class)
+    public ResponseEntity<Object> handleSendMailError(
+    		SendEmailException ex, WebRequest request) {
+    	return new ResponseEntityAdapter<SendEmailException>
+    		(HttpStatus.INTERNAL_SERVER_ERROR, ex).getResponse();
+    }
+    
 
 }

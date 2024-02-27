@@ -22,6 +22,15 @@ public class EmailConfig {
 
     @Value("${email.server.password}")
     private String EMAIL_PASSWORD;
+    
+    @Value("${email.default.domain}")
+    private String EMAIL_DOMAIN;
+    
+    @Value("${email.default.recipient}")
+    private String EMAIL_DEFAULT_RECIPIENT;
+    
+    @Value("${email.allowed}")
+    private String[] EMAIL_ADDRESSES_ALLOWED;
 
     @Value("${email.replyable.general.emailaddress}")
     private String EMAIL_REPLYABLE_GENERAL;
@@ -34,11 +43,6 @@ public class EmailConfig {
     
     @Value("${email.replyable.noreply.emailaddress}")
     private String EMAIL_NOREPLY;
-    
-    public enum EmailType {
-    	TEXT,
-    	HTML
-    }
     
     @Bean
     public JavaMailSender getEmailSender() {
@@ -58,6 +62,10 @@ public class EmailConfig {
     	return EMAIL_USERNAME;
     }
 
+    public String defaultRecipient() {
+    	return EMAIL_DEFAULT_RECIPIENT;
+    }
+    
     public String replyableGeneralEmailAddress() {
         return EMAIL_REPLYABLE_GENERAL;
     }
@@ -74,8 +82,16 @@ public class EmailConfig {
         return EMAIL_NOREPLY;
     }
     
+    public String defaultDomain() {
+    	return EMAIL_DOMAIN;
+    }
+    
     public String[] getAuthorizedEmailAddresses() {
     	return new String[] { replyableGeneralEmailAddress(), replyableSupportEmailAddress(), replyableAdminEmailAddress(), noreplyEmailAddress() };
+    }
+    
+    public String[] getAllowedEmailAddresses() {
+    	return EMAIL_ADDRESSES_ALLOWED;
     }
 
 }

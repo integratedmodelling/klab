@@ -77,12 +77,9 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import io.micrometer.core.instrument.util.JsonUtils;
 
 /**
  * Helper to avoid having to write 10 lines every time I need to do a GET with headers. It can be
@@ -107,7 +104,8 @@ public class Client extends RestTemplate implements IClient {
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
 
     ObjectMapper objectMapper;
-    String authToken;
+    String authorizationToken;
+    String authenticationToken;
     MediaType contentType = new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8);
     RestTemplate basicTemplate;
     private Set<String> endpoints = new HashSet<>();
@@ -204,7 +202,7 @@ public class Client extends RestTemplate implements IClient {
             // messageConverters.add(byteConverter);
             setMessageConverters(messageConverters);
             this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
-            this.authToken = node.getId();
+            this.authorizationToken = node.getId();
         }
     }
 
@@ -262,6 +260,14 @@ public class Client extends RestTemplate implements IClient {
         }
     }
 
+    private void setAuthTokens(HttpHeaders headers) {
+    	if (authorizationToken != null) {
+            headers.set(HttpHeaders.AUTHORIZATION, authorizationToken);
+        }
+    	if (authenticationToken != null) {
+    		headers.add("Authentication", authenticationToken);
+        }
+    }
     /**
      * Interceptor to add user agents and ensure that the authorization token gets in.
      * 
@@ -279,9 +285,7 @@ public class Client extends RestTemplate implements IClient {
             headers.set("Accept", "application/json");
             headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
             headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-            if (authToken != null) {
-                headers.set(HttpHeaders.AUTHORIZATION, authToken);
-            }
+            setAuthTokens(headers);
             return execution.execute(requestWrapper, body);
         }
     }
@@ -317,7 +321,8 @@ public class Client extends RestTemplate implements IClient {
         this.basicTemplate = client.basicTemplate;
         this.objectMapper = client.objectMapper;
         this.endpoints = client.endpoints;
-        this.authToken = client.authToken;
+        this.authorizationToken = client.authorizationToken;
+        this.authenticationToken = client.authenticationToken;
         this.contentType = client.contentType;
         setup();
     }
@@ -343,15 +348,23 @@ public class Client extends RestTemplate implements IClient {
 
         Client ret = new Client(this);
         ret.objectMapper = this.objectMapper;
-        ret.authToken = authorizer.getId();
+        ret.authorizationToken = authorizer.getId();
         return ret;
     }
 
-    public Client with(String authorization) {
+    public Client withAuthorization(String authorization) {
 
         Client ret = new Client();
         ret.objectMapper = this.objectMapper;
-        ret.authToken = authorization;
+        ret.authorizationToken = authorization;
+        return ret;
+    }
+    
+    public Client withAuthentication(String authentication) {
+
+        Client ret = new Client();
+        ret.objectMapper = this.objectMapper;
+        ret.authenticationToken = authentication;
         return ret;
     }
 
@@ -366,9 +379,7 @@ public class Client extends RestTemplate implements IClient {
             headers.setContentType(contentType);
         }
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
 
         HttpEntity<Object> entity = new HttpEntity<>(data, headers);
 
@@ -458,9 +469,7 @@ public class Client extends RestTemplate implements IClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
 
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
@@ -516,9 +525,7 @@ public class Client extends RestTemplate implements IClient {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         if (parameters != null) {
@@ -574,9 +581,7 @@ public class Client extends RestTemplate implements IClient {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", cls.equals(String.class) ? "text/plain" : "application/json");
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         if (parameters != null) {
@@ -672,9 +677,7 @@ public class Client extends RestTemplate implements IClient {
         headers.set("Accept", "application/json");
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new FileSystemResource(file));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
@@ -738,9 +741,7 @@ public class Client extends RestTemplate implements IClient {
             headers.setContentType(MediaType.APPLICATION_JSON);
         }
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
 
         try {
 

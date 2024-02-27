@@ -70,13 +70,23 @@ engine:
 
 email:
    server:
-      hostname: mail.privateemail.com
+      hostname: mail.example.com
       port: 587
-      username: info@integratedmodelling.org
-      password: tinyhipposarefriend
+      username: username@example.org
+      password: password
+
+   default:
+      domain: integratedmodelling.org
+      recipient: support@integratedmodelling.org
+
+   allowed: >
+      info@integratedmodelling.org,
+      support@integratedmodelling.org,
+      admin@integratedmodelling.org,
+      aries@integratedmodelling.org,
+      noreply@integratedmodelling.org,
 
    replyable:
-      replyable:
       general:
          emailaddress: General <info@integratedmodelling.org>
       support:

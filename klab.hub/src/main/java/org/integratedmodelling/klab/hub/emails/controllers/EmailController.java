@@ -9,13 +9,13 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.EmailTemplate;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.config.EmailConfig;
-import org.integratedmodelling.klab.hub.config.EmailConfig.EmailType;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.emails.services.EmailTemplateService;
 import org.integratedmodelling.klab.hub.exception.SendEmailException;
-import org.integratedmodelling.klab.hub.payload.KlabEmail;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
+import org.integratedmodelling.klab.rest.KlabEmail;
+import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -155,7 +155,7 @@ public class EmailController {
 	public ResponseEntity<?> sendEmail(@RequestBody KlabEmail email) {
 		ResponseEntity<String> response = null;
 		// checks
-		// normally from is ever the same and coming from configuration, so the check is not needed
+		// Currently, the only email that can be used is the one used for SMTP. Therefore no customization is available
 		email.from = emailConfig.senderEmail();
 		// if (Arrays.stream(emailConfig.getAuthorizedEmailAddresses()).anyMatch(email.from::equals)) {
 		// to and replayTo are known
@@ -190,7 +190,7 @@ public class EmailController {
 			emailManager.send(email.from, email.to, email.replayTo, email.subject, email.content, email.type != EmailType.TEXT, email.attachments);
 			return ResponseEntity
 					.status(HttpStatus.OK)
-					.body("Email sended");
+					.body("Email sent");
 		} catch (SendEmailException see) {
 			return ResponseEntity
 				.status(HttpStatus.INTERNAL_SERVER_ERROR)

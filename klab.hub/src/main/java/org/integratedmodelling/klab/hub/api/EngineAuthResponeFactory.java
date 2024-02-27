@@ -207,7 +207,7 @@ public class EngineAuthResponeFactory {
 	    		IdentityReference userIdentity = new IdentityReference(engine.getUsername(), engine.getEmailAddress(),
 	    				LocalDateTime.now().toString());
 	    		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
-	    				LocalDateTime.now().plusDays(90).toString(), engine.getId());
+	    				LocalDateTime.now().plusDays(90).toString(), engine.getToken());
 	    		
 	    		ArrayList<GroupEntry> expired = profile.expiredGroupEntries();
 	    		ArrayList<GroupEntry> expiring = profile.expiringGroupEntries();

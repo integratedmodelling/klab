@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.api;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-import org.integratedmodelling.klab.hub.config.EmailConfig.EmailType;
+import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;

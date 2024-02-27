@@ -30,9 +30,10 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 		this.emailAddress = "";
 	}
 
-	public KlabUser(AuthenticatedIdentity userData, NetworkSession networkSession) {
+	public KlabUser(AuthenticatedIdentity userData,String authToken, NetworkSession networkSession) {
 		super(userData.getIdentity());
-		this.token = userData.getToken();
+		this.id = userData.getToken(); // JWT Token
+		this.token = authToken; // Authentication token
 		this.groups.addAll(userData.getGroups());
 		this.parent = networkSession;
 	}

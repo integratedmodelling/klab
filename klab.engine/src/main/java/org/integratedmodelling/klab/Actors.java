@@ -215,6 +215,8 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("left");
         layoutMetadata.add("top");
         layoutMetadata.add("bottom");
+        layoutMetadata.add("center");
+        layoutMetadata.add("middle");
         layoutMetadata.add("hfill");
         layoutMetadata.add("vfill");
         layoutMetadata.add("fill");
@@ -253,6 +255,7 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("height");
         layoutMetadata.add("width");
         layoutMetadata.add("cols");
+        layoutMetadata.add("rows");
         layoutMetadata.add("equal");
         layoutMetadata.add("collapse");
         layoutMetadata.add("remove");

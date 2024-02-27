@@ -22,12 +22,14 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.IQuantity;
@@ -52,9 +54,11 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.auth.UserIdentity;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
@@ -66,13 +70,17 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
+import org.integratedmodelling.klab.rest.KlabEmail;
+import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
+import org.springframework.http.ResponseEntity;
 
 import akka.actor.typed.ActorRef;
 
@@ -544,6 +552,51 @@ public class RuntimeBehavior {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.getRuntimeScope().getMonitor().debug(args.toArray());
+        }
+    }
+    
+    @Action(id = "email", fires = Type.STRING, description="Send an email")
+    public static class Email extends KlabActionExecutor {
+    	
+       	public Email(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+		@Override
+        public void run(IKActorsBehavior.Scope scope) {
+            List<Object> args = new ArrayList<>();
+            for (Object arg : arguments.values()) {
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
+            }
+            UserIdentity user = (UserIdentity)session.getUser();
+            Client client = Client.create();
+            String url = Network.INSTANCE.getHub().getUrls().get(0);
+            if (args.size() >= 2) {
+            	String to = args.get(0).toString();
+            	// Fixed subject
+            	String subject = "[APP MESSAGE] Message from user " + user.getUsername() + " using app " + scope.getBehavior().getName();
+            	String content = args.get(1).toString();
+            	EmailType type = (args.size() == 3 && "HTML".equals(args.get(2).toString())) ?
+            			EmailType.HTML : EmailType.TEXT; 
+            	new Thread(){
+
+                    @Override
+                    public void run() {
+                    	fire(KlabEmail.EmailStatus.SENDING, scope);
+						try {
+							client.withAuthentication(user.getToken()).post(url+API.HUB.USER_SEND_EMAIL, 
+			                		new KlabEmail(null, Set.of(to), null, subject, content, type, null), ResponseEntity.class);
+							fire(KlabEmail.EmailStatus.SENT, scope);
+						} catch (KlabIOException kex) {
+							scope.getRuntimeScope().getMonitor().warn("Error sending mail: " + kex);
+		            		fire(KlabEmail.EmailStatus.ERROR, scope);
+						}
+                    }
+            	}.start();
+            } else {
+            	fire("Invalid argument usage in email function: must be [recipients], [content], ([\"TEXT\"|\"HTML\"])", scope);
+            }
         }
     }
 
