@@ -8,8 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
-
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -61,7 +59,7 @@ public class STACValidator implements IResourceValidator {
         JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
-        Type type = null;
+        Type type = readRasterDataType(asset);
         // Currently, only files:values is supported. If needed, the classification extension could be used too.
         Map<String, Object> vals = STACAssetParser.getFileValues(asset);
         if (!vals.isEmpty()) {
@@ -77,6 +75,23 @@ public class STACValidator implements IResourceValidator {
         }
         readMetadata(metadata.getObject(), builder);
         return builder;
+    }
+
+    private Type readRasterDataType(JSONObject asset) {
+        if (!asset.has("raster:bands")) {
+            return null;
+        }
+        if (asset.getJSONArray("raster:bands").isEmpty() || asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
+            return null;
+        }
+        String type = asset.getJSONArray("raster:bands").getJSONObject(0).getString("data_type");
+        // https://github.com/stac-extensions/raster?tab=readme-ov-file#data-types
+        final Set<String> NUMERIC_DATA_TYPES = Set.of("int8", "int16", "int32", "int64", "uint8", "unit16", "uint32", "uint64", "float16", "float32", "float64");
+        if (NUMERIC_DATA_TYPES.contains(type)) {
+            return Type.NUMBER;
+        }
+        // The rest of possible values are either complex numbers or a generic "other"
+        return null;
     }
 
     private Type getCodelistType(Object value) {
