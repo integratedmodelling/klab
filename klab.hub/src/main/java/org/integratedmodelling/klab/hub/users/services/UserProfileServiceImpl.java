@@ -56,6 +56,12 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public ProfileResource updateUserByProfile(ProfileResource profile) {
 		User user = updateUserFromProfileResource(profile);
+		if (!user.getEmail().equals(profile.getEmail())) {
+			if (userRepository.existsByEmailIgnoreCase(profile.getEmail())) {
+				throw new KlabException("Duplicated key. Email is already exists");
+			}
+			user.setEmail(profile.getEmail());
+		}
 		User updatedUser = new UpdateUser(user, userRepository).execute();
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
 		return updatedProfile.getSafeProfile();

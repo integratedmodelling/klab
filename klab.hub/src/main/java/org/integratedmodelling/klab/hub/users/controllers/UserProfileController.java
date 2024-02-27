@@ -164,7 +164,7 @@ public class UserProfileController {
 	}
 
 	@PutMapping(API.HUB.USER_BASE_ID)
-	@PreAuthorize("authentication.getPrincipal() == #id")
+	@PreAuthorize("authentication.getPrincipal() == #id or hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> updateUserProfile(@PathVariable String id, @RequestBody UpdateUserRequest updateRequest) {
 		ProfileResource profile = userService.updateUserByProfile(updateRequest.getProfile());
 		return new ResponseEntity<>(profile, HttpStatus.ACCEPTED);
