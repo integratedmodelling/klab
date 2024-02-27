@@ -61,13 +61,20 @@ public class STACValidator implements IResourceValidator {
         JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
+        Type type = null;
         // Currently, only files:values is supported. If needed, the classification extension could be used too.
         Map<String, Object> vals = STACAssetParser.getFileValues(asset);
         if (!vals.isEmpty()) {
             CodelistReference codelist = populateCodelist(assetId, vals);
+            if (type == null) {
+                type = codelist.getType();
+            }
             builder.addCodeList(codelist);
         }
 
+        if (type != null) {
+            builder.withType(type);
+        }
         readMetadata(metadata.getObject(), builder);
         return builder;
     }
@@ -75,6 +82,10 @@ public class STACValidator implements IResourceValidator {
     private Type getCodelistType(Object value) {
         if (value instanceof Number) {
             return Type.NUMBER;
+        } else if (value instanceof String) {
+            return Type.TEXT;
+        } else if (value instanceof Boolean) {
+            return Type.BOOLEAN;
         }
         // As we are reading a JSON, text is our safest default option
         return Type.TEXT;
@@ -89,10 +100,11 @@ public class STACValidator implements IResourceValidator {
         MappingReference direct = new MappingReference();
         MappingReference inverse = new MappingReference();
         vals.entrySet().forEach(code -> {
-            codelist.setType(getCodelistType(code.getValue()));
             direct.getMappings().add(new Pair<>(code.getKey(), (String)code.getValue()));
             codelist.getCodeDescriptions().put(code.getKey(), (String)code.getValue());
         });
+        Type type = getCodelistType(vals.entrySet().stream().findFirst().get());
+        codelist.setType(type);
         codelist.setDirectMapping(direct);
         codelist.setInverseMapping(inverse);
         return codelist;
