@@ -17,4 +17,5 @@ public interface LdapService {
 	abstract void createUser(UserDetails user);
 	abstract Name buildDn(String username );
 	abstract boolean userExists(String username, String email);
+	void updateUserEmailAddress(String username, String newEmailAddress);
 }

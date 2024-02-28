@@ -15,6 +15,8 @@ public class CustomProperty {
     private String value;
     private boolean onlyAdmin;
     
+    public CustomProperty() {}
+    
     public CustomProperty(String key, String value, boolean onlyAdmin) {
         this.key = key;
         this.value = value;

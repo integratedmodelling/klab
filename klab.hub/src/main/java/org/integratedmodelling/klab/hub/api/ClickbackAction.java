@@ -10,7 +10,9 @@ public enum ClickbackAction {
     newUser(
     		TokenType.newUser),
     lostPassword(
-    		TokenType.lostPassword);
+    		TokenType.lostPassword),
+    changeEmail(
+    		TokenType.verifyEmail);
     
     private final TokenType tokenType;
 
