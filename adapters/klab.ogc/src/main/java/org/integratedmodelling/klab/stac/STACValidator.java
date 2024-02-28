@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -81,7 +82,9 @@ public class STACValidator implements IResourceValidator {
         if (!asset.has("raster:bands")) {
             return null;
         }
-        if (asset.getJSONArray("raster:bands").isEmpty() || asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
+        if (asset.getJSONArray("raster:bands").isEmpty()
+                || !asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
+            // We could assume that most rasters are numeric. When in doubt, we could set the default to Number
             return null;
         }
         String type = asset.getJSONArray("raster:bands").getJSONObject(0).getString("data_type");
@@ -92,18 +95,6 @@ public class STACValidator implements IResourceValidator {
         }
         // The rest of possible values are either complex numbers or a generic "other"
         return null;
-    }
-
-    private Type getCodelistType(Object value) {
-        if (value instanceof Number) {
-            return Type.NUMBER;
-        } else if (value instanceof String) {
-            return Type.TEXT;
-        } else if (value instanceof Boolean) {
-            return Type.BOOLEAN;
-        }
-        // As we are reading a JSON, text is our safest default option
-        return Type.TEXT;
     }
 
     private CodelistReference populateCodelist(String assetId, Map<String, Object> vals) {
@@ -118,7 +109,7 @@ public class STACValidator implements IResourceValidator {
             direct.getMappings().add(new Pair<>(code.getKey(), (String)code.getValue()));
             codelist.getCodeDescriptions().put(code.getKey(), (String)code.getValue());
         });
-        Type type = getCodelistType(vals.entrySet().stream().findFirst().get());
+        Type type = STACUtils.inferValueType(vals.entrySet().stream().findFirst().get().getKey());
         codelist.setType(type);
         codelist.setDirectMapping(direct);
         codelist.setInverseMapping(inverse);
