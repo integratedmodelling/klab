@@ -38,9 +38,10 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 		this.parent = networkSession;
 	}
 
-	public KlabUser(String username, String token, List<GrantedAuthority> authorities) {
+	public KlabUser(String username, String jwtToken, String authToken, List<GrantedAuthority> authorities) {
 		super(username);
-		this.token = token;
+		this.id = jwtToken;
+		this.token = authToken;
 		this.authorities.addAll(authorities);
 	}
 

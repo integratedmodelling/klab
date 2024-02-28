@@ -207,7 +207,7 @@ public class EngineAuthResponeFactory {
 	    		IdentityReference userIdentity = new IdentityReference(engine.getUsername(), engine.getEmailAddress(),
 	    				LocalDateTime.now().toString());
 	    		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
-	    				LocalDateTime.now().plusDays(90).toString(), engine.getToken());
+	    				LocalDateTime.now().plusDays(90).toString(), engine.getId());
 	    		
 	    		ArrayList<GroupEntry> expired = profile.expiredGroupEntries();
 	    		ArrayList<GroupEntry> expiring = profile.expiringGroupEntries();
@@ -323,7 +323,7 @@ public class EngineAuthResponeFactory {
 		EngineUser engine = new EngineUser(profile.getUsername(), null);
 		String token = new JwtToken().createEngineJwtToken(profile);
 		engine.setEmailAddress(profile.getEmail());
-		engine.setToken(token);
+		engine.setId(token);
 		engine.getGroups().addAll(profile.getGroupsList());
 		return engine;
 	}
@@ -332,7 +332,7 @@ public class EngineAuthResponeFactory {
 		EngineUser engine = new EngineUser(profile.getUsername(), null);
 		String token = new JwtToken().createEngineJwtToken(profile);
 		engine.setEmailAddress(profile.getEmail());
-		engine.setToken(token);
+		engine.setId(token);
 		engine.getGroups().addAll(profile.getGroupsList());
 		return engine;
 	}

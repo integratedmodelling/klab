@@ -60,7 +60,8 @@ public class PreauthenticatedUserDetailsService implements UserDetailsService {
         }
         
         // anonymous or local user
-        return new KlabUser(username, NameGenerator.newName(), authorities);
+        String tokens = NameGenerator.newName();
+        return new KlabUser(username, tokens, tokens, authorities);
     }
 
 }

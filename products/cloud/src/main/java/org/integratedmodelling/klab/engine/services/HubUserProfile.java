@@ -29,6 +29,8 @@ public class HubUserProfile {
 	private List<GroupEntry> groupEntries;
 	@JsonInclude(Include.NON_NULL)
 	private String jwtToken;
+	@JsonInclude(Include.NON_NULL)
+	private String authToken;
 
 	public List<String> getRoles() {
 		return roles;
@@ -68,6 +70,14 @@ public class HubUserProfile {
 
     public void setJwtToken(String jwtToken) {
         this.jwtToken = jwtToken;
+    }
+    
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
 }

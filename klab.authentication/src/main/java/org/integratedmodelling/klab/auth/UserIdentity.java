@@ -120,6 +120,10 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     public String getId() {
         return id;
     }
+    
+    public void setId(String id) {
+        this.id = id;
+    }
 
     @Override
     public <T extends IIdentity> T getParentIdentity(Class<T> type) {

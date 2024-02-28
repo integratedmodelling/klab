@@ -77,9 +77,10 @@ public class HubUserService implements RemoteUserService {
 			}
 			if (result != null && result.getStatusCode().is2xxSuccessful()) {
 				HubUserProfile profile = result.getBody().getProfile();
+				String authToken = result.getBody().getAuthentication().getTokenString();
+				profile.setAuthToken(authToken);
 				RemoteUserLoginResponse response = getLoginResponse(profile, null);
-				String token = result.getBody().getAuthentication().getTokenString();
-				response.setAuthorization(token);
+				response.setAuthorization(authToken);
 				return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
 			} else {
 	            throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
@@ -168,7 +169,8 @@ public class HubUserService implements RemoteUserService {
 			groups.add(group);
 		});
 
-		KlabUser user = new KlabUser(profile.getName(), profile.getJwtToken(), authorities);
+		KlabUser user = new KlabUser(profile.getName(), profile.getJwtToken(),
+				profile.getAuthToken(), authorities);
 		user.setEmailAddress(profile.getEmail());
 		user.getGroups().addAll(groups);
 
