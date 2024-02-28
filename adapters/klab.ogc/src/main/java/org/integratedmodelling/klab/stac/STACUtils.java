@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.DOIReader;
 
@@ -92,6 +93,16 @@ public class STACUtils {
             }
         }
         return null;
+    }
+
+    public static Type inferValueType(String key) {
+        if (StringUtils.isNumeric(key)) {
+            return Type.NUMBER;
+        } else if ("true".equalsIgnoreCase(key) || "false".equalsIgnoreCase(key)) {
+            return Type.BOOLEAN;
+        }
+        // As we are reading a JSON, text is our safest default option
+        return Type.TEXT;
     }
 
 }
