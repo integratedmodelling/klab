@@ -70,6 +70,7 @@ public class STACService {
         String collectionId = parameters.get("collectionId", String.class);
 
         GeometryBuilder gBuilder = Geometry.builder();
+        gBuilder.time().generic();
 
         JsonNode collectionMetadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
         JSONArray bbox = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
