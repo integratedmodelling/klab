@@ -90,9 +90,6 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 		if (urn.getParameters().containsKey(OFFSET)) {
 			parameters.put(OFFSET, urn.getParameters().get(OFFSET));
 		}
-		if (urn.getParameters().containsKey(STATE)) {
-			parameters.put(STATE, urn.getParameters().get(STATE));
-		}
 		if (urn.getParameters().containsKey(ACTIVITY)) {
 			parameters.put(ACTIVITY, urn.getParameters().get(ACTIVITY));
 		}
@@ -158,7 +155,6 @@ public class RecreationIDBAdapter implements IUrnAdapter {
         HttpResponse<JsonNode> response = Unirest.get("https://integratedmodelling.org/aux-geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=urban_heat_modelling:gadm_level_1_usa&bbox="
                 + envelope.getMinX() +"," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY()
                 + ",EPSG:4326&outputFormat=application/json").asJson();
-
         if (!response.isSuccess()) {
             throw new KlabResourceNotFoundException("Cannot retrieve information from geoserver resource \"urban_heat_modelling:gadm_level_1_usa\".");
         }
@@ -172,20 +168,11 @@ public class RecreationIDBAdapter implements IUrnAdapter {
         }
     }
 
-	private final List<String> USA_STATES = Arrays.asList("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-			"HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV",
-			"NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA",
-			"WA", "WV", "WI", "WY");
     private List<String> buildRecreationIDBInput(Map<String, String> parameters, IEnvelope envelope)
             throws UnsupportedEncodingException {
         List<String> states = getStatesFromEnvelope(envelope);
         List<String> query = new ArrayList<>();
-        // TODO revise this zombie code before making a PR. It might be useful
-        // states = parameters.containsKey(STATE) ? Arrays.asList(parameters.get(STATE).split(",")) : USA_STATES;
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
-			if (entry.getKey().equals(STATE)) {
-				continue;
-			}
 			String parameter = entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString());
 			query.add(parameter);
 		}
