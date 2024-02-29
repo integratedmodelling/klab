@@ -9,6 +9,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -156,6 +157,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
 	}
 
+    @SuppressWarnings("unchecked")
     private List<String> getStatesFromEnvelope(IEnvelope envelope) {
         HttpResponse<JsonNode> response = Unirest.get("https://integratedmodelling.org/aux-geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=urban_heat_modelling:gadm_level_1_usa&bbox="
                 + envelope.getMinX() +"," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY()
@@ -166,8 +168,8 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
         JSONObject statesData = response.getBody().getObject();
         try {
-            return statesData.getJSONArray("features").toList().stream().map(
-                    feature -> ((JSONObject) feature).getJSONObject("properties").getString("iso_1").replaceFirst("US-", "")).toList();
+            return new Vector<String>(statesData.getJSONArray("features").toList().stream().map(
+                    feature -> ((JSONObject) feature).getJSONObject("properties").getString("iso_1").replaceFirst("US-", "")).toList());
         } catch (JSONException e) {
             throw new KlabResourceAccessException("Error while parsing \"urban_heat_modelling:gadm_level_1_usa\"");
         }
@@ -176,8 +178,8 @@ public class RecreationIDBAdapter implements IUrnAdapter {
     private List<String> buildRecreationIDBInput(Map<String, String> parameters, IEnvelope envelope)
             throws UnsupportedEncodingException {
         // The list is initialized with the list of territories and DC, which cannot be queried by the same means as the states
-        List<String> regions = List.of("DC", "AS", "GU", "MP", "PR", "VI");
-        regions.addAll(getStatesFromEnvelope(envelope));
+        List<String> regions = getStatesFromEnvelope(envelope);
+        regions.addAll(List.of("DC", "AS", "GU", "MP", "PR", "VI"));
         List<String> query = new ArrayList<>();
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
 			String parameter = entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString());
