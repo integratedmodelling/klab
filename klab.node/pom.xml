@@ -32,7 +32,7 @@
 						</auth>
 					</to>
 					<container>
-						<expandClasspathDependencies>true</expandClasspathDependencies>
+						<!-- <expandClasspathDependencies>true</expandClasspathDependencies> -->
 						<user>klab:klab</user>
 						<jvmFlags>${jib.jvmFlags}</jvmFlags>
 						<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
