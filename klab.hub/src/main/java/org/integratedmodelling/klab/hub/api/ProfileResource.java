@@ -44,7 +44,7 @@ public class ProfileResource implements OAuth2User{
 
 	public String address;
 
-    public String jobTitle;
+	public String jobTitle;
 
     public String phone;
 

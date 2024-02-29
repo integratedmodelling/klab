@@ -3,16 +3,15 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.domain.Sort;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
-import org.integratedmodelling.klab.auth.Role;
 
 /*
  * This is needed for login authentication.  It is used to load the user and

@@ -68,7 +68,7 @@ public interface API {
     public static String url(String template, String... kvp) {
         String ret = template;
         if (kvp != null) {
-            for (int i = 0; i < kvp.length; i++) {
+            for(int i = 0; i < kvp.length; i++) {
                 ret = template.replace(kvp[i], kvp[++i]);
             }
         }
@@ -325,6 +325,14 @@ public interface API {
          */
         public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
         /**
+         * Base URL path for user resources on the hub with no authentication.
+         */
+        public static final String USER_BASE_NOAUTH = USER_BASE + "/noAuth";
+        /**
+         * Base URL path for user resources on the hub with no authentication.
+         */
+        public static final String USER_BASE_ID_NOAUTH = USER_BASE_NOAUTH + "/{id}";
+        /**
          * Base URL path for user resources on the hub.
          */
         public static final String USER_BASE_ID = USER_BASE + "/{id}";
@@ -369,12 +377,16 @@ public interface API {
          */
         public static final String LOCKED_USERS = USER_BASE + "/locked-users";
         /**
-
+         * Base URL path for send email from users.
+         */
+        public static final String USER_SEND_EMAIL = USER_BASE + "/email";
+        /**
+        
          *URL path for get agreement template.
          */
         public static final String GET_AGREEMENT = API_BASE + "/agreements";
         /**
-
+        
          *URL path for get agreement template.
          */
         public static final String GET_AGREEMENT_ID = GET_AGREEMENT + "/{id}";
@@ -397,7 +409,7 @@ public interface API {
         /**
          *URL path for get agreement template filtered
          */
-        public static final String AGREEMENT_TEMPLATE_FILTER= AGREEMENT_TEMPLATE + "/filter";
+        public static final String AGREEMENT_TEMPLATE_FILTER = AGREEMENT_TEMPLATE + "/filter";
         /**
          * Base URL path for tag resources on the hub.
          */
@@ -455,12 +467,11 @@ public interface API {
          */
         public static final String USER_ID_CUSTOM_PROPERTIES = USER_BASE_ID + "/custom-properties";
 
-
         public static interface PARAMETERS {
             /**
              * URL PARAMETER for user activation tokens.
              */
-			public static final String USER_ACTIVATION = "activate";
+            public static final String USER_ACTIVATION = "activate";
             /**
              * URL PARAMETER for user requesting a lost password email.
              */
@@ -477,6 +488,18 @@ public interface API {
              * URL PARAMETER for user to verify account.
              */
             public static final String USER_VERIFICATION = "verify";
+            /**
+             * URL PARAMETER for user get user profile by token.
+             */
+            public static final String USER_GET = "get-user";
+            /**
+             * URL PARAMETER for user requesting a new email.
+             */
+            public static final String USER_REQUEST_EMAIL = "request-new-email";
+            /**
+             * URL PARAMETER for user setting a new email from set email token.
+             */
+            public static final String USER_SET_EMAIL = "new-email";
             /**
              * URL PARAMETER for user to request a new certificate.
              */
@@ -1265,7 +1288,6 @@ public interface API {
 
         public static final String STATS_OUTPUT = STATS_BASE + "/output";
 
-        
         /*
          * public anonymous endpoints for web sites or quick monitoring
          */
