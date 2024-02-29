@@ -135,6 +135,11 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 				// to the areas are points.
 				shape = Shape.create(lon, lat, (Projection) scope.getScale().getSpace().getProjection());
 
+                // Discard points that are not inside the polygon
+                if (!space.contains(shape)) {
+                    continue;
+                }
+
 				Builder obuilder = builder.startObject(scope.getTargetName(), siteName, makeScale(urn, shape, scope));
 
 				// Add attributes to each recreation area like the name and id.
