@@ -49,18 +49,22 @@ public class UserEmailController {
 		Set<String> recipients = new HashSet<String>();
 		if (email.to != null && email.to.size() > 0) {
 			for(String userEmail: email.to) {
-				if (!userEmail.contains("@")) {
-					userEmail = userEmail + "@" + emailConfig.defaultDomain();
-				}
-				if (Arrays.asList(emailConfig.getAllowedEmailAddresses()).contains(userEmail)) {
-					recipients.add(userEmail);
-				}
-				if (recipients.size() == 0) {
-					throw new MailAddressNotAllowedException(userEmail);
+				if (userEmail.length() > 0) {
+					if (!userEmail.contains("@")) {
+						userEmail = userEmail + "@" + emailConfig.defaultDomain();
+					}
+					if (Arrays.asList(emailConfig.getAllowedEmailAddresses()).contains(userEmail)) {
+						recipients.add(userEmail);
+					} else {
+						throw new MailAddressNotAllowedException(userEmail);
+					}
 				}
 			}
+			if (recipients.size() == 0) {
+				recipients.add(emailConfig.defaultRecipient());
+			}
 		} else {
-			recipients.add(emailConfig.defaultRecipient());
+			
 		}
 		
 			
