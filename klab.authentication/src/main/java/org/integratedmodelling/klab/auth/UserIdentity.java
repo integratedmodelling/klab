@@ -34,7 +34,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     }
 
     public UserIdentity(UserIdentity user) {
-    	this.id = user.getId();
+        this.id = user.getId();
         this.username = user.username;
         this.emailAddress = user.emailAddress;
         this.token = user.token;
@@ -46,7 +46,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
         this(identity.getIdentity());
         this.id = identity.getToken();
         this.token = identity.getToken();
-        for (Group group : identity.getGroups()) {
+        for(Group group : identity.getGroups()) {
             this.groups.add(group);
         }
         this.expiryDate = DateTime.parse(identity.getExpiry());
@@ -74,9 +74,9 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     }
 
     public Set<String> getRoles() {
-    	return this.roles;
+        return this.roles;
     }
-    
+
     @Override
     public String getPassword() {
         return getId();
@@ -120,7 +120,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     public String getId() {
         return id;
     }
-    
+
     public void setId(String id) {
         this.id = id;
     }
@@ -138,7 +138,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     public void setToken(String token) {
         this.token = token;
     }
-    
+
     public String getToken() {
         return this.token;
     }

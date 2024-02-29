@@ -14,141 +14,138 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document(collection = "EmailTemplates")
 @CompoundIndexes({
-    @CompoundIndex(name = "email_template_unique_index",
-                   unique = true,
-                   def = "{'name' : 1, 'authorUsername' : 1}")
-})
-public class EmailTemplate extends GenericModel{
-    
+        @CompoundIndex(name = "email_template_unique_index", unique = true, def = "{'name' : 1, 'authorUsername' : 1}")})
+public class EmailTemplate extends GenericModel {
+
     @NotNull
     String authorUsername;
-    
+
     @Email
     String sender;
-    
+
     @Email
     String[] recipients;
-    
+
     String subject;
-    
+
     String content;
-        
+
     EmailType type = EmailType.HTML;
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * @param name the name to set
-	 */
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @return the id
+     */
+    public String getId() {
+        return id;
+    }
 
     /**
-	 * @return the author username
-	 */
-	public String getAuthorUsername() {
-		return authorUsername;
-	}
+     * @param id the id to set
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	/**
-	 * @param username the username to set
-	 */
-	public void setAuthorUsername(String authorUsername) {
-		this.authorUsername = authorUsername;
-	}
-	
-	/**
-	 * @return the sender
-	 */
-	public String getSender() {
-		return sender;
-	}
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	/**
-	 * @param sender the sender to set
-	 */
-	public void setSender(String sender) {
-		this.sender = sender;
-	}
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	/**
-	 * @return the recipients
-	 */
-	public String[] getRecipients() {
-		return recipients;
-	}
+    /**
+     * @return the author username
+     */
+    public String getAuthorUsername() {
+        return authorUsername;
+    }
 
-	/**
-	 * @param recipients the recipients to set
-	 */
-	public void setRecipients(String[] recipients) {
-		this.recipients = recipients;
-	}
+    /**
+     * @param username the username to set
+     */
+    public void setAuthorUsername(String authorUsername) {
+        this.authorUsername = authorUsername;
+    }
 
-	/**
-	 * @return the object
-	 */
-	public String getSubject() {
-		return subject;
-	}
+    /**
+     * @return the sender
+     */
+    public String getSender() {
+        return sender;
+    }
 
-	/**
-	 * @param object the object to set
-	 */
-	public void setSubject(String subject) {
-		this.subject = subject;
-	}
+    /**
+     * @param sender the sender to set
+     */
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
 
-	/**
-	 * @return the content
-	 */
-	public String getContent() {
-		return content;
-	}
+    /**
+     * @return the recipients
+     */
+    public String[] getRecipients() {
+        return recipients;
+    }
 
-	/**
-	 * @param content the content to set
-	 */
-	public void setContent(String content) {
-		this.content = content;
-	}
+    /**
+     * @param recipients the recipients to set
+     */
+    public void setRecipients(String[] recipients) {
+        this.recipients = recipients;
+    }
 
-	/**
-	 * @return the type
-	 */
-	public EmailType getType() {
-		return type;
-	}
+    /**
+     * @return the object
+     */
+    public String getSubject() {
+        return subject;
+    }
 
-	/**
-	 * @param type the type to set
-	 */
-	public void setType(EmailType type) {
-		this.type = type;
-	};
-    
-	public String toString() {
-		return this.name + "; Object: "+this.getSubject();
-	}
-    
+    /**
+     * @param object the object to set
+     */
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    /**
+     * @return the content
+     */
+    public String getContent() {
+        return content;
+    }
+
+    /**
+     * @param content the content to set
+     */
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     * @return the type
+     */
+    public EmailType getType() {
+        return type;
+    }
+
+    /**
+     * @param type the type to set
+     */
+    public void setType(EmailType type) {
+        this.type = type;
+    };
+
+    public String toString() {
+        return this.name + "; Object: " + this.getSubject();
+    }
+
 }

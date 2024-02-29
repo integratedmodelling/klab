@@ -133,7 +133,7 @@ public class Client extends RestTemplate implements IClient {
 
         return new Client(factory);
     }
-    
+
     public static Client createJson() {
         Client ret = create();
         ret.setup();
@@ -166,7 +166,7 @@ public class Client extends RestTemplate implements IClient {
             super(factory);
             objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+            List<HttpMessageConverter< ? >> messageConverters = new ArrayList<HttpMessageConverter< ? >>();
             MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
             /*
              * Make this converter process any kind of response, not only application/*json, which
@@ -185,7 +185,7 @@ public class Client extends RestTemplate implements IClient {
             super(factory);
 
             objectMapper = new ObjectMapper();
-            List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+            List<HttpMessageConverter< ? >> messageConverters = new ArrayList<>();
             MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
             StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
             FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
@@ -260,12 +260,16 @@ public class Client extends RestTemplate implements IClient {
         }
     }
 
+    /**
+     * Add option to set both headers, Authorization and Authentication
+     * @param headers the headers object to set the new headers
+     */
     private void setAuthTokens(HttpHeaders headers) {
-    	if (authorizationToken != null) {
+        if (authorizationToken != null) {
             headers.set(HttpHeaders.AUTHORIZATION, authorizationToken);
         }
-    	if (authenticationToken != null) {
-    		headers.add("Authentication", authenticationToken);
+        if (authenticationToken != null) {
+            headers.add("Authentication", authenticationToken);
         }
     }
     /**
@@ -293,7 +297,7 @@ public class Client extends RestTemplate implements IClient {
     private void setup() {
 
         objectMapper = new ObjectMapper();
-        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        List<HttpMessageConverter< ? >> messageConverters = new ArrayList<>();
         MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
         StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
         FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
@@ -336,7 +340,7 @@ public class Client extends RestTemplate implements IClient {
         ret.contentType = contentType;
         return ret;
     }
-    
+
     /**
      * Return a client with authorization set to the passed object.
      * 
@@ -359,7 +363,7 @@ public class Client extends RestTemplate implements IClient {
         ret.authorizationToken = authorization;
         return ret;
     }
-    
+
     public Client withAuthentication(String authentication) {
 
         Client ret = new Client();
@@ -369,7 +373,7 @@ public class Client extends RestTemplate implements IClient {
     }
 
     @Override
-    public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
+    public <T extends Object> T post(String url, Object data, Class< ? extends T> cls) {
 
         url = checkEndpoint(url);
 
@@ -400,10 +404,10 @@ public class Client extends RestTemplate implements IClient {
             if (response.getBody() == null) {
                 return null;
             }
-            if (response.getBody() instanceof Map && ((Map<?, ?>) response.getBody()).containsKey("exception")
-                    && ((Map<?, ?>) response.getBody()).get("exception") != null) {
+            if (response.getBody() instanceof Map && ((Map< ? , ? >) response.getBody()).containsKey("exception")
+                    && ((Map< ? , ? >) response.getBody()).get("exception") != null) {
 
-                Map<?, ?> map = (Map<?, ?>) response.getBody();
+                Map< ? , ? > map = (Map< ? , ? >) response.getBody();
                 Object exception = map.get("exception");
                 // Object path = map.get("path");
                 Object message = map.get("message");
@@ -435,7 +439,7 @@ public class Client extends RestTemplate implements IClient {
 
         System.out.println("Endpoint: " + url);
         System.out.println("Headers:");
-        for (String header : headers.keySet()) {
+        for(String header : headers.keySet()) {
             System.out.println("  " + header + " = " + headers.get(header));
         }
         System.out.println("Data:\n" + printAsJson(data));
@@ -446,7 +450,7 @@ public class Client extends RestTemplate implements IClient {
         if (url == null || url.length == 0) {
             this.endpoints.clear();
         } else {
-            for (String u : url) {
+            for(String u : url) {
                 this.endpoints.add(u);
             }
         }
@@ -530,7 +534,7 @@ public class Client extends RestTemplate implements IClient {
 
         if (parameters != null) {
             String params = "";
-            for (int i = 0; i < parameters.length; i++) {
+            for(int i = 0; i < parameters.length; i++) {
                 String key = parameters[i].toString();
                 String nakedKey = key;
                 String val = parameters[++i].toString();
@@ -550,7 +554,7 @@ public class Client extends RestTemplate implements IClient {
             }
         }
 
-        ResponseEntity<?> response = exchange(url, HttpMethod.DELETE, entity, Object.class);
+        ResponseEntity< ? > response = exchange(url, HttpMethod.DELETE, entity, Object.class);
 
         switch(response.getStatusCodeValue()) {
         case 302:
@@ -574,7 +578,7 @@ public class Client extends RestTemplate implements IClient {
      */
     @Override
     @SuppressWarnings({"unchecked"})
-    public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
+    public <T> T get(String url, Class< ? extends T> cls, Object... parameters) {
 
         url = checkEndpoint(url);
 
@@ -586,7 +590,7 @@ public class Client extends RestTemplate implements IClient {
 
         if (parameters != null) {
             String params = "";
-            for (int i = 0; i < parameters.length; i++) {
+            for(int i = 0; i < parameters.length; i++) {
                 String key = parameters[i].toString();
                 String nakedKey = key;
                 Object nextPar = parameters[++i];
@@ -604,8 +608,7 @@ public class Client extends RestTemplate implements IClient {
                 if (url.contains(key)) {
                     url = url.replace(key, val);
                 } else {
-                    params += (params.isEmpty() ? "" : "&") + nakedKey + "="
-                            + /* Escape.forURL( */val/* ) */;
+                    params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + /* Escape.forURL( */val/* ) */;
                 }
             }
             if (!params.isEmpty()) {
@@ -613,7 +616,7 @@ public class Client extends RestTemplate implements IClient {
             }
         }
 
-        ResponseEntity<?> response = null;
+        ResponseEntity< ? > response = null;
         if (cls.isArray()) {
             response = exchange(url, HttpMethod.GET, entity, Object.class);
         } else if (String.class.equals(cls)) {
@@ -635,11 +638,11 @@ public class Client extends RestTemplate implements IClient {
 
         if (response.getBody() instanceof Map) {
 
-            Object exception = ((Map<?, ?>) response.getBody()).get("exception");
-            Object error = ((Map<?, ?>) response.getBody()).get("error");
+            Object exception = ((Map< ? , ? >) response.getBody()).get("exception");
+            Object error = ((Map< ? , ? >) response.getBody()).get("error");
 
             if (exception != null || error != null) {
-                Object message = ((Map<?, ?>) response.getBody()).get("message");
+                Object message = ((Map< ? , ? >) response.getBody()).get("message");
                 // Object error = response.getBody().get("error");
                 throw new KlabIOException(
                         "remote exception: " + (message == null ? (exception == null ? error : exception) : message));
@@ -649,9 +652,9 @@ public class Client extends RestTemplate implements IClient {
 
         } else if (response.getBody() instanceof List && cls.isArray()) {
 
-            List<?> list = (List<?>) response.getBody();
-            Object ret = Array.newInstance(cls.getComponentType(), (((List<?>) response.getBody()).size()));
-            for (int i = 0; i < list.size(); i++) {
+            List< ? > list = (List< ? >) response.getBody();
+            Object ret = Array.newInstance(cls.getComponentType(), (((List< ? >) response.getBody()).size()));
+            for(int i = 0; i < list.size(); i++) {
                 Object object = list.get(i);
                 if (object instanceof Map) {
                     object = objectMapper.convertValue(object, cls.getComponentType());
@@ -669,7 +672,7 @@ public class Client extends RestTemplate implements IClient {
     }
 
     @Override
-    public <T> T postFile(String url, File file, Class<? extends T> cls) {
+    public <T> T postFile(String url, File file, Class< ? extends T> cls) {
 
         url = checkEndpoint(url);
 

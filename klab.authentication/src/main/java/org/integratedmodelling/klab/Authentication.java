@@ -175,7 +175,7 @@ public enum Authentication implements IAuthenticationService {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
-        for (IIdentity id : identities.values()) {
+        for(IIdentity id : identities.values()) {
             if (type.isAssignableFrom(id.getClass())) {
                 return (T) id;
             }
@@ -238,7 +238,7 @@ public enum Authentication implements IAuthenticationService {
      * @return
      */
     public ISession getDefaultSession() {
-        for (IIdentity id : identities.values()) {
+        for(IIdentity id : identities.values()) {
             if (id instanceof ISession && ((ISession) id).isDefault()) {
                 return (ISession) id;
             }
@@ -255,9 +255,9 @@ public enum Authentication implements IAuthenticationService {
     public String getWorldview(IIdentity user) {
         String ret = null;
         if (user instanceof IUserIdentity) {
-            for (Group group : ((IUserIdentity) user).getGroups()) {
+            for(Group group : ((IUserIdentity) user).getGroups()) {
                 if (group.isWorldview()) {
-                    for (String project : group.getProjectUrls()) {
+                    for(String project : group.getProjectUrls()) {
                         String pid = MiscUtilities.getURLBaseName(project);
                         if (ret == null && !pid.contains(".")) {
                             ret = pid;
@@ -385,7 +385,7 @@ public enum Authentication implements IAuthenticationService {
                         + " owned by " + hubNode.getPartner().getId());
 
                 Logging.INSTANCE.info("The following nodes are available:");
-                for (INodeIdentity n : Network.INSTANCE.getNodes()) {
+                for(INodeIdentity n : Network.INSTANCE.getNodes()) {
                     Duration uptime = new Duration(n.getUptime());
                     DateTime boottime = DateTime.now(DateTimeZone.UTC).minus(uptime.toPeriod());
                     IPartnerIdentity partner = n.getParentIdentity();
@@ -417,7 +417,7 @@ public enum Authentication implements IAuthenticationService {
 
         return ret;
     }
-    
+
     public ExternalAuthenticationCredentials getCredentials(String hostUrl) {
         return externalCredentials.get(hostUrl);
     }
@@ -482,7 +482,7 @@ public enum Authentication implements IAuthenticationService {
         List<ObservableReference> ret = new ArrayList<>();
         IUserIdentity user = identity.getParentIdentity(IUserIdentity.class);
         if (user != null) {
-            for (Group group : user.getGroups()) {
+            for(Group group : user.getGroups()) {
                 ret.addAll(group.getObservables());
             }
         }
@@ -492,7 +492,7 @@ public enum Authentication implements IAuthenticationService {
     @Override
     public Collection<ISession> getSessions() {
         List<ISession> ret = new ArrayList<>();
-        for (IIdentity identity : identities.values()) {
+        for(IIdentity identity : identities.values()) {
             if (identity instanceof ISession) {
                 ret.add((ISession) identity);
             }
@@ -504,8 +504,6 @@ public enum Authentication implements IAuthenticationService {
         externalCredentials.put(host, credentials);
         externalCredentials.write();
     }
-    
-    
 
     public IUserIdentity getUserIdentity(Principal principal) {
         if (principalTranslator != null) {
@@ -516,8 +514,8 @@ public enum Authentication implements IAuthenticationService {
     }
 
     public boolean hasEitherGroup(IUserIdentity user, String... groups) {
-        for (Group g : user.getGroups()) {
-            for (String grp : groups) {
+        for(Group g : user.getGroups()) {
+            for(String grp : groups) {
                 if (g.getName().equals(grp)) {
                     return true;
                 }
@@ -536,7 +534,7 @@ public enum Authentication implements IAuthenticationService {
     public Collection<String> getWorldviewRepositories(IUserIdentity user) {
         Set<String> ret = new LinkedHashSet<>();
         if (user != null) {
-            for (Group group : user.getGroups()) {
+            for(Group group : user.getGroups()) {
                 if (group.isWorldview()) {
                     ret.addAll(group.getProjectUrls());
                 }

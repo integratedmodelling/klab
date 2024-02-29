@@ -140,11 +140,11 @@ public enum Actors implements IActorsService {
     private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
     private Map<String, Map<String, Map<String, String>>> localizations = Collections.synchronizedMap(new HashMap<>());
     private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, Pair<String, Class<? extends KlabActionExecutor>>> actionClasses = Collections
+    private Map<String, Pair<String, Class< ? extends KlabActionExecutor>>> actionClasses = Collections
             .synchronizedMap(new HashMap<>());
     // the annotations for the classes defined through code
-    private Map<Class<?>, Action> actionDefinitions = Collections.synchronizedMap(new HashMap<>());
-    private Map<String, Pair<String, Class<? extends KlabWidgetActionExecutor>>> viewActionClasses = Collections
+    private Map<Class< ? >, Action> actionDefinitions = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, Pair<String, Class< ? extends KlabWidgetActionExecutor>>> viewActionClasses = Collections
             .synchronizedMap(new HashMap<>());
     AtomicLong semaphoreId = new AtomicLong(1L);
     Map<Semaphore.Type, Set<Long>> semaphores = Collections.synchronizedMap(new HashMap<>());
@@ -170,13 +170,13 @@ public enum Actors implements IActorsService {
 
     public class Library {
 
-        public Library(String name, Class<?> cls) {
+        public Library(String name, Class< ? > cls) {
             this.name = name;
             this.cls = cls;
         }
 
         public String name;
-        public Class<?> cls;
+        public Class< ? > cls;
         public Map<String, CallDescriptor> methods = Collections.synchronizedMap(new HashMap<>());
         Set<IKActorsBehavior.Type> defaulted = new HashSet<>();
 
@@ -271,7 +271,7 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("opened");
 
         isoLanguages = new HashSet<>();
-        for (String isoLanguage : Locale.getISOLanguages()) {
+        for(String isoLanguage : Locale.getISOLanguages()) {
             isoLanguages.add(isoLanguage);
         }
     }
@@ -445,10 +445,8 @@ public enum Actors implements IActorsService {
      * @return
      */
     public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-        return ActorSystem.create(
-                    Behaviors.supervise(create)
-                        .onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
-                        identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername()) : identity.getId());
+        return ActorSystem.create(Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+                identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername()) : identity.getId());
     }
 
     private String sanitize(String username) {
@@ -463,7 +461,7 @@ public enum Actors implements IActorsService {
      * @param cls
      */
     @SuppressWarnings("unchecked")
-    public void registerBehavior(org.integratedmodelling.klab.api.extensions.actors.Behavior annotation, Class<?> cls) {
+    public void registerBehavior(org.integratedmodelling.klab.api.extensions.actors.Behavior annotation, Class< ? > cls) {
 
         BehaviorReference descriptor = behaviorDescriptors.get(annotation.id());
         if (descriptor == null) {
@@ -479,18 +477,18 @@ public enum Actors implements IActorsService {
             descriptor.setColor(annotation.color());
         }
 
-        for (Class<?> cl : cls.getDeclaredClasses()) {
+        for(Class< ? > cl : cls.getDeclaredClasses()) {
             Action message = cl.getAnnotation(Action.class);
             if (message != null) {
                 BehaviorReference.Action ad = new BehaviorReference.Action();
                 ad.setName(message.id());
                 ad.setDescription(message.description());
                 descriptor.getActions().add(ad);
-                this.actionClasses.put(message.id(), new Pair<>(annotation.id(), (Class<? extends KlabActionExecutor>) cl));
+                this.actionClasses.put(message.id(), new Pair<>(annotation.id(), (Class< ? extends KlabActionExecutor>) cl));
                 this.actionDefinitions.put(cl, message);
                 if (KlabActionExecutor.class.isAssignableFrom(cl)) {
                     this.viewActionClasses.put(message.id(),
-                            new Pair<>(annotation.id(), (Class<? extends KlabWidgetActionExecutor>) cl));
+                            new Pair<>(annotation.id(), (Class< ? extends KlabWidgetActionExecutor>) cl));
                 }
             }
         }
@@ -529,10 +527,10 @@ public enum Actors implements IActorsService {
     public KlabActionExecutor getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
             IKActorsBehavior.Scope scope, ActorRef<KlabMessage> sender, String callId) {
 
-        Pair<String, Class<? extends KlabActionExecutor>> cls = actionClasses.get(id);
+        Pair<String, Class< ? extends KlabActionExecutor>> cls = actionClasses.get(id);
         if (cls != null) {
             try {
-                Constructor<? extends KlabActionExecutor> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
+                Constructor< ? extends KlabActionExecutor> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
                         IParameters.class, IKActorsBehavior.Scope.class, ActorRef.class, String.class);
                 KlabActionExecutor ret = constructor.newInstance(identity, arguments, scope, sender, callId);
                 ret.notifyDefinition(this.actionDefinitions.get(cls.getSecond()));
@@ -544,13 +542,13 @@ public enum Actors implements IActorsService {
         return null;
     }
 
-    public Class<? extends KlabActionExecutor> getActionClass(String id) {
-        Pair<String, Class<? extends KlabActionExecutor>> ret = actionClasses.get(id);
+    public Class< ? extends KlabActionExecutor> getActionClass(String id) {
+        Pair<String, Class< ? extends KlabActionExecutor>> ret = actionClasses.get(id);
         return ret == null ? null : ret.getSecond();
     }
 
-    public Class<? extends KlabWidgetActionExecutor> getViewActionClass(String id) {
-        Pair<String, Class<? extends KlabWidgetActionExecutor>> ret = viewActionClasses.get(id);
+    public Class< ? extends KlabWidgetActionExecutor> getViewActionClass(String id) {
+        Pair<String, Class< ? extends KlabWidgetActionExecutor>> ret = viewActionClasses.get(id);
         return ret == null ? null : ret.getSecond();
     }
 
@@ -562,7 +560,7 @@ public enum Actors implements IActorsService {
     @Override
     public Collection<String> getBehaviorIds(IKActorsBehavior.Type type) {
         List<String> ret = new ArrayList<>();
-        for (String key : behaviors.keySet()) {
+        for(String key : behaviors.keySet()) {
             if (behaviors.get(key).getDestination() == type) {
                 ret.add(key);
             }
@@ -573,7 +571,7 @@ public enum Actors implements IActorsService {
     @Override
     public Collection<String> getPublicApps() {
         Set<String> ret = new LinkedHashSet<>();
-        for (String key : behaviors.keySet()) {
+        for(String key : behaviors.keySet()) {
             if (behaviors.get(key).getDestination() == Type.APP && behaviors.get(key).getStatement().isPublic()) {
                 // getId() and set semantics ensure that localized instances only appear once with
                 // their original name
@@ -604,7 +602,7 @@ public enum Actors implements IActorsService {
             }
         }
 
-        for (IAnnotation annotation : annotations) {
+        for(IAnnotation annotation : annotations) {
             if (annotation.getName().equals("bind")) {
                 String behavior = annotation.containsKey("behavior")
                         ? annotation.get("behavior", String.class)
@@ -644,7 +642,7 @@ public enum Actors implements IActorsService {
      */
     @SuppressWarnings("unchecked")
     public <T> T getArgument(IParameters<String> arguments, IKActorsBehavior.Scope scope, IIdentity identity, Class<T> cls) {
-        for (String key : arguments.getUnnamedKeys()) {
+        for(String key : arguments.getUnnamedKeys()) {
             Object ret = arguments.get(key);
             if (ret instanceof KActorsValue) {
                 ret = ((KActorsValue) ret).evaluate(scope, identity, false);
@@ -686,15 +684,15 @@ public enum Actors implements IActorsService {
             dumpPanel(view.getHeader(), "Header", ret, offset + 3);
         }
 
-        for (ViewPanel panel : view.getLeftPanels()) {
+        for(ViewPanel panel : view.getLeftPanels()) {
             dumpPanel(panel, "Left", ret, offset + 3);
         }
 
-        for (ViewPanel panel : view.getPanels()) {
+        for(ViewPanel panel : view.getPanels()) {
             dumpPanel(panel, "Center", ret, offset + 3);
         }
 
-        for (ViewPanel panel : view.getRightPanels()) {
+        for(ViewPanel panel : view.getRightPanels()) {
             dumpPanel(panel, "Right", ret, offset + 3);
         }
 
@@ -710,7 +708,7 @@ public enum Actors implements IActorsService {
 
         ret.append(spacer + title + ": " + panel.getName() + " [" + panel.getId() + "]\n");
 
-        for (ViewComponent component : panel.getComponents()) {
+        for(ViewComponent component : panel.getComponents()) {
             dumpComponent(component, ret, offset + 3);
         }
 
@@ -728,7 +726,7 @@ public enum Actors implements IActorsService {
             ret.append(spacer + component.getType() + " " + (name == null ? "<unnamed>" : name) + " [" + component.getId() + "]"
                     + dumpAttributes(component) + (component.getActorPath() == null ? "" : (" -> " + component.getActorPath()))
                     + "\n");
-            for (ViewComponent c : component.getComponents()) {
+            for(ViewComponent c : component.getComponents()) {
                 dumpComponent(c, ret, offset + 3);
             }
         }
@@ -738,7 +736,7 @@ public enum Actors implements IActorsService {
         String ret = "";
         if (!component.getAttributes().isEmpty()) {
             String attrs = "";
-            for (String key : component.getAttributes().keySet()) {
+            for(String key : component.getAttributes().keySet()) {
                 attrs += (attrs.isEmpty() ? "" : ", ") + key + ": " + component.getAttributes().get(key);
             }
             ret = " {" + attrs + "}";
@@ -752,7 +750,7 @@ public enum Actors implements IActorsService {
      */
     public void loadUserBehaviors() {
         File bspace = Configuration.INSTANCE.getDataPath("user");
-        for (File bfile : bspace.listFiles()) {
+        for(File bfile : bspace.listFiles()) {
             if (bfile.toString().endsWith(".kactor")) {
                 KActors.INSTANCE.add(bfile);
             }
@@ -761,9 +759,9 @@ public enum Actors implements IActorsService {
 
     public ViewPanel findPanel(Layout view, String id) {
         ViewPanel ret = null;
-        for (Collection<?> panels : new Collection[]{view.getPanels(), view.getLeftPanels(), view.getRightPanels(),
+        for(Collection< ? > panels : new Collection[]{view.getPanels(), view.getLeftPanels(), view.getRightPanels(),
                 Collections.singleton(view.getFooter()), Collections.singleton(view.getHeader())}) {
-            for (Object panel : panels) {
+            for(Object panel : panels) {
                 ret = findPanel((ViewPanel) panel, id);
                 if (ret != null) {
                     return ret;
@@ -777,7 +775,7 @@ public enum Actors implements IActorsService {
         if (panel instanceof ViewPanel && id.equals(panel.getId())) {
             return (ViewPanel) panel;
         }
-        for (ViewComponent component : panel.getComponents()) {
+        for(ViewComponent component : panel.getComponents()) {
             ViewPanel ret = findPanel(component, id);
             if (ret != null) {
                 return ret;
@@ -794,7 +792,7 @@ public enum Actors implements IActorsService {
 
         Map<String, Set<String>> ret = new HashMap<>();
 
-        for (String key : actionClasses.keySet()) {
+        for(String key : actionClasses.keySet()) {
             String agent = actionClasses.get(key).getFirst();
             if (agent != null) {
                 if (!ret.containsKey(agent)) {
@@ -895,9 +893,10 @@ public enum Actors implements IActorsService {
      * @param identity
      * @return
      */
-    public Object createJavaObject(KActorsValue.Constructor constructor, IKActorsBehavior.Scope scope, IActorIdentity<?> identity) {
+    public Object createJavaObject(KActorsValue.Constructor constructor, IKActorsBehavior.Scope scope,
+            IActorIdentity< ? > identity) {
 
-        Class<?> cls = null;
+        Class< ? > cls = null;
         String className = constructor.getClassname();
         Object ret = null;
 
@@ -920,7 +919,7 @@ public enum Actors implements IActorsService {
                 List<Object> arguments = new ArrayList<>();
                 Map<String, Object> settings = new HashMap<>();
 
-                for (Object arg : constructor.getArguments().getUnnamedArguments()) {
+                for(Object arg : constructor.getArguments().getUnnamedArguments()) {
                     if (arg instanceof KActorsValue) {
                         arguments.add(((KActorsValue) arg).evaluate(scope, identity, true));
                     } else {
@@ -928,7 +927,7 @@ public enum Actors implements IActorsService {
                     }
                 }
 
-                for (String key : constructor.getArguments().keySet()) {
+                for(String key : constructor.getArguments().keySet()) {
                     if (constructor.getArguments().getUnnamedKeys().contains(key)) {
                         continue;
                     }
@@ -936,14 +935,14 @@ public enum Actors implements IActorsService {
                     settings.put(key, arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
                 }
 
-                Constructor<?> constr = null;
+                Constructor< ? > constr = null;
 
                 if (arguments.size() == 0) {
                     constr = cls.getConstructor();
                 } else {
-                    Class<?>[] cclasses = new Class<?>[arguments.size()];
+                    Class< ? >[] cclasses = new Class< ? >[arguments.size()];
                     int i = 0;
-                    for (Object o : arguments) {
+                    for(Object o : arguments) {
                         cclasses[i++] = o == null ? Object.class : o.getClass();
                     }
                     constr = cls.getConstructor(cclasses);
@@ -958,7 +957,7 @@ public enum Actors implements IActorsService {
 
                 // shouldn't happen w/o exception
                 if (ret != null) {
-                    for (String setting : settings.keySet()) {
+                    for(String setting : settings.keySet()) {
                         String methodName = setting.startsWith("set") ? setting : ("set" + StringUtil.capitalize(setting));
                         Object argument = settings.get(setting);
                         Method method = null;
@@ -1027,7 +1026,7 @@ public enum Actors implements IActorsService {
     }
 
     @SuppressWarnings("unchecked")
-    public Iterable<Object> getIterable(IKActorsValue iterable, IKActorsBehavior.Scope scope, IActorIdentity<?> identity) {
+    public Iterable<Object> getIterable(IKActorsValue iterable, IKActorsBehavior.Scope scope, IActorIdentity< ? > identity) {
         switch(iterable.getType()) {
         case ANYTHING:
             break;
@@ -1125,16 +1124,16 @@ public enum Actors implements IActorsService {
      * @param arguments
      * @param scope
      */
-    public Object invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, IKActorsBehavior.Scope scope,
-            IActorIdentity<?> identity) {
+    public Object invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments,
+            IKActorsBehavior.Scope scope, IActorIdentity< ? > identity) {
 
         Object ret = null;
         List<Object> jargs = new ArrayList<>();
         Map<String, Object> kargs = null;
-        for (Object v : arguments.getUnnamedArguments()) {
+        for(Object v : arguments.getUnnamedArguments()) {
             jargs.add(v instanceof KActorsValue ? ((KActorsValue) v).evaluate(scope, identity, false) : v);
         }
-        for (String k : arguments.getNamedKeys()) {
+        for(String k : arguments.getNamedKeys()) {
             if (kargs == null) {
                 kargs = new HashMap<>();
             }
@@ -1145,10 +1144,10 @@ public enum Actors implements IActorsService {
             jargs.add(kargs);
         }
 
-        Class<?>[] clss = new Class[jargs.size()];
+        Class< ? >[] clss = new Class[jargs.size()];
 
         int i = 0;
-        for (Object jarg : jargs) {
+        for(Object jarg : jargs) {
             clss[i++] = jarg == null ? Object.class : jarg.getClass();
         }
 
@@ -1206,7 +1205,7 @@ public enum Actors implements IActorsService {
                 clss = new Class[jargs.size() + 1];
 
                 i = 0;
-                for (Object jarg : jargs) {
+                for(Object jarg : jargs) {
                     clss[i++] = jarg == null ? Object.class : jarg.getClass();
                 }
                 clss[i] = Map.class;
@@ -1336,7 +1335,7 @@ public enum Actors implements IActorsService {
         }
 
         if (app != null) {
-            while(((Session) session).isRunning(app)) {
+            while (((Session) session).isRunning(app)) {
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException e) {
@@ -1349,16 +1348,16 @@ public enum Actors implements IActorsService {
 
     }
 
-    public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation, Class<?> cls) {
+    public void registerLibrary(org.integratedmodelling.klab.api.extensions.actors.Library annotation, Class< ? > cls) {
 
         /**
          * Parse methods, create indices, set defaults
          */
         Library library = new Library(annotation.name(), cls);
-        for (IKActorsBehavior.Type def : annotation.defaultFor()) {
+        for(IKActorsBehavior.Type def : annotation.defaultFor()) {
             library.defaulted.add(def);
         }
-        for (Method method : cls.getDeclaredMethods()) {
+        for(Method method : cls.getDeclaredMethods()) {
             if (Modifier.isPublic(method.getModifiers()) && method.isAnnotationPresent(Call.class)) {
                 Call cid = method.getAnnotation(Call.class);
                 String name = cid.name().isEmpty() ? method.getName() : cid.name();
@@ -1377,13 +1376,13 @@ public enum Actors implements IActorsService {
      */
     public Map<String, Library> getLibraries(IKActorsBehavior statement, IMonitor monitor) {
         Map<String, Library> ret = new HashMap<>();
-        for (Library library : libraries.values()) {
+        for(Library library : libraries.values()) {
             if (library.defaulted.contains(statement.getType())) {
                 ret.put(library.name, library);
             }
         }
 
-        for (String imported : statement.getImports()) {
+        for(String imported : statement.getImports()) {
             Library lib = libraries.get(imported);
             if (lib != null) {
                 ret.put(lib.name, lib);
@@ -1397,7 +1396,7 @@ public enum Actors implements IActorsService {
     public boolean matches(IKActorsValue kvalue, Object value, IKActorsBehavior.Scope scope) {
         switch(kvalue.getType()) {
         case ANNOTATION:
-            for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
+            for(IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
                 if (annotation.getName().equals(kvalue.getStatedValue())) {
                     scope.getSymbolTable().put(annotation.getName(), annotation);
                     return true;
@@ -1485,10 +1484,10 @@ public enum Actors implements IActorsService {
         case TREE:
             break;
         case CONSTANT:
-            return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(kvalue.getStatedValue()))
+            return (value instanceof Enum && ((Enum< ? >) value).name().toUpperCase().equals(kvalue.getStatedValue()))
                     || (value instanceof String && ((String) value).equals(kvalue.getStatedValue()));
         case EMPTY:
-            return value == null || (value instanceof Collection && ((Collection<?>) value).isEmpty())
+            return value == null || (value instanceof Collection && ((Collection< ? >) value).isEmpty())
                     || (value instanceof String && ((String) value).isEmpty())
                     || (value instanceof IConcept && ((IConcept) value).is(IKimConcept.Type.NOTHING))
                     || (value instanceof IObservable && ((IObservable) value).is(IKimConcept.Type.NOTHING))
@@ -1561,8 +1560,8 @@ public enum Actors implements IActorsService {
          */
         if (scope != null) {
             value = container;
-            while(value instanceof KActorsValue) {
-                value = KlabActor.evaluateInScope((KActorsValue) value, scope, (IActorIdentity<?>) identity);
+            while (value instanceof KActorsValue) {
+                value = KlabActor.evaluateInScope((KActorsValue) value, scope, (IActorIdentity< ? >) identity);
             }
         }
 
@@ -1579,7 +1578,7 @@ public enum Actors implements IActorsService {
         if (outputFile != null) {
             //
         }
-        for (String projectUrl : testCaseProjectsOrGitUrls) {
+        for(String projectUrl : testCaseProjectsOrGitUrls) {
 
             IProject project = null;
             // turn string into project, if existing call runAllTests on it and sum up the return
@@ -1611,7 +1610,7 @@ public enum Actors implements IActorsService {
             File loc = MiscUtilities.changeExtension(source.getFile(), "localization");
             if (loc.exists()) {
                 FileCatalog<Map> cat = FileCatalog.create(loc, Map.class, Map.class);
-                for (String lang : cat.keySet()) {
+                for(String lang : cat.keySet()) {
                     Localization localization = new Localization();
                     localization.setIsoCode(lang);
                     Locale locale = Locale.forLanguageTag(lang);

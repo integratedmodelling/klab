@@ -55,10 +55,10 @@ public class PreauthenticatedUserDetailsService implements UserDetailsService {
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String role : roles) {
+        for(String role : roles) {
             authorities.add(new SimpleGrantedAuthority(role));
         }
-        
+
         // anonymous or local user
         String tokens = NameGenerator.newName();
         return new KlabUser(username, tokens, tokens, authorities);

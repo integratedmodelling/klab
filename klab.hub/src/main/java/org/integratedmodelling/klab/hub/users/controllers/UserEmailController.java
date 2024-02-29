@@ -28,48 +28,48 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserEmailController {
 
-	@Autowired
-	EmailManager emailManager;
-	
-	@Autowired
+    @Autowired
+    EmailManager emailManager;
+
+    @Autowired
     private EmailConfig emailConfig;
 
-	/**
-	 * Send an email. Used by apps in engines.
-	 * @param sendEmail
-	 * @return confirmation or error
-	 */
-	@PostMapping(value = API.HUB.USER_SEND_EMAIL, produces = MediaType.APPLICATION_JSON_VALUE)
-	@PreAuthorize("hasRole('ROLE_USER')")
-	public ResponseEntity<?> sendEmail(@RequestBody KlabEmail email) {
-		
-		// / Currently, the only email that can be used is the one used for SMTP. Therefore no customization is available
-		email.from = emailConfig.senderEmail();
-		
-		Set<String> recipients = new HashSet<String>();
-		if (email.to != null && email.to.size() > 0) {
-			for(String userEmail: email.to) {
-				if (userEmail.length() > 0) {
-					if (!userEmail.contains("@")) {
-						userEmail = userEmail + "@" + emailConfig.defaultDomain();
-					}
-					if (Arrays.asList(emailConfig.getAllowedEmailAddresses()).contains(userEmail)) {
-						recipients.add(userEmail);
-					} else {
-						throw new MailAddressNotAllowedException(userEmail);
-					}
-				}
-			}
-			if (recipients.size() == 0) {
-				recipients.add(emailConfig.defaultRecipient());
-			}
-		} else {
-			
-		}
-		
-			
-		emailManager.send(email.from, recipients, null, email.subject, email.content, email.type != EmailType.TEXT);
-		return new ResponseEntity<HttpStatus>(HttpStatus.OK);
-		
-	}
+    /**
+     * Send an email. Used by apps in engines.
+     * @param sendEmail
+     * @return confirmation or error
+     */
+    @PostMapping(value = API.HUB.USER_SEND_EMAIL, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity< ? > sendEmail(@RequestBody KlabEmail email) {
+
+        // / Currently, the only email that can be used is the one used for SMTP. Therefore no
+        // customization is available
+        email.from = emailConfig.senderEmail();
+
+        Set<String> recipients = new HashSet<String>();
+        if (email.to != null && email.to.size() > 0) {
+            for(String userEmail : email.to) {
+                if (userEmail.length() > 0) {
+                    if (!userEmail.contains("@")) {
+                        userEmail = userEmail + "@" + emailConfig.defaultDomain();
+                    }
+                    if (Arrays.asList(emailConfig.getAllowedEmailAddresses()).contains(userEmail)) {
+                        recipients.add(userEmail);
+                    } else {
+                        throw new MailAddressNotAllowedException(userEmail);
+                    }
+                }
+            }
+            if (recipients.size() == 0) {
+                recipients.add(emailConfig.defaultRecipient());
+            }
+        } else {
+
+        }
+
+        emailManager.send(email.from, recipients, null, email.subject, email.content, email.type != EmailType.TEXT);
+        return new ResponseEntity<HttpStatus>(HttpStatus.OK);
+
+    }
 }

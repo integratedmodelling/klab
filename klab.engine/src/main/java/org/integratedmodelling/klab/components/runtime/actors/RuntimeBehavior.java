@@ -185,7 +185,7 @@ public class RuntimeBehavior {
                     toFire = (IObservation) contextDef.get("observation");
                 }
 
-                for (String observable : args.getSecond()) {
+                for(String observable : args.getSecond()) {
                     try {
                         Future<IArtifact> future = ((Session) identity).getState().submit(observable);
                         toFire = (IObservation) future.get();
@@ -194,7 +194,7 @@ public class RuntimeBehavior {
                             /*
                              * return artifact is a view
                              */
-                            for (IKnowledgeView view : ((IRuntimeScope) ((IObservation) toFire).getScope()).getViews()) {
+                            for(IKnowledgeView view : ((IRuntimeScope) ((IObservation) toFire).getScope()).getViews()) {
                                 if (observable.equals(view.getUrn())) {
                                     toFire = view;
                                     break;
@@ -310,7 +310,7 @@ public class RuntimeBehavior {
             Set<IConcept> roles = new HashSet<>();
             Set<IConcept> observables = new HashSet<>();
 
-            for (Object arg : arguments.getUnnamedArguments()) {
+            for(Object arg : arguments.getUnnamedArguments()) {
                 Object value = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg;
                 if (value instanceof IObservable) {
                     IConcept c = ((IObservable) value).getType();
@@ -320,7 +320,7 @@ public class RuntimeBehavior {
                         observables.add(c);
                     }
                 } else if (value instanceof Collection) {
-                    for (Object cc : ((Collection<?>) value)) {
+                    for(Object cc : ((Collection< ? >) value)) {
                         if (cc instanceof IObservable) {
                             IConcept c = ((IObservable) cc).getType();
                             if (c.is(IKimConcept.Type.ROLE)) {
@@ -334,8 +334,8 @@ public class RuntimeBehavior {
             }
 
             session.getState().resetRoles();
-            for (IConcept role : roles) {
-                for (IConcept target : observables) {
+            for(IConcept role : roles) {
+                for(IConcept target : observables) {
                     session.getState().addRole(role, target);
                 }
             }
@@ -365,7 +365,7 @@ public class RuntimeBehavior {
         @Override
         public void run(IKActorsBehavior.Scope scope) {
             Set<String> scenarios = new HashSet<>();
-            for (String key : arguments.getUnnamedKeys()) {
+            for(String key : arguments.getUnnamedKeys()) {
                 scenarios.add(((IKActorsValue) arguments.get(key)).evaluate(scope, identity, true).toString());
             }
             session.getState().setActiveScenarios(scenarios);
@@ -446,7 +446,7 @@ public class RuntimeBehavior {
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
             boolean pdef = false;
-            for (String key : arguments.getUnnamedKeys()) {
+            for(String key : arguments.getUnnamedKeys()) {
                 Object o = arguments.get(key);
                 if (o instanceof Double && !pdef && ((Double) o) <= 1 && ((Double) o) >= 0) {
                     probability = (Double) o;
@@ -494,7 +494,7 @@ public class RuntimeBehavior {
         @Override
         public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.getRuntimeScope().getMonitor().info(args.toArray());
@@ -512,7 +512,7 @@ public class RuntimeBehavior {
         @Override
         public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.getRuntimeScope().getMonitor().warn(args.toArray());
@@ -530,7 +530,7 @@ public class RuntimeBehavior {
         @Override
         public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.getRuntimeScope().getMonitor().error(args.toArray());
@@ -548,54 +548,54 @@ public class RuntimeBehavior {
         @Override
         public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.getRuntimeScope().getMonitor().debug(args.toArray());
         }
     }
-    
-    @Action(id = "email", fires = Type.STRING, description="Send an email")
+
+    @Action(id = "email", fires = Type.STRING, description = "Send an email")
     public static class Email extends KlabActionExecutor {
-    	
-       	public Email(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
+
+        public Email(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
-		@Override
+        @Override
         public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
-            UserIdentity user = (UserIdentity)session.getUser();
+            UserIdentity user = (UserIdentity) session.getUser();
             Client client = Client.create();
             String url = Network.INSTANCE.getHub().getUrls().get(0);
             if (args.size() >= 2) {
-            	String to = args.get(0).toString();
-            	// Fixed subject
-            	String subject = "[APP MESSAGE] Message from user " + user.getUsername() + " using app " + scope.getBehavior().getName();
-            	String content = args.get(1).toString();
-            	EmailType type = (args.size() == 3 && "HTML".equals(args.get(2).toString())) ?
-            			EmailType.HTML : EmailType.TEXT; 
-            	new Thread(){
+                String to = args.get(0).toString();
+                // Fixed subject
+                String subject = "[APP MESSAGE] Message from user " + user.getUsername() + " using app "
+                        + scope.getBehavior().getName();
+                String content = args.get(1).toString();
+                EmailType type = (args.size() == 3 && "HTML".equals(args.get(2).toString())) ? EmailType.HTML : EmailType.TEXT;
+                new Thread(){
 
                     @Override
                     public void run() {
-                    	fire(KlabEmail.EmailStatus.SENDING, scope);
-						try {
-							client.withAuthentication(user.getToken()).post(url+API.HUB.USER_SEND_EMAIL, 
-			                		new KlabEmail(null, Set.of(to), null, subject, content, type, null), ResponseEntity.class);
-							fire(KlabEmail.EmailStatus.SENT, scope);
-						} catch (KlabIOException kex) {
-							scope.getRuntimeScope().getMonitor().warn("Error sending mail: " + kex);
-		            		fire(KlabEmail.EmailStatus.ERROR, scope);
-						}
+                        fire(KlabEmail.EmailStatus.SENDING, scope);
+                        try {
+                            client.withAuthentication(user.getToken()).post(url + API.HUB.USER_SEND_EMAIL,
+                                    new KlabEmail(null, Set.of(to), null, subject, content, type, null), ResponseEntity.class);
+                            fire(KlabEmail.EmailStatus.SENT, scope);
+                        } catch (KlabIOException kex) {
+                            scope.getRuntimeScope().getMonitor().warn("Error sending mail: " + kex);
+                            fire(KlabEmail.EmailStatus.ERROR, scope);
+                        }
                     }
-            	}.start();
+                }.start();
             } else {
-            	fire("Invalid argument usage in email function: must be [recipients], [content], ([\"TEXT\"|\"HTML\"])", scope);
+                fire("Invalid argument usage in email function: must be [recipients], [content], ([\"TEXT\"|\"HTML\"])", scope);
             }
         }
     }
@@ -621,7 +621,7 @@ public class RuntimeBehavior {
             }
             final boolean dtabs = tables;
             if (!tables) {
-                for (Object arg : arguments.values()) {
+                for(Object arg : arguments.values()) {
                     args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
                 }
             }
@@ -633,8 +633,8 @@ public class RuntimeBehavior {
                     try {
                         File file = null;
                         if (dtabs) {
-                            file = AbstractTableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
-                                    file);
+                            file = AbstractTableArtifact
+                                    .exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(), file);
                         } else {
                             file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
                         }
@@ -728,13 +728,13 @@ public class RuntimeBehavior {
      * @param identity
      * @return
      */
-    public static Pair<Map<String, Object>, List<String>> separateObservationArguments(IParameters<String> arguments, IKActorsBehavior.Scope scope,
-            IActorIdentity<?> identity) {
+    public static Pair<Map<String, Object>, List<String>> separateObservationArguments(IParameters<String> arguments,
+            IKActorsBehavior.Scope scope, IActorIdentity< ? > identity) {
 
         Map<String, Object> contextDefinition = new HashMap<>();
         List<String> observationArguments = new ArrayList<>();
 
-        for (int i = 0; i < arguments.getUnnamedArguments().size(); i++) {
+        for(int i = 0; i < arguments.getUnnamedArguments().size(); i++) {
             Object o = arguments.getUnnamedArguments().get(i);
             if (o instanceof KActorsValue) {
                 o = ((KActorsValue) o).evaluate(scope, identity, true);
@@ -912,7 +912,7 @@ public class RuntimeBehavior {
             IObjectArtifact artifact = null;
             Iterator<Object> it = Actors.INSTANCE
                     .iterateResource(contextDefinition.get("urn").toString(), Klab.INSTANCE.getRootMonitor()).iterator();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 Object o = it.next();
                 if (o instanceof IObjectArtifact) {
                     artifact = (IObjectArtifact) o;
@@ -946,7 +946,7 @@ public class RuntimeBehavior {
                 /*
                  * apply or re-apply the grid to the shape
                  */
-                space = Space.create(space.getShape(), (Grid)contextDefinition.get("gridspecs"));
+                space = Space.create(space.getShape(), (Grid) contextDefinition.get("gridspecs"));
             }
         } else if (contextDefinition.containsKey("spaceunit")) {
             if (space == null) {
