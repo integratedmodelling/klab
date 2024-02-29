@@ -37,7 +37,6 @@ import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
 
-import kong.unirest.GetRequest;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -169,7 +168,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
             return statesData.getJSONArray("features").toList().stream().map(
                     feature -> ((JSONObject) feature).getJSONObject("properties").getString("iso_1").replaceFirst("US-", "")).toList();
         } catch (JSONException e) {
-            throw new KlabResourceAccessException(e);
+            throw new KlabResourceAccessException("Error while parsing \"urban_heat_modelling:gadm_level_1_usa\"");
         }
     }
 
