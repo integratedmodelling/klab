@@ -8,7 +8,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
-
 /**
  * @author steve
  * 
@@ -22,45 +21,47 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubUserProfile {
-	private String name;
-	private String email;
-	private List<String> roles;
-	
-	private List<GroupEntry> groupEntries;
-	@JsonInclude(Include.NON_NULL)
-	private String jwtToken;
+    private String name;
+    private String email;
+    private List<String> roles;
 
-	public List<String> getRoles() {
-		return roles;
-	}
+    private List<GroupEntry> groupEntries;
+    @JsonInclude(Include.NON_NULL)
+    private String jwtToken;
+    @JsonInclude(Include.NON_NULL)
+    private String authToken;
 
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
-	}
+    public List<String> getRoles() {
+        return roles;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<GroupEntry> getGroupEntries() {
-		return groupEntries;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setGroupEntries(List<GroupEntry> groupEntries) {
-		this.groupEntries = groupEntries;
-	}
+    public List<GroupEntry> getGroupEntries() {
+        return groupEntries;
+    }
+
+    public void setGroupEntries(List<GroupEntry> groupEntries) {
+        this.groupEntries = groupEntries;
+    }
 
     public String getJwtToken() {
         return jwtToken;
@@ -68,6 +69,14 @@ public class HubUserProfile {
 
     public void setJwtToken(String jwtToken) {
         this.jwtToken = jwtToken;
+    }
+
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
 }

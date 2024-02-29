@@ -324,7 +324,9 @@ public enum GeotoolsUtils {
          * that makes it work only with float.
          */
         WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(), (int) grid.getYCells(), 1, null);
-
+        if (!(locator instanceof IScale)) {
+            locator = state.getScale().at(locator);
+        }
         /*
          * pre-fill with nodata (the thing is filled with 0s).
          */

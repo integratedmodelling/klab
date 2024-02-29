@@ -41,8 +41,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 	public static final String CDS_USER_NUMBER_PROPERTY = "klab.copernicus.cds.user";
 	public static final String CDS_API_KEY_PROPERTY = "klab.copernicus.cds.apikey";
-	public static final String CDS_API_VERSION_1_0 = "1_0";
-	public static final String CDS_API_VERSION_1_1 = "1_1";
+	public static final String CDS_API_VERSION = "1_1";
+	public static final String CDS_API_FORMAT = "zip";
 	private int TIMEOUT_SECONDS = 30;
 	private static Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
 
@@ -127,13 +127,14 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		body.put("year", "" + date.getYear());
 		body.put("month", this.monts[(date.getMonth() - 1) / 3]);
 		body.put("day", this.days);
-		body.put("version", CDS_API_VERSION_1_0);
+		body.put("version", CDS_API_VERSION);
+		body.put("format", CDS_API_FORMAT);
 
 		configureRequest(variable, body);
 
 		String jsonBody = JsonUtils.printAsJson(body);
 
-		Logging.INSTANCE.info("requesting chunk " + chunk + " of " + variable + " to CDS API");
+		Logging.INSTANCE.info("requesting chunk " + chunk + " of " + variable + " to CDS API: " + jsonBody);
 		
 		HttpResponse<JsonNode> response = Unirest.post(getEndpointUrl("resources/datasets/" + this.dataset))
 				.basicAuth(user, apiKey).header("Accept", "application/json").body(jsonBody).asJson();

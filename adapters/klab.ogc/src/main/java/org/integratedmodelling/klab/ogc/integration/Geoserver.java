@@ -200,10 +200,14 @@ public class Geoserver {
                 request = request.basicAuth(username, password);
             }
 
-            return request.body(payload).asEmpty().isSuccess();
+            HttpResponse<String> resp = request.body(payload).asString();
+            if (!resp.isSuccess()) {
+                Logging.INSTANCE.error("Error creating coverage store: HTTP [" + resp.getStatus() + "] - " + resp.getBody());
+            }
+            return resp.isSuccess();
 
         } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
+            Logging.INSTANCE.error("Error creating coverage store - ", e.getMessage());
         }
 
         return false;
@@ -231,8 +235,11 @@ public class Geoserver {
                 request = request.basicAuth(username, password);
             }
 
-            return request.body(payload).asEmpty().isSuccess();
-
+            HttpResponse<String> resp = request.body(payload).asString();
+            if (!resp.isSuccess()) {
+                Logging.INSTANCE.error("Error creating coverage layer: HTTP [" + resp.getStatus() + "] - " + resp.getBody());
+            }
+            return resp.isSuccess();
         }
         return false;
     }

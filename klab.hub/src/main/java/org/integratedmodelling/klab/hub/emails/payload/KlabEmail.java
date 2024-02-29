@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.emails.payload;
 import java.io.File;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.emails.EmailConfig.EmailType;
+import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
 
 public class KlabEmail {
 	
