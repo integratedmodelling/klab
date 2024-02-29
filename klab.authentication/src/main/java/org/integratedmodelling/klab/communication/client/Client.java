@@ -77,12 +77,9 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
-import io.micrometer.core.instrument.util.JsonUtils;
 
 /**
  * Helper to avoid having to write 10 lines every time I need to do a GET with headers. It can be
@@ -107,7 +104,8 @@ public class Client extends RestTemplate implements IClient {
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
 
     ObjectMapper objectMapper;
-    String authToken;
+    String authorizationToken;
+    String authenticationToken;
     MediaType contentType = new MediaType(MediaType.APPLICATION_JSON, StandardCharsets.UTF_8);
     RestTemplate basicTemplate;
     private Set<String> endpoints = new HashSet<>();
@@ -135,7 +133,7 @@ public class Client extends RestTemplate implements IClient {
 
         return new Client(factory);
     }
-    
+
     public static Client createJson() {
         Client ret = create();
         ret.setup();
@@ -168,7 +166,7 @@ public class Client extends RestTemplate implements IClient {
             super(factory);
             objectMapper = new ObjectMapper();
             objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
+            List<HttpMessageConverter< ? >> messageConverters = new ArrayList<HttpMessageConverter< ? >>();
             MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
             /*
              * Make this converter process any kind of response, not only application/*json, which
@@ -187,7 +185,7 @@ public class Client extends RestTemplate implements IClient {
             super(factory);
 
             objectMapper = new ObjectMapper();
-            List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+            List<HttpMessageConverter< ? >> messageConverters = new ArrayList<>();
             MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
             StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
             FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
@@ -204,7 +202,7 @@ public class Client extends RestTemplate implements IClient {
             // messageConverters.add(byteConverter);
             setMessageConverters(messageConverters);
             this.setInterceptors(Collections.singletonList(new AuthorizationInterceptor()));
-            this.authToken = node.getId();
+            this.authorizationToken = node.getId();
         }
     }
 
@@ -263,6 +261,18 @@ public class Client extends RestTemplate implements IClient {
     }
 
     /**
+     * Add option to set both headers, Authorization and Authentication
+     * @param headers the headers object to set the new headers
+     */
+    private void setAuthTokens(HttpHeaders headers) {
+        if (authorizationToken != null) {
+            headers.set(HttpHeaders.AUTHORIZATION, authorizationToken);
+        }
+        if (authenticationToken != null) {
+            headers.add("Authentication", authenticationToken);
+        }
+    }
+    /**
      * Interceptor to add user agents and ensure that the authorization token gets in.
      * 
      * @author ferdinando.villa
@@ -279,9 +289,7 @@ public class Client extends RestTemplate implements IClient {
             headers.set("Accept", "application/json");
             headers.set("X-User-Agent", "k.LAB " + Version.CURRENT);
             headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-            if (authToken != null) {
-                headers.set(HttpHeaders.AUTHORIZATION, authToken);
-            }
+            setAuthTokens(headers);
             return execution.execute(requestWrapper, body);
         }
     }
@@ -289,7 +297,7 @@ public class Client extends RestTemplate implements IClient {
     private void setup() {
 
         objectMapper = new ObjectMapper();
-        List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+        List<HttpMessageConverter< ? >> messageConverters = new ArrayList<>();
         MappingJackson2HttpMessageConverter jsonMessageConverter = new MappingJackson2HttpMessageConverter();
         StringHttpMessageConverter utf8 = new StringHttpMessageConverter(Charset.forName("UTF-8"));
         FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
@@ -317,7 +325,8 @@ public class Client extends RestTemplate implements IClient {
         this.basicTemplate = client.basicTemplate;
         this.objectMapper = client.objectMapper;
         this.endpoints = client.endpoints;
-        this.authToken = client.authToken;
+        this.authorizationToken = client.authorizationToken;
+        this.authenticationToken = client.authenticationToken;
         this.contentType = client.contentType;
         setup();
     }
@@ -331,7 +340,7 @@ public class Client extends RestTemplate implements IClient {
         ret.contentType = contentType;
         return ret;
     }
-    
+
     /**
      * Return a client with authorization set to the passed object.
      * 
@@ -343,20 +352,28 @@ public class Client extends RestTemplate implements IClient {
 
         Client ret = new Client(this);
         ret.objectMapper = this.objectMapper;
-        ret.authToken = authorizer.getId();
+        ret.authorizationToken = authorizer.getId();
         return ret;
     }
 
-    public Client with(String authorization) {
+    public Client withAuthorization(String authorization) {
 
         Client ret = new Client();
         ret.objectMapper = this.objectMapper;
-        ret.authToken = authorization;
+        ret.authorizationToken = authorization;
+        return ret;
+    }
+
+    public Client withAuthentication(String authentication) {
+
+        Client ret = new Client();
+        ret.objectMapper = this.objectMapper;
+        ret.authenticationToken = authentication;
         return ret;
     }
 
     @Override
-    public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
+    public <T extends Object> T post(String url, Object data, Class< ? extends T> cls) {
 
         url = checkEndpoint(url);
 
@@ -366,9 +383,7 @@ public class Client extends RestTemplate implements IClient {
             headers.setContentType(contentType);
         }
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
 
         HttpEntity<Object> entity = new HttpEntity<>(data, headers);
 
@@ -389,10 +404,10 @@ public class Client extends RestTemplate implements IClient {
             if (response.getBody() == null) {
                 return null;
             }
-            if (response.getBody() instanceof Map && ((Map<?, ?>) response.getBody()).containsKey("exception")
-                    && ((Map<?, ?>) response.getBody()).get("exception") != null) {
+            if (response.getBody() instanceof Map && ((Map< ? , ? >) response.getBody()).containsKey("exception")
+                    && ((Map< ? , ? >) response.getBody()).get("exception") != null) {
 
-                Map<?, ?> map = (Map<?, ?>) response.getBody();
+                Map< ? , ? > map = (Map< ? , ? >) response.getBody();
                 Object exception = map.get("exception");
                 // Object path = map.get("path");
                 Object message = map.get("message");
@@ -424,7 +439,7 @@ public class Client extends RestTemplate implements IClient {
 
         System.out.println("Endpoint: " + url);
         System.out.println("Headers:");
-        for (String header : headers.keySet()) {
+        for(String header : headers.keySet()) {
             System.out.println("  " + header + " = " + headers.get(header));
         }
         System.out.println("Data:\n" + printAsJson(data));
@@ -435,7 +450,7 @@ public class Client extends RestTemplate implements IClient {
         if (url == null || url.length == 0) {
             this.endpoints.clear();
         } else {
-            for (String u : url) {
+            for(String u : url) {
                 this.endpoints.add(u);
             }
         }
@@ -458,9 +473,7 @@ public class Client extends RestTemplate implements IClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM));
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
 
         HttpEntity<String> entity = new HttpEntity<String>(headers);
 
@@ -516,14 +529,12 @@ public class Client extends RestTemplate implements IClient {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", "application/json");
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         if (parameters != null) {
             String params = "";
-            for (int i = 0; i < parameters.length; i++) {
+            for(int i = 0; i < parameters.length; i++) {
                 String key = parameters[i].toString();
                 String nakedKey = key;
                 String val = parameters[++i].toString();
@@ -543,7 +554,7 @@ public class Client extends RestTemplate implements IClient {
             }
         }
 
-        ResponseEntity<?> response = exchange(url, HttpMethod.DELETE, entity, Object.class);
+        ResponseEntity< ? > response = exchange(url, HttpMethod.DELETE, entity, Object.class);
 
         switch(response.getStatusCodeValue()) {
         case 302:
@@ -567,21 +578,19 @@ public class Client extends RestTemplate implements IClient {
      */
     @Override
     @SuppressWarnings({"unchecked"})
-    public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
+    public <T> T get(String url, Class< ? extends T> cls, Object... parameters) {
 
         url = checkEndpoint(url);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", cls.equals(String.class) ? "text/plain" : "application/json");
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         if (parameters != null) {
             String params = "";
-            for (int i = 0; i < parameters.length; i++) {
+            for(int i = 0; i < parameters.length; i++) {
                 String key = parameters[i].toString();
                 String nakedKey = key;
                 Object nextPar = parameters[++i];
@@ -599,8 +608,7 @@ public class Client extends RestTemplate implements IClient {
                 if (url.contains(key)) {
                     url = url.replace(key, val);
                 } else {
-                    params += (params.isEmpty() ? "" : "&") + nakedKey + "="
-                            + /* Escape.forURL( */val/* ) */;
+                    params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + /* Escape.forURL( */val/* ) */;
                 }
             }
             if (!params.isEmpty()) {
@@ -608,7 +616,7 @@ public class Client extends RestTemplate implements IClient {
             }
         }
 
-        ResponseEntity<?> response = null;
+        ResponseEntity< ? > response = null;
         if (cls.isArray()) {
             response = exchange(url, HttpMethod.GET, entity, Object.class);
         } else if (String.class.equals(cls)) {
@@ -630,11 +638,11 @@ public class Client extends RestTemplate implements IClient {
 
         if (response.getBody() instanceof Map) {
 
-            Object exception = ((Map<?, ?>) response.getBody()).get("exception");
-            Object error = ((Map<?, ?>) response.getBody()).get("error");
+            Object exception = ((Map< ? , ? >) response.getBody()).get("exception");
+            Object error = ((Map< ? , ? >) response.getBody()).get("error");
 
             if (exception != null || error != null) {
-                Object message = ((Map<?, ?>) response.getBody()).get("message");
+                Object message = ((Map< ? , ? >) response.getBody()).get("message");
                 // Object error = response.getBody().get("error");
                 throw new KlabIOException(
                         "remote exception: " + (message == null ? (exception == null ? error : exception) : message));
@@ -644,9 +652,9 @@ public class Client extends RestTemplate implements IClient {
 
         } else if (response.getBody() instanceof List && cls.isArray()) {
 
-            List<?> list = (List<?>) response.getBody();
-            Object ret = Array.newInstance(cls.getComponentType(), (((List<?>) response.getBody()).size()));
-            for (int i = 0; i < list.size(); i++) {
+            List< ? > list = (List< ? >) response.getBody();
+            Object ret = Array.newInstance(cls.getComponentType(), (((List< ? >) response.getBody()).size()));
+            for(int i = 0; i < list.size(); i++) {
                 Object object = list.get(i);
                 if (object instanceof Map) {
                     object = objectMapper.convertValue(object, cls.getComponentType());
@@ -664,7 +672,7 @@ public class Client extends RestTemplate implements IClient {
     }
 
     @Override
-    public <T> T postFile(String url, File file, Class<? extends T> cls) {
+    public <T> T postFile(String url, File file, Class< ? extends T> cls) {
 
         url = checkEndpoint(url);
 
@@ -672,9 +680,7 @@ public class Client extends RestTemplate implements IClient {
         headers.set("Accept", "application/json");
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new FileSystemResource(file));
         HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(body, headers);
@@ -738,9 +744,7 @@ public class Client extends RestTemplate implements IClient {
             headers.setContentType(MediaType.APPLICATION_JSON);
         }
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
-        if (authToken != null) {
-            headers.set(HttpHeaders.AUTHORIZATION, authToken);
-        }
+        setAuthTokens(headers);
 
         try {
 
