@@ -175,14 +175,16 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
     private List<String> buildRecreationIDBInput(Map<String, String> parameters, IEnvelope envelope)
             throws UnsupportedEncodingException {
-        List<String> states = getStatesFromEnvelope(envelope);
+        // The list is initialized with the list of territories and DC, which cannot be queried by the same means as the states
+        List<String> regions = List.of("DC", "AS", "GU", "MP", "PR", "VI");
+        regions.addAll(getStatesFromEnvelope(envelope));
         List<String> query = new ArrayList<>();
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
 			String parameter = entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString());
 			query.add(parameter);
 		}
 		String finalQuery = String.join("&", query);
-		return states.stream().map(state -> finalQuery + "&" + STATE + "=" + state).toList();
+		return regions.stream().map(state -> finalQuery + "&" + STATE + "=" + state).toList();
 	}
 
 	private IGeometry makeScale(Urn urn, IShape shape, IContextualizationScope scope) {
