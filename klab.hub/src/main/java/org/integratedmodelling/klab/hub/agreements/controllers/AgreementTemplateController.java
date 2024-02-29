@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.hub.agreements.controllers;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementTemplate;
 import org.integratedmodelling.klab.hub.agreements.payload.RequestAgreementTemplate;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementTemplateService;
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;

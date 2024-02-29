@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.hub.api.EmailTemplate;
+import org.integratedmodelling.klab.hub.emails.dto.EmailTemplate;
 import org.integratedmodelling.klab.hub.repository.EmailTemplateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;

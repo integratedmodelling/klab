@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.config.EmailConfig;
+import org.integratedmodelling.klab.hub.emails.EmailConfig;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.MailAddressNotAllowedException;
 import org.integratedmodelling.klab.rest.KlabEmail;

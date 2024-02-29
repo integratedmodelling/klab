@@ -2,12 +2,13 @@ package org.integratedmodelling.klab.hub.users.services;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
-import org.integratedmodelling.klab.hub.api.User;
+
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
+import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
 import org.integratedmodelling.klab.rest.CustomProperty;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.hub.agreements.services;
 
 import java.util.List;
 
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementTemplate;
 import org.integratedmodelling.klab.hub.agreements.payload.RequestAgreementTemplate;
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.springframework.stereotype.Service;

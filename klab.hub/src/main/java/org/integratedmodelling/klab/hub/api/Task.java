@@ -7,6 +7,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
@@ -58,18 +60,18 @@ public abstract class Task {
     @Transient
     private TaskType type;
     
-    protected Task() {
+    public Task() {
     	this(null, null);
     }
     
-    protected Task(Role roleRequirement) {
+    public Task(Role roleRequirement) {
     	this(roleRequirement, null);
     }
     
-    protected Task(TaskStatus parentStatus) {
+    public Task(TaskStatus parentStatus) {
     	this(null, parentStatus);
     }
-    protected Task(Role roleRequirement, TaskStatus parentStatus) {
+    public Task(Role roleRequirement, TaskStatus parentStatus) {
     	this.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
     	this.setRoleRequirement(roleRequirement);;
     	this.setIssued();
