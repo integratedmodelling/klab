@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.users.controllers;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.api.DeletedUser;
+import org.integratedmodelling.klab.hub.users.dto.DeletedUser;
 import org.integratedmodelling.klab.hub.users.services.UserDeletionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

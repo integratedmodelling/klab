@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2AuthenticationFailureHandler;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2AuthenticationSuccessHandler;
-import org.integratedmodelling.klab.hub.service.OAuth2UserService;
+import org.integratedmodelling.klab.hub.security.oauth2.OAuth2UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -2,9 +2,9 @@ package org.integratedmodelling.klab.hub.listeners;
 
 import java.util.Collection;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.hub.api.MongoNode;
-import org.integratedmodelling.klab.hub.commands.GetINodeIdentity;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
+import org.integratedmodelling.klab.hub.nodes.commands.GetINodeIdentity;
+import org.integratedmodelling.klab.hub.nodes.dtos.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;

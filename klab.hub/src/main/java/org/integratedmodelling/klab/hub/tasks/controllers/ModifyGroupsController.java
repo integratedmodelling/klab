@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.hub.api.GroupRequestTask;
 import org.integratedmodelling.klab.hub.api.ModifyGroupsTask;
 import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
 import org.integratedmodelling.klab.hub.api.Task;
-import org.integratedmodelling.klab.hub.api.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;

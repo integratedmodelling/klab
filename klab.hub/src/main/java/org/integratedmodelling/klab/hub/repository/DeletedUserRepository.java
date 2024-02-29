@@ -2,9 +2,7 @@ package org.integratedmodelling.klab.hub.repository;
 
 import java.util.Optional;
 
-import org.bson.types.ObjectId;
-import org.integratedmodelling.klab.hub.api.DeletedUser;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.integratedmodelling.klab.hub.users.dto.DeletedUser;
 import org.springframework.stereotype.Repository;
 
 @Repository
