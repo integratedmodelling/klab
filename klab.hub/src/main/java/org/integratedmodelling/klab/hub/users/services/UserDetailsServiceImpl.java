@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

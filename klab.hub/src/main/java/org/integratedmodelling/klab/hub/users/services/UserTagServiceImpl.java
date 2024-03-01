@@ -4,14 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.hub.api.MongoTag;
+import org.integratedmodelling.klab.hub.api.TagEntry;
+import org.integratedmodelling.klab.hub.api.TagNotification;
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TagNotificationRepository;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
-import org.integratedmodelling.klab.hub.tags.dto.TagEntry;
-import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
-import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.stereotype.Service;
 
 @Service

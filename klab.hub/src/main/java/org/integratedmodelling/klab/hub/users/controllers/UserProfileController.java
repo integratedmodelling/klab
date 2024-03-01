@@ -4,26 +4,29 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.licenses.dto.JwtToken;
-import org.integratedmodelling.klab.hub.paginationAndFilter.GenericPageAndFilterConverter;
-import org.integratedmodelling.klab.hub.paginationAndFilter.dto.FilterCondition;
-import org.integratedmodelling.klab.hub.paginationAndFilter.payload.PageRequest;
-import org.integratedmodelling.klab.hub.paginationAndFilter.payload.PageResponse;
-import org.integratedmodelling.klab.hub.paginationAndFilter.services.FilterBuilderService;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.JwtToken;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.api.TokenVerifyEmailClickback;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.controllers.dto.FilterCondition;
+import org.integratedmodelling.klab.hub.controllers.pagination.GenericPageAndFilterConverter;
+import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenVerifyEmailClickback;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
-import org.integratedmodelling.klab.hub.tokens.exceptions.ActivationTokenFailedException;
+import org.integratedmodelling.klab.hub.payload.PageRequest;
+import org.integratedmodelling.klab.hub.payload.PageResponse;
+import org.integratedmodelling.klab.hub.payload.UpdateEmailRequest;
+import org.integratedmodelling.klab.hub.payload.UpdateEmailResponse;
+import org.integratedmodelling.klab.hub.payload.UpdateUserRequest;
+import org.integratedmodelling.klab.hub.service.FilterBuilderService;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
 import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
-import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
-import org.integratedmodelling.klab.hub.users.dto.User;
-import org.integratedmodelling.klab.hub.users.payload.UpdateEmailRequest;
-import org.integratedmodelling.klab.hub.users.payload.UpdateEmailResponse;
-import org.integratedmodelling.klab.hub.users.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -66,6 +69,7 @@ public class UserProfileController {
 		this.userAuthService = userAuthService;
 	}
 
+	@SuppressWarnings("unlikely-arg-type")
 	@GetMapping(API.HUB.USER_BASE)
 	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<?> getAllUserProfiles(PageRequest pageRequest) {

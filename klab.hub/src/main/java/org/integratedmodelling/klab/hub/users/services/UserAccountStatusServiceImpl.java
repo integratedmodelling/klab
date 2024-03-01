@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.api.User.AccountStatus;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.dto.User;
-import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.springframework.stereotype.Service;
 
 @Service

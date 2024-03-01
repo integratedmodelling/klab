@@ -13,9 +13,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.integratedmodelling.klab.hub.emails.EmailConfig;
-import org.integratedmodelling.klab.hub.emails.exceptions.SendEmailException;
+import org.integratedmodelling.klab.hub.exception.SendEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;

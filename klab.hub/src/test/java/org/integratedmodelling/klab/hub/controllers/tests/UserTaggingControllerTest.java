@@ -1,13 +1,13 @@
 package org.integratedmodelling.klab.hub.controllers.tests;
 
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.api.MongoTag;
+import org.integratedmodelling.klab.hub.api.TagNotification;
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.TagNotificationRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
-import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
-import org.integratedmodelling.klab.hub.users.dto.User;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.AfterAll;

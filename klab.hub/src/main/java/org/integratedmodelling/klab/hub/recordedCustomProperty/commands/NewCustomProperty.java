@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.recordedCustomProperty.commands;
 
-import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
+import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 
 public class NewCustomProperty implements RecordedCustomPropertyCommand {

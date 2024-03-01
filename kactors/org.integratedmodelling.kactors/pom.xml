@@ -111,6 +111,12 @@
 							</includes>
 						</fileset>
 						<fileset>
+							<directory>${basedir}/../org.integratedmodelling.kactors.web/src-gen/</directory>
+							<includes>
+								<include>**/*</include>
+							</includes>
+						</fileset>
+						<fileset>
 							<directory>${basedir}/model/generated/</directory>
 						</fileset>
 					</filesets>

@@ -6,11 +6,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenAuthentication;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
-import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;

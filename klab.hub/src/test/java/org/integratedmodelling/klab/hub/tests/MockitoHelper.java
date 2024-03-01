@@ -6,11 +6,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
-import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
-import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.api.User;
 import org.mockito.Mockito;
 
 public class MockitoHelper {

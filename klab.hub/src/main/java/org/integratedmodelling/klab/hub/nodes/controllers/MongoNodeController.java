@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.nodes.controllers;
 
+import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.nodes.dtos.MongoNode;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

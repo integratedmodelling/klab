@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskParameters;
-import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenClickback;
+import org.integratedmodelling.klab.hub.api.TaskStatus;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
 
 public interface TaskService {
 	/**

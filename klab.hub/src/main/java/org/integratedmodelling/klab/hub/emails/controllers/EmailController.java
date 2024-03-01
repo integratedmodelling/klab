@@ -6,13 +6,13 @@ import java.util.Optional;
 import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.emails.EmailConfig;
-import org.integratedmodelling.klab.hub.emails.dto.EmailTemplate;
-import org.integratedmodelling.klab.hub.emails.exceptions.SendEmailException;
+import org.integratedmodelling.klab.hub.api.EmailTemplate;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.emails.services.EmailTemplateService;
+import org.integratedmodelling.klab.hub.exception.SendEmailException;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.KlabEmail;
 import org.integratedmodelling.klab.rest.KlabEmail.EmailType;

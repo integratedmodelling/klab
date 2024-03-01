@@ -6,9 +6,9 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
 import org.integratedmodelling.klab.rest.CustomProperty;
 import org.junit.jupiter.api.AfterAll;

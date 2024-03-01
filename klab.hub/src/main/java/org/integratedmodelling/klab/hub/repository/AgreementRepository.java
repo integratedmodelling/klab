@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.repository;
 
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.api.Agreement;
 import org.springframework.stereotype.Repository;
 
 @Repository

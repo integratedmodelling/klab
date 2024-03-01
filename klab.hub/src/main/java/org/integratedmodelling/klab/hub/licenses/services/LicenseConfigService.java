@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.licenses.services;
 
-import org.integratedmodelling.klab.hub.licenses.dto.LicenseConfiguration;
-import org.integratedmodelling.klab.hub.services.GenericHubService;
+import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.service.GenericHubService;
 import org.springframework.stereotype.Service;
 
 @Service

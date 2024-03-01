@@ -2,15 +2,15 @@ package org.integratedmodelling.klab.hub.nodes.services;
 
 import java.util.Collection;
 
+import org.integratedmodelling.klab.hub.api.MongoNode;
+import org.integratedmodelling.klab.hub.commands.CreateMongoNode;
+import org.integratedmodelling.klab.hub.commands.DeleteMongoNode;
+import org.integratedmodelling.klab.hub.commands.GetMongoNodeById;
+import org.integratedmodelling.klab.hub.commands.GetMongoNodeByName;
+import org.integratedmodelling.klab.hub.commands.GetMongoNodes;
+import org.integratedmodelling.klab.hub.commands.MongoNodeExists;
+import org.integratedmodelling.klab.hub.commands.UpdateMongoNode;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.nodes.commands.CreateMongoNode;
-import org.integratedmodelling.klab.hub.nodes.commands.DeleteMongoNode;
-import org.integratedmodelling.klab.hub.nodes.commands.GetMongoNodeById;
-import org.integratedmodelling.klab.hub.nodes.commands.GetMongoNodeByName;
-import org.integratedmodelling.klab.hub.nodes.commands.GetMongoNodes;
-import org.integratedmodelling.klab.hub.nodes.commands.MongoNodeExists;
-import org.integratedmodelling.klab.hub.nodes.commands.UpdateMongoNode;
-import org.integratedmodelling.klab.hub.nodes.dtos.MongoNode;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
 import org.springframework.stereotype.Service;
 

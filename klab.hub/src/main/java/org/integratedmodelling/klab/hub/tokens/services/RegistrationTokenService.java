@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
-import org.integratedmodelling.klab.hub.tokens.dto.TokenAuthentication;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenClickback;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
+import org.integratedmodelling.klab.hub.api.TokenType;
 import org.springframework.stereotype.Service;
 
 @Service

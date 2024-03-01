@@ -19,8 +19,11 @@
 		<module>org.integratedmodelling.kim.ide</module>
 		<module>org.integratedmodelling.kim.ui</module>
 		<module>org.integratedmodelling.kim.target</module>
+		<!-- <module>org.integratedmodelling.kim.tests</module>  -->
+		<!-- <module>org.integratedmodelling.kim.ui.tests</module> -->
 		<module>org.integratedmodelling.kim.updatesite</module>
 		<module>org.integratedmodelling.kim.sdk</module>
+		<!-- <module>org.integratedmodelling.kim.web</module> -->
 	</modules>
 	<build>
 		<plugins>
@@ -92,7 +95,7 @@
 						<dependency>
 						    <groupId>org.eclipse.platform</groupId>
 						    <artifactId>org.eclipse.equinox.common</artifactId>
-						    <version>3.16.200</version>
+						    <version>3.13.0</version>
 						</dependency>
 					</dependencies>
 				</plugin>

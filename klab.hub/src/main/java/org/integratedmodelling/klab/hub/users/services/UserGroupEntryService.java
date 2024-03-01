@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
-import org.integratedmodelling.klab.hub.users.dto.User;
-import org.integratedmodelling.klab.hub.users.payload.UpdateUsersGroups;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.springframework.stereotype.Service;
 
 @Service

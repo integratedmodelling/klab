@@ -7,4 +7,3 @@ target
 **/.temp-*
 **/*._trace
 .mvn/wrapper/maven-wrapper.jar
-**/*.keep

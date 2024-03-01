@@ -2,13 +2,13 @@ package org.integratedmodelling.klab.hub.tokens.services;
 
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.licenses.dto.MongoLever;
+import org.integratedmodelling.klab.hub.api.MongoLever;
+import org.integratedmodelling.klab.hub.api.TokenLever;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.commands.CreateLeverAuthenticationToken;
+import org.integratedmodelling.klab.hub.exception.AuthenticationFailedException;
 import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateLeverAuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenLever;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
-import org.integratedmodelling.klab.hub.tokens.exceptions.AuthenticationFailedException;
 import org.springframework.stereotype.Service;
 
 @Service

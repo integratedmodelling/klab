@@ -22,10 +22,12 @@
 		<module>org.integratedmodelling.kactors</module>
 		<module>org.integratedmodelling.kactors.ide</module>
 		<module>org.integratedmodelling.kactors.ui</module>
+		<module>org.integratedmodelling.kactors.web</module>
 		<module>org.integratedmodelling.kactors.target</module>
 		<module>org.integratedmodelling.kactors.feature</module>
 		<module>org.integratedmodelling.kactors.repository</module>
 		<module>org.integratedmodelling.kactors.tests</module>
+		<!-- <module>org.integratedmodelling.kactors.ui.tests</module> -->
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -260,8 +262,8 @@
 						<useProjectSettings>false</useProjectSettings>
 					</configuration>
 				</plugin>
-				<!-- to skip running (and compiling) tests use commandline flag: -Dmaven.test.skip
-					To skip tests, but still compile them, use: -DskipTests To allow all tests
+				<!-- to skip running (and compiling) tests use commandline flag: -Dmaven.test.skip 
+					To skip tests, but still compile them, use: -DskipTests To allow all tests 
 					in a pom to pass/fail, use commandline flag: -fae (fail at end) -->
 				<plugin>
 					<groupId>org.eclipse.tycho</groupId>

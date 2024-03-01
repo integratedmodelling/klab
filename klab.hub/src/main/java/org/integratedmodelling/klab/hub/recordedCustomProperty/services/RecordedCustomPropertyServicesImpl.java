@@ -3,8 +3,8 @@ package org.integratedmodelling.klab.hub.recordedCustomProperty.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.recordedCustomProperty.commands.NewCustomProperty;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
 import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;

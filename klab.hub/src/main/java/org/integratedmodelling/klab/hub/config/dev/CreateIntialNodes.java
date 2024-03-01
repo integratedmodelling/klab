@@ -5,11 +5,11 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
-import org.integratedmodelling.klab.hub.nodes.commands.CreateMongoNode;
-import org.integratedmodelling.klab.hub.nodes.dtos.MongoNode;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.api.MongoNode;
+import org.integratedmodelling.klab.hub.commands.CreateMongoNode;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
 
 public class CreateIntialNodes {
 

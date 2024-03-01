@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.payload.LoginResponse;
+import org.integratedmodelling.klab.hub.payload.LogoutResponse;
 import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
-import org.integratedmodelling.klab.hub.users.payload.LoginResponse;
-import org.integratedmodelling.klab.hub.users.payload.LogoutResponse;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +24,7 @@ public class UserAuthenticationController {
 	
 	@PostMapping(API.HUB.AUTHENTICATE_USER)
 	public ResponseEntity<?> loginResponse(@RequestBody UserAuthenticationRequest request) {
-		LoginResponse<?> response = userAuthService.getAuthResponse(request.getUsername(), request.getPassword(), request.isRemote());
+		LoginResponse response = userAuthService.getAuthResponse(request.getUsername(), request.getPassword(), request.isRemote());
 		return response.getResponse();
 	}
 	

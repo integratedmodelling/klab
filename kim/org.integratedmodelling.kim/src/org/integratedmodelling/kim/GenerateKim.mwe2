@@ -15,7 +15,16 @@ Workflow {
 			project = StandardProjectConfig {
 				baseName = "org.integratedmodelling.kim"
 				rootPath = rootPath
+				runtimeTest = {
+					enabled = true
+				}
 				eclipsePlugin = {
+					enabled = true
+				}
+				eclipsePluginTest = {
+					enabled = true
+				}
+				web = {
 					enabled = true
 				}
 				createEclipseMetaData = true

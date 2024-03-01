@@ -27,7 +27,7 @@ import org.bouncycastle.openpgp.operator.bc.BcPBESecretKeyEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.bc.BcPGPDigestCalculatorProvider;
 import org.bouncycastle.openpgp.operator.bc.BcPGPKeyPair;
-import org.integratedmodelling.klab.hub.licenses.dto.ArmoredKeyPair;
+import org.integratedmodelling.klab.hub.api.ArmoredKeyPair;
 import org.springframework.stereotype.Service;
 
 @Service

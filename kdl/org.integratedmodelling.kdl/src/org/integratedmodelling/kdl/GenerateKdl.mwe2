@@ -6,13 +6,22 @@ import org.eclipse.xtext.xtext.generator.model.project.*
 var rootPath = ".."
 
 Workflow {
-
+	
 	component = XtextGenerator {
 		configuration = {
 			project = StandardProjectConfig {
 				baseName = "org.integratedmodelling.kdl"
 				rootPath = rootPath
+				runtimeTest = {
+					enabled = true
+				}
 				eclipsePlugin = {
+					enabled = true
+				}
+				eclipsePluginTest = {
+					enabled = true
+				}
+				web = {
 					enabled = true
 				}
 				createEclipseMetaData = true

@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.tokens.enums.ClickbackAction;
+import org.integratedmodelling.klab.hub.api.ClickbackAction;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 

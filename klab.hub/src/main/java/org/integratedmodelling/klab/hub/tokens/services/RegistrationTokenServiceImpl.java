@@ -1,18 +1,16 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
-import java.util.Optional;
-
+import org.integratedmodelling.klab.hub.api.CreateVerifyEmailToken;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.TokenClickback;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.commands.CreateChangePasswordToken;
+import org.integratedmodelling.klab.hub.commands.CreateLostPasswordToken;
+import org.integratedmodelling.klab.hub.commands.CreateNewUserAccountToken;
+import org.integratedmodelling.klab.hub.commands.CreateVerifyAccountToken;
+import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateChangePasswordToken;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateLostPasswordToken;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateNewUserAccountToken;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateVerifyAccountToken;
-import org.integratedmodelling.klab.hub.tokens.commands.CreateVerifyEmailToken;
-import org.integratedmodelling.klab.hub.tokens.commands.DeleteAuthenticationToken;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenAuthentication;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenClickback;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;

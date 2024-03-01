@@ -7,12 +7,12 @@ import java.security.NoSuchProviderException;
 import java.util.Collection;
 
 import org.bouncycastle.openpgp.PGPException;
-import org.integratedmodelling.klab.hub.licenses.dto.BouncyConfiguration;
-import org.integratedmodelling.klab.hub.licenses.dto.LicenseConfiguration;
-import org.integratedmodelling.klab.hub.licenses.exceptions.LicenseConfigDefaultNotFound;
-import org.integratedmodelling.klab.hub.licenses.exceptions.LicenseConfigDoestNotExists;
-import org.integratedmodelling.klab.hub.licenses.exceptions.LicenseGenerationError;
-import org.integratedmodelling.klab.hub.nodes.commands.GenerateLicenseFactory;
+import org.integratedmodelling.klab.hub.api.BouncyConfiguration;
+import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.commands.GenerateLicenseFactory;
+import org.integratedmodelling.klab.hub.exception.LicenseConfigDefaultNotFound;
+import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
+import org.integratedmodelling.klab.hub.exception.LicenseGenerationError;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

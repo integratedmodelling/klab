@@ -4,7 +4,7 @@ import java.util.Properties;
 
 import javax.validation.constraints.NotBlank;
 
-import org.integratedmodelling.klab.hub.nodes.dtos.MongoNode;
+import org.integratedmodelling.klab.hub.api.MongoNode;
 
 public class DockerNodeConfigurationRequest {
 	@NotBlank

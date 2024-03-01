@@ -2,7 +2,9 @@ package org.integratedmodelling.klab.hub.repository;
 
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.licenses.dto.LicenseConfiguration;
+import org.bson.types.ObjectId;
+import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
 

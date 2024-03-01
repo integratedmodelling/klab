@@ -8,8 +8,8 @@ import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.Task;
-import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
-import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
+import org.integratedmodelling.klab.hub.api.TaskStatus;
+import org.integratedmodelling.klab.hub.api.TaskType;
 import org.integratedmodelling.klab.hub.tasks.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

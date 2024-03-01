@@ -10,12 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.tasks.commands.TaskCommand;
-import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
-import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
-import org.integratedmodelling.klab.hub.tasks.support.TaskBuilder;
-import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.stereotype.Component;

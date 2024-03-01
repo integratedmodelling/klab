@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.groups.controllers;
 
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.ResponseEntityAdapter;
-import org.integratedmodelling.klab.hub.users.exceptions.GroupDoesNotExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;

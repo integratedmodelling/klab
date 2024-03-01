@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.hub.config.dev;
 
-import org.integratedmodelling.klab.hub.licenses.dto.MongoLever;
+import org.integratedmodelling.klab.hub.api.MongoLever;
 import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 
 public class CreateMongoLever {

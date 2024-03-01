@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.users.services;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -13,36 +14,39 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bson.types.ObjectId;
-import org.integratedmodelling.klab.hub.agreements.commands.UpdateAgreement;
-import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
-import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
+import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
+import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.api.AgreementEntry;
+import org.integratedmodelling.klab.hub.api.GroupEntry;
+import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
+import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
+import org.integratedmodelling.klab.hub.commands.UpdateUser;
+import org.integratedmodelling.klab.hub.commands.UpdateUsers;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
+import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.commands.GetMongoGroupByName;
-import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
-import org.integratedmodelling.klab.hub.users.commands.UpdateUsers;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
-import org.integratedmodelling.klab.hub.users.dto.User;
-import org.integratedmodelling.klab.hub.users.exceptions.GroupDoesNotExistException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
-import org.integratedmodelling.klab.hub.users.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.utils.DateConversionUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	
-	public UserGroupEntryServiceImpl(UserRepository userRepository, MongoGroupRepository groupRepository, AgreementRepository agreementRepository) {
+	public UserGroupEntryServiceImpl(UserRepository userRepository, MongoGroupRepository groupRepository, AgreementService agreementService, AgreementRepository agreementRepository) {
 		super();
 		this.userRepository = userRepository;
 		this.groupRepository = groupRepository;
+		this.agreementService = agreementService;
 		this.agreementRepository = agreementRepository;
 	}
 
 	private UserRepository userRepository;
 	private MongoGroupRepository groupRepository;
+	private AgreementService agreementService;
 	private AgreementRepository agreementRepository;
 	
 	@Override

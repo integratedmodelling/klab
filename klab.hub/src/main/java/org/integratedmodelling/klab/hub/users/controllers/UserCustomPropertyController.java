@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.users.controllers;
 import java.util.Collection;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
 import org.integratedmodelling.klab.hub.users.services.UserCustomPropertyService;
 import org.integratedmodelling.klab.rest.CustomProperty;

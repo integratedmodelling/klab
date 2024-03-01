@@ -2,16 +2,16 @@ package org.integratedmodelling.klab.hub.users.controllers;
 
 import javax.mail.MessagingException;
 
-import org.integratedmodelling.klab.hub.emails.exceptions.SendEmailException;
+import org.integratedmodelling.klab.hub.exception.DeletedUserNotFoundException;
+import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
 import org.integratedmodelling.klab.hub.exception.MailAddressNotAllowedException;
 import org.integratedmodelling.klab.hub.exception.ResponseEntityAdapter;
-import org.integratedmodelling.klab.hub.users.exceptions.DeletedUserNotFoundException;
-import org.integratedmodelling.klab.hub.users.exceptions.LoginFailedExcepetion;
-import org.integratedmodelling.klab.hub.users.exceptions.UserByEmailDoesNotExistException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserEmailExistsException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserExistsException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserNameOrEmailExistsException;
+import org.integratedmodelling.klab.hub.exception.SendEmailException;
+import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
+import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.exception.UserNameOrEmailExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
