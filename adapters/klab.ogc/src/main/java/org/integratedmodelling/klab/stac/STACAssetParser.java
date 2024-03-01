@@ -11,10 +11,11 @@ public class STACAssetParser {
     // https://github.com/radiantearth/stac-spec/blob/master/best-practices.md#common-media-types-in-stac
     final private static Set<String> SUPPORTED_MEDIA_TYPE = Set.of("image/tiff;application=geotiff;profile=cloud-optimized","image/vnd.stac.geotiff;profile=cloud-optimized");
 
-    public static String readTitle(JSONObject collection) {
-        return collection.has("title") ? collection.getString("title") : collection.getString("id");
-    }
-
+    /** 
+     * Check if the MIME value is supported.
+     * @param asset as JSON
+     * @return true if the media type is supported.
+     */
     public static boolean isSupportedMediaType(JSONObject asset) {
         if (!asset.has("type")) {
             return false;
