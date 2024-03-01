@@ -29,6 +29,14 @@ public abstract class GenericModel {
 		this.name = name;
 	}
 
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.time.LocalDateTime;
 
-abstract class IdentityModel extends GenericModel{
+public abstract class IdentityModel extends GenericModel{
 	
     LocalDateTime registrationDate;
     LocalDateTime lastConnection;

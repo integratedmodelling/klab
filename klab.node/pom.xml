@@ -32,7 +32,7 @@
 						</auth>
 					</to>
 					<container>
-						<expandClasspathDependencies>true</expandClasspathDependencies>
+						<!-- <expandClasspathDependencies>true</expandClasspathDependencies> -->
 						<user>klab:klab</user>
 						<jvmFlags>${jib.jvmFlags}</jvmFlags>
 						<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
@@ -127,7 +127,7 @@
 		<dependency>
 			<groupId>org.bitbucket.b_c</groupId>
 			<artifactId>jose4j</artifactId>
-			<version>0.9.3</version>
+			<version>0.9.4</version>
 		</dependency>
 
 		<dependency>

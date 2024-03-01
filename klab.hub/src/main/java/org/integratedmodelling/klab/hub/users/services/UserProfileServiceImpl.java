@@ -7,17 +7,17 @@ import java.util.Set;
 import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.hub.api.ProfileResource;
-import org.integratedmodelling.klab.hub.api.TokenType;
-import org.integratedmodelling.klab.hub.api.TokenVerifyEmailClickback;
-import org.integratedmodelling.klab.hub.api.User;
-import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
-import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
-import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
+import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.service.implementation.LdapServiceImpl;
+import org.integratedmodelling.klab.hub.tokens.dto.TokenVerifyEmailClickback;
+import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
+import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
+import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
+import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.exceptions.UserByEmailDoesNotExistException;
+import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -56,6 +56,12 @@ public class UserProfileServiceImpl implements UserProfileService {
 	@Override
 	public ProfileResource updateUserByProfile(ProfileResource profile) {
 		User user = updateUserFromProfileResource(profile);
+		if (!user.getEmail().equals(profile.getEmail())) {
+			if (userRepository.existsByEmailIgnoreCase(profile.getEmail())) {
+				throw new KlabException("Duplicated key. Email is already exists");
+			}
+			user.setEmail(profile.getEmail());
+		}
 		User updatedUser = new UpdateUser(user, userRepository).execute();
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
 		return updatedProfile.getSafeProfile();

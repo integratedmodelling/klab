@@ -21,16 +21,16 @@ public class KdlUiModule extends AbstractKdlUiModule {
   public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
     return KdlHighlightingConfiguration.class;
   }
-  
+
   public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
     return KdlHighlightingCalculator.class;
   }
-  
+
   public Class<? extends DefaultAntlrTokenToAttributeIdMapper> bindAbstractAntlrTokenToAttributeIdMapper() {
     return KdlSyntaxHighlighter.class;
   }
-  
-  public KdlUiModule(final AbstractUIPlugin plugin) {
-    super(plugin);
+
+  public KdlUiModule(final AbstractUIPlugin arg0) {
+    super(arg0);
   }
 }
