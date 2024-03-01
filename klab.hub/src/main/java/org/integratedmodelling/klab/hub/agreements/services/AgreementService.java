@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.springframework.data.domain.Page;

@@ -73,10 +73,21 @@ email:
       hostname: mail.privateemail.com
       port: 587
       username: info@integratedmodelling.org
-      password: tinyhipposarefriend
+      password: 4cXDAmM9xTC7
+
+   default:
+      domain: integratedmodelling.org
+      recipient: support@integratedmodelling.org
+
+   allowed: >
+      info@integratedmodelling.org,
+      support@integratedmodelling.org,
+      admin@integratedmodelling.org,
+      aries@integratedmodelling.org,
+      noreply@integratedmodelling.org,
+      enrico.girotto@bc3research.org
 
    replyable:
-      replyable:
       general:
          emailaddress: General <info@integratedmodelling.org>
       support:

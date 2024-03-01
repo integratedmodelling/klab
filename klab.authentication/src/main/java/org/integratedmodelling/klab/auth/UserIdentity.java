@@ -19,6 +19,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
 
     private static final long serialVersionUID = -5670348187596399293L;
 
+    protected String id;
     protected String username;
     protected String emailAddress;
     protected String token;
@@ -33,6 +34,7 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     }
 
     public UserIdentity(UserIdentity user) {
+        this.id = user.getId();
         this.username = user.username;
         this.emailAddress = user.emailAddress;
         this.token = user.token;
@@ -42,8 +44,9 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
 
     public UserIdentity(AuthenticatedIdentity identity) {
         this(identity.getIdentity());
+        this.id = identity.getToken();
         this.token = identity.getToken();
-        for (Group group : identity.getGroups()) {
+        for(Group group : identity.getGroups()) {
             this.groups.add(group);
         }
         this.expiryDate = DateTime.parse(identity.getExpiry());
@@ -71,9 +74,9 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
     }
 
     public Set<String> getRoles() {
-    	return this.roles;
+        return this.roles;
     }
-    
+
     @Override
     public String getPassword() {
         return getId();
@@ -115,7 +118,11 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
 
     @Override
     public String getId() {
-        return token;
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
@@ -130,6 +137,10 @@ public abstract class UserIdentity implements IUserIdentity, UserDetails, IActor
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getToken() {
+        return this.token;
     }
 
     @Override

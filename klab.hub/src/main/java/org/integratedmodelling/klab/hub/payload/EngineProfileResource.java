@@ -4,8 +4,8 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.auth.Role;
-import org.integratedmodelling.klab.hub.api.GroupEntry;
-import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 
 public class EngineProfileResource {
 
