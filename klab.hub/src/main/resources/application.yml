@@ -70,10 +70,10 @@ engine:
 
 email:
    server:
-      hostname: mail.privateemail.com
+      hostname: mail.example.com
       port: 587
-      username: info@integratedmodelling.org
-      password: 4cXDAmM9xTC7
+      username: example@example.com
+      password: password
 
    default:
       domain: integratedmodelling.org
