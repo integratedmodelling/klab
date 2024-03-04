@@ -44,9 +44,8 @@ public class STACValidator implements IResourceValidator {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
         String catalogUrl = userData.get("catalogUrl", String.class);
-        STACService service = STACAdapter.getService(catalogUrl);
-
         String collectionId = userData.get("collectionId", String.class);
+        STACService service = STACAdapter.getService(catalogUrl, collectionId);
         JsonNode metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
 
         Set<String> extensions = readSTACExtensions(metadata);

@@ -1,9 +1,6 @@
 package org.integratedmodelling.klab.stac;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacManager;
@@ -24,40 +21,25 @@ public class STACService {
     public static final String UPPER_CORNER = "ows:UpperCorner";
 
     private HMStacManager catalog;
-    private List<HMStacCollection> collections = Collections.synchronizedList(new ArrayList<>());
+    private HMStacCollection collection;
 
-    private String resourceUrl;
-    public STACService(String resourceUrl) {
-        this.resourceUrl = resourceUrl;
+    public STACService(String catalogUrl, String collectionId) {
         LogProgressMonitor lpm = new LogProgressMonitor();
-        this.catalog = new HMStacManager(resourceUrl, lpm);
+        this.catalog = new HMStacManager(catalogUrl, lpm);
         try {
             this.catalog.open();
-            this.collections.addAll(catalog.getCollections());
+            this.collection = catalog.getCollectionById(collectionId);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
-    public String getServiceUrl() {
-        return resourceUrl;
+    public HMStacCollection getCollection() {
+        return collection;
     }
 
-    public HMStacCollection getCollectionById(String collectionId) {
-        try {
-            return catalog.getCollectionById(collectionId);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public List<HMStacCollection> getCollections() {
-        return collections;
-    }
-
-    public IEnvelope getEnvelope(String collectionId) {
-        HMStacCollection collection = collections.stream().filter(c -> c.getId().equals(collectionId)).findFirst().get();
+    public IEnvelope getEnvelope() {
         ReferencedEnvelope envelope = collection.getSpatialBounds();
         double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
         double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};

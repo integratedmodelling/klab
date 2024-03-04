@@ -52,7 +52,9 @@ public class STACEncoder implements IResourceEncoder {
 
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {
-		STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
+		String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
+		String collectionId = resource.getParameters().get("collectionId", String.class);
+		STACService service = STACAdapter.getService(catalogUrl, collectionId);
 
 		if (service == null) {
 			monitor.error("Service " + resource.getParameters().get("catalogUrl", String.class)
@@ -60,7 +62,7 @@ public class STACEncoder implements IResourceEncoder {
 			return false;
 		}
 
-		HMStacCollection collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
+		HMStacCollection collection = service.getCollection();
 		if (collection == null) {
 			monitor.error(
 					"Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
@@ -128,8 +130,11 @@ public class STACEncoder implements IResourceEncoder {
                 : null;
         HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics);
 
-		STACService service = STACAdapter.getService(resource.getParameters().get("catalogUrl", String.class));
-		HMStacCollection collection = service.getCollectionById(resource.getParameters().get("collectionId", String.class));
+        String catalogUrl = urnParameters.get("catalogUrl");
+        String collectionId = urnParameters.get("collectionId");
+
+		STACService service = STACAdapter.getService(catalogUrl, collectionId);
+		HMStacCollection collection = service.getCollection();
 		if (collection == null) {
 		    scope.getMonitor().error(
 					"Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");

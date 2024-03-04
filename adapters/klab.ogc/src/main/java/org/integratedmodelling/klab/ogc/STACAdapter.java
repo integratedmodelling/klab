@@ -65,7 +65,7 @@ public class STACAdapter implements IResourceAdapter {
 				null));
 	}
 
-	public static STACService getService(String catalogUrl) {
-	    return new STACService(catalogUrl);
+	public static STACService getService(String catalogUrl, String collectionId) {
+	    return new STACService(catalogUrl, collectionId);
 	}
 }
