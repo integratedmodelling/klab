@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 
@@ -30,8 +31,7 @@ public class STACService {
             this.catalog.open();
             this.collection = catalog.getCollectionById(collectionId);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new KlabInternalErrorException("Error trying to create a STAC Service. " + e.getMessage());
         }
     }
 
