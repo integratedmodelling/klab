@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
@@ -85,8 +86,8 @@ public class STACValidator implements IResourceValidator {
         }
         if (asset.getJSONArray("raster:bands").isEmpty()
                 || !asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
-            // We could assume that most rasters are numeric. When in doubt, we could set the default to Number
-            return null;
+            // We assume that most rasters are numeric. When in doubt, we set the default to Number
+            return Type.NUMBER;
         }
         String type = asset.getJSONArray("raster:bands").getJSONObject(0).getString("data_type");
         // https://github.com/stac-extensions/raster?tab=readme-ov-file#data-types
@@ -94,7 +95,12 @@ public class STACValidator implements IResourceValidator {
         if (NUMERIC_DATA_TYPES.contains(type)) {
             return Type.NUMBER;
         }
-        // The rest of possible values are either complex numbers or a generic "other"
+        final Set<String> COMPLEX_DATA_TYPES = Set.of("cint16", "cint32", "cfloat32", "cfloat64");
+        if (COMPLEX_DATA_TYPES.contains(type)) {
+            throw new KlabUnimplementedException("STAC resource contains raster of complex numbers.");
+        }
+        // The only possible value left is a generic "other".
+        // It could be boolean, string, higher precision numbers, or any other type.
         return null;
     }
 
