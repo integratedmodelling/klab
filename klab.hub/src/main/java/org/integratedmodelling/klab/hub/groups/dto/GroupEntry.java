@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.dto;
+package org.integratedmodelling.klab.hub.groups.dto;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

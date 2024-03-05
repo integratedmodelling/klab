@@ -3,8 +3,8 @@ package org.integratedmodelling.klab.hub.users.commands;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
 
 public class GetAllMongoGroupNames {
 

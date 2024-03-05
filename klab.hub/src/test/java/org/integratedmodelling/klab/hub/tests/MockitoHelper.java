@@ -8,8 +8,8 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.mockito.Mockito;
 

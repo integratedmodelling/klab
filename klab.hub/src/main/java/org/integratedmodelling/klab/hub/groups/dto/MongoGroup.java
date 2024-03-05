@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.hub.users.dto;
+package org.integratedmodelling.klab.hub.groups.dto;
 
 import java.util.ArrayList;
 import java.util.HashSet;

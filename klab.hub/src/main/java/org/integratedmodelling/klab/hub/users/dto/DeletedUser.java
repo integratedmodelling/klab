@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.TypeAlias;
