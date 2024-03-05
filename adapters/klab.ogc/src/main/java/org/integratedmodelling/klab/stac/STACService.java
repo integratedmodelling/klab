@@ -13,14 +13,10 @@ import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
 
 public class STACService {
-
-    public static final String LOWER_CORNER = "ows:LowerCorner";
-    public static final String UPPER_CORNER = "ows:UpperCorner";
-
     private HMStacManager catalog;
     private HMStacCollection collection;
 
@@ -54,15 +50,15 @@ public class STACService {
         GeometryBuilder gBuilder = Geometry.builder();
         gBuilder.time().generic();
 
-        JsonNode collectionMetadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
-        JSONArray bbox = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
+        JSONObject collectionMetadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
+        JSONArray bbox = collectionMetadata.getJSONObject("extent").getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0);
         gBuilder.space().boundingBox(bbox.getDouble(0), bbox.getDouble(1), bbox.getDouble(2), bbox.getDouble(3));
 
         // For now, we will assume that there is a single interval
         // From the STAC documentation: "The first time interval always describes the overall
         // temporal extent of the data. All subsequent time intervals can be used to provide a more
         // precise description of the extent and identify clusters of data."
-        JSONArray timeInterval = collectionMetadata.getObject().getJSONObject("extent").getJSONObject("temporal").getJSONArray("interval").getJSONArray(0);
+        JSONArray timeInterval = collectionMetadata.getJSONObject("extent").getJSONObject("temporal").getJSONArray("interval").getJSONArray(0);
         if (!timeInterval.isNull(0)) {
             Instant start = Instant.parse(timeInterval.getString(0));
             gBuilder.time().start(start.toEpochMilli());

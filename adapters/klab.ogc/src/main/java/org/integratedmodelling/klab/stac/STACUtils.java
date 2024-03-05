@@ -61,20 +61,20 @@ public class STACUtils {
         return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
-    public static JsonNode requestCollectionMetadata(String catalogUrl, String collectionId) {
+    public static JSONObject requestCollectionMetadata(String catalogUrl, String collectionId) {
         HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
             throw new KlabResourceAccessException("Cannot access the collection at " + catalogUrl + "/collections/" + collectionId);
         }
-        return response.getBody();
+        return response.getBody().getObject();
     }
 
-    public static JsonNode requestItemMetadata(String catalogUrl, String collectionId, String item) {
+    public static JSONObject requestItemMetadata(String catalogUrl, String collectionId, String item) {
         HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
             throw new KlabResourceAccessException("Cannot access the item at " + catalogUrl + "/collections/" + collectionId + "/items/" + item);
         }
-        return response.getBody();
+        return response.getBody().getObject();
     }
 
     public static String readLicense(JSONObject collection) {
