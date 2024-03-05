@@ -55,6 +55,9 @@ public class STACValidator implements IResourceValidator {
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 
+        // The default URL of the resource is the collection endpoint. May be overwritten. 
+        builder.withMetadata(IMetadata.DC_URL, catalogUrl + "/collections/" + collectionId);
+
         String assetId = userData.get("asset", String.class);
         JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
