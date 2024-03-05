@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Pattern;
@@ -18,6 +20,7 @@ import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
+import org.integratedmodelling.klab.rest.CustomProperty;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -72,6 +75,8 @@ public class ProfileResource implements OAuth2User{
     private Collection<? extends GrantedAuthority> authorities;
     
     private Map<String, Object> attributes;
+    
+    public Set<CustomProperty> customProperties = new HashSet<>();
     
     /**
      * Use to store the jwt token in case of needs
@@ -183,6 +188,14 @@ public class ProfileResource implements OAuth2User{
 	public void setLastConnection(LocalDateTime lastConnection) {
 		this.lastConnection = lastConnection;
 	}
+	
+	public Set<CustomProperty> getCustomProperties() {
+		return customProperties;
+	}
+
+	public void setCustomProperties(Set<CustomProperty> customProperties) {
+		this.customProperties = customProperties;
+	}
 
 	public List<String> getGroupsIds() {
 	    List<String> groupsIds = new ArrayList<>();
@@ -250,7 +263,8 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.jwtToken = jwtToken;
 		cleanedProfile.name = name;
 		//TODO check
-		cleanedProfile.agreements = cleanedProfile.getAgreements();
+		cleanedProfile.agreements = agreements;
+		cleanedProfile.customProperties = customProperties;
 		return cleanedProfile;
 	}
 
