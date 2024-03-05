@@ -577,6 +577,7 @@ public class RuntimeBehavior {
                 // Fixed subject
                 String subject = "[APP MESSAGE] Message from user " + user.getUsername() + " using app "
                         + scope.getBehavior().getName();
+                String replayTo = user.getEmailAddress();
                 String content = args.get(1).toString();
                 EmailType type = (args.size() == 3 && "HTML".equals(args.get(2).toString())) ? EmailType.HTML : EmailType.TEXT;
                 new Thread(){
@@ -586,7 +587,7 @@ public class RuntimeBehavior {
                         fire(KlabEmail.EmailStatus.SENDING, scope);
                         try {
                             client.withAuthentication(user.getToken()).post(url + API.HUB.USER_SEND_EMAIL,
-                                    new KlabEmail(null, Set.of(to), null, subject, content, type, null), ResponseEntity.class);
+                                    new KlabEmail(null, Set.of(to), Set.of(replayTo), subject, content, type, null), ResponseEntity.class);
                             fire(KlabEmail.EmailStatus.SENT, scope);
                         } catch (KlabIOException kex) {
                             scope.getRuntimeScope().getMonitor().warn("Error sending mail: " + kex);

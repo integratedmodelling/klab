@@ -70,10 +70,10 @@ engine:
 
 email:
    server:
-      hostname: mail.privateemail.com
+      hostname: mail.example.org
       port: 587
-      username: info@integratedmodelling.org
-      password: 4cXDAmM9xTC7
+      username: example@example.org
+      password: password
 
    default:
       domain: integratedmodelling.org
@@ -85,7 +85,6 @@ email:
       admin@integratedmodelling.org,
       aries@integratedmodelling.org,
       noreply@integratedmodelling.org,
-      enrico.girotto@bc3research.org
 
    replyable:
       general:
