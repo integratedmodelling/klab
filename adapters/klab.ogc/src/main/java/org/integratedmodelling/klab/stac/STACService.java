@@ -50,18 +50,23 @@ public class STACService {
 
         gBuilder.space().boundingBox(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1]);
 
-        // For now, we will assume that there is a single interval
-        // From the STAC documentation: "The first time interval always describes the overall
-        // temporal extent of the data. All subsequent time intervals can be used to provide a more
-        // precise description of the extent and identify clusters of data."
-        List<Date> interval = collection.getTemporalBounds();
-        if (!interval.isEmpty()) {
-            gBuilder.time().start(interval.get(0).getTime());
-            gBuilder.time().end(interval.get(1).getTime());
-        }
+        setTemporalInterval(gBuilder);
 
         Geometry ret = gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE);
         return ret;
+    }
+
+    private void setTemporalInterval(GeometryBuilder gBuilder) {
+        List<Date> interval = collection.getTemporalBounds();
+        if (interval.isEmpty()) {
+            return;
+        }
+        if (interval.get(0) != null) {
+            gBuilder.time().start(interval.get(0).getTime());
+        }
+        if (interval.size() > 1 && interval.get(1) != null) {
+            gBuilder.time().end(interval.get(1).getTime());
+        }
     }
 
 }
