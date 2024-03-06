@@ -23,9 +23,16 @@ public class STACService {
         this.catalog = new HMStacManager(catalogUrl, lpm);
         try {
             this.catalog.open();
+        } catch (Exception e) {
+            throw new KlabInternalErrorException("Error at STAC service. Cannot read catalog at '" + catalogUrl + "'.");
+        }
+        try {
             this.collection = catalog.getCollectionById(collectionId);
         } catch (Exception e) {
-            throw new KlabInternalErrorException("Error trying to create a STAC Service. " + e.getMessage());
+            throw new KlabInternalErrorException("Error at STAC service. Cannot read collection at '" + catalogUrl + "/collections/" + collectionId + "'.");
+        }
+        if (collection == null) {
+            throw new KlabInternalErrorException("Error at STAC service. Endpoint '" + catalogUrl + "' has no collection '" + collectionId + "'.");
         }
     }
 
