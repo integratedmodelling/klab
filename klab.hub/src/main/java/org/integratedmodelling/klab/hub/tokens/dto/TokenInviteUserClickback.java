@@ -5,8 +5,8 @@ import java.util.Set;
 import javax.validation.constraints.NotNull;
 
 import org.integratedmodelling.klab.hub.config.LinkConfig;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.tokens.enums.ClickbackAction;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
 import org.springframework.data.annotation.TypeAlias;
 
 //import com.sun.istack.NotNull;

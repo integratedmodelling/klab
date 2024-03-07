@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Triple;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.licenses.dto.JwtToken;
 import org.integratedmodelling.klab.hub.paginationAndFilter.GenericPageAndFilterConverter;
 import org.integratedmodelling.klab.hub.paginationAndFilter.dto.FilterCondition;
@@ -18,7 +19,6 @@ import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.integratedmodelling.klab.hub.tokens.exceptions.ActivationTokenFailedException;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
 import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.payload.UpdateEmailRequest;

@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;

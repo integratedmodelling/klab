@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.nodes.dtos;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.IdentityModel;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;

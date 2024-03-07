@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+import org.integratedmodelling.klab.hub.groups.dto.GroupSummary;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.users.commands.CreateMongoGroup;
@@ -14,8 +16,6 @@ import org.integratedmodelling.klab.hub.users.commands.GetMongoGroupById;
 import org.integratedmodelling.klab.hub.users.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.users.commands.MongoGroupExists;
 import org.integratedmodelling.klab.hub.users.commands.UpdateMongoGroup;
-import org.integratedmodelling.klab.hub.users.dto.GroupSummary;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.users.exceptions.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.exceptions.GroupExistException;
 import org.integratedmodelling.klab.hub.users.listeners.RemoveGroup;

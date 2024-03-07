@@ -15,12 +15,12 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tasks.commands.TaskCommand;
 import org.integratedmodelling.klab.hub.tasks.support.TaskBuilder;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.GroupDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;

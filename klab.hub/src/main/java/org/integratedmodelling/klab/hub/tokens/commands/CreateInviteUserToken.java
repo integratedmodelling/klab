@@ -2,9 +2,9 @@ package org.integratedmodelling.klab.hub.tokens.commands;
 
 import java.util.Set;
 
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.integratedmodelling.klab.hub.tokens.dto.TokenInviteUserClickback;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
 
 public class CreateInviteUserToken extends CreateTokenCommand {
 

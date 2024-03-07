@@ -298,6 +298,7 @@ public class User extends IdentityModel implements UserDetails{
         serverUrl = resource.serverUrl;
         setLastConnection(resource.lastConnection);
         lastLogin = resource.lastLogin;
+        customProperties = resource.customProperties;
     }
 
 

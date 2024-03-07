@@ -11,9 +11,9 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;

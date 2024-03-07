@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.users.commands;
 
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.users.dto.MongoGroup;
 
 public class DeleteMongoGroup {
 
