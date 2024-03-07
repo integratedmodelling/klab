@@ -30,19 +30,19 @@ import kong.unirest.json.JSONObject;
 
 public class STACImporter implements IResourceImporter {
 
-	STACValidator validator = new STACValidator();
+    STACValidator validator = new STACValidator();
 
-	@Override
-	public IResourceImporter withOption(String option, Object value) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IResourceImporter withOption(String option, Object value) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public boolean acceptsMultiple() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean acceptsMultiple() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
             throws MalformedURLException {
@@ -110,60 +110,59 @@ public class STACImporter implements IResourceImporter {
 
         monitor.info("STAC: imported collection " + locationElements[1]);
         return ret;
-	}
+    }
 
-	@Override
-	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public boolean canHandle(String importLocation, IParameters<String> userData) {
-		URL url = null;
-		try {
-			url = new URL(importLocation);
-		} catch (MalformedURLException e) {
-			return false;
-		}
-		// TODO make more checks to know if it is a proper STAC endpoint
-		return url != null && url.getProtocol().startsWith("http");
-	}
+    @Override
+    public boolean canHandle(String importLocation, IParameters<String> userData) {
+        URL url = null;
+        try {
+            url = new URL(importLocation);
+        } catch (MalformedURLException e) {
+            return false;
+        }
+        // TODO make more checks to know if it is a proper STAC endpoint
+        return url != null && url.getProtocol().startsWith("http");
+    }
 
-	@Override
-	public boolean resourceCanHandle(IResource resource, String importLocation) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean resourceCanHandle(IResource resource, String importLocation) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
-		// TODO Auto-generated method stub
-		return Collections.emptyList();
-	}
+    @Override
+    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+        // TODO Auto-generated method stub
+        return Collections.emptyList();
+    }
 
-	@Override
-	public File exportObservation(File file, IObservation observation, ILocator locator, String format,
-			IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public Map<String, String> getExportCapabilities(IResource resource) {
-		return Collections.emptyMap();
-	}
+    @Override
+    public Map<String, String> getExportCapabilities(IResource resource) {
+        return Collections.emptyMap();
+    }
 
-	@Override
-	public boolean exportResource(File file, IResource resource, String format) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean exportResource(File file, IResource resource, String format) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	@Override
-	public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public boolean write(Writer writer, IObservation observation, ILocator locator, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.stac;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.Version;
@@ -25,8 +27,9 @@ public class STACUtils {
         if (!json.has("keywords")) {
             return null;
         }
-        JSONArray keywords = json.getJSONArray("keywords");
-        return keywords.isEmpty() ? null : keywords.toString().replace("\"", "");
+        List<String> keywords = json.getJSONArray("keywords").toList();
+        return keywords.isEmpty() ? null :
+            keywords.stream().collect(Collectors.joining(","));
     }
 
     final private static Set<String> DOI_KEYS_IN_STAC_JSON = Set.of("sci:doi", "assets.sci:doi", "summaries.sci:doi", "properties.sci:doi", "item_assets.sci:doi");
@@ -58,20 +61,20 @@ public class STACUtils {
         return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
-    public static JsonNode requestCollectionMetadata(String catalogUrl, String collectionId) {
+    public static JSONObject requestCollectionMetadata(String catalogUrl, String collectionId) {
         HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
             throw new KlabResourceAccessException("Cannot access the collection at " + catalogUrl + "/collections/" + collectionId);
         }
-        return response.getBody();
+        return response.getBody().getObject();
     }
 
-    public static JsonNode requestItemMetadata(String catalogUrl, String collectionId, String item) {
+    public static JSONObject requestItemMetadata(String catalogUrl, String collectionId, String item) {
         HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
             throw new KlabResourceAccessException("Cannot access the item at " + catalogUrl + "/collections/" + collectionId + "/items/" + item);
         }
-        return response.getBody();
+        return response.getBody().getObject();
     }
 
     public static String readLicense(JSONObject collection) {
