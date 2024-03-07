@@ -44,46 +44,44 @@ import org.locationtech.jts.geom.Polygon;
 
 public class STACEncoder implements IResourceEncoder {
 
-	/**
-	 * The raster encoder that does the actual work after we get our coverage from
-	 * the service.
-	 */
-	RasterEncoder encoder = new RasterEncoder();
+    /**
+     * The raster encoder that does the actual work after we get our coverage from
+     * the service.
+     */
+    RasterEncoder encoder = new RasterEncoder();
 
-	@Override
-	public boolean isOnline(IResource resource, IMonitor monitor) {
-		String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
-		String collectionId = resource.getParameters().get("collectionId", String.class);
-		STACService service = STACAdapter.getService(catalogUrl, collectionId);
+    @Override
+    public boolean isOnline(IResource resource, IMonitor monitor) {
+        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
+        String collectionId = resource.getParameters().get("collectionId", String.class);
+        STACService service = STACAdapter.getService(catalogUrl, collectionId);
 
-		if (service == null) {
-			monitor.error("Service " + resource.getParameters().get("catalogUrl", String.class)
-					+ " does not exist: likely the service URL is wrong or offline");
-			return false;
-		}
+        if (service == null) {
+            monitor.error("Service " + resource.getParameters().get("catalogUrl", String.class)
+                    + " does not exist: likely the service URL is wrong or offline");
+            return false;
+        }
 
-		HMStacCollection collection = service.getCollection();
-		if (collection == null) {
-			monitor.error(
-					"Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
-			return false;
-		}
+        HMStacCollection collection = service.getCollection();
+        if (collection == null) {
+            monitor.error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
+            return false;
+        }
+        return true;
+    }
 
-		return true;
-	}
+    @Override
+    public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+            Map<String, String> urnParameters, IContextualizationScope scope) {
+        // TODO Auto-generated method stub
+        return resource;
+    }
 
-	@Override
-	public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
-			Map<String, String> urnParameters, IContextualizationScope scope) {
-		// TODO Auto-generated method stub
-		return resource;
-	}
-
-	@Override
-	public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
     private Time refitTime(Time contextTime, Time resourceTime) {
         if (resourceTime.getCoveredExtent() < contextTime.getCoveredExtent()) {
@@ -122,9 +120,9 @@ public class STACEncoder implements IResourceEncoder {
         items.sort((i1, i2) -> i1.getTimestamp().compareTo(i2.getTimestamp()));
     }
 
-	@Override
-	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			Builder builder, IContextualizationScope scope) {
+    @Override
+    public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
+            IContextualizationScope scope) {
         IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                 ? ((Observation) scope.getTargetArtifact()).getObservable()
                 : null;
@@ -133,20 +131,20 @@ public class STACEncoder implements IResourceEncoder {
         String catalogUrl = urnParameters.get("catalogUrl");
         String collectionId = urnParameters.get("collectionId");
 
-		STACService service = STACAdapter.getService(catalogUrl, collectionId);
-		HMStacCollection collection = service.getCollection();
-		if (collection == null) {
-		    scope.getMonitor().error(
-					"Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
-		}
+        STACService service = STACAdapter.getService(catalogUrl, collectionId);
+        HMStacCollection collection = service.getCollection();
+        if (collection == null) {
+            scope.getMonitor().error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
+        }
 
-		GridCoverage2D coverage = null;
+        GridCoverage2D coverage = null;
 
-		Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst()
-				.orElseThrow();
-		Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
-		ITimeInstant start = time.getStart();
-		ITimeInstant end = time.getEnd();
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
+                .findFirst().orElseThrow();
+        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
+                .findFirst().orElseThrow();
+        ITimeInstant start = time.getStart();
+        ITimeInstant end = time.getEnd();
 
         Scale resourceScale = Scale.create(resource.getGeometry());
         Time resourceTime = (Time) resourceScale.getDimension(Type.TIME);
@@ -162,57 +160,56 @@ public class STACEncoder implements IResourceEncoder {
             }
         }
 
-		IEnvelope envelope = space.getEnvelope();
-		Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
-		Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
+        IEnvelope envelope = space.getEnvelope();
+        Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+        Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
 
-		try {
-
-			List<HMStacItem> items = collection.setGeometryFilter(poly)
-					.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
-					.searchItems();
+        try {
+            List<HMStacItem> items = collection.setGeometryFilter(poly)
+                    .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
+                    .searchItems();
 
             if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
                 sortByDate(items);
             }
 
-			if (items.isEmpty()) {
-				throw new KlabIllegalStateException("No STAC items found for this context.");
-			}
+            if (items.isEmpty()) {
+                throw new KlabIllegalStateException("No STAC items found for this context.");
+            }
 
-			LogProgressMonitor lpm = new LogProgressMonitor();
-			IGrid grid = space.getGrid();
+            LogProgressMonitor lpm = new LogProgressMonitor();
+            IGrid grid = space.getGrid();
 
-			RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
-					space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(),
-					(int) grid.getYCells());
+            RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
+                    space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(),
+                    (int) grid.getYCells());
 
-			ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
-					space.getProjection().getCoordinateReferenceSystem());
-			RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
-					(int) grid.getYCells());
-			Set<Integer> ESPGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
-			if (ESPGsAtItems.size() > 1) {
-				scope.getMonitor().warn("Multiple ESPGs found on the items " + ESPGsAtItems.toString() + ". The transformation process could affect the data.");
-			}
+            ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
+                    space.getProjection().getCoordinateReferenceSystem());
+            RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
+                    (int) grid.getYCells());
+            Set<Integer> ESPGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
+            if (ESPGsAtItems.size() > 1) {
+                scope.getMonitor().warn("Multiple ESPGs found on the items " + ESPGsAtItems.toString() + ". The transformation process could affect the data.");
+            }
 
-			// Allow transform ensures the process to finish, but I would not bet on the resulting data.
-			final boolean allowTransform = true;
+            // Allow transform ensures the process to finish, but I would not bet on the resulting
+            // data.
+            final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
             HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
-			coverage = outRaster.buildCoverage();
-			scope.getMonitor().info("Coverage: " + coverage);
-		} catch (Exception e) {
-			scope.getMonitor().error("Cannot create STAC file. " + e.getMessage());
-		}
+            coverage = outRaster.buildCoverage();
+            scope.getMonitor().info("Coverage: " + coverage);
+        } catch (Exception e) {
+            scope.getMonitor().error("Cannot create STAC file. " + e.getMessage());
+        }
 
-		encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
-	}
+        encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+    }
 
-	@Override
-	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
-		// TODO Auto-generated method stub
-
-	}
+    @Override
+    public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+        // TODO Auto-generated method stub
+    }
 
 }
