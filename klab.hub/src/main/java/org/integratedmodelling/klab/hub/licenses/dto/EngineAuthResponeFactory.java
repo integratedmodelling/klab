@@ -204,6 +204,8 @@ public class EngineAuthResponeFactory {
             cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
             engineProperties.remove(KlabCertificate.KEY_PARTNER_HUB);
             cipherProperties.remove(KlabCertificate.KEY_PARTNER_HUB);
+            engineProperties.remove(KlabCertificate.KEY_EMAIL);
+            cipherProperties.remove(KlabCertificate.KEY_EMAIL);
             if (engineProperties.equals(cipherProperties)) {
                 EngineUser engine = remoteEngineUser(profile);
                 IdentityReference userIdentity = new IdentityReference(engine.getUsername(), engine.getEmailAddress(),
