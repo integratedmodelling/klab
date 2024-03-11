@@ -48,6 +48,7 @@ public class UserEmailController {
         email.from = emailConfig.senderEmail();
 
         Set<String> recipients = new HashSet<String>();
+        Set<String> replayToRecipients = new HashSet<String>();
         if (email.to != null && email.to.size() > 0) {
             for(String userEmail : email.to) {
                 if (userEmail.length() > 0) {
@@ -65,10 +66,15 @@ public class UserEmailController {
                 recipients.add(emailConfig.defaultRecipient());
             }
         } else {
-
+            recipients.add(emailConfig.defaultRecipient());
+        }
+        if (email.replayTo != null && email.replayTo.size() > 0) {
+            for(String replayTo : email.replayTo) {
+                replayToRecipients.add(replayTo);
+            }
         }
 
-        emailManager.send(email.from, recipients, null, email.subject, email.content, email.type != EmailType.TEXT);
+        emailManager.send(email.from, recipients, replayToRecipients, email.subject, email.content, email.type != EmailType.TEXT);
         return new ResponseEntity<HttpStatus>(HttpStatus.OK);
 
     }
