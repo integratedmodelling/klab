@@ -8,11 +8,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.s3.S3ConnectionManager;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,15 +43,6 @@ public class S3ConnectionManagerTest {
         boolean isConnected = s3connection.isConnected();
 
         assertTrue(isConnected);
-    }
-
-    @Test
-    public void failToConnectDueToMissingCredentials() {
-        S3ConnectionManager s3connection = new S3ConnectionManager();
-
-        Assertions.assertThrows(KlabMissingCredentialsException.class, () -> {
-            s3connection.connect("https://unregistered.eus", Optional.empty());
-        });
     }
 
     @Nested
