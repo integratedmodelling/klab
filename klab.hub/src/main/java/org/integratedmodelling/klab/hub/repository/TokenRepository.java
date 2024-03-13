@@ -15,5 +15,6 @@ public interface TokenRepository extends ResourceRepository<TokenAuthentication,
 	
     @Query("{'username' : ?0 , '_class' : ?1}")
     Optional<TokenAuthentication> findByUsernameAndClass(String username,  String _class);
+	List<TokenAuthentication> deleteAllByUsername(String username);
 
 }
