@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import io.minio.DownloadObjectArgs;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
+import io.minio.MinioClient.Builder;
 import io.minio.errors.ErrorResponseException;
 import io.minio.errors.InsufficientDataException;
 import io.minio.errors.InternalException;
@@ -35,20 +36,16 @@ public class S3ConnectionManager {
      * @param region Region of the bucket (Optional)
      */
     public void connect(String endpoint, Optional<String> region) {
-        readS3Credentials(endpoint);
-        if (region.isPresent()) {
-            minioClient = MinioClient.builder()
-                    .endpoint(endpoint)
-                    .credentials(s3AccessKey, s3SecretKey)
-                    .region(region.get())
-                    .build();
-        } else {
-            // TODO check if the region is always required 
-            minioClient = MinioClient.builder()
-                    .endpoint(endpoint)
-                    .credentials(s3AccessKey, s3SecretKey)
-                    .build();
+        boolean hasCredentials = readS3Credentials(endpoint);
+        Builder builder = MinioClient.builder()
+                .endpoint(endpoint);
+        if (hasCredentials) {
+            builder.credentials(s3AccessKey, s3SecretKey);
         }
+        if (region.isPresent()) {
+            builder.region(region.get());
+        }
+        minioClient = builder.build();
     }
 
     /**
@@ -84,14 +81,15 @@ public class S3ConnectionManager {
         return new File(filename);
     }
 
-    private void readS3Credentials(String endpoint) {
+    private boolean readS3Credentials(String endpoint) {
         ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
         if (credentials == null) {
-            throw new KlabMissingCredentialsException("No credentials for the S3 endpoint " + endpoint);
+            return false;
         }
 
         s3AccessKey = credentials.getCredentials().get(0);
         s3SecretKey = credentials.getCredentials().get(1);
+        return true;
     }
 
     private static Pair<String, String> extractBucketAndKey(String s3Uri) {
