@@ -5,16 +5,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.Optional;
-
+import java.util.List;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
-import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.Pair;
+
+import io.minio.BucketExistsArgs;
 import io.minio.DownloadObjectArgs;
+import io.minio.GetBucketLifecycleArgs;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.MinioClient.Builder;
@@ -24,28 +25,56 @@ import io.minio.errors.InternalException;
 import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
+import io.minio.messages.Bucket;
+import io.minio.messages.LifecycleConfiguration;
 
 public class S3ConnectionManager {
+    String url;
     String s3AccessKey;
     String s3SecretKey;
+    String region = "eu-west-1";
     MinioClient minioClient;
 
     /**
      * Creates a connection to the S3 endpoint 
      * @param endpoint S3 endpoint
-     * @param region Region of the bucket (Optional)
      */
-    public void connect(String endpoint, Optional<String> region) {
+    public void connect(String endpoint) {
         boolean hasCredentials = readS3Credentials(endpoint);
         Builder builder = MinioClient.builder()
                 .endpoint(endpoint);
         if (hasCredentials) {
             builder.credentials(s3AccessKey, s3SecretKey);
         }
-        if (region.isPresent()) {
-            builder.region(region.get());
-        }
         minioClient = builder.build();
+    }
+
+    public boolean bucketExists(String bucketName) {
+        try {
+            return minioClient.bucketExists(BucketExistsArgs.builder()
+                    .bucket(bucketName)
+                    .build());
+        } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+                | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
+                | IllegalArgumentException | IOException e) {
+            throw new KlabResourceAccessException(e);
+        }
+    }
+
+    public List<Bucket> listBuckets() throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
+        return minioClient.listBuckets();
+    }
+
+    public LifecycleConfiguration getBucket(String bucketName) {
+            try {
+                return minioClient.getBucketLifecycle(GetBucketLifecycleArgs.builder()
+                        .bucket(bucketName)
+                        .build());
+            } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException
+                    | InternalException | InvalidResponseException | NoSuchAlgorithmException | ServerException
+                    | XmlParserException | IllegalArgumentException | IOException e) {
+                throw new KlabResourceAccessException(e);
+            }
     }
 
     /**
@@ -54,6 +83,7 @@ public class S3ConnectionManager {
      * @param filename where the file is going to be stored
      * @return the File where the object has been downloaded
      */
+    @Deprecated // Not suitable for being used yet
     public File downloadFileFromS3URL(String url, String filename) {
         if (!isConnected()) {
             throw new KlabIllegalStateException("There is not an open S3 connection.");
@@ -71,13 +101,15 @@ public class S3ConnectionManager {
                     .bucket(bucket)
                     .filename(filename)
                     .object(object)
+                    .region(region)
                     .build());
-        } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
-                | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
-                | IllegalArgumentException | IOException e) {
+        } catch (ErrorResponseException e) {
+            region = e.response().networkResponse().header("x-amz-bucket-region");
+            return downloadFileFromS3URL(url, filename);
+        } catch (InvalidKeyException | InsufficientDataException | InternalException | InvalidResponseException
+                | NoSuchAlgorithmException | ServerException | XmlParserException | IllegalArgumentException | IOException e) {
             throw new KlabResourceAccessException("Cannot download the resource at " + url + ". Error " + e);
         }
-
         return new File(filename);
     }
 
@@ -110,6 +142,7 @@ public class S3ConnectionManager {
      * @param url of the object
      * @return the object as an InputStream
      */
+    @Deprecated // Not suitable for being used yet
     public InputStream getInputStreamFromS3URL(String url) {
         Pair<String, String> bucketAndKey = extractBucketAndKey(url);
         String bucket = bucketAndKey.getFirst();
@@ -119,8 +152,12 @@ public class S3ConnectionManager {
             return minioClient.getObject(GetObjectArgs.builder()
                     .bucket(bucket)
                     .object(object)
+                    .region(region)
                     .build());
-        } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+        } catch (ErrorResponseException e) {
+            region = e.response().networkResponse().header("x-amz-bucket-region");
+            return getInputStreamFromS3URL(url);
+        } catch (InvalidKeyException | InsufficientDataException | InternalException
                 | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
                 | IllegalArgumentException | IOException e) {
             throw new KlabResourceAccessException("Cannot get stream from the resource at " + url + ". Error " + e);
