@@ -3,15 +3,7 @@ package org.integratedmodelling.klab.test.utils;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.s3.S3ConnectionManager;
-import org.integratedmodelling.klab.utils.s3.S3URLUtils;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 public class S3ConnectionManagerTest {
@@ -44,27 +36,4 @@ public class S3ConnectionManagerTest {
         assertTrue(isConnected);
     }
 
-    @Nested
-    @Disabled("There are no known resources that will remain unmodified forever.")
-    @DisplayName("Tests usign AWS")
-    public class AWSTests {
-        @Test
-        public void makeATestConnection() {
-            S3ConnectionManager s3connection = new S3ConnectionManager();
-            s3connection.connect(S3URLUtils.AWS_ENDPOINT);
-        }
-
-        @Test
-        public void getStream() throws IOException {
-            String testResourceURL = "s3://landsat-pds/scene_list.gz";
-            S3ConnectionManager s3connection = new S3ConnectionManager();
-            s3connection.connect(S3URLUtils.AWS_ENDPOINT);
-
-            InputStream input = s3connection.getInputStreamFromS3URL(testResourceURL);
-
-            File file = File.createTempFile("test", ".gz");
-            FileUtils.copyInputStreamToFile(input, file);
-            assertTrue(file.exists());
-        }
-    }
 }
