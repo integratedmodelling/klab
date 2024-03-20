@@ -55,19 +55,6 @@ public class S3ConnectionManagerTest {
         }
 
         @Test
-        public void downloadFile() throws IOException {
-            String testResourceURL = "s3://landsat-pds/scene_list.gz";
-            String filePath = "test.gz";
-            S3ConnectionManager s3connection = new S3ConnectionManager();
-            s3connection.connect(S3URLUtils.AWS_ENDPOINT);
-
-            File file = s3connection.downloadFileFromS3URL(testResourceURL, filePath);
-
-            assertTrue(file.exists());
-            file.delete();
-        }
-
-        @Test
         public void getStream() throws IOException {
             String testResourceURL = "s3://landsat-pds/scene_list.gz";
             S3ConnectionManager s3connection = new S3ConnectionManager();

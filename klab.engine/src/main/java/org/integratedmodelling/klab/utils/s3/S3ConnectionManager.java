@@ -1,22 +1,19 @@
 package org.integratedmodelling.klab.utils.s3;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
-import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.WorkInProgress;
+import org.integratedmodelling.klab.utils.WorkInProgress.Status;
 
 import io.minio.BucketExistsArgs;
-import io.minio.DownloadObjectArgs;
-import io.minio.GetBucketLifecycleArgs;
 import io.minio.GetObjectArgs;
+import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
 import io.minio.MinioClient.Builder;
 import io.minio.errors.ErrorResponseException;
@@ -25,14 +22,11 @@ import io.minio.errors.InternalException;
 import io.minio.errors.InvalidResponseException;
 import io.minio.errors.ServerException;
 import io.minio.errors.XmlParserException;
-import io.minio.messages.Bucket;
-import io.minio.messages.LifecycleConfiguration;
 
 public class S3ConnectionManager {
     String url;
     String s3AccessKey;
     String s3SecretKey;
-    String region = "eu-west-1";
     MinioClient minioClient;
 
     /**
@@ -49,6 +43,11 @@ public class S3ConnectionManager {
         minioClient = builder.build();
     }
 
+    /**
+     * Checks if a bucket is present in the existing connection
+     * @param bucketName
+     * @return true if the bucket exists
+     */
     public boolean bucketExists(String bucketName) {
         try {
             return minioClient.bucketExists(BucketExistsArgs.builder()
@@ -59,58 +58,6 @@ public class S3ConnectionManager {
                 | IllegalArgumentException | IOException e) {
             throw new KlabResourceAccessException(e);
         }
-    }
-
-    public List<Bucket> listBuckets() throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException, InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
-        return minioClient.listBuckets();
-    }
-
-    public LifecycleConfiguration getBucket(String bucketName) {
-            try {
-                return minioClient.getBucketLifecycle(GetBucketLifecycleArgs.builder()
-                        .bucket(bucketName)
-                        .build());
-            } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException
-                    | InternalException | InvalidResponseException | NoSuchAlgorithmException | ServerException
-                    | XmlParserException | IllegalArgumentException | IOException e) {
-                throw new KlabResourceAccessException(e);
-            }
-    }
-
-    /**
-     * Downloads a file from the S3 endpoint
-     * @param url of the object
-     * @param filename where the file is going to be stored
-     * @return the File where the object has been downloaded
-     */
-    @Deprecated // Not suitable for being used yet
-    public File downloadFileFromS3URL(String url, String filename) {
-        if (!isConnected()) {
-            throw new KlabIllegalStateException("There is not an open S3 connection.");
-        }
-
-        if (!S3URLUtils.isS3Endpoint(url)) {
-            throw new KlabIllegalArgumentException("Tried to download the resource at " + url + " using an S3 connection.");
-        }
-        Pair<String, String> bucketAndKey = extractBucketAndKey(url);
-        String bucket = bucketAndKey.getFirst();
-        String object = bucketAndKey.getSecond();
-
-        try {
-            minioClient.downloadObject(DownloadObjectArgs.builder()
-                    .bucket(bucket)
-                    .filename(filename)
-                    .object(object)
-                    .region(region)
-                    .build());
-        } catch (ErrorResponseException e) {
-            region = e.response().networkResponse().header("x-amz-bucket-region");
-            return downloadFileFromS3URL(url, filename);
-        } catch (InvalidKeyException | InsufficientDataException | InternalException | InvalidResponseException
-                | NoSuchAlgorithmException | ServerException | XmlParserException | IllegalArgumentException | IOException e) {
-            throw new KlabResourceAccessException("Cannot download the resource at " + url + ". Error " + e);
-        }
-        return new File(filename);
     }
 
     private boolean readS3Credentials(String endpoint) {
@@ -142,25 +89,45 @@ public class S3ConnectionManager {
      * @param url of the object
      * @return the object as an InputStream
      */
-    @Deprecated // Not suitable for being used yet
+    @WorkInProgress(reason = "This method should determine the region of the bucket instead of making multiple calls to the bucket to guess it or extracting it from an error response.", status = Status.ON_HOLD)
     public InputStream getInputStreamFromS3URL(String url) {
         Pair<String, String> bucketAndKey = extractBucketAndKey(url);
         String bucket = bucketAndKey.getFirst();
         String object = bucketAndKey.getSecond();
 
+        // Until a better way is implemented, we use the default region for the first try.
+        @WorkInProgress(reason = "Currently, there is no way to determine the region of the bucket.", status = Status.ON_HOLD)
+        String region = "eu-west-1";
+
         try {
-            return minioClient.getObject(GetObjectArgs.builder()
-                    .bucket(bucket)
-                    .object(object)
-                    .region(region)
-                    .build());
+            return getObject(bucket, object, region);
+        } catch (InvalidKeyException | InsufficientDataException | InternalException | InvalidResponseException
+                | NoSuchAlgorithmException | ServerException | XmlParserException | IOException e) {
+            throw new KlabResourceAccessException(String.format("Cannot get stream from S3 object at %s. ", url) + e);
         } catch (ErrorResponseException e) {
+            // Try to read the region from the error message and extract the region.
+            // If not possible, just throw an exception
             region = e.response().networkResponse().header("x-amz-bucket-region");
-            return getInputStreamFromS3URL(url);
-        } catch (InvalidKeyException | InsufficientDataException | InternalException
-                | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
-                | IllegalArgumentException | IOException e) {
-            throw new KlabResourceAccessException("Cannot get stream from the resource at " + url + ". Error " + e);
+            if (region == null) {
+                throw new KlabResourceAccessException(String.format("Error receiving stream from S3 object at %s. ", url) + e);
+            }
+            try {
+                return getObject(bucket, object, region);
+            } catch (InvalidKeyException | ErrorResponseException | InsufficientDataException | InternalException
+                    | InvalidResponseException | NoSuchAlgorithmException | ServerException | XmlParserException
+                    | IOException f) {
+                throw new KlabResourceAccessException(String.format("Cannot get stream from %s. ", url) + f);
+            }
         }
+    }
+
+    private GetObjectResponse getObject(String bucket, String object, String region)
+            throws ErrorResponseException, InsufficientDataException, InternalException, InvalidKeyException,
+            InvalidResponseException, IOException, NoSuchAlgorithmException, ServerException, XmlParserException {
+        return minioClient.getObject(GetObjectArgs.builder()
+                .bucket(bucket)
+                .object(object)
+                .region(region)
+                .build());
     }
 }
