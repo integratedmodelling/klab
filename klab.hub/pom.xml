@@ -180,7 +180,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-            <version>1.18.28</version>
+            <version>1.18.32</version>
         </dependency>
 
 		<!-- This section is for Spring Security Dependencies -->

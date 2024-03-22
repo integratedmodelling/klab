@@ -43,8 +43,6 @@ public class MongoTag {
     
     private Boolean visible;
 
-    public MongoTag() {
-    }
     
     
 
