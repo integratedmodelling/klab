@@ -128,8 +128,8 @@ public class STACEncoder implements IResourceEncoder {
                 : null;
         HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics);
 
-        String catalogUrl = urnParameters.get("catalogUrl");
-        String collectionId = urnParameters.get("collectionId");
+        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
+        String collectionId = resource.getParameters().get("collectionId", String.class);
 
         STACService service = STACAdapter.getService(catalogUrl, collectionId);
         HMStacCollection collection = service.getCollection();
