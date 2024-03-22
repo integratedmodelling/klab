@@ -503,7 +503,7 @@ public interface API {
             /**
              * URL PARAMETER for user setting a new email from set email token.
              */
-			public static final String USER_SET_EMAIL = "new-email";
+            public static final String USER_SET_EMAIL = "new-email";
             /**
              * URL PARAMETER for user to request a new certificate.
              */

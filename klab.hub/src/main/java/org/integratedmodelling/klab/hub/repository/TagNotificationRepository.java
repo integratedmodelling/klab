@@ -16,13 +16,13 @@ public interface TagNotificationRepository extends ResourceRepository<TagNotific
     @DeleteQuery
     void deleteByTag(MongoTag tag);
 
-	List<TagNotification> findAllByTagId(List<String> listId);
+    List<TagNotification> findAllByTagId(List<String> listId);
 
-	TagNotification findByTagId(String id);
+    TagNotification findByTagId(String id);
 
-	List<TagNotification> findAllByTag(List<MongoTag> listMongoTags);
+    List<TagNotification> findAllByTag(List<MongoTag> listMongoTags);
 
-	List<TagNotification> findAllByTagIdIn(List<String> list);
+    List<TagNotification> findAllByTagIdIn(List<String> list);
 
-	List<TagNotification> findAllByTagIn(List<MongoTag> listMongoTags);
+    List<TagNotification> findAllByTagIn(List<MongoTag> listMongoTags);
 }

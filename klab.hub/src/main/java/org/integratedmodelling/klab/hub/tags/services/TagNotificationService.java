@@ -20,84 +20,83 @@ import scala.PartialFunction.OrElse;
 @Service
 public class TagNotificationService {
 
-	private static final Logger logger = LoggerFactory.getLogger(TagNotificationService.class);
-	
-	@Autowired
-	MongoTemplate mongoTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(TagNotificationService.class);
 
-	@Autowired
-	private TagNotificationRepository tagNotificationRepository;
+    @Autowired
+    MongoTemplate mongoTemplate;
 
-	@Autowired
-	private MongoTagRepository mongoTagRepository;
+    @Autowired
+    private TagNotificationRepository tagNotificationRepository;
 
-	public TagNotification createWarningUserTagNotification(User user, String tagName, Boolean visible, String title,
-			String message) {
-		MongoTag tag = new MongoTag();
-		tag.setITagElement(user);
-		tag.setName(tagName);
-		tag.setVisible(visible);
-		
-		tag = mongoTagRepository.save(tag);
-		TagNotification tagNotification = new TagNotification();
+    @Autowired
+    private MongoTagRepository mongoTagRepository;
 
-		tagNotification.setTag(tag);
-		tagNotification.setType(Type.WARNING);
+    public TagNotification createWarningUserTagNotification(User user, String tagName, Boolean visible, String title,
+            String message) {
+        MongoTag tag = new MongoTag();
+        tag.setITagElement(user);
+        tag.setName(tagName);
+        tag.setVisible(visible);
 
-		try {
-			tagNotificationRepository.save(tagNotification);
-		} catch (Exception e) {
-			throw new KlabException("Error saving tag notification.", e);
-		}
+        tag = mongoTagRepository.save(tag);
+        TagNotification tagNotification = new TagNotification();
 
-		return tagNotification;
-	}
+        tagNotification.setTag(tag);
+        tagNotification.setType(Type.WARNING);
 
-	
-	/**
-	 * Find 
-	 * @param username
-	 * @return
-	 */
-	public List<MongoTag> findTagByUsername(String username) {
-		return mongoTagRepository.findAllByUsernameOrUsernameIsNull(username);
-	}
+        try {
+            tagNotificationRepository.save(tagNotification);
+        } catch (Exception e) {
+            throw new KlabException("Error saving tag notification.", e);
+        }
 
-	/**
-	 * Get tagNotification list by username, also included null username tag notifications 
-	 * @param username
-	 * @return
-	 */
-	public List<TagNotification> getUserTagNotifications(String username) {		
-		List<TagNotification> listTagNotifications = null;
-		List<MongoTag> listMongoTags = null;
-		try {
-			listMongoTags = mongoTagRepository.findAllByUsernameOrUsernameIsNull(username);
-			listTagNotifications = tagNotificationRepository
-					.findAllByTagIn(listMongoTags);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new KlabException(e.getMessage(), e);
-		}
-		return listTagNotifications;
-	}
+        return tagNotification;
+    }
 
-	/**
-	 * Delete tagNotification and mongoTag by ragNotification id.
-	 * 
-	 * @param id
-	 * @return
-	 */
-	public TagNotification deleteTagNotification(String id) {
-		TagNotification tagNotification = tagNotificationRepository.findById(id).orElseThrow(() -> new KlabException("TagNotification doesn't exist"));
-		try {
-			mongoTagRepository.delete(tagNotification.getTag());
-			tagNotificationRepository.delete(tagNotification);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-			throw new KlabException("Error deleting data in mongo.", e);
-		}
-		return tagNotification;
-	}
+    /**
+     * Find 
+     * @param username
+     * @return
+     */
+    public List<MongoTag> findTagByUsername(String username) {
+        return mongoTagRepository.findAllByUsernameOrUsernameIsNull(username);
+    }
+
+    /**
+     * Get tagNotification list by username, also included null username tag notifications 
+     * @param username
+     * @return
+     */
+    public List<TagNotification> getUserTagNotifications(String username) {
+        List<TagNotification> listTagNotifications = null;
+        List<MongoTag> listMongoTags = null;
+        try {
+            listMongoTags = mongoTagRepository.findAllByUsernameOrUsernameIsNull(username);
+            listTagNotifications = tagNotificationRepository.findAllByTagIn(listMongoTags);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new KlabException(e.getMessage(), e);
+        }
+        return listTagNotifications;
+    }
+
+    /**
+     * Delete tagNotification and mongoTag by ragNotification id.
+     * 
+     * @param id
+     * @return
+     */
+    public TagNotification deleteTagNotification(String id) {
+        TagNotification tagNotification = tagNotificationRepository.findById(id)
+                .orElseThrow(() -> new KlabException("TagNotification doesn't exist"));
+        try {
+            mongoTagRepository.delete(tagNotification.getTag());
+            tagNotificationRepository.delete(tagNotification);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new KlabException("Error deleting data in mongo.", e);
+        }
+        return tagNotification;
+    }
 
 }

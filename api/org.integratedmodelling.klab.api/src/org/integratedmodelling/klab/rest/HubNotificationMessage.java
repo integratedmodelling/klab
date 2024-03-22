@@ -23,7 +23,7 @@ public class HubNotificationMessage {
     };
     
     public enum Type {
-    	SUCCESS,
+        SUCCESS,
         ERROR,
         WARNING,
         INFO

@@ -18,17 +18,16 @@ import net.minidev.json.JSONObject;
 
 @RestController
 public class TagNotificationController {
-	
-	@Autowired
-	private TagNotificationService tagNotificationService;
-	
-	
-	/**
-	 * Get all tag notifications for this username, also included the generic tag notifications
-	 * @param username
-	 * @return
-	 */
-	@GetMapping(value = API.HUB.TAG_NOTIFICATIONS, produces = "application/json", params = API.HUB.PARAMETERS.USER_TAGS)    
+
+    @Autowired
+    private TagNotificationService tagNotificationService;
+
+    /**
+     * Get all tag notifications for this username, also included the generic tag notifications
+     * @param username
+     * @return
+     */
+    @GetMapping(value = API.HUB.TAG_NOTIFICATIONS, produces = "application/json", params = API.HUB.PARAMETERS.USER_TAGS)
     public ResponseEntity< ? > getUserTagNotifications(@RequestParam(API.HUB.PARAMETERS.USER_TAGS) String username) {
         JSONObject resp = new JSONObject();
         try {
@@ -39,13 +38,13 @@ public class TagNotificationController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-	
-	/**
-	 * Delete tag notification
-	 * @param id
-	 * @return
-	 */
-	@DeleteMapping(value = API.HUB.TAG_NOTIFICATION_ID)    
+
+    /**
+     * Delete tag notification
+     * @param id
+     * @return
+     */
+    @DeleteMapping(value = API.HUB.TAG_NOTIFICATION_ID)
     public ResponseEntity< ? > deletetagNotification(@PathVariable("id") String id) {
         JSONObject resp = new JSONObject();
         try {

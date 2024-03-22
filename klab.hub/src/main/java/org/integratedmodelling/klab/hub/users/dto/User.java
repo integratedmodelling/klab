@@ -30,23 +30,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
-@Document(collection="Users")
+@Document(collection = "Users")
 @TypeAlias("MongoUser")
-@CompoundIndexes({
-    @CompoundIndex(name = "username_idx",
-                   unique = true,
-                   def = "{'name' : 1, 'username' : 1}")
-})
-public class User extends IdentityModel implements UserDetails, ITagElement{
-	
-	public static final String GLOBAL_GROUP = "REGISTERED";
+@CompoundIndexes({@CompoundIndex(name = "username_idx", unique = true, def = "{'name' : 1, 'username' : 1}")})
+public class User extends IdentityModel implements UserDetails, ITagElement {
+
+    public static final String GLOBAL_GROUP = "REGISTERED";
 
     private static final long serialVersionUID = -6213593655742083476L;
-    
+
     String affiliation;
 
     String comments;
-    
+
     @Indexed(unique = true)
     String email;
 
@@ -59,20 +55,19 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     String initials;
 
     String address;
-    
+
     @Enumerated(EnumType.STRING)
     private AuthProvider provider;
-    
+
     private String providerId;
 
     String jobTitle;
 
-	String phone;
+    String phone;
 
     String serverUrl;
 
     LocalDateTime lastLogin;
-
 
     boolean sendUpdates = true;
 
@@ -90,12 +85,7 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     Set<CustomProperty> customProperties = new HashSet<>();
 
     public enum AccountStatus {
-        active,
-        locked,
-        deleted,
-        expired,
-        pendingActivation,
-        verified
+        active, locked, deleted, expired, pendingActivation, verified
     };
 
     // @Transient prevents the password from being stored in Mongo.
@@ -104,7 +94,8 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     String passwordHash;
 
     // TODO reference this from a AbstractSecurityInterceptor for DataSource object security.
-    // see "secure object" references at http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle
+    // see "secure object" references at
+    // http://docs.spring.io/spring-security/site/docs/current/reference/htmlsingle
 //    public boolean hasAnyGroups(Set<KlabGroup> groups) {
 //        for (KlabGroup group : groups) {
 //            if (groups.contains(group)) {
@@ -220,13 +211,13 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
         this.roles.clear();
         this.roles.addAll(roles);
     }
-    
+
     public Set<Role> getRoles() {
-    	return this.roles;
+        return this.roles;
     }
-    
+
     public void removeRoles(Collection<Role> rolesToRemove) {
-    	this.roles.removeAll(rolesToRemove);
+        this.roles.removeAll(rolesToRemove);
     }
 
     public Set<String> getApplications() {
@@ -302,7 +293,6 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
         customProperties = resource.customProperties;
     }
 
-
 //	public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {
 //        if (groups == null) {
 //            // force this to be checked by set intersection, rather than instantly failing (preserves logic)
@@ -340,24 +330,23 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     }
 
     public AuthProvider getProvider() {
-		return provider;
-	}
+        return provider;
+    }
 
-	public void setProvider(AuthProvider provider) {
-		this.provider = provider;
-	}
-	
+    public void setProvider(AuthProvider provider) {
+        this.provider = provider;
+    }
 
     public void setLastLogin() {
         lastLogin = LocalDateTime.now();
     }
-    
+
     public void setLastLogin(LocalDateTime date) {
         lastLogin = date;
     }
 
     public LocalDateTime getLastLogin() {
-    	return lastLogin;
+        return lastLogin;
     }
 
     public String getProviderId() {
@@ -367,15 +356,15 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     public void setProviderId(String providerId) {
         this.providerId = providerId;
     }
-    
-	public String getEmail() {
-		return email;
-	}
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	
-	public void addAgreements(AgreementEntry agreements) {
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void addAgreements(AgreementEntry agreements) {
         this.agreements.addAll(Arrays.asList(agreements));
     }
 
@@ -383,7 +372,6 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
         this.agreements.addAll(agreements);
     }
 
-    
     public Set<AgreementEntry> getAgreements() {
         return agreements;
     }
@@ -393,10 +381,9 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     }
 
     public boolean hasTag(String tagName) {
-        return tags.stream()
-        .anyMatch(t -> t.getTag() != null && t.getTag().getName().equals(tagName));
+        return tags.stream().anyMatch(t -> t.getTag() != null && t.getTag().getName().equals(tagName));
     }
-	
+
     public void addTag(MongoTag mongoTag) {
         TagEntry tagEntry = new TagEntry(mongoTag);
         this.tags.add(tagEntry);
@@ -413,9 +400,7 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     }
 
     public List<TagEntry> getUnsentTags() {
-        return tags.stream()
-                .filter(t -> !t.isSent())
-                .collect(Collectors.toList());
+        return tags.stream().filter(t -> !t.isSent()).collect(Collectors.toList());
     }
 
     public Set<CustomProperty> getCustomProperties() {
@@ -435,8 +420,7 @@ public class User extends IdentityModel implements UserDetails, ITagElement{
     }
 
     public Optional<CustomProperty> findCustomProperty(String key) {
-        return customProperties.stream()
-                .filter(cp -> cp.getKey().equals(key)).findFirst();
+        return customProperties.stream().filter(cp -> cp.getKey().equals(key)).findFirst();
     }
 
     public void removeCustomProperty(String name) {

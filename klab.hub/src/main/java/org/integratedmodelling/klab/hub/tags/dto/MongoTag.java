@@ -30,62 +30,48 @@ public class MongoTag {
     @Id
     @Indexed(unique = true)
     private String id;
-    
+
     @NotNull(message = "Name field cannot be null or blank")
     private String name;
-    
+
     @Field("Username")
     private String username;
 
     private Period timeToExpiration;
-    
+
     private ITagElement iTagElement;
-    
+
     private Boolean visible;
 
-    
-    
-
     public String getId() {
-		return id;
-	}
+        return id;
+    }
 
+    public void setId(String id) {
+        this.id = id;
+    }
 
+    public ITagElement getiTagElement() {
+        return iTagElement;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setiTagElement(ITagElement iTagElement) {
+        this.iTagElement = iTagElement;
+    }
 
-
-
-	public ITagElement getiTagElement() {
-		return iTagElement;
-	}
-
-
-
-	public void setiTagElement(ITagElement iTagElement) {
-		this.iTagElement = iTagElement;
-	}
-
-
-
-	public void setTimeToExpiration(Period timeToExpiration) {
-		this.timeToExpiration = timeToExpiration;
-	}
-
-
+    public void setTimeToExpiration(Period timeToExpiration) {
+        this.timeToExpiration = timeToExpiration;
+    }
 
     private boolean isValidName(String name) {
         if (name.isEmpty()) {
             return false;
         }
-        return Pattern.compile("([a-zA-Z0-9])+(-([a-zA-Z0-9])+)*")
-                .matcher(name).matches();
+        return Pattern.compile("([a-zA-Z0-9])+(-([a-zA-Z0-9])+)*").matcher(name).matches();
     }
 
     public void setName(String name) {
-        if(!isValidName(name)) {
+        if (!isValidName(name)) {
             throw new IllegalArgumentException("Tag has not a valid format");
         }
         this.name = name;
@@ -99,30 +85,28 @@ public class MongoTag {
         return timeToExpiration;
     }
 
-	public ITagElement getITagElement() {
-		return iTagElement;
-	}
+    public ITagElement getITagElement() {
+        return iTagElement;
+    }
 
-	public void setITagElement(ITagElement iTagElement) {
-		this.iTagElement = iTagElement;
-	}
+    public void setITagElement(ITagElement iTagElement) {
+        this.iTagElement = iTagElement;
+    }
 
-	public Boolean getVisible() {
-		return visible;
-	}
+    public Boolean getVisible() {
+        return visible;
+    }
 
-	public void setVisible(Boolean visible) {
-		this.visible = visible;
-	}
+    public void setVisible(Boolean visible) {
+        this.visible = visible;
+    }
 
-	public String getUsername() {
-		return username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
 }

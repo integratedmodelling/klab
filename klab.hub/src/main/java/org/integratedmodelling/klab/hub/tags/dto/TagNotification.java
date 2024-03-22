@@ -24,25 +24,25 @@ import lombok.NoArgsConstructor;
 @Document(collection = "NotificationTags")
 @TypeAlias("NotificationTag")
 public class TagNotification {
-	
-	@Id
+
+    @Id
     @Indexed(unique = true)
     private String id;
 
     @DBRef
     private MongoTag tag;
-    
-    @Enumerated(EnumType.STRING) 
+
+    @Enumerated(EnumType.STRING)
     private Type type;
-    
+
     private String title;
     public String getTitle() {
-		return title;
-	}
+        return title;
+    }
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     private String message;
 
@@ -62,23 +62,20 @@ public class TagNotification {
         return message;
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setType(Type type) {
-		this.type = type;
-	}
+    public void setType(Type type) {
+        this.type = type;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
-	
-	
-    
-    
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 }
