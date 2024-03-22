@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
+import org.integratedmodelling.klab.hub.api.ITagElement;
 import org.integratedmodelling.klab.hub.api.IdentityModel;
 import org.integratedmodelling.klab.hub.security.oauth2.AuthProvider;
 import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
@@ -36,7 +37,7 @@ import jakarta.persistence.Enumerated;
                    unique = true,
                    def = "{'name' : 1, 'username' : 1}")
 })
-public class User extends IdentityModel implements UserDetails{
+public class User extends IdentityModel implements UserDetails, ITagElement{
 	
 	public static final String GLOBAL_GROUP = "REGISTERED";
 

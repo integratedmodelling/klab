@@ -437,6 +437,10 @@ public interface API {
         /**
          * Base URL path for tag notifications by tag.
          */
+        public static final String TAG_NOTIFICATION_ID = TAG_NOTIFICATIONS + "/{id}";
+        /**
+         * Base URL path for tag notifications by tag.
+         */
         public static final String TAG_NOTIFICATION_OF_TAG = TAG_NOTIFICATIONS + "/{name}";
         /**
          * Base URL path for tag notifications by user.
@@ -499,7 +503,7 @@ public interface API {
             /**
              * URL PARAMETER for user setting a new email from set email token.
              */
-            public static final String USER_SET_EMAIL = "new-email";
+			public static final String USER_SET_EMAIL = "new-email";
             /**
              * URL PARAMETER for user to request a new certificate.
              */
@@ -566,9 +570,13 @@ public interface API {
 
             public static final String HAS_ROLES = "has-roles";
             /**
-             * Base PARAMETER for the type of a tag
+             * URL PARAMETER for the type of a tag
              */
             public static final String TYPE_OF_TAG = "type";
+            /**
+             * URL PARAMETER for username, get all tags from this user
+             */
+            public static final String USER_TAGS = "username";
 
         }
 

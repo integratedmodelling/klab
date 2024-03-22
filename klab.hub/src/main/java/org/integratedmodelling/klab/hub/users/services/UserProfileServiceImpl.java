@@ -10,6 +10,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
+import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
+import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
+import org.integratedmodelling.klab.hub.tags.services.TagNotificationService;
 import org.integratedmodelling.klab.hub.tokens.dto.TokenVerifyEmailClickback;
 import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
@@ -18,6 +22,7 @@ import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
+import org.integratedmodelling.klab.rest.HubNotificationMessage.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -42,15 +47,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 	private EmailManager emailManager;
 
 	private RegistrationTokenService tokenService;
+	private TagNotificationService tagNotificationService;
+	
 
 	public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, EmailManager emailManager,
-			RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl) {
+			RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl, TagNotificationService tagNotificationService) {
 		super();
 		this.userRepository = userRepository;
 		this.objectMapper = objectMapper;
 		this.emailManager = emailManager;
 		this.tokenService = tokenService;
 		this.ldapServiceImpl = ldapServiceImpl;
+		this.tagNotificationService = tagNotificationService;
 	}
 
 	@Override
@@ -169,10 +177,18 @@ public class UserProfileServiceImpl implements UserProfileService {
 		
 		/* update ldap */
 		try {
-		ldapServiceImpl.updateUserEmailAddress(username, email);
+			ldapServiceImpl.updateUserEmailAddress(username, email);
 		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			throw new KlabException("Error updating ldap user: " + e.getMessage(), e);
+		}
+		
+		try {
+			TagNotification tagNotification = tagNotificationService.createWarningUserTagNotification(updatedUser, TagNameEnum.downloadCertificateChangeEmail.toString(), false, "", "");
+			
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			throw new KlabException(e.getMessage(), e);
 		}
 		
 		ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
