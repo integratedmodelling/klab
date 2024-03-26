@@ -85,7 +85,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
             response.getOutputStream().close();
         }
         /* Delete warning to download kLabCertificate is exists */
-        tagNotificationService.deleteTagNotification(id, TagNameEnum.downloadCertificateChangeEmail);
+        tagNotificationService.deleteTagNotification(userProfileService.getUser(id), TagNameEnum.downloadCertificateChangeEmail);
 
     }
 

@@ -5,6 +5,8 @@ import java.util.List;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
 import org.integratedmodelling.klab.hub.tags.services.TagNotificationService;
+import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,9 @@ public class TagNotificationController {
     @Autowired
     private TagNotificationService tagNotificationService;
 
+    @Autowired
+    private UserProfileService userProfileService;
+
     /**
      * Get all tag notifications for this username, also included the generic tag notifications
      * @param username
@@ -29,12 +34,11 @@ public class TagNotificationController {
      */
     @GetMapping(value = API.HUB.TAG_NOTIFICATIONS, produces = "application/json", params = API.HUB.PARAMETERS.USER_TAGS)
     public ResponseEntity< ? > getUserTagNotifications(@RequestParam(API.HUB.PARAMETERS.USER_TAGS) String username) {
-        JSONObject resp = new JSONObject();
         try {
-            List<TagNotification> tagNotifications = tagNotificationService.getUserTagNotifications(username);
+            User user = userProfileService.getUser(username);
+            List<TagNotification> tagNotifications = tagNotificationService.getUserTagNotifications(user);
             return ResponseEntity.status(HttpStatus.OK).body(tagNotifications);
         } catch (Exception e) {
-//            resp.appendField("Message", String.format("Role %s is not valid", role));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
