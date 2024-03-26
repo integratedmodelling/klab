@@ -13,4 +13,6 @@ public interface MongoTagRepository extends ResourceRepository<MongoTag, String>
 
     Optional<MongoTag> findByName(String name);
 
+    List<MongoTag> findAllByUsernameOrUsernameIsNull(String username);
+
 }
