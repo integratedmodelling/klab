@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.tags.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -7,6 +8,7 @@ import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.TagNotificationRepository;
 import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
 import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
+import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.rest.HubNotificationMessage.Type;
 import org.slf4j.Logger;
@@ -14,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-
-import scala.PartialFunction.OrElse;
 
 @Service
 public class TagNotificationService {
@@ -97,6 +97,28 @@ public class TagNotificationService {
             throw new KlabException("Error deleting data in mongo.", e);
         }
         return tagNotification;
+    }
+
+    public void deleteTagNotification(String id, TagNameEnum downloadCertificateChangeEmailEnum) {
+        List<MongoTag> tagList = mongoTagRepository.findAllByUsernameOrUsernameIsNull(id);
+        List<TagNotification> tagNotificacionList = tagNotificationRepository.findAllByTagIn(tagList);
+        TagNotification tagNotification = null;
+        List<TagNotification> filteredList = new ArrayList<>();
+        if (!tagNotificacionList.isEmpty()) {
+            filteredList = tagNotificacionList.stream()
+                    .filter(tg -> tg.getTag().getName().equals(downloadCertificateChangeEmailEnum.toString())).toList();
+        }
+
+        if (!filteredList.isEmpty()) {
+            deleteTagNotifications(filteredList);
+        }
+
+    }
+
+    private void deleteTagNotifications(List<TagNotification> filteredList) {
+        mongoTagRepository.deleteAll(filteredList.stream().map(fl -> fl.getTag()).toList());
+        tagNotificationRepository.deleteAll(filteredList);
+
     }
 
 }

@@ -25,4 +25,6 @@ public interface TagNotificationRepository extends ResourceRepository<TagNotific
     List<TagNotification> findAllByTagIdIn(List<String> list);
 
     List<TagNotification> findAllByTagIn(List<MongoTag> listMongoTags);
+
+    List<TagNotification> findByTagUsername(String id);
 }
