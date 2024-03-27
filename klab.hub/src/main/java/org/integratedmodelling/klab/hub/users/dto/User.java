@@ -12,9 +12,9 @@ import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
-import org.integratedmodelling.klab.hub.api.ITagElement;
 import org.integratedmodelling.klab.hub.api.IdentityModel;
 import org.integratedmodelling.klab.hub.security.oauth2.AuthProvider;
+import org.integratedmodelling.klab.hub.tags.dto.ITagElement;
 import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
 import org.integratedmodelling.klab.hub.tags.dto.TagEntry;
 import org.integratedmodelling.klab.rest.CustomProperty;
@@ -106,11 +106,11 @@ public class User extends IdentityModel implements UserDetails, ITagElement {
 //    }
 
     public String getId() {
-        return getId();
+        return super.getId();
     }
 
     public void setId(String id) {
-        setId(id);
+        super.setId(id);
     }
 
     @Override

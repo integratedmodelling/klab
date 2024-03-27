@@ -10,8 +10,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
-import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
 import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
 import org.integratedmodelling.klab.hub.tags.services.TagNotificationService;
 import org.integratedmodelling.klab.hub.tokens.dto.TokenVerifyEmailClickback;
@@ -22,7 +20,6 @@ import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
-import org.integratedmodelling.klab.rest.HubNotificationMessage.Type;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -86,14 +83,14 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public ProfileResource getUserProfile(String username) {
-        User user = userRepository.findByNameIgnoreCase(username).orElseThrow(() -> new UserDoesNotExistException());
+        User user = getUser(username);
         return getUserSafeProfile(user);
     }
 
     @Override
     public ProfileResource getCurrentUserProfile(boolean remote) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByNameIgnoreCase(username).orElseThrow(() -> new UserDoesNotExistException());
+        User user = getUser(username);
         ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
         if (remote) {
             return profile;
@@ -111,7 +108,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public ProfileResource getRawUserProfile(String username) {
-        User user = userRepository.findByNameIgnoreCase(username).orElseThrow(() -> new UserDoesNotExistException());
+        User user = getUser(username);
         ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
         return profile;
     }
@@ -156,8 +153,7 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public ProfileResource updateUserEmail(String username, String email) {
-        User user = userRepository.findByNameIgnoreCase(username)
-                .orElseThrow(() -> new KlabException("Current User doesn't exist"));
+        User user = getUser(username);
         user.setEmail(email);
 
         /* update mongo repository */
@@ -182,7 +178,7 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         try {
-            TagNotification tagNotification = tagNotificationService.createWarningUserTagNotification(updatedUser,
+            tagNotificationService.createWarningUserTagNotification(updatedUser,
                     TagNameEnum.downloadCertificateChangeEmail.toString(), false, "", "");
 
         } catch (Exception e) {
@@ -195,11 +191,20 @@ public class UserProfileServiceImpl implements UserProfileService {
     }
 
     private User updateUserFromProfileResource(ProfileResource profile) {
-        User user = userRepository.findByNameIgnoreCase(profile.getUsername())
-                .filter(u -> u.getUsername().equals(profile.getUsername()))
-                .orElseThrow(() -> new KlabException("Current User context does match updated profile username"));
+        User user;
+        try {
+            user = getUser(profile.getUsername());
+        } catch (Exception e) {
+            throw new KlabException("Current User context does match updated profile username");
+        }
         user.updateFromProfileResource(profile);
         return user;
+    }
+
+    @Override
+    public User getUser(String username) {
+        return userRepository.findByNameIgnoreCase(username).filter(u -> u.getUsername().equals(username))
+                .orElseThrow(() -> new KlabException("Current User doesn't exist"));
     }
 
     @Override

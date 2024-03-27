@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.repository.MongoTagRepository;
 import org.integratedmodelling.klab.hub.repository.TagNotificationRepository;
+import org.integratedmodelling.klab.hub.tags.dto.ITagElement;
 import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
 import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
 import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
@@ -34,6 +35,7 @@ public class TagNotificationService {
     public TagNotification createWarningUserTagNotification(User user, String tagName, Boolean visible, String title,
             String message) {
         MongoTag tag = new MongoTag();
+        tag.setTagElementId(user.getId());
         tag.setITagElement(user);
         tag.setName(tagName);
         tag.setVisible(visible);
@@ -54,24 +56,15 @@ public class TagNotificationService {
     }
 
     /**
-     * Find 
-     * @param username
-     * @return
-     */
-    public List<MongoTag> findTagByUsername(String username) {
-        return mongoTagRepository.findAllByUsernameOrUsernameIsNull(username);
-    }
-
-    /**
      * Get tagNotification list by username, also included null username tag notifications 
-     * @param username
+     * @param user
      * @return
      */
-    public List<TagNotification> getUserTagNotifications(String username) {
+    public List<TagNotification> getUserTagNotifications(ITagElement iTagElement) {
         List<TagNotification> listTagNotifications = null;
         List<MongoTag> listMongoTags = null;
         try {
-            listMongoTags = mongoTagRepository.findAllByUsernameOrUsernameIsNull(username);
+            listMongoTags = mongoTagRepository.findAllByTagElementId(iTagElement.getId());
             listTagNotifications = tagNotificationRepository.findAllByTagIn(listMongoTags);
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -99,14 +92,18 @@ public class TagNotificationService {
         return tagNotification;
     }
 
-    public void deleteTagNotification(String id, TagNameEnum downloadCertificateChangeEmailEnum) {
-        List<MongoTag> tagList = mongoTagRepository.findAllByUsernameOrUsernameIsNull(id);
+    /**
+     * Delete tagNotifications by user and type
+     * @param user
+     * @param tagNameEnum
+     */
+    public void deleteTagNotification(User user, TagNameEnum tagNameEnum) {
+        List<MongoTag> tagList = mongoTagRepository.findAllByTagElementId(user.getId());
         List<TagNotification> tagNotificacionList = tagNotificationRepository.findAllByTagIn(tagList);
-        TagNotification tagNotification = null;
         List<TagNotification> filteredList = new ArrayList<>();
         if (!tagNotificacionList.isEmpty()) {
-            filteredList = tagNotificacionList.stream()
-                    .filter(tg -> tg.getTag().getName().equals(downloadCertificateChangeEmailEnum.toString())).toList();
+            filteredList = tagNotificacionList.stream().filter(tg -> tg.getTag().getName().equals(tagNameEnum.toString()))
+                    .toList();
         }
 
         if (!filteredList.isEmpty()) {
@@ -115,9 +112,13 @@ public class TagNotificationService {
 
     }
 
-    private void deleteTagNotifications(List<TagNotification> filteredList) {
-        mongoTagRepository.deleteAll(filteredList.stream().map(fl -> fl.getTag()).toList());
-        tagNotificationRepository.deleteAll(filteredList);
+    /**
+     * Delete list of tagNotifications
+     * @param tagNotificationList
+     */
+    private void deleteTagNotifications(List<TagNotification> tagNotificationList) {
+        mongoTagRepository.deleteAll(tagNotificationList.stream().map(fl -> fl.getTag()).toList());
+        tagNotificationRepository.deleteAll(tagNotificationList);
 
     }
 
