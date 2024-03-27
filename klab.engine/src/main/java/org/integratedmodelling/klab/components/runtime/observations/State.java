@@ -717,5 +717,65 @@ public class State extends Observation implements IState, IKeyHolder {
 	public void setStatistics(List<Statistics> stats) {
 		this.debuggingStatistics = stats;
 	}
+	
+	// Expose aggregation functions to groovy
+	// TODO remove the RelocatedState if safe
+	public double getSum() { 
+        if (storage instanceof AbstractAdaptiveStorage) { 
+            AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(getScope().getScale()); 
+            dumpStatistics(); 
+            return slice == null ? Double.NaN : slice.getRawStatistics().getSum(); 
+        } 
+        throw new KlabUnimplementedException("Groovy support for non-conventional states"); 
+    } 
+     
+    public double getMax() { 
+        if (storage instanceof AbstractAdaptiveStorage) { 
+            AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(getScope().getScale()); 
+            return slice == null ? Double.NaN : slice.getRawStatistics().getMax(); 
+        } 
+        throw new KlabUnimplementedException("Groovy support for non-conventional states"); 
+    } 
+ 
+    public double getMin() { 
+        if (storage instanceof AbstractAdaptiveStorage) { 
+            AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(getScope().getScale()); 
+            return slice == null ? Double.NaN : slice.getRawStatistics().getMin(); 
+        } 
+        throw new KlabUnimplementedException("Groovy support for non-conventional states"); 
+    } 
+ 
+    public double getMean() { 
+        if (storage instanceof AbstractAdaptiveStorage) { 
+            AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(getScope().getScale()); 
+            return slice == null ? Double.NaN : slice.getRawStatistics().getMean(); 
+        } 
+        throw new KlabUnimplementedException("Groovy support for non-conventional states"); 
+    } 
+ 
+    // for backwards compatibility 
+    public double getAvg() { 
+        if (storage instanceof AbstractAdaptiveStorage) { 
+            AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(getScope().getScale()); 
+            return slice == null ? Double.NaN : slice.getRawStatistics().getMean(); 
+        } 
+        throw new KlabUnimplementedException("Groovy support for non-conventional states"); 
+    } 
+ 
+    public double getStd() { 
+        if (storage instanceof AbstractAdaptiveStorage) { 
+            AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(getScope().getScale()); 
+            return slice == null ? Double.NaN : slice.getRawStatistics().getStandardDeviation(); 
+        } 
+        throw new KlabUnimplementedException("Groovy support for non-conventional states"); 
+    } 
+ 
+    public double getVariance() { 
+        if (storage instanceof AbstractAdaptiveStorage) { 
+            AbstractAdaptiveStorage<?>.Slice slice = ((AbstractAdaptiveStorage<?>) storage).getSlice(getScope().getScale()); 
+            return slice == null ? Double.NaN : slice.getRawStatistics().getVariance(); 
+        } 
+        throw new KlabUnimplementedException("Groovy support for non-conventional states"); 
+    }
 
 }
