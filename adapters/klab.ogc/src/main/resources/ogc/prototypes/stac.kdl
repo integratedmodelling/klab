@@ -1,0 +1,19 @@
+/*
+ * Parameters accepted in a STAC resource
+ */
+ annotation stac	
+	"The STAC adapter names a collection in a STAC catalog and manages import in k.LAB, including aggregation of multiple timepoints if
+	 context requires it." 	
+	label "STAC collection adapter" 	
+ {
+
+ 	final text 'catalogUrl'
+ 		"The URL pointing to the STAC catalog file that contains the resource dataset."
+
+ 	final text 'collectionId'
+ 		"The ID of the annotated data collection."
+ 		
+ 	final text 'asset'
+ 		"The asset that is going to be retrieved from the items."
+
+ }

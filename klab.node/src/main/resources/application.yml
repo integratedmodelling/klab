@@ -17,6 +17,8 @@ klab:
    adapter:
       fscan:
          auth: "*"
+      stats:
+         auth: "*"
       raster:
          auth: "*"
       vector:

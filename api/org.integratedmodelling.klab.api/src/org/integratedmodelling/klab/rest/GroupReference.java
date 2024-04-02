@@ -42,7 +42,7 @@ public class GroupReference {
 	}
 	
 	public GroupReference(Group group) {
-		this(Objects.requireNonNull(group, "Group cannot be null").getId(), group.getDescription(), group.getIconUrl());
+		this(Objects.requireNonNull(group, "Group cannot be null").getName(), group.getDescription(), group.getIconUrl());
 	}
 	/**
 	 * @return the id

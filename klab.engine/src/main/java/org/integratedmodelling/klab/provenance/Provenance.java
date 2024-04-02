@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -24,8 +25,10 @@ import org.integratedmodelling.klab.api.provenance.IAssociation;
 import org.integratedmodelling.klab.api.provenance.IPlan;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DelegatingArtifact;
 import org.integratedmodelling.klab.data.resources.ContextualizedResource;
@@ -47,6 +50,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import groovy.lang.GroovyObjectSupport;
 
 import org.integratedmodelling.klab.api.API.PUBLIC.Export;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 
 /**
  * Holds two graphs: a simplified one that only contains artifacts (resources and observations) with
@@ -345,6 +349,60 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
             return IIdentity.Type.KLAB;
         }
 
+        @Override
+        public Reference getActor() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void instrument(Reference actor) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public View getView() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void setView(View layout) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean stop() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public IMonitor getMonitor() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public IParameters<String> getState() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String load(IBehavior behavior, IContextualizationScope scope) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean stop(String behaviorId) {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
     };
 
     /**
@@ -395,6 +453,60 @@ public class Provenance extends GroovyObjectSupport implements IProvenance {
         @Override
         public IIdentity.Type getIdentityType() {
             return IIdentity.Type.MODEL_SESSION;
+        }
+
+        @Override
+        public Reference getActor() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void instrument(Reference actor) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public View getView() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void setView(View layout) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public boolean stop() {
+            // TODO Auto-generated method stub
+            return false;
+        }
+
+        @Override
+        public IMonitor getMonitor() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public IParameters<String> getState() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public String load(IBehavior behavior, IContextualizationScope scope) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public boolean stop(String behaviorId) {
+            // TODO Auto-generated method stub
+            return false;
         }
     };
 

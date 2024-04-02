@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -56,8 +57,8 @@ import org.slf4j.LoggerFactory;
 
 public class KlabNavigatorActions {
 
-    public static Logger logger = LoggerFactory.getLogger(KlabNavigatorActions.class);
-    
+	public static Logger logger = LoggerFactory.getLogger(KlabNavigatorActions.class);
+
 	public static void createProject() {
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewProjectWizard());
 		dialog.create();
@@ -81,14 +82,13 @@ public class KlabNavigatorActions {
 		dialog.create();
 		dialog.open();
 	}
-	
+
 	public static void addBehavior(EProject project) {
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
 				new NewBehaviorWizard(project.getProject()));
 		dialog.create();
 		dialog.open();
 	}
-
 
 	public static void addScenario(EProject project) {
 
@@ -120,7 +120,7 @@ public class KlabNavigatorActions {
 		dialog.create();
 		dialog.open();
 	}
-	
+
 	public static void deleteScript(EScript script, IWorkbenchPage page) {
 		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
 				"Delete script " + script.getName() + "? This action cannot be recovered.")) {
@@ -133,7 +133,7 @@ public class KlabNavigatorActions {
 					new ProjectModificationRequest(script.getProject().getName(), script.getName()));
 		}
 	}
-	
+
 	public static void deleteBehavior(EActorBehavior script, IWorkbenchPage page) {
 //		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
 //				"Delete script " + script.getName() + "? This action cannot be recovered.")) {
@@ -146,19 +146,19 @@ public class KlabNavigatorActions {
 //					new ProjectModificationRequest(script.getProject().getName(), script.getName()));
 //		}
 	}
-	
-	   public static void editLocalization(EActorBehavior script, IWorkbenchPage page) {
 
-	       try {
-	            IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-	                    .showView(LocalizationView.ID);
-	            if (view != null) {
-	                ((LocalizationView) view).loadApplication(script);
-	            }
-	        } catch (Exception e) {
-	            Eclipse.INSTANCE.handleException(e);
-	        }
-	    }
+	public static void editLocalization(EActorBehavior script, IWorkbenchPage page) {
+
+		try {
+			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(LocalizationView.ID);
+			if (view != null) {
+				((LocalizationView) view).loadApplication(script);
+			}
+		} catch (Exception e) {
+			Eclipse.INSTANCE.handleException(e);
+		}
+	}
 
 	public static void addTestCase(ETestFolder folder) {
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
@@ -193,17 +193,36 @@ public class KlabNavigatorActions {
 		dialog.open();
 	}
 
-	public static void editResource(EResourceReference resource) {
+	public static void editResource(ResourceReference resource) {
 		try {
-			IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.showView(ResourceEditor.ID);
+			final IViewPart view = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.findView(ResourceEditor.ID);
 			if (view != null) {
-				((ResourceEditor) view).loadResource(resource);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(view);
+
+				Display.getDefault().asyncExec(() -> {
+					view.dispose();
+				});
+			}
+			IViewPart rview = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+					.showView(ResourceEditor.ID);
+			if (rview != null) {
+				((ResourceEditor) rview).loadResource(resource);
 			}
 		} catch (Exception e) {
 			Eclipse.INSTANCE.handleException(e);
 		}
 	}
+
+//	   public static void editResource(ResourceReference resource, IViewPart view) {
+//	        try {
+//	            if (view != null) {
+//	                ((ResourceEditor) view).loadResource(resource);
+//	            }
+//	        } catch (Exception e) {
+//	            Eclipse.INSTANCE.handleException(e);
+//	        }
+//	    }
 
 	public static void deleteResource(EResource resource) {
 		if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
@@ -214,14 +233,13 @@ public class KlabNavigatorActions {
 			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.DeleteLocalResource, request);
 		}
 	}
-	
+
 	public static void publishLocalResource(ResourceReference resource, List<NodeReference> nodes) {
-		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
-				new PublishResourceWizard(resource, nodes));
+		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new PublishResourceWizard(resource, nodes));
 		dialog.create();
 		dialog.open();
 	}
-	
+
 	public static void exportResource(EResource resource) {
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new ExportResourceWizard(resource));
 		dialog.setPageSize(800, 550);
@@ -339,8 +357,8 @@ public class KlabNavigatorActions {
 		dialog.open();
 	}
 
-    public static void deactivate(EProject project) {
-        logger.debug("Project deactivated: " + project.getName());
-    }
+	public static void deactivate(EProject project) {
+		logger.debug("Project deactivated: " + project.getName());
+	}
 
 }

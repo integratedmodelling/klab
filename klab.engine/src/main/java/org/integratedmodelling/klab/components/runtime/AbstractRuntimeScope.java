@@ -16,13 +16,15 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
-import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.dataflow.Actuator.Status;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.DataflowHandler;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.resolution.DependencyGraph;
@@ -75,7 +77,7 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         Status status = new Status();
         Set<IObservation> products = new LinkedHashSet<>();
         IObservation target;
-        
+
         @Override
         public IScale getScale() {
             return scale;
@@ -103,6 +105,7 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
     }
 
     protected AbstractRuntimeScope(Dataflow dataflow, IResolutionScope resolutionScope, IMonitor monitor) {
+        
         this.resolutionScope = (ResolutionScope) resolutionScope;
         this.dataflow = dataflow;
         this.monitor = monitor;
@@ -112,33 +115,35 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
         this.actuatorData = Collections.synchronizedMap(new HashMap<>());
         this.implicitlyChangingObservables = Collections.synchronizedSet(new HashSet<>());
         this.concreteIdentities = Collections.synchronizedMap(new HashMap<>());
-
+        
         // cache for groovy IS operator in this context
-        this.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>(){
-            @Override
-            public Boolean load(String key) throws Exception {
-                String[] split = key.split(";");
-                IConcept a = Concepts.c(split[0]);
-                IConcept b = Concepts.c(split[1]);
-                return a.is(b);
-            }
-        });
+        this.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
+                .build(new CacheLoader<String, Boolean>(){
+                    @Override
+                    public Boolean load(String key) throws Exception {
+                        String[] split = key.split(";");
+                        IConcept a = Concepts.c(split[0]);
+                        IConcept b = Concepts.c(split[1]);
+                        return a.is(b);
+                    }
+                });
 
-        this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>(){
-            @Override
-            public Boolean load(String key) throws Exception {
-                String[] split = key.split(";");
+        this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
+                .build(new CacheLoader<String, Boolean>(){
+                    @Override
+                    public Boolean load(String key) throws Exception {
+                        String[] split = key.split(";");
 
-                IConcept a = Concepts.c(split[0]);
-                IConcept b = Concepts.c(split[1]);
+                        IConcept a = Concepts.c(split[0]);
+                        IConcept b = Concepts.c(split[1]);
 
-                boolean ret = a.is(b);
-                if (!ret && (b.is(Type.PREDICATE))) {
-                    // TODO check for adoption
-                }
-                return ret;
-            }
-        });
+                        boolean ret = a.is(b);
+                        if (!ret && (b.is(Type.PREDICATE))) {
+                            // TODO check for adoption
+                        }
+                        return ret;
+                    }
+                });
     }
 
     protected AbstractRuntimeScope(AbstractRuntimeScope scope) {
@@ -198,7 +203,8 @@ public abstract class AbstractRuntimeScope extends DataflowHandler implements IR
                     /*
                      * Turn time into a 1-step grid (so size = 2). The scheduler will do the rest.
                      */
-                    this.resolutionScale = Scale.substituteExtent(this.resolutionScale, ((Time) time).upgradeForOccurrents());
+                    this.resolutionScale = Scale.substituteExtent(this.resolutionScale,
+                            ((Time) time).upgradeForOccurrents());
                 }
 
                 // set the dataflow to autostart transitions if we only have one

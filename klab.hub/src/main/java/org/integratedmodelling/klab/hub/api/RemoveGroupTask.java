@@ -4,8 +4,15 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.tasks.commands.TaskCommand;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
+import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,13 +25,16 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 		
 		@Autowired
 		private UserRepository userRepository;
+		@Autowired
+        private AgreementRepository agreementRepository;
 		
 		@Override
 		public void executeAccept(Task task) {
 			RemoveGroupTask rgt = (RemoveGroupTask)task;
 			User user = userRepository.findByNameIgnoreCase(rgt.getUsername()).get();
 			
-			Set<GroupEntry> currentGroupEntries = user.getGroupEntries();
+			Set<GroupEntry> currentGroupEntries = user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries();
+			
 			Set<GroupEntry> toRemoveGroupEntries = rgt.getRequestGroups();
 			
 			// check dependencies
@@ -70,8 +80,10 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 				}
 			}
 			if (removed) {
-				user.setGroupEntries(currentGroupEntries);
-				userRepository.save(user);
+			    Agreement agreement = user.getAgreements().stream().findFirst().get().getAgreement();
+			    agreement.setGroupEntries(currentGroupEntries);
+				//user.setGroupEntries(currentGroupEntries);
+				agreementRepository.save(agreement);
 				task.setStatus(TaskStatus.accepted);
 			} else {
 				task.setStatus(TaskStatus.error);

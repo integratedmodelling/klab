@@ -2,11 +2,11 @@ package org.integratedmodelling.klab.engine.services;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.rest.ObservableReference;
+import org.integratedmodelling.klab.rest.GroupEntry;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 /**
  * @author steve
@@ -21,131 +21,62 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubUserProfile {
-	private String name;
-	private String email;
-	private List<String> roles;
-	private List<GroupEntry> groupEntries;
+    private String name;
+    private String email;
+    private List<String> roles;
 
-	public List<String> getRoles() {
-		return roles;
-	}
+    private List<GroupEntry> groupEntries;
+    @JsonInclude(Include.NON_NULL)
+    private String jwtToken;
+    @JsonInclude(Include.NON_NULL)
+    private String authToken;
 
-	public void setRoles(List<String> roles) {
-		this.roles = roles;
-	}
+    public List<String> getRoles() {
+        return roles;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setRoles(List<String> roles) {
+        this.roles = roles;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public List<GroupEntry> getGroupEntries() {
-		return groupEntries;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setGroupEntries(List<GroupEntry> groupEntries) {
-		this.groupEntries = groupEntries;
-	}
-	
-	@JsonIgnoreProperties(ignoreUnknown = true)
-	static class GroupEntry {
+    public List<GroupEntry> getGroupEntries() {
+        return groupEntries;
+    }
 
-		private Group group;
-		
-		@JsonIgnoreProperties(ignoreUnknown = true)
-		static class Group {
-			
-			@JsonProperty("name")
-			private String id;
-			
-			private String description;
-			
-			private String iconUrl;
-			
-			private List<String> projectUrls;
-			
-			private List<ObservableReference> observables;
-			
-			private boolean worldview;
-			
-			private long maxUpload;
+    public void setGroupEntries(List<GroupEntry> groupEntries) {
+        this.groupEntries = groupEntries;
+    }
 
-			public String getId() {
-				return id;
-			}
+    public String getJwtToken() {
+        return jwtToken;
+    }
 
-			public void setId(String id) {
-				this.id = id;
-			}
+    public void setJwtToken(String jwtToken) {
+        this.jwtToken = jwtToken;
+    }
 
-			public String getDescription() {
-				return description;
-			}
+    public String getAuthToken() {
+        return authToken;
+    }
 
-			public void setDescription(String description) {
-				this.description = description;
-			}
-
-			public String getIconUrl() {
-				return iconUrl;
-			}
-
-			public void setIconUrl(String iconUrl) {
-				this.iconUrl = iconUrl;
-			}
-
-			public List<String> getProjectUrls() {
-				return projectUrls;
-			}
-
-			public void setProjectUrls(List<String> projectUrls) {
-				this.projectUrls = projectUrls;
-			}
-
-			public List<ObservableReference> getObservables() {
-				return observables;
-			}
-
-			public void setObservables(List<ObservableReference> observables) {
-				this.observables = observables;
-			}
-
-			public boolean isWorldview() {
-				return worldview;
-			}
-
-			public void setWorldview(boolean worldview) {
-				this.worldview = worldview;
-			}
-
-			public long getMaxUpload() {
-				return maxUpload;
-			}
-
-			public void setMaxUpload(long maxUpload) {
-				this.maxUpload = maxUpload;
-			}
-		}
-		
-
-		public Group getGroup() {
-			return group;
-		}
-
-		public void setGroup(Group group) {
-			this.group = group;
-		}
-	}
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
 
 }

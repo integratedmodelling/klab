@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
+import org.integratedmodelling.klab.api.knowledge.ILocalWorkspace;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
@@ -64,6 +65,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IResourceService;
@@ -196,7 +198,7 @@ public enum Resources implements IResourceService {
 
     Map<String, Map<String, Project>> projectCatalog = new HashMap<>();
     Map<String, IWorkspace> workspaces = new HashMap<>();
-    Map<File, IWorkspace> workspacesByRoot = new HashMap<>();
+    Map<File, ILocalWorkspace> workspacesByRoot = new HashMap<>();
 
     /**
      * The core workspace, only containing the OWL knowledge distributed with the software, and no
@@ -214,13 +216,13 @@ public enum Resources implements IResourceService {
      * The workspace containing components from the network (or local components if so configured),
      * loaded on demand.
      */
-    private IWorkspace components;
+    private ILocalWorkspace components;
 
     /**
      * Workspace containing the k.LAB assets installed on the running instance. The files in this
      * workspace are monitored and reloaded incrementally at each change.
      */
-    private IWorkspace local;
+    private ILocalWorkspace local;
 
     /**
      * The service workspace contains one project per session user where to define uploads, learned
@@ -251,7 +253,7 @@ public enum Resources implements IResourceService {
     }
 
     @Override
-    public IWorkspace getLocalWorkspace() {
+    public ILocalWorkspace getLocalWorkspace() {
         return local;
     }
 
@@ -271,7 +273,7 @@ public enum Resources implements IResourceService {
     }
 
     @Override
-    public IWorkspace getComponentsWorkspace() {
+    public ILocalWorkspace getComponentsWorkspace() {
         return components;
     }
 
@@ -301,7 +303,7 @@ public enum Resources implements IResourceService {
     /*
      * Create and load the components workspace; record group permissions for all projects
      */
-    public boolean loadComponents(Collection<File> localComponentPaths, IMonitor monitor) {
+    public boolean loadComponents(Collection<File> localComponentPaths, String worldview, IMonitor monitor) {
         try {
             Map<String, Set<String>> deployedComponents = new HashMap<>();
             IUserIdentity user = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
@@ -313,13 +315,13 @@ public enum Resources implements IResourceService {
                             if (groups == null) {
                                 groups = Collections.synchronizedSet(new HashSet<>());
                             }
-                            groups.add(group.getId());
+                            groups.add(group.getName());
                             deployedComponents.put(projectUrl, groups);
                         }
                     }
                 }
             }
-            components = new ComponentsWorkspace("components", Configuration.INSTANCE.getDataPath("workspace/deploy"),
+            components = new ComponentsWorkspace("components", Configuration.INSTANCE.getDataPath("workspace/deploy"), worldview,
                     deployedComponents);
             workspaces.put(components.getName(), components);
 
@@ -340,11 +342,11 @@ public enum Resources implements IResourceService {
      * certificate. By design there is no permission checking in the worldview, semantic assets are
      * always shared universally.
      */
-    public boolean loadWorldview(ICertificate certificate, IMonitor monitor) {
+    public boolean loadWorldview(ICertificate certificate, String worldviewId, IMonitor monitor) {
         try {
-            worldview = new Worldview(certificate.getWorldview(), Configuration.INSTANCE.getDataPath("worldview"),
-                    certificate.getWorldviewRepositories());
-            this.loader = worldview.load(this.loader, monitor);
+            worldview = new Worldview(worldviewId, Configuration.INSTANCE.getDataPath("worldview"),
+                    certificate.getWorldviewRepositories(worldviewId));
+            this.loader = ((ILocalWorkspace) worldview).load(this.loader, monitor);
             workspaces.put(worldview.getName(), worldview);
             return true;
         } catch (Throwable e) {
@@ -356,9 +358,9 @@ public enum Resources implements IResourceService {
     /*
      * Initialize (index but do not load) the local workspace from the passed path.
      */
-    public void initializeLocalWorkspace(File workspaceRoot, IMonitor monitor) {
+    public void initializeLocalWorkspace(File workspaceRoot, String worldview, IMonitor monitor) {
         if (local == null) {
-            local = new MonitorableFileWorkspace("workspace", workspaceRoot);
+            local = new MonitorableFileWorkspace("workspace", worldview, workspaceRoot);
             workspaces.put("workspace", local);
         }
     }
@@ -376,7 +378,7 @@ public enum Resources implements IResourceService {
     /*
      * Create and load the local workspace.
      */
-    public boolean loadLocalWorkspace(IMonitor monitor) {
+    public boolean loadLocalWorkspace(String worldview, IMonitor monitor) {
         try {
             this.loader = getLocalWorkspace().load(this.loader, monitor);
             return true;
@@ -439,9 +441,9 @@ public enum Resources implements IResourceService {
     }
 
     public IProject loadSingleton(String projectId, File dataPath) {
-        IWorkspace workspace = workspacesByRoot.get(dataPath);
+        ILocalWorkspace workspace = workspacesByRoot.get(dataPath);
         if (workspace == null) {
-            workspace = new Workspace(dataPath);
+            workspace = new Workspace(dataPath, null);
             workspacesByRoot.put(dataPath, workspace);
         }
         return workspace.loadProject(projectId, Klab.INSTANCE.getRootMonitor());
@@ -1087,7 +1089,7 @@ public enum Resources implements IResourceService {
             }
             adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(), builder,
                     Expression.emptyContext(resource.getGeometry(), monitor));
-            
+
         } else if (kurn.isUniversal() && getUrnAdapter(kurn.getCatalog()) != null) {
 
             IUrnAdapter adapter = getUrnAdapter(kurn.getCatalog());
@@ -1105,7 +1107,8 @@ public enum Resources implements IResourceService {
             }
 
         } else {
-            throw new KlabUnimplementedException("getResourceData(): this call can only be used to access locally supported resources");
+            throw new KlabUnimplementedException(
+                    "getResourceData(): this call can only be used to access locally supported resources");
         }
         return builder.build();
     }
@@ -1124,6 +1127,7 @@ public enum Resources implements IResourceService {
 
         Urn kurn = new Urn(urn);
         IResource resource = resolveResource(urn);
+        ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 
         if (kurn.isLocal()) {
             if (resource == null) {
@@ -1155,15 +1159,16 @@ public enum Resources implements IResourceService {
         } else {
             INodeIdentity node = Network.INSTANCE.getNodeForResource(kurn);
             if (node != null) {
-                
+
                 ResourceDataRequest request = new ResourceDataRequest();
                 request.setUrn(urn.toString());
                 request.setGeometry(encodeScale(geometry, resource));
                 request.setArtifactName(resultId);
                 request.setArtifactType(requestType);
-                
-                builder = new DecodingDataBuilder(node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request,
-                        Expression.emptyContext(geometry, monitor));
+
+                builder = new DecodingDataBuilder(
+                        node.getClient().onBehalfOf(session.getUser()).post(API.NODE.RESOURCE.GET_DATA, request, Map.class),
+                        request, Expression.emptyContext(geometry, monitor));
             }
         }
         return builder.build();
@@ -1260,6 +1265,9 @@ public enum Resources implements IResourceService {
                         if (descriptor.getMaxTimeMs() < elapsed) {
                             descriptor.setMaxTimeMs(elapsed);
                         }
+                        
+                        scope.getMonitor().debug("Resource " + urn + " contextualized in " + Time.INSTANCE.printPeriod(elapsed));
+                        
                         descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                     }
                     return ret;
@@ -1303,6 +1311,9 @@ public enum Resources implements IResourceService {
                         if (descriptor.getMaxTimeMs() < elapsed) {
                             descriptor.setMaxTimeMs(elapsed);
                         }
+
+                        scope.getMonitor().debug("Resource " + urn + " contextualized in " + Time.INSTANCE.printPeriod(elapsed));
+
                         descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                     }
 
@@ -1329,8 +1340,8 @@ public enum Resources implements IResourceService {
                 request.setArtifactType(scope.getTargetArtifact() == null ? Type.VALUE : scope.getTargetArtifact().getType());
                 request.setArtifactName(scope.getTargetArtifact() == null ? "result" : scope.getTargetName());
 
-                DecodingDataBuilder builder = new DecodingDataBuilder(
-                        node.getClient().post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request, scope);
+                DecodingDataBuilder builder = new DecodingDataBuilder(node.getClient().onBehalfOf(scope.getSession().getUser())
+                        .post(API.NODE.RESOURCE.GET_DATA, request, Map.class), request, scope);
                 IKlabData ret = builder.build();
 
                 if (descriptor != null) {
@@ -1342,9 +1353,12 @@ public enum Resources implements IResourceService {
                     if (descriptor.getMaxTimeMs() < elapsed) {
                         descriptor.setMaxTimeMs(elapsed);
                     }
+                    scope.getMonitor().debug("Resource " + urn + " contextualized in " + Time.INSTANCE.printPeriod(elapsed));
                     descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
                 }
+
                 return ret;
+
             } else {
                 error = new KlabResourceAccessException("cannot find a node to resolve URN " + urn);
                 descriptor.setnErrors(descriptor.getnErrors() + 1);
@@ -1821,7 +1835,7 @@ public enum Resources implements IResourceService {
         // physically delete project
         IProject project = getProject(projectId);
         if (project != null) {
-            project.getWorkspace().deleteProject(project);
+            ((ILocalWorkspace) project.getWorkspace()).deleteProject(project);
         }
         // reload
         getLoader().rescan(true);
@@ -2132,8 +2146,8 @@ public enum Resources implements IResourceService {
                 request.setGeometry(encodeScale(scale, resource));
                 request.setOverallGeometry(encodeScale(((IObservation) observation).getScale(), resource));
                 try {
-                    ResourceReference reference = node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request,
-                            ResourceReference.class);
+                    ResourceReference reference = node.getClient().onBehalfOf(scope.getSession().getUser())
+                            .post(API.NODE.RESOURCE.CONTEXTUALIZE, request, ResourceReference.class);
                     return new ContextualizedResource(reference);
                 } catch (Throwable e) {
                     scope.getMonitor().warn("Remote resource contextualization call failed. Availability info missing.");
@@ -2334,5 +2348,11 @@ public enum Resources implements IResourceService {
 
     public synchronized void setProperty(String property, String string) {
         this.properties.setProperty(property, string);
+    }
+
+    public void unregisterProjectResources(IProject project) {
+        for (String urn : project.getLocalResourceUrns()) {
+            localResourceCatalog.remove(urn);
+        }
     }
 }

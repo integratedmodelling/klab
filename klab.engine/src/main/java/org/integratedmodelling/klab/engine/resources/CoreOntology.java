@@ -244,6 +244,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String AFFECTS_PROPERTY = "observation:affects";
 		public static final String CREATES_PROPERTY = "observation:creates";
 		public static final String CHANGES_PROPERTY = "observation:changes";
+		public static final String CHANGED_PROPERTY = "observation:changed";
 		public static final String CONTAINS_PART_PROPERTY = "observation:containsPart";
 		public static final String CONTAINS_PART_SPATIALLY_PROPERTY = "observation:containsPartSpatially";
 		public static final String OBSERVES_PROPERTY = "observation:observes";
@@ -346,7 +347,7 @@ public class CoreOntology extends AbstractWorkspace {
 	}
 
 	public CoreOntology(File directory) {
-		super("core", directory);
+		super("core", null, directory);
 	}
 
 	public void registerCoreConcept(String coreConcept, IConcept worldviewPeer) {

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.apache.commons.io.FileUtils;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
@@ -20,13 +23,16 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.data.IQuantity;
@@ -51,28 +57,33 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.auth.UserIdentity;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Grid;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
-import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
+import org.integratedmodelling.klab.documentation.extensions.table.AbstractTableArtifact;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
+import org.integratedmodelling.klab.rest.KlabEmail;
+import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
+import org.springframework.http.ResponseEntity;
 
 import akka.actor.typed.ActorRef;
 
@@ -103,13 +114,13 @@ public class RuntimeBehavior {
 
         String listenerId = null;
 
-        public Context(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Context(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (arguments.get("interrupt") instanceof IKActorsValue) {
                 KActorsValue interrupt = arguments.get("interrupt", KActorsValue.class);
@@ -144,7 +155,7 @@ public class RuntimeBehavior {
                             public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
                             }
 
-                        }, scope.appId);
+                        }, scope.getAppId());
 
             } else {
 
@@ -177,7 +188,7 @@ public class RuntimeBehavior {
                     toFire = (IObservation) contextDef.get("observation");
                 }
 
-                for (String observable : args.getSecond()) {
+                for(String observable : args.getSecond()) {
                     try {
                         Future<IArtifact> future = ((Session) identity).getState().submit(observable);
                         toFire = (IObservation) future.get();
@@ -186,7 +197,7 @@ public class RuntimeBehavior {
                             /*
                              * return artifact is a view
                              */
-                            for (IKnowledgeView view : ((IRuntimeScope) ((IObservation) toFire).getScope()).getViews()) {
+                            for(IKnowledgeView view : ((IRuntimeScope) ((IObservation) toFire).getScope()).getViews()) {
                                 if (observable.equals(view.getUrn())) {
                                     toFire = view;
                                     break;
@@ -226,13 +237,13 @@ public class RuntimeBehavior {
 
         String listenerId = null;
 
-        public Submit(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Submit(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
                 fire(Status.WAITING, scope);
@@ -264,7 +275,7 @@ public class RuntimeBehavior {
             }
         }
 
-        private String getUrnValue(Object object, KlabActor.Scope scope) {
+        private String getUrnValue(Object object, IKActorsBehavior.Scope scope) {
             if (object instanceof KActorsValue) {
                 object = ((KActorsValue) object).evaluate(scope, identity, true);
             }
@@ -291,18 +302,18 @@ public class RuntimeBehavior {
 
         String listenerId = null;
 
-        public SetRole(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public SetRole(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             Set<IConcept> roles = new HashSet<>();
             Set<IConcept> observables = new HashSet<>();
 
-            for (Object arg : arguments.getUnnamedArguments()) {
+            for(Object arg : arguments.getUnnamedArguments()) {
                 Object value = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg;
                 if (value instanceof IObservable) {
                     IConcept c = ((IObservable) value).getType();
@@ -312,7 +323,7 @@ public class RuntimeBehavior {
                         observables.add(c);
                     }
                 } else if (value instanceof Collection) {
-                    for (Object cc : ((Collection<?>) value)) {
+                    for(Object cc : ((Collection< ? >) value)) {
                         if (cc instanceof IObservable) {
                             IConcept c = ((IObservable) cc).getType();
                             if (c.is(IKimConcept.Type.ROLE)) {
@@ -326,8 +337,8 @@ public class RuntimeBehavior {
             }
 
             session.getState().resetRoles();
-            for (IConcept role : roles) {
-                for (IConcept target : observables) {
+            for(IConcept role : roles) {
+                for(IConcept target : observables) {
                     session.getState().addRole(role, target);
                 }
             }
@@ -349,15 +360,15 @@ public class RuntimeBehavior {
 
         String listenerId = null;
 
-        public SetScenarios(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public SetScenarios(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             Set<String> scenarios = new HashSet<>();
-            for (String key : arguments.getUnnamedKeys()) {
+            for(String key : arguments.getUnnamedKeys()) {
                 scenarios.add(((IKActorsValue) arguments.get(key)).evaluate(scope, identity, true).toString());
             }
             session.getState().setActiveScenarios(scenarios);
@@ -377,13 +388,13 @@ public class RuntimeBehavior {
 
         String listenerId = null;
 
-        public Locate(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Locate(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
 
             if (arguments == null || arguments.getUnnamedKeys().isEmpty()) {
                 this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class).getState()
@@ -412,7 +423,7 @@ public class RuntimeBehavior {
                             public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
                             }
 
-                        }, scope.appId);
+                        }, scope.getAppId());
             } else {
                 // TODO set from a previously saved map
             }
@@ -434,11 +445,11 @@ public class RuntimeBehavior {
         double probability = 0.5;
         Object fired = null;
 
-        public Maybe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Maybe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
             boolean pdef = false;
-            for (String key : arguments.getUnnamedKeys()) {
+            for(String key : arguments.getUnnamedKeys()) {
                 Object o = arguments.get(key);
                 if (o instanceof Double && !pdef && ((Double) o) <= 1 && ((Double) o) >= 0) {
                     probability = (Double) o;
@@ -450,7 +461,7 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             if (random.nextDouble() < probability) {
                 fire(fired == null ? DEFAULT_FIRE : fired, scope);
             } else {
@@ -463,100 +474,146 @@ public class RuntimeBehavior {
     @Action(id = "reset", fires = {})
     public static class Reset extends KlabActionExecutor {
 
-        public Reset(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Reset(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
-            ISession session = scope.runtimeScope.getSession();
-            scope.sender.tell(new AppReset(scope, scope.appId));
+        public void run(IKActorsBehavior.Scope scope) {
+//            ISession session = scope.getRuntimeScope().getSession();
+            scope.tellSender(new AppReset(scope, scope.getAppId()));
         }
     }
 
     @Action(id = "info", fires = {})
     public static class Info extends KlabActionExecutor {
 
-        public Info(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Info(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
-            scope.runtimeScope.getMonitor().info(args.toArray());
+            scope.getRuntimeScope().getMonitor().info(args.toArray());
         }
     }
 
     @Action(id = "warning", fires = {})
     public static class Warning extends KlabActionExecutor {
 
-        public Warning(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Warning(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
-            scope.runtimeScope.getMonitor().warn(args.toArray());
+            scope.getRuntimeScope().getMonitor().warn(args.toArray());
         }
     }
 
     @Action(id = "error", fires = {})
     public static class Error extends KlabActionExecutor {
 
-        public Error(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Error(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
-            scope.runtimeScope.getMonitor().error(args.toArray());
+            scope.getRuntimeScope().getMonitor().error(args.toArray());
         }
     }
 
     @Action(id = "debug", fires = {})
     public static class Debug extends KlabActionExecutor {
 
-        public Debug(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Debug(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
+            for(Object arg : arguments.values()) {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
-            scope.runtimeScope.getMonitor().debug(args.toArray());
+            scope.getRuntimeScope().getMonitor().debug(args.toArray());
+        }
+    }
+
+    @Action(id = "email", fires = Type.STRING, description = "Send an email")
+    public static class Email extends KlabActionExecutor {
+
+        public Email(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        public void run(IKActorsBehavior.Scope scope) {
+            List<Object> args = new ArrayList<>();
+            for(Object arg : arguments.values()) {
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
+            }
+            UserIdentity user = (UserIdentity) session.getUser();
+            Client client = Client.create();
+            String url = Network.INSTANCE.getHub().getUrls().get(0);
+            if (args.size() >= 2) {
+                String to = args.get(0).toString();
+                // Fixed subject
+                String subject = "[APP MESSAGE] Message from user " + user.getUsername() + " using app "
+                        + scope.getBehavior().getName();
+                String replayTo = user.getEmailAddress();
+                String content = args.get(1).toString();
+                EmailType type = (args.size() == 3 && "HTML".equals(args.get(2).toString())) ? EmailType.HTML : EmailType.TEXT;
+                new Thread(){
+
+                    @Override
+                    public void run() {
+                        fire(KlabEmail.EmailStatus.SENDING, scope);
+                        try {
+                            client.withAuthentication(user.getToken()).post(url + API.HUB.USER_SEND_EMAIL,
+                                    new KlabEmail(null, Set.of(to), Set.of(replayTo), subject, content, type, null), ResponseEntity.class);
+                            fire(KlabEmail.EmailStatus.SENT, scope);
+                        } catch (KlabIOException kex) {
+                            scope.getRuntimeScope().getMonitor().warn("Error sending mail: " + kex);
+                            fire(KlabEmail.EmailStatus.ERROR, scope);
+                        }
+                    }
+                }.start();
+            } else {
+                fire("Invalid argument usage in email function: must be [recipients], [content], ([\"TEXT\"|\"HTML\"])", scope);
+            }
         }
     }
 
     @Action(id = "pack", fires = IKActorsValue.Type.URN, description = "Prepares a downloadable payload and fires the URL to it when ready")
     public static class Pack extends KlabActionExecutor {
 
-        public Pack(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public Pack(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
 
         @Override
-        void run(final KlabActor.Scope scope) {
+        public void run(final IKActorsBehavior.Scope scope) {
             final List<Object> args = new ArrayList<>();
             boolean tables = false;
             if (arguments.containsKey("tables")) {
@@ -568,7 +625,7 @@ public class RuntimeBehavior {
             }
             final boolean dtabs = tables;
             if (!tables) {
-                for (Object arg : arguments.values()) {
+                for(Object arg : arguments.values()) {
                     args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
                 }
             }
@@ -580,8 +637,8 @@ public class RuntimeBehavior {
                     try {
                         File file = null;
                         if (dtabs) {
-                            file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
-                                    file);
+                            file = AbstractTableArtifact
+                                    .exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(), file);
                         } else {
                             file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
                         }
@@ -599,6 +656,42 @@ public class RuntimeBehavior {
             }.start();
         }
     }
+    
+    @Action(id = "save", fires = {}, description = "Save a previous prepared file on export folder")
+    public static class Save extends KlabActionExecutor {
+        public Save(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+        
+        @Override
+        public void run(IKActorsBehavior.Scope scope) {
+
+            Object suggestedFilename = arguments.get("filename");
+            if (suggestedFilename instanceof KActorsValue) {
+                suggestedFilename = ((KActorsValue) suggestedFilename).evaluate(scope, identity, true);
+            }
+
+            if (!arguments.getUnnamedKeys().isEmpty()) {
+
+                Object value = arguments.getUnnamedArguments().get(0);
+                if (value instanceof KActorsValue) {
+                    value = ((KActorsValue) value).evaluate(scope, identity, true);
+                }
+
+                if (value != null && value instanceof File) {
+                    File file = (File)value;
+                    File output = Configuration.INSTANCE.getExportFile(suggestedFilename != null ? suggestedFilename.toString() : file.getName());
+                    try {
+                        FileUtils.copyFile(file, output);
+                    } catch (IOException e) {
+                        fail(scope, e);
+                    }
+                }
+
+            }
+        }
+    }
 
     /**
      * Install a listener in a context that will fire an object to the sender whenever it is
@@ -612,14 +705,14 @@ public class RuntimeBehavior {
 
         String listener;
 
-        public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+        public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
             // TODO filters
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
+        public void run(IKActorsBehavior.Scope scope) {
             this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
                     .addApplicationGlobalListener(new ISessionState.Listener(){
                         @Override
@@ -644,7 +737,7 @@ public class RuntimeBehavior {
                         public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
                         }
 
-                    }, scope.appId);
+                    }, scope.getAppId());
         }
 
         @Override
@@ -675,13 +768,13 @@ public class RuntimeBehavior {
      * @param identity
      * @return
      */
-    public static Pair<Map<String, Object>, List<String>> separateObservationArguments(IParameters<String> arguments, Scope scope,
-            IActorIdentity<?> identity) {
+    public static Pair<Map<String, Object>, List<String>> separateObservationArguments(IParameters<String> arguments,
+            IKActorsBehavior.Scope scope, IActorIdentity< ? > identity) {
 
         Map<String, Object> contextDefinition = new HashMap<>();
         List<String> observationArguments = new ArrayList<>();
 
-        for (int i = 0; i < arguments.getUnnamedArguments().size(); i++) {
+        for(int i = 0; i < arguments.getUnnamedArguments().size(); i++) {
             Object o = arguments.getUnnamedArguments().get(i);
             if (o instanceof KActorsValue) {
                 o = ((KActorsValue) o).evaluate(scope, identity, true);
@@ -729,7 +822,7 @@ public class RuntimeBehavior {
                         throw new KlabIllegalArgumentException(
                                 "cannot use additional space unit " + o + " as a context parameter");
                     }
-                } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+                } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((Quantity) o).getUnit()))) {
                     if (!contextDefinition.containsKey("timeunit")) {
                         key = "timeunit";
                         contextDefinition.put(key, ((Quantity) o).getUnitStatement());
@@ -766,6 +859,15 @@ public class RuntimeBehavior {
                     contextDefinition.put(key, o);
                 } else {
                     throw new KlabIllegalArgumentException("cannot use additional space extent " + o + " as a context parameter");
+                }
+            } else if (o instanceof Integer){
+                // is allowed to use an integer to represent the year
+                int year = (Integer)o;
+                if (year > 1900 && year < 2200) {
+                    key = "time";
+                    contextDefinition.put(key, Time.create(year));
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use additional time extent " + o + " as a context parameter");
                 }
             } else if (o instanceof ITime) {
                 if (!contextDefinition.containsKey("time")) {
@@ -859,7 +961,7 @@ public class RuntimeBehavior {
             IObjectArtifact artifact = null;
             Iterator<Object> it = Actors.INSTANCE
                     .iterateResource(contextDefinition.get("urn").toString(), Klab.INSTANCE.getRootMonitor()).iterator();
-            while(it.hasNext()) {
+            while (it.hasNext()) {
                 Object o = it.next();
                 if (o instanceof IObjectArtifact) {
                     artifact = (IObjectArtifact) o;
@@ -893,7 +995,7 @@ public class RuntimeBehavior {
                 /*
                  * apply or re-apply the grid to the shape
                  */
-                space = Space.create(space.getShape(), (Grid)contextDefinition.get("gridspecs"));
+                space = Space.create(space.getShape(), (Grid) contextDefinition.get("gridspecs"));
             }
         } else if (contextDefinition.containsKey("spaceunit")) {
             if (space == null) {

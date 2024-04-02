@@ -7,58 +7,25 @@ def kmodelers = [
 ]
 
 pipeline {
-    agent { label "mvn-java-agent"}
+    agent { label "klab-agent-jdk17"}
     options { skipDefaultCheckout(true) }
-    parameters {
-        string(name: 'BRANCH',
-            defaultValue: '',
-            description :'Which branch should be used for the build?\n' + 
-            'Empty is the default value and will generate build on the latest commit'
-        )
-
-        string(name: 'TAG',
-            defaultValue: '',
-            description: 'Variable used for tagging the container images or generating ' +
-            'a build based on a tagged commit.  Default is empty and the tag is determined ' +
-            'by the most recent commit.'
-        )   
-
-        string(name: 'MINIO_HOST',
-            defaultValue: 'http://192.168.250.224:9000',
-            description: 'Minio host used to archive files'
-        )
-
-        string(name: 'MINIO_CREDENTIALS',
-            defaultValue: 'bc42afcf-7037-4d23-a7cb-6c66b8a0aa45',
-            description: 'Minio credentials used to be used by job'
-        )
-            
-        string(name: 'REGISTRY_CREDENTIALS',
-            defaultValue: '83f9fb8b-e503-4566-9784-e80f2f2d7c64',
-            description: 'Docker registry credentials used to be used by job'
-        ) 
-            
-        string(
-            name: 'GIT_CREDENTIALS',
-            defaultValue: '2f30d924-29e5-4235-b61f-a0dbe2bb7783',
-            description: 'Git Credentials'
-        )
-    }
-
     environment {
         VERSION_DATE = sh(
             script: "date '+%Y-%m-%dT%H:%M:%S'",
             returnStdout: true).trim()
         MAVEN_OPTS="--illegal-access=permit"
         REGISTRY = "registry.integratedmodelling.org"
-        STAT_CONTAINER = "stat-server-16"
-        ENGINE_CONTAINER = "engine-server-16"
-        HUB_CONTAINER = "hub-server-16"
-        NODE_CONTAINER = "node-server-16"
-        BASE_CONTAINER = "klab-base-16"
-        MAIN = "master"
-        DEVELOP = "develop"
-        PRODUCTS_GEN = "yes"
+        STAT_CONTAINER = "stat-server-17"
+        ENGINE_CONTAINER = "engine-server-17"
+        HUB_CONTAINER = "hub-server-17"
+        NODE_CONTAINER = "node-server-17"
+        BASE_CONTAINER = "klab-base-17:04da07762c87f77f2a3c04c880815327f94643c3"
+        PRODUCTS_GEN = shouldPushProducts(env.BRANCH_NAME)
+        TAG = "${env.BRANCH_NAME.replace('/','-')}"
+        MINIO_HOST = "http://192.168.250.224:9000"
+        MINIO_CREDENTIALS = "bc42afcf-7037-4d23-a7cb-6c66b8a0aa45"
+        REGISTRY_CREDENTIALS = "83f9fb8b-e503-4566-9784-e80f2f2d7c64"
+        GIT_CREDENTIALS = "2f30d924-29e5-4235-b61f-a0dbe2bb7783"
     }
 
     stages {
@@ -68,52 +35,21 @@ pipeline {
         */
         stage ('Clone Repo') {
             steps {
-		checkout scm
+                checkout scm
 
                 withCredentials(
                     [usernamePassword(
-                        credentialsId: "${params.MINIO_CREDENTIALS}",
+                        credentialsId: "${env.MINIO_CREDENTIALS}",
                         passwordVariable: 'SECRETKEY',
                         usernameVariable: 'ACCESSKEY'
                         )
                     ]){ sh 'mc alias set minio $MINIO_HOST $ACCESSKEY $SECRETKEY' }
 
                 script {
-                    
-					if  (TAG.isEmpty() == false) {
-					    echo "Tag parameterize"
-					    sh "git checkout tags/${TAG} -b latest"
-					    BRANCH = MAIN
-					    env.TAG = TAG
-					} else {
-						if (BRANCH.isEmpty() == false) {
-					    	echo "Branch parameterize"
-					    } else {
-					    	echo "Unparameterize checkout of latest commit"
-					    	BRANCH = sh(
-					        	returnStdout: true,
-					        	script: 'git for-each-ref --count=1 --sort=-committerdate --format="%(refname:short)"'
-					    	).trim().replace("origin/", "")
-					    }
-					    sh "git checkout ${BRANCH}"
-					    env.TAG = BRANCH.replace("/","-")
-					    if (BRANCH == MAIN) {
-					        env.BRANCH = MAIN
-					        env.TAG = "latest"
-					        echo "Latest"
-					    } else if (BRANCH == DEVELOP) {
-					        env.BRANCH = DEVELOP
-					        env.TAG = DEVELOP
-					        echo "Develop"
-					    } else {
-					        PRODUCTS_GEN = "no"
-					        echo "Other: ${BRANCH}"
-					    }    
-					}
-					
+
               		env.SNAPSHOT = sh(
-                        returnStdout: true, 
-                        script: 'mvn org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate ' +
+                        returnStdout: true,
+                        script: './mvnw org.apache.maven.plugins:maven-help-plugin:3.1.0:evaluate ' +
                                 '-Dexpression=project.version -q -DforceStdout ' +
                                 '--batch-mode -U -e -Dsurefire.useFile=false'
                         ).trim()
@@ -130,25 +66,18 @@ pipeline {
                             script: 'git describe --tags `git rev-list --tags --max-count=1`',
                             returnStdout: true).trim()
 
-                    if (BRANCH.isEmpty() == true && env.CURRENT_COMMIT == env.LATEST_TAGGED_COMMIT) {
-                        echo "Tagged commit build ${LATEST_TAGGED_COMMIT} with tag ${LATEST_TAG}"
-                        env.TAG = env.LATEST_TAG
-                        PRODUCTS_GEN = "yes"
-                    }
-                  	
-                    env.BRANCH = BRANCH
-                    currentBuild.description = "${BRANCH} build with container tag: ${env.TAG}"
-                    echo "${BRANCH} build with container tag: ${env.TAG} and products generations is ${PRODUCTS_GEN}"
+                    currentBuild.description = "${env.BRANCH_NAME} build with container tag: ${env.TAG}"
+                    echo "${env.BRANCH_NAME} build with container tag: ${env.TAG} and products generations is ${env.PRODUCTS_GEN}"
                 }
 
             }
         }
-        
+
 
         stage ('Update Version.java') {
             steps {
                 sh "cd api/org.integratedmodelling.klab.api/src/org/integratedmodelling/klab && " +
-                        "sed -i 's;\"VERSION_BRANCH;\"${env.BRANCH};g' Version.java &&" +
+                        "sed -i 's;\"VERSION_BRANCH;\"${env.BRANCH_NAME};g' Version.java &&" +
                         "sed -i 's;\"VERSION_COMMIT;\"${env.CURRENT_COMMIT};g' Version.java &&" +
                         "sed -i 's;\"VERSION_BUILD;\"${env.BUILD_NUMBER};g' Version.java && " +
                         "sed -i 's;\"VERSION_DATE;\"${env.VERSION_DATE};g' Version.java"
@@ -158,21 +87,41 @@ pipeline {
 
         stage('Maven install with jib') {
             steps {
-                withCredentials([usernamePassword(credentialsId: "${params.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh 'export JAVA_HOME=/opt/java16/openjdk && mvn clean install -U -DskipTests jib:build -Djib.httpTimeout=60000'
+                withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sh './mvnw -U clean install -DskipTests jib:build -Djib.httpTimeout=60000'
+                    sh './mvnw -pl :klab.ogc test -Dtest="*STAC*"'
+                }
+            }
+        }
+
+        stage('Maven deploy') {
+            when {
+                anyOf { branch 'develop'; branch 'master' }
+            }
+            steps {
+                configFileProvider([configFile(fileId: '1f5f24a2-9839-4194-b2ad-0613279f9fba', variable: 'MAVEN_SETTINGS_XML')]) {
+                    sh './mvnw --settings $MAVEN_SETTINGS_XML deploy -pl :api -DskipTests'
                 }
             }
         }
 
         stage('Push products') {
             when {
-                expression { PRODUCTS_GEN == "yes" }
+                expression { env.PRODUCTS_GEN == "yes" }
             }
             steps {
-                pushProducts(env.TAG, kmodelers)
+                pushProducts(productsFolderName(env.BRANCH_NAME), kmodelers)
             }
         }
     }
+}
+
+def shouldPushProducts(branchName) {
+    return branchName == 'master' || branchName == 'develop' ? 'yes' : 'no'
+}
+
+def productsFolderName(branchName) {
+    return branchName == 'master'  ? 'latest' : branchName
 }
 
 def pushProducts(destination, kmodelers) {
@@ -232,5 +181,3 @@ def prepareKmodelersUpload(list, destination) {
         }
     }
 }
-
-

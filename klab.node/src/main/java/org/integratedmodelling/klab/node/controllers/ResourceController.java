@@ -8,6 +8,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
@@ -28,7 +31,6 @@ import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.engine.indexing.ResourceIndexer;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
-import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.Group;
@@ -268,7 +270,7 @@ public class ResourceController {
 		} else {
 			KlabPermissions perms = KlabPermissions.create(submitting);
 			Collection<String> groups = new ArrayList<String>();
-			user.getGroups().forEach(g -> groups.add(g.getId()));
+			user.getGroups().forEach(g -> groups.add(g.getName()));
 			if (perms.isAuthorized(user.getUsername(), groups)) {
 				return checkUploadLimit(user, fileSize);
 			} else {

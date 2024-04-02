@@ -1,10 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.Map;
-
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Actors.PanelLocation;
 import org.integratedmodelling.klab.Annotations;
@@ -13,11 +13,11 @@ import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IActorIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.model.IAnnotation;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -30,25 +30,25 @@ import com.google.common.base.Optional;
  * @author Ferd
  *
  */
-class ViewScope {
+public class ViewScope implements IKActorsBehavior.ViewScope {
 
     String identityId;
     IIdentity identity;
     String applicationId;
     String actorPath = null;
-    Layout layout = null;
+    private Layout layout = null;
     Optional<Boolean> notEmpty;
-    ViewComponent currentComponent;
+    private ViewComponent currentComponent;
 
-    private Integer groupCounter = new Integer(0);
+    private Integer groupCounter = 0;
 
-    public ViewScope(Scope actorScope) {
-        this.applicationId = actorScope.appId;
-        this.identity = actorScope.identity;
-        this.identityId = actorScope.identity.getId();
+    public ViewScope(IKActorsBehavior.Scope actorScope) {
+        this.applicationId = actorScope.getAppId();
+        this.identity = actorScope.getIdentity();
+        this.identityId = actorScope.getIdentity().getId();
     }
 
-    public ViewScope getChild(ConcurrentGroup group, Scope scope) {
+    public ViewScope getChild(ConcurrentGroup group, IKActorsBehavior.Scope scope) {
 
         if (this.currentComponent == null) {
             // not an app with a view
@@ -62,7 +62,7 @@ class ViewScope {
         boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
         ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
         if (group.getGroupMetadata().containsKey("name")) {
-            String name = KlabActor.evaluateInScope((KActorsValue) group.getGroupMetadata().get("name"), scope, scope.identity)
+            String name = KlabActor.evaluateInScope((KActorsValue) group.getGroupMetadata().get("name"), scope, scope.getIdentity())
                     .toString();
             ret.setName(name);
         }
@@ -73,7 +73,7 @@ class ViewScope {
             id = "g" + (groupCounter++);
         }
 
-        setViewMetadata(ret, group.getGroupMetadata(), scope);
+        setViewMetadata(ret, Parameters.create(group.getGroupMetadata()), scope);
         ret.setId(parent.getId() + "/" + id);
         parent.getComponents().add(ret);
 
@@ -83,13 +83,15 @@ class ViewScope {
         return child;
     }
 
-    void setViewMetadata(ViewComponent component, Map<String, ?> parameters, Scope scope) {
+
+    @Override
+    public void setViewMetadata(ViewComponent component, IParameters<String> parameters, IKActorsBehavior.Scope scope) {
         if (parameters != null) {
             for (String key : parameters.keySet()) {
                 if (!component.getAttributes().containsKey(key) && Actors.INSTANCE.getLayoutMetadata().contains(key)) {
                     Object param = parameters.get(key);
                     String value = scope.localize(param instanceof KActorsValue
-                            ? KlabActor.evaluateInScope((KActorsValue) param, scope, scope.identity).toString()
+                            ? KlabActor.evaluateInScope((KActorsValue) param, scope, scope.getIdentity()).toString()
                             : param.toString());
                     component.getAttributes().put(key, value);
                 }
@@ -126,7 +128,7 @@ class ViewScope {
      * @param parentDataflow
      * @return
      */
-    public ViewPanel createPanel(Action action, String appId, IActorIdentity<?> identity, Scope scope) {
+    public ViewPanel createPanel(Action action, String appId, IActorIdentity<?> identity, IKActorsBehavior.Scope scope) {
 
         ViewPanel panel = null;
         boolean hasView = action.getBehavior().getDestination() == Type.COMPONENT && "main".equals(action.getName());
@@ -186,7 +188,7 @@ class ViewScope {
         return panel;
     }
 
-    ViewScope createLayout(IAnnotation annotation, String actionId, Scope scope) {
+    public ViewScope createLayout(IAnnotation annotation, String actionId, IKActorsBehavior.Scope scope) {
 
         ViewScope ret = new ViewScope(this);
 
@@ -209,7 +211,7 @@ class ViewScope {
         return ret;
     }
 
-    private Layout createLayout(IBehavior behavior, Scope scope) {
+    public Layout createLayout(IBehavior behavior, IKActorsBehavior.Scope scope) {
 
         Layout ret = new Layout(behavior.getName(), this.applicationId);
         ret.setIdentity(this.identityId);
@@ -228,6 +230,7 @@ class ViewScope {
                 Layout.MenuItem menuItem = new Layout.MenuItem();
                 menuItem.setId("menu." + action.getId());
                 menuItem.setText(menu.containsKey("title") ? scope.localize(menu.get("title").toString()) : "Unnamed menu");
+                menuItem.setUrl(menu.containsKey("url") ? menu.get("url").toString() : null);
                 ret.getMenu().add(menuItem);
             }
         }
@@ -244,7 +247,7 @@ class ViewScope {
      * @param action
      * @return
      */
-    public ViewScope getChild(Action action, String appId, IActorIdentity<?> identity, Scope scope) {
+    public ViewScope getChild(Action action, String appId, IActorIdentity<?> identity, IKActorsBehavior.Scope scope) {
 
         // this creates the layout if needed.
         this.applicationId = appId;
@@ -256,6 +259,22 @@ class ViewScope {
         ViewScope ret = new ViewScope(this);
         ret.currentComponent = panel;
         return ret;
+    }
+
+    public ViewComponent getCurrentComponent() {
+        return currentComponent;
+    }
+
+    public void setCurrentComponent(ViewComponent currentComponent) {
+        this.currentComponent = currentComponent;
+    }
+
+    public Layout getLayout() {
+        return layout;
+    }
+
+    public void setLayout(Layout layout) {
+        this.layout = layout;
     }
 
 }

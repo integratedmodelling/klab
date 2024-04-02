@@ -150,6 +150,8 @@ public class Project implements IProject {
         } catch (Exception e) {
             throw new KlabIOException(e);
         }
+        
+        Resources.INSTANCE.getLoader().add(ret);
 
         return ret;
 

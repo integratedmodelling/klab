@@ -1,0 +1,22 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.11.0
+@version 0.11.0
+@namespace refdata
+
+void update
+	"Update the reference database from the content of the local database. This is a destructive
+	 operation which runs with no confirmation."
+{
+	optional boolean clear
+		"Clear the reference database before starting."
+
+	class org.integratedmodelling.stats.commands.UpdateRefDb
+}
+
+
+
+

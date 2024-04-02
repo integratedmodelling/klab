@@ -11,7 +11,8 @@ public interface ITaskReference {
 	enum Status {
 		Started,
 		Finished,
-		Aborted
+		Aborted,
+		Interrupted
 	}
 	
 	String getId();

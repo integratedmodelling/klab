@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.observations;
 
 import org.integratedmodelling.klab.api.auth.IContextualizedIdentity;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -43,9 +44,9 @@ public interface IObservation extends IContextualizedIdentity, IArtifact {
 	 * @return the observation's observable
 	 */
 	IObservable getObservable();
-	
+
 	/**
-	 * The observer that/who made the observation. Never null. 
+	 * The observer that/who made the observation. Never null.
 	 * 
 	 * @return
 	 */
@@ -87,6 +88,14 @@ public interface IObservation extends IContextualizedIdentity, IArtifact {
 	 * @return the context for the observation, if any.
 	 */
 	IDirectObservation getContext();
+
+	/**
+	 * The top-level context. If this observation is the top-level context, return
+	 * itself.
+	 * 
+	 * @return the top-level context for the observation. Never null.
+	 */
+	IDirectObservation getRootContext();
 
 	/**
 	 * True if our scale has an observation of space with more than one state value.

@@ -95,7 +95,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
     private KimConcept relationshipSource = null;
     private KimConcept relationshipTarget = null;
     private KimConcept temporalInherent = null;
-
     private KimConcept validParent = null;
 
     /**
@@ -200,13 +199,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
     }
 
     private static KimConcept normalize(ConceptDeclaration declaration, IKimMacro macro, IKimStatement parent, boolean root) {
-
-        if (macro != null) {
-            /*
-             * the template to follow is the parent concept in the macro
-             */
-            System.out.println("EHILA'");
-        }
         
         if (Kim.INSTANCE.hasErrors(declaration)) {
             return null;
@@ -1164,6 +1156,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
         this.otherConcept = otherConcept;
     }
 
+    @Override
     public KimConcept getValidParent() {
         return validParent;
     }
@@ -1339,7 +1332,13 @@ public class KimConcept extends KimStatement implements IKimConcept {
     @Override
     public String getCodeName() {
 
-        String ret = CamelCase.toLowerCase(new SemanticType(getName()).getName(), '-');
+        String name = getName();
+        if (name.startsWith("$") || name.startsWith("#")) {
+            // only happens with macros; this preserves the $ in them
+            name = "macro:" + toString().substring(1);
+        }
+        
+        String ret = CamelCase.toLowerCase(new SemanticType(name).getName(), '-');
         if (observable != null) {
             ret = observable.getCodeName();
         }

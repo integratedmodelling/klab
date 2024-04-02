@@ -19,12 +19,9 @@
 		<module>org.integratedmodelling.kdl</module>
 		<module>org.integratedmodelling.kdl.ide</module>
 		<module>org.integratedmodelling.kdl.ui</module>
-		<!-- <module>org.integratedmodelling.kdl.web</module>  -->
 		<module>org.integratedmodelling.kdl.target</module>
 		<module>org.integratedmodelling.kdl.feature</module>
 		<module>org.integratedmodelling.kdl.repository</module>
-		<!-- <module>org.integratedmodelling.kdl.tests</module>  -->
-		<!-- <module>org.integratedmodelling.kdl.ui.tests</module> -->
 	</modules>
 	<build>
 		<plugins>
@@ -132,7 +129,7 @@
 						<dependency>
 						    <groupId>org.eclipse.platform</groupId>
 						    <artifactId>org.eclipse.equinox.common</artifactId>
-						    <version>3.10.0</version>
+						    <version>3.16.200</version>
 						</dependency>
 					</dependencies>
 				</plugin>
@@ -250,7 +247,7 @@
 					</configuration>
 				</plugin>
 				<plugin>
-					<!-- 
+					<!--
 						Can be removed after first generator execution
 						https://bugs.eclipse.org/bugs/show_bug.cgi?id=480097
 					-->

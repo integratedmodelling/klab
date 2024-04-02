@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
-import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.TicketService;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;

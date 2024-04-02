@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.api.Role;
-import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -36,10 +36,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	@Override
 	public User loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-		User user = userRepository.findByNameIgnoreCase(username)
-			.orElseThrow(() -> new UsernameNotFoundException("Unable to find user - " + username));
-		
+			    
+	    User user = userRepository.findByNameIgnoreCaseOrderByNameAsc(username).get();
+	    
 		UserDetails ldapUser = ldapUserDetailsManager.loadUserByUsername(username);
 		
 		
@@ -49,7 +48,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		
 		user.setPasswordHash(ldapUser.getPassword());
 		if (!roles.isEmpty()) {
-			user.setRoles(roles);
+			user.setRoles(roles);    
 		}
 		
 		if(user.getRoles().isEmpty()) {

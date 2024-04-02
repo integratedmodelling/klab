@@ -43,7 +43,8 @@
                     <to>
                         <image>${env.REGISTRY}/${env.ENGINE_CONTAINER}</image>
                         <tags>
-                        	<tag>${env.TAG}</tag>
+							<tag>${env.TAG}</tag>
+							<tag>${env.CURRENT_COMMIT}</tag>
 				    	</tags>
 				    	<auth>
 				    		<username>${env.USERNAME}</username>
@@ -53,8 +54,7 @@
 					<container>
 						<expandClasspathDependencies>true</expandClasspathDependencies>
 						<user>klab:klab</user>
-						<jvmFlags>
-						</jvmFlags>
+						<jvmFlags>${jib.jvmFlags}</jvmFlags>
 						<mainClass>org.integratedmodelling.klab.engine.EngineApplication</mainClass>
 						<args>
 						</args>
@@ -64,7 +64,7 @@
 						</ports>
 						<labels>
 						</labels>
-						
+
 					</container>
                 </configuration>
             </plugin>

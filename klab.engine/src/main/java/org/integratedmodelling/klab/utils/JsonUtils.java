@@ -135,7 +135,7 @@ public class JsonUtils {
     public static <T> T cloneObject(T object) {
         return (T) parseObject(printAsJson(object), object.getClass());
     }
-    
+
     /**
      * Load an object from an input stream.
      * 
@@ -163,6 +163,14 @@ public class JsonUtils {
     public static <T> T load(File file, Class<T> cls) throws KlabIOException {
         try {
             return defaultMapper.readValue(file, cls);
+        } catch (Exception e) {
+            throw new KlabIOException(e);
+        }
+    }
+
+    public static <T> T loadFromClasspath(String resource, Class<T> cls) throws KlabIOException {
+        try (InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource)) {
+            return defaultMapper.readValue(input, cls);
         } catch (Exception e) {
             throw new KlabIOException(e);
         }
@@ -227,12 +235,12 @@ public class JsonUtils {
             throw new IllegalArgumentException("serialization failed: " + e.getMessage());
         }
     }
-    
+
     /**
      * Serialize the passed object as JSON and pretty-print the resulting code.
      *
      * @param object the object
-     * @param file 
+     * @param file
      * @return the string
      */
     public static void printAsJson(Object object, File file) {
@@ -244,7 +252,7 @@ public class JsonUtils {
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
 
         try {
-        	om.writeValue(file, object);
+            om.writeValue(file, object);
         } catch (Exception e) {
             throw new IllegalArgumentException("serialization failed: " + e.getMessage());
         }

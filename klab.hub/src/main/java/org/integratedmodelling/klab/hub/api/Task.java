@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +10,9 @@ import org.joda.time.DateTime;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.KeycloakSecurityContext;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
@@ -28,9 +32,9 @@ public abstract class Task {
 	
 	String user;
 	
-	DateTime issued;
+	LocalDateTime issued;
     
-    DateTime closed;
+	LocalDateTime closed;
     
     @Enumerated(EnumType.STRING)
     Role roleRequirement;
@@ -43,7 +47,7 @@ public abstract class Task {
     
     List<String> log = new ArrayList<String>();
     
-    DateTime expirationDate;
+    LocalDateTime expirationDate;
     
     /**
      * The next task to be accepted or deny
@@ -60,15 +64,15 @@ public abstract class Task {
     @Transient
     private TaskType type;
     
-    protected Task() {
+    public Task() {
     	this(null, null);
     }
     
-    protected Task(Role roleRequirement) {
+    public Task(Role roleRequirement) {
     	this(roleRequirement, null);
     }
     
-    protected Task(TaskStatus parentStatus) {
+    public Task(TaskStatus parentStatus) {
     	this(null, parentStatus);
     }
     protected Task(Role roleRequirement, TaskStatus parentStatus) {
@@ -103,20 +107,20 @@ public abstract class Task {
 		this.id = id;
 	}
 
-	public DateTime getIssued() {
+	public LocalDateTime getIssued() {
 		return issued;
 	}
 
 	public void setIssued() {
-		this.issued = DateTime.now();
+		this.issued = LocalDateTime.now();
 	}
 
-	public DateTime getClosed() {
+	public LocalDateTime getClosed() {
 		return closed;
 	}
 
 	public void setClosed() {
-		this.closed = DateTime.now();
+		this.closed = LocalDateTime.now();
 	}
 
 	public TaskStatus getStatus() {
@@ -127,11 +131,11 @@ public abstract class Task {
 		this.status = status;
 	}
 
-	public DateTime getExpirationDate() {
+	public LocalDateTime getExpirationDate() {
 		return expirationDate;
 	}
 
-	public void setExpirationDate(DateTime expirationDate) {
+	public void setExpirationDate(LocalDateTime expirationDate) {
 		this.expirationDate = expirationDate;
 	}
 

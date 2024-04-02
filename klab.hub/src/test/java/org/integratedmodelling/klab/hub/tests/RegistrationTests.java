@@ -19,10 +19,13 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.HubApplication;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
-import org.integratedmodelling.klab.hub.payload.PasswordChangeRequest;
-import org.integratedmodelling.klab.hub.payload.SignupRequest;
+import org.integratedmodelling.klab.hub.enums.AgreementLevel;
+import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.users.controllers.UserRegistrationController;
+import org.integratedmodelling.klab.hub.users.payload.PasswordChangeRequest;
+import org.integratedmodelling.klab.hub.users.payload.SignupRequest;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +77,9 @@ public class RegistrationTests extends ApplicationCheck {
 		URI uri = new URI(baseUrl);
 		String username = "srwohl";
 		String email = "steven.wohl@bc3research.org";
-		SignupRequest request = new SignupRequest(username,email);
+		String agreementLevel = "NON_PROFIT";
+		String agreementType = "INSTITUTION";		
+		SignupRequest request = new SignupRequest(username,email, agreementLevel, agreementType);
 		ResponseEntity<JSONObject> result = restTemplate.postForEntity(uri, request, JSONObject.class);
 		assertEquals(HttpStatus.CONFLICT, result.getStatusCode());
 	}
@@ -85,7 +90,9 @@ public class RegistrationTests extends ApplicationCheck {
 		URI uri = new URI(baseUrl);
 		String username = "srwohl.not.present";
 		String email = "steven.wohl@bc3research.org";
-		SignupRequest request = new SignupRequest(username,email);
+		String agreementLevel = "PROFIT";
+        String agreementType = "INSTITUTION";       
+        SignupRequest request = new SignupRequest(username,email, agreementLevel, agreementType);
 		ResponseEntity<JSONObject> result = restTemplate.postForEntity(uri, request, JSONObject.class);
 		assertEquals(HttpStatus.BAD_REQUEST, result.getStatusCode());
 	}
@@ -96,7 +103,9 @@ public class RegistrationTests extends ApplicationCheck {
 		URI uri = new URI(baseUrl);
 		String username = "new.user";
 		String email = "new.user@email.com";
-		SignupRequest request = new SignupRequest(username,email);
+		String agreementLevel = "NON_PROFIT";
+        String agreementType = "USER";       
+        SignupRequest request = new SignupRequest(username,email, agreementLevel, agreementType);
 		ResponseEntity<JSONObject> result = restTemplate.postForEntity(uri, request, JSONObject.class);
 		assertEquals(HttpStatus.CREATED, result.getStatusCode());
 		Retriever r = new Retriever(greenMail.getPop3());

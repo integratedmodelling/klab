@@ -22,19 +22,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import io.dekorate.kubernetes.annotation.KubernetesApplication;
-import io.dekorate.kubernetes.annotation.Port;
-
 @Component
 @Singleton
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.node.security",
-		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers" })
-@KubernetesApplication(
-		replicas = 1,
-		expose = true,
-	    ports = @Port(name = "http", containerPort = 8287)
-		)
+		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers",
+		"org.integratedmodelling.klab.node.services" })
 public class NodeApplication {
 	
 	// property specifying the resource online checking interval in seconds

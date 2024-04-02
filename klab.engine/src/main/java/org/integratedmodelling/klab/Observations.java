@@ -913,7 +913,14 @@ public enum Observations implements IObservationService {
             }
         }
 
-        return importer.exportObservation(file, observation, locator, outputFormat, monitor);
+        File ret = importer.exportObservation(file, observation, locator, outputFormat, monitor);
+  
+        ISession session = observation.getParentIdentity(ISession.class);
+        if (session != null) {
+        	Klab.INSTANCE.addDownload(session, observation, ret);
+        }
+        
+        return ret;
     }
 
     public boolean isData(Object o) {

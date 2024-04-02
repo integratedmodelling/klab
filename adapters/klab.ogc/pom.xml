@@ -39,23 +39,29 @@
 
 		<!-- Postgis for publishing -->
 		<!-- https://mvnrepository.com/artifact/net.postgis/postgis-geometry -->
-		<dependency>
-			<groupId>net.postgis</groupId>
-			<artifactId>postgis-geometry</artifactId>
-			<version>2.5.0</version>
-		</dependency>
+
 
 		<dependency>
 			<groupId>com.github.javadev</groupId>
 			<artifactId>underscore</artifactId>
 			<version>1.68</version>
 		</dependency>
-
-		<dependency>
-			<groupId>org.geotools.jdbc</groupId>
-			<artifactId>gt-jdbc-postgis</artifactId>
-			<version>${geotools.version}</version>
-		</dependency>
+		
+       <dependency>
+            <groupId>org.hortonmachine</groupId>
+            <artifactId>hm-gears</artifactId>
+            <version>${hortonmachine.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.measure</groupId>
+                    <artifactId>jsr-275</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.mongodb</groupId>
+                    <artifactId>mongo-java-driver</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 		<!-- <dependency> <groupId>org.geotools.xsd</groupId> <artifactId>gt-xsd-core</artifactId> 
 			<version>${geotools.version}</version> </dependency>
 		<dependency>
@@ -71,6 +77,11 @@
 		<dependency>
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-geojson</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-stac-store</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
 		<dependency>
@@ -92,6 +103,36 @@
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>${junit5.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>${hamcrest.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-api-mockito2</artifactId>
+			<version>${powermock.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

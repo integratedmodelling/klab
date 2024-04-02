@@ -31,7 +31,7 @@ public class Clear implements ICommand {
 			int n = 0, t = 0;
 			String ret = "";
 			for (Object urn : call.getParameters().get("arguments", java.util.List.class)) {
-				Object o = node.getClient().remove(API.NODE.RESOURCE.DELETE_URN, API.P_URN, urn);
+				Object o = node.getClient().onBehalfOf(session.getUser()).remove(API.NODE.RESOURCE.DELETE_URN, API.P_URN, urn);
 				ret += "\n" + urn;
 				if (o instanceof Boolean && (Boolean)o) {
 					n++;

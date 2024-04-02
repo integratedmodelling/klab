@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.engine;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,12 +16,12 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.engine.events.UserEventPublisher;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.services.AgentServiceCheck;
 import org.integratedmodelling.klab.engine.services.ConsulDnsService;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.utils.FileUtils;
 
 public class RemoteEngine extends Engine {
 
@@ -27,7 +29,6 @@ public class RemoteEngine extends Engine {
 
     private Long sessionDeadBand = 8L;
     private ConsulDnsService dnsService;
-    private UserEventPublisher publisher;
     private AgentServiceCheck check;
 
     public RemoteEngine( ICertificate certificate ) {
@@ -75,18 +76,17 @@ public class RemoteEngine extends Engine {
     @Override
     protected void closeExpiredSessions() {
         if (!Authentication.INSTANCE.getSessions().isEmpty()) {
+            long current = System.currentTimeMillis();
+            long yesterday = Instant.now().minus(1, ChronoUnit.DAYS).toEpochMilli();
             try {
-                long current = System.currentTimeMillis();
                 activeSessions().forEach(sesh -> {
                     long last = sesh.getLastActivity() + (sessionDeadBand * 60000);
                     if (last < (current)) {
                         try {
                             Logging.INSTANCE.info("Killing session " + sesh.getId());
                             sesh.close();
-                            publisher.logout(null, sesh, true);
                         } catch (IOException e) {
                             // I do not want to throw anything because the thread would die
-                            publisher.logoutFailed(sesh.getUsername(), e.getMessage());
                             Logging.INSTANCE.info("Error closing inactive session or removing dead weight.");
                         }
                     }
@@ -94,6 +94,7 @@ public class RemoteEngine extends Engine {
             } catch (Exception e) {
                 Logging.INSTANCE.info(e.toString());
             }
+            FileUtils.deleteTempFiles(yesterday);
         }
     }
 
@@ -123,10 +124,6 @@ public class RemoteEngine extends Engine {
         check.start();
     }
 
-    public void setPublisher(UserEventPublisher publisher) {
-        this.publisher = publisher;
-    }
-    
     public void setSessionDeadBand(Long value) {
         this.sessionDeadBand = value;
     }

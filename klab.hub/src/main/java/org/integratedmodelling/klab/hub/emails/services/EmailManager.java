@@ -13,9 +13,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMessage.RecipientType;
 
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.hub.config.EmailConfig;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
-import org.integratedmodelling.klab.hub.exception.SendEmailException;
+import org.integratedmodelling.klab.hub.emails.EmailConfig;
+import org.integratedmodelling.klab.hub.emails.exceptions.SendEmailException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -82,7 +82,7 @@ public class EmailManager {
     				+ "\n\nPlease make sure those groups are appropriate for %s" 
     				+ "and if so click on the following link: %s",
     			username, groups, username,clickbackUrl);
-    	sendInternalEmail(emailConfig.senderEmail(), emailConfig.replyableGeneralEmailAddress(), subject,msg);
+    	sendInternalEmail(emailConfig.senderEmail(), emailConfig.noreplyEmailAddress(), subject,msg);
     }
     
     public void sendInviteWithGroupsEmail(String to, URL clickbackUrl) throws MessagingException {

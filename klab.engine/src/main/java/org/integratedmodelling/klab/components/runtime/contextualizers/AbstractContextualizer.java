@@ -1,13 +1,20 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IValueMediator;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservedConcept;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -16,10 +23,14 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.storage.MediatingState;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * Helper class to facilitate access to the contextualizer declaration and units management in
@@ -32,8 +43,9 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
     private IPrototype prototype;
     private RuntimeScope scope;
+    private ActivityBuilder statistics;
 
-    protected IPrototype getPrototype() {
+    public IPrototype getPrototype() {
         return prototype;
     }
 
@@ -45,8 +57,66 @@ public abstract class AbstractContextualizer implements IContextualizer {
         return scope;
     }
 
+    protected ActivityBuilder getStatistics() {
+        return statistics;
+    }
+
     public void setScope(RuntimeScope scope) {
         this.scope = scope;
+    }
+
+    public IParameters<String> getAnnotatedInputs(String annotation) {
+        return getAnnotatedInputs(annotation, null);
+    }
+
+    public Map<String, IAnnotation> getAnnotations(String annotation) {
+
+        Map<String, IAnnotation> ret = new HashMap<>();
+        Argument input = null;
+        for (Argument iarg : prototype.listImportAnnotations()) {
+            if (iarg.getName().equals(annotation)) {
+                input = iarg;
+                break;
+            }
+        }
+
+        if (input != null) {
+            Dataflow dataflow = (Dataflow) scope.getDataflow();
+            for (IObservation obs : scope.getCatalog().values()) {
+                IAnnotation ann = Annotations.INSTANCE.getAnnotation(obs.getObservable(), annotation);
+                if (ann != null) {
+                    ret.put(obs.getObservable().getName(), dataflow == null ? ann : dataflow.parameterizeAnnotation(ann));
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    public IParameters<String> getAnnotatedInputs(String annotation, ILocator locator) {
+
+        IParameters<String> ret = Parameters.create();
+        Argument input = null;
+        for (Argument iarg : prototype.listImportAnnotations()) {
+            if (iarg.getName().equals(annotation)) {
+                input = iarg;
+                break;
+            }
+        }
+
+        if (input != null) {
+            for (IObservation obs : scope.getCatalog().values()) {
+                if (Annotations.INSTANCE.hasAnnotation(obs.getObservable(), annotation)) {
+                    if (obs instanceof IState && locator != null) {
+                        ret.put(obs.getObservable().getName(), ((IState) obs).get(locator));
+                    } else {
+                        ret.put(obs.getObservable().getName(), obs);
+                    }
+                }
+            }
+        }
+
+        return ret;
     }
 
     /**
@@ -137,16 +207,16 @@ public abstract class AbstractContextualizer implements IContextualizer {
         T artifact = null;
 
         if (input.getUnit() != null && IState.class.isAssignableFrom(cls)) {
-            
+
             /*
              * mediate from the unit this produces to the one in the state
              */
             IValueMediator mediator = Units.INSTANCE.getMediator(input.getUnit());
             IState target = scope.getArtifact(stateIdentifier, IState.class);
             if (!target.getObservable().getMediator().equals(mediator)) {
-                return (T)MediatingState.mediateIfNecessary(target, mediator);
+                return (T) MediatingState.mediateIfNecessary(target, mediator);
             }
-            
+
         } else if (input.getUnit() == null) {
             artifact = scope.getArtifact(stateIdentifier, cls);
             if (artifact.getObservable().getArtifactType() != input.getType()) {
@@ -169,6 +239,16 @@ public abstract class AbstractContextualizer implements IContextualizer {
 
     @Override
     public void notifyContextualizedResource(IContextualizable resource, IArtifact target, IContextualizationScope scope) {
+    }
+
+    public void setStatistics(ActivityBuilder stats) {
+        this.statistics = stats;
+    }
+
+    /**
+     * Override this to provide initial configuration after prototype and scope have been assigned.
+     */
+    public void initializeContextualizer() {
     }
 
 }

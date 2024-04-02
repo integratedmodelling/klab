@@ -28,6 +28,7 @@
 						<image>${env.REGISTRY}/${env.HUB_CONTAINER}</image>
 						<tags>
 							<tag>${env.TAG}</tag>
+							<tag>${env.CURRENT_COMMIT}</tag>
 						</tags>
 						<auth>
 							<username>${env.USERNAME}</username>
@@ -36,8 +37,7 @@
 					</to>
 					<container>
 						<user>klab:klab</user>
-						<jvmFlags>
-						</jvmFlags>
+						<jvmFlags>${jib.jvmFlags}</jvmFlags>
 						<mainClass>org.integratedmodelling.klab.hub.HubApplication</mainClass>
 						<args>
 						</args>
@@ -89,7 +89,7 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.64</version>
+			<version>1.67</version>
 		</dependency>
 		<dependency>
 			<groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
@@ -99,15 +99,8 @@
 		<dependency>
 			<groupId>org.bitbucket.b_c</groupId>
 			<artifactId>jose4j</artifactId>
-			<version>0.6.3</version>
+			<version>0.9.4</version>
 		</dependency>
-		<!-- needed for legacy license support -->
-		<dependency>
-			<groupId>com.verhas</groupId>
-			<artifactId>license3j</artifactId>
-			<version>2.0.0-JVM8</version>
-		</dependency>
-		<!-- ////////////////////////////////////////////////////////////////// -->
 
 		<!-- This section is for K.Lab Dependencies -->
 		<dependency>
@@ -180,8 +173,15 @@
 					<artifactId>javax.annotation-api</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>	
+		
 		<!-- ////////////////////////////////////////////////////////////////// -->
+		<dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+            <version>1.18.32</version>
+        </dependency>
 
 		<!-- This section is for Spring Security Dependencies -->
 		<dependency>
@@ -211,11 +211,11 @@
 		<dependency>
 			<groupId>org.hibernate.validator</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>6.0.7.Final</version>
+			<version>6.0.20.Final</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-joda</artifactId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>${jackson-version}</version>
 		</dependency>
 		<dependency>
@@ -231,7 +231,7 @@
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-text</artifactId>
-			<version>1.9</version>
+			<version>1.10.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.reflections/reflections -->
 		<dependency>
@@ -266,5 +266,26 @@
 		<version>19.0.2</version>
 	</dependency>
 
+		<!--Dependencies for the unit tests -->
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>${junit-version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-junit-jupiter</artifactId>
+			<version>${mockito.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<!-- ////////////////////////////////////////////////////////////////// -->
+		
 	</dependencies>
 </project>

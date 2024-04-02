@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
@@ -449,7 +450,7 @@ public class EngineClient extends RestTemplate {
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.set("Accept", mediaType);
-		// headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		headers.set("User-Agent", "k.LAB/" + Version.CURRENT);
 		if (authToken != null) {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}

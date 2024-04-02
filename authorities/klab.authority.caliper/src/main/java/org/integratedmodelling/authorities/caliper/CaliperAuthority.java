@@ -61,7 +61,7 @@ public class CaliperAuthority implements IAuthority {
             + "  ?concept skos:prefLabel ?label_en . FILTER(contains(lcase(str(?label_en)), '{QUERY_STRING}')) .\r\n"
             + "  ?concept skos:notation ?code .\r\n" + "  ?concept skos:broader ?broader .\r\n" + "} order by ?code";
 
-    private static final String SPARQL_ENDPOINT = "https://stats-class.fao.uniroma2.it/AllVoc_Sparql/";
+    private static final String SPARQL_ENDPOINT = "https://stats.fao.org/caliper/AllVocs/";
     private static final Map<String, String> CALIPER_SCHEMES = new HashMap<>();
     private static final Map<String, String> CALIPER_DESCRIPTIONS = new HashMap<>();
     private static final Map<String, String> CALIPER_URLS = new HashMap<>();
@@ -70,29 +70,29 @@ public class CaliperAuthority implements IAuthority {
 
         // TODO all this should come from caliper, filtered as needed and cached
 
-        CALIPER_SCHEMES.put("ISIC", "http://stats-class.fao.uniroma2.it/ISIC/rev4/scheme");
+//        CALIPER_SCHEMES.put("ISIC", "http://unstats.un.org/classifications/ISIC/rev4/scheme");
         // CALIPER_SCHEMES.put("ICC10", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
-        CALIPER_SCHEMES.put("ICC", "http://stats-class.fao.uniroma2.it/ICC/v1.1/scheme");
-        CALIPER_SCHEMES.put("M49", "http://stats-class.fao.uniroma2.it/geo/M49");
-        CALIPER_SCHEMES.put("SDGEO", "http://stats-class.fao.uniroma2.it/geo/M49/SDG-groups");
-        CALIPER_SCHEMES.put("FOODEX2", "http://stats-class.fao.uniroma2.it/foodex2/all");
+        CALIPER_SCHEMES.put("ICC", "http://stats.fao.org/classifications/ICC/v1.1/scheme");
+//        CALIPER_SCHEMES.put("M49", "http://stats.fao.org/classifications/geo/M49");
+//        CALIPER_SCHEMES.put("SDGEO", "http://stats.fao.org/classifications/geo/M49/SDG-groups");
+//        CALIPER_SCHEMES.put("FOODEX2", "http://stats.fao.org/classifications/foodex2/all");
         // CALIPER_SCHEMES.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0/scheme");
-        CALIPER_SCHEMES.put("CPC", "http://stats-class.fao.uniroma2.it/CPC/v2.1/core");
+        CALIPER_SCHEMES.put("CPC", "http://unstats.un.org/classifications/CPC/v2.1/core");
         // CALIPER_SCHEMES.put("CPC21FERT", "http://stats-class.fao.uniroma2.it/CPC/v2.1/fert");
         // CALIPER_SCHEMES.put("FCL", "http://stats-class.fao.uniroma2.it/FCL/v2019/scheme");
-        CALIPER_SCHEMES.put("HS", "http://stats-class.fao.uniroma2.it/HS/fao_mapping_targets/scheme");
+        CALIPER_SCHEMES.put("HS", "http://stats.fao.org/classifications/HS/fao_mapping_targets/scheme");
 
-        CALIPER_URLS.put("ISIC", "http://stats-class.fao.uniroma2.it/ISIC/rev4");
+        CALIPER_URLS.put("ISIC", "http://unstats.un.org/classifications/ISIC/rev4");
         // CALIPER_SCHEMES.put("ICC10", "http://stats-class.fao.uniroma2.it/ICC/v1.0");
-        CALIPER_URLS.put("ICC", "http://stats-class.fao.uniroma2.it/ICC/v1.1");
-        CALIPER_URLS.put("M49", "http://stats-class.fao.uniroma2.it/geo/m49");
-        CALIPER_URLS.put("SDGEO", "http://stats-class.fao.uniroma2.it/geo/M49/SDG-groups");
-        CALIPER_URLS.put("FOODEX2", "http://stats-class.fao.uniroma2.it/foodex2");
+        CALIPER_URLS.put("ICC", "http://stats.fao.org/classifications/ICC/v1.1");
+//        CALIPER_URLS.put("M49", "http://stats.fao.org/classifications/geo/m49");
+//        CALIPER_URLS.put("SDGEO", "http://stats.fao.org/classifications/geo/M49/SDG-groups");
+//        CALIPER_URLS.put("FOODEX2", "http://stats.fao.org/classifications/foodex2");
         // CALIPER_SCHEMES.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0");
-        CALIPER_URLS.put("CPC", "http://stats-class.fao.uniroma2.it/CPC/v2.1");
+        CALIPER_URLS.put("CPC", "http://stats.fao.org/classifications/CPC/v2.1");
         // CALIPER_SCHEMES.put("CPC21FERT", "http://stats-class.fao.uniroma2.it/CPC/v2.1/fert");
         // CALIPER_SCHEMES.put("FCL", "http://stats-class.fao.uniroma2.it/FCL/v2019");
-        CALIPER_URLS.put("HS", "http://stats-class.fao.uniroma2.it/HS/fao_mapping_targets");
+//        CALIPER_URLS.put("HS", "http://stats.fao.org/classifications/HS/fao_mapping_targets");
 
         CALIPER_DESCRIPTIONS.put("ISIC", "ISIC Rev. 4 is a standard classification of economic activities "
                 + "arranged so that entities can be classified according to the activity they carry out. "
@@ -103,19 +103,19 @@ public class CaliperAuthority implements IAuthority {
         CALIPER_DESCRIPTIONS.put("ICC",
                 "The Indicative Crop Classification (ICC) was developed for the 2020 round of agricultural censuses. A manual "
                         + "is available at http://www.fao.org/3/i4913e/i4913e.pdf");
-        CALIPER_DESCRIPTIONS.put("M49",
-                "The list of countries or areas in M49 includes those countries or area "
-                        + "for which statistical data are compiled by the Statistics Division of the United Nations Secretariat. "
-                        + "The names of countries or areas refer to their short form used in day-to-day operations of the United "
-                        + "Nations and not necessarily to their official name as used in formal documents. These names are "
-                        + "based on the United Nations Terminology Database (UNTERM).");
-        CALIPER_DESCRIPTIONS.put("SDGEO",
-                "These are the regional groups used to present data on progress towards "
-                        + "the Sustainable Development Goals worldwide. The country groupings are based on the geographic "
-                        + "regions defined under the Standard Country or Area Codes for Statistical Use (known as M49) of "
-                        + "the United Nations Statistics Division.");
-        CALIPER_DESCRIPTIONS.put("FOODEX2",
-                "FoodEx2 is a standardised food classification and description system published and maintained by EFSA.");
+//        CALIPER_DESCRIPTIONS.put("M49",
+//                "The list of countries or areas in M49 includes those countries or area "
+//                        + "for which statistical data are compiled by the Statistics Division of the United Nations Secretariat. "
+//                        + "The names of countries or areas refer to their short form used in day-to-day operations of the United "
+//                        + "Nations and not necessarily to their official name as used in formal documents. These names are "
+//                        + "based on the United Nations Terminology Database (UNTERM).");
+//        CALIPER_DESCRIPTIONS.put("SDGEO",
+//                "These are the regional groups used to present data on progress towards "
+//                        + "the Sustainable Development Goals worldwide. The country groupings are based on the geographic "
+//                        + "regions defined under the Standard Country or Area Codes for Statistical Use (known as M49) of "
+//                        + "the United Nations Statistics Division.");
+//        CALIPER_DESCRIPTIONS.put("FOODEX2",
+//                "FoodEx2 is a standardised food classification and description system published and maintained by EFSA.");
         // CALIPER_DESCRIPTIONS.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0/scheme");
         CALIPER_DESCRIPTIONS.put("CPC", "CPC constitutes a comprehensive classification of all goods and services. "
                 + "CPC presents categories for all products that can be the object of domestic or international "
@@ -126,11 +126,11 @@ public class CaliperAuthority implements IAuthority {
         // CALIPER_DESCRIPTIONS.put("CPC21FERT",
         // "http://stats-class.fao.uniroma2.it/CPC/v2.1/fert");
         // CALIPER_DESCRIPTIONS.put("FCL", "http://stats-class.fao.uniroma2.it/FCL/v2019/scheme");
-        CALIPER_DESCRIPTIONS.put("HS",
-                "The Harmonized Commodity Description and Coding System (HS) is maintained by "
-                        + "the UNSD and is subject to copyright: this RDF 'basket' of HS terms is only a service concept scheme "
-                        + "containing codes and labels of HS terms (from all versions) used as correspondences of terms in "
-                        + "other statistical classifications.");
+//        CALIPER_DESCRIPTIONS.put("HS",
+//                "The Harmonized Commodity Description and Coding System (HS) is maintained by "
+//                        + "the UNSD and is subject to copyright: this RDF 'basket' of HS terms is only a service concept scheme "
+//                        + "containing codes and labels of HS terms (from all versions) used as correspondences of terms in "
+//                        + "other statistical classifications.");
 
         // CALIPER_SCHEMES.put("WCACROPS", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
         // CALIPER_SCHEMES.put("FPCD", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
@@ -297,7 +297,7 @@ public class CaliperAuthority implements IAuthority {
 
     public static void main(String[] args) {
 
-        try (InputStream input = new URL("http://stats-class.fao.uniroma2.it/CPC/v2.0/0.ttl").openStream()) {
+        try (InputStream input = new URL("http://unstats.un.org/classifications/CPC/v2.0/0.ttl").openStream()) {
             Model model = Rio.parse(input, RDFFormat.TURTLE);
             for (Statement statement : model) {
                 System.out.println("CIAPA EL STATEMENT: " + statement);

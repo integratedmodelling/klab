@@ -1,22 +1,22 @@
---- 
-klab: 
-  adapter: 
-    raster: 
+---
+klab:
+  adapter:
+    raster:
       auth: "*"
-    vector: 
+    vector:
       auth: "*"
-    wcs: 
+    wcs:
       auth: "*"
-    weather: 
+    weather:
       auth: "*"
-  geoserver: 
+  geoserver:
     password: geoserver_password
     url: "geoserver_node:8080"
     user: geoserver_user
-  node: 
+  node:
     searching: "*"
     submitting: "*"
-  postgres: 
+  postgres:
     host: postgres_node
     password: postgres_password
     port: 5432
@@ -36,10 +36,10 @@ klab:
     klab.wordlview=im
     klab.certificate.type=NODE
     klab.partner.name=testhub
-server: 
+server:
   port: ${random.int(5000,5100)}
-  servlet: 
+  servlet:
     context-path: /node
-    multipart: 
+    multipart:
       max-file-size: 100MB
       max-request-size: 100MB

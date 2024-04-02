@@ -14,9 +14,15 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.tasks.commands.TaskCommand;
+import org.integratedmodelling.klab.hub.tasks.support.TaskBuilder;
+import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.exceptions.GroupDoesNotExistException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -59,6 +65,7 @@ public static class Parameters extends TaskParameters {
 			} else {
 				throw new ClassCastException();
 			}
+			User user = userRepository.findByName(param.username).orElseThrow();
 			ArrayList<Task> ret = new ArrayList<Task>(2);
 			
 			Set<GroupEntry> optIn = new HashSet<>();
@@ -72,16 +79,23 @@ public static class Parameters extends TaskParameters {
 				throw new GroupDoesNotExistException("A requested Group does not exist or no groups requested");
 			}
 			
+			Set<String> userGroups = user.getAgreements().stream().findFirst().get().getAgreement().getGroupEntries().stream()
+			        .map(GroupEntry::getGroupName).collect(Collectors.toCollection(HashSet<String>::new));
 			// check dependencies
 			List<String> dependencies = new ArrayList<String>();
 			List<MongoGroup> groups = new ArrayList<MongoGroup>();
 			
 			for (String groupName : param.groupNames) {
 				Optional<MongoGroup> group = groupRepository.findByNameIgnoreCase(groupName);
-				if (group.isPresent()) {
+				if (group.isPresent() && (param.clazz.equals(RemoveGroupTask.class) || !userGroups.contains(group.get().getName()))) {
 					groups.add(group.get());
+					
 					if (param.clazz.equals(GroupRequestTask.class) && group.get().getDependsOn() != null) {
-						dependencies.addAll(group.get().getDependsOn());
+					    for (String dependecy : group.get().getDependsOn()) {
+					        if (!userGroups.contains(dependecy)) {
+					            dependencies.add(dependecy);
+					        }
+					    }
 					}
 				}
 			}
@@ -96,13 +110,12 @@ public static class Parameters extends TaskParameters {
 			}
 			
 			for (MongoGroup group : groups) {
-				if (param.getRequest().isUserInRole(group.getRoleRequirement().toString())) {
+				if (group.isOptIn()) {
 					optIn.add(new GroupEntry(group));
 				} else {
 					requestGroups.add(new GroupEntry(group));
 				}
 			}
-			
 			Constructor<? extends ModifyGroupsTask> constructor = null;
 			try {
 				constructor = param.clazz.getConstructor(String.class, Set.class);
@@ -112,9 +125,9 @@ public static class Parameters extends TaskParameters {
 			}
 			try {
 				if(!optIn.isEmpty()) {
-					Task optInTask = constructor.newInstance(param.username, optIn);
+					Task optInTask = constructor.newInstance(user.getUsername(), optIn);
 					optInTask.setAutoAccepted(true);
-					optInTask.setRoleRequirement(optIn.iterator().next().getGroup().getRoleRequirement());
+					optInTask.setRoleRequirement(user.getRoles().iterator().next());
 					ret.add(optInTask);
 				}
 				if(!requestGroups.isEmpty()) {

@@ -74,3 +74,91 @@ export number kriging
 	
 	class org.integratedmodelling.geoprocessing.core.KrigingResolver
 }
+
+export number viewshed 
+    "Create a raster map of viewshed, based on multiple view source points."
+    label 'Viewshed'
+{
+    import object viewpoints
+        "The viewpoint observations. If the features are not points, the
+         centroid will be used."
+         
+    import number elevation
+        "A DEM observation."
+    
+    optional number height
+        "The height of the source view points in meters over the terrain."
+        default 100.0
+    
+    geometry S2
+    
+    class org.integratedmodelling.geoprocessing.viewshed.ViewshedResolver
+}
+ 
+export number fillvalues
+    "Fill the missing values of a raster by interpolation of nearby valid cells."
+    label 'RasterMissingValuesFiller'
+{
+    import number raster
+        "The raster containing novalue holes that need tobe filled."
+         
+    optional number validcellsbuffer
+        "The maximum buffer in cells, within which valid cells are used to contribute to the interpolation of the missing value."
+        default 10.0
+    
+    optional enum interpolationmode
+        "The interpolation mode to use. Valid options are: IDW, TPS, AVERAGING, CATEGORIES"
+        default IDW
+    
+    geometry S2
+    
+    class org.integratedmodelling.geoprocessing.core.RasterMissingValuesFillerResolver
+}
+
+export number sentinel
+    "Download sentinel data."
+    label 'SentinelDownloader'
+{
+    optional enum band
+        "The band to extract. Valid options are: red, green, blue, nir1, nir2, nir3, swir1, swir2"
+        default red
+    
+    geometry S2
+    
+    class org.integratedmodelling.geoprocessing.remotesensing.SentinelResolver
+}
+
+export number barnesinterpolator
+	"Interpolates values of point features using the Barnes Surface Interpolation method"
+	 label 'BarnesInterpolator'
+{
+	import object artifact 
+		"The object artifact to use to produce the source points. Should identify point features; if not points,
+		 the centroid will be used and the states will be aggregated."
+		
+	concept state 
+		"The semantics for the state to use in the source points or features." 
+		
+	optional number "scale"
+	    "Sets the length scale in m for the interpolation weighting function. 
+	    The length scale should be determined from the distance between the observation points, 
+	    as well as the scale of the phenomena. Default is 1 km"
+	    
+	optional number "iterations"
+	    "Sets the number of passes performed during interpolation. Default is 1"
+
+	optional number "maxdist"
+		"Sets the maximum distance from an observation for a grid point to be supported by that observation,
+		 If the value is 0  (default), all grid points are considered to be supported."
+		
+	optional number "minobs"
+	    "Sets the minimum number of in-range observations which are required for a grid point to be supported. 
+	    Default is 2."
+	    
+	optional number "convergence"
+	    "Sets the convergence factor used during refinement passes. The value should be in the range [0,1].Default is 0.3"
+
+	geometry S2
+	
+	class org.integratedmodelling.geoprocessing.core.BarnesSurfaceResolver
+}

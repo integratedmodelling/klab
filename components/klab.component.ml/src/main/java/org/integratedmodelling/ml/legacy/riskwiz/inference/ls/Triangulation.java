@@ -17,7 +17,9 @@ public class Triangulation extends Algorithm<BNNode, BNEdge> {
 
     private Set<JTVertexHugin> cliques;
 
-    public Triangulation() {}
+    public Triangulation() {
+    	super(BNEdge.class);
+    }
 
     /*
      * Returns triangulated beliefNetwork (do we really need it), create a set of cliques of that beliefNetwork which
@@ -26,8 +28,7 @@ public class Triangulation extends Algorithm<BNNode, BNEdge> {
     public RiskUndirectedGraph<BNNode, BNEdge> execute(
             RiskUndirectedGraph<BNNode, BNEdge> graph) {
         cliques = new HashSet<JTVertexHugin>();
-        RiskUndirectedGraph<BNNode, BNEdge> graphCopy = new RiskUndirectedGraph<BNNode, BNEdge>(
-                graph.getEdgeFactory());
+        RiskUndirectedGraph<BNNode, BNEdge> graphCopy = new RiskUndirectedGraph<BNNode, BNEdge>(BNEdge.class);
 
         // copy beliefNetwork
         Graphs.addGraph(graphCopy, graph);

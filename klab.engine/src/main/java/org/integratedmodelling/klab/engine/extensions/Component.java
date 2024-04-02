@@ -139,13 +139,7 @@ public class Component implements IComponent {
 
 		Logging.INSTANCE.info("Initializing component " + name);
 
-		Object executor = null;
-		try {
-			executor = implementingClass.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new KlabInternalErrorException("cannot instantiate component executor for " + name);
-		}
-
+		Object executor = getImplementation();
 		if (executor == null) {
 			throw new KlabInternalErrorException(
 					"component " + name + " cannot be initialized for lack of a suitable public constructor");
@@ -233,13 +227,7 @@ public class Component implements IComponent {
 		if (setupMethods.isEmpty()) {
 			return null;
 		}
-		Object executor = null;
-		try {
-			executor = implementingClass.getDeclaredConstructor().newInstance();
-		} catch (Exception e) {
-			throw new KlabInternalErrorException("cannot instantiate component executor for " + name);
-		}
-
+		Object executor = getImplementation();
 		if (executor == null) {
 			throw new KlabInternalErrorException("component " + name + " has not been configured properly");
 		}
@@ -441,11 +429,12 @@ public class Component implements IComponent {
 	 * 
 	 * @return the implementation
 	 */
+	@Override
 	public Object getImplementation() {
 		if (implementation == null && implementingClass != null) {
 			try {
-				implementation = implementingClass.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
+				implementation = implementingClass.getDeclaredConstructor().newInstance();
+			} catch (Throwable e) {
 				throw new KlabInternalErrorException(e);
 			}
 		}

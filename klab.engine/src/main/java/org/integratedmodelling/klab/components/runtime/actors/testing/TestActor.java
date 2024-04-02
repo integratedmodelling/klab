@@ -33,7 +33,5 @@ public class TestActor extends SessionActor {
 		// TODO exec all tests
 		return Behaviors.same();
 	}
-
-	
 	
 }

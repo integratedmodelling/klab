@@ -1,26 +1,26 @@
 package org.integratedmodelling.klab.hub.api;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 
-abstract class IdentityModel extends GenericModel{
+public abstract class IdentityModel extends GenericModel{
 	
-	DateTime registrationDate;
-    DateTime lastConnection;
+    LocalDateTime registrationDate;
+    LocalDateTime lastConnection;
 	
-    public DateTime getRegistrationDate() {
+    public LocalDateTime getRegistrationDate() {
 		return registrationDate;
 	}
-	public void setRegistrationDate(DateTime registrationDate) {
+	public void setRegistrationDate(LocalDateTime registrationDate) {
 		this.registrationDate = registrationDate;
 	}
-    public void setLastConnection(DateTime lastConnection) {
+    public void setLastConnection(LocalDateTime lastConnection) {
     	this.lastConnection = lastConnection;
 	}
-	public DateTime getLastConnection() {
+	public LocalDateTime getLastConnection() {
 		return lastConnection;
 	}
 	public void setLastConnection() {
-		lastConnection = DateTime.now();
+		lastConnection = LocalDateTime.now();
 	}
 
 }

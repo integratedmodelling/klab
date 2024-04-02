@@ -7,13 +7,14 @@ public class EngineAuthenticationRequest extends AuthenticationRequest {
 	private String userType;
 
 	public EngineAuthenticationRequest(String name, String key, String userType, String certificate,
-			ICertificate.Level level) {
+			ICertificate.Level level, String idAgreement) {
 		super();
 		this.name = name;
 		this.key = key;
 		this.userType = userType;
 		this.certificate = certificate;
 		this.level = level;
+		this.idAgreement = idAgreement;
 	}
 
 	public String getEmail() {
@@ -68,6 +69,7 @@ public class EngineAuthenticationRequest extends AuthenticationRequest {
 		result = prime * result + ((key == null) ? 0 : key.hashCode());
 		result = prime * result + ((userType == null) ? 0 : userType.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((idAgreement == null) ? 0 : idAgreement.hashCode());
 		return result;
 	}
 
@@ -100,6 +102,11 @@ public class EngineAuthenticationRequest extends AuthenticationRequest {
 				return false;
 		} else if (!name.equals(other.name))
 			return false;
+		if (idAgreement == null) {
+            if (other.idAgreement!= null)
+                return false;
+        } else if (!idAgreement.equals(other.idAgreement))
+            return false;
 		return true;
 	}
 }

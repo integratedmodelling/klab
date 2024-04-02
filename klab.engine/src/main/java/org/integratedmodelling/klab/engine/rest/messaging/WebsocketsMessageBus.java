@@ -159,6 +159,9 @@ public class WebsocketsMessageBus implements IMessageBus {
     private Map<String, IMessage> responses = Collections.synchronizedMap(new HashMap<>());
     private Set<String> requests = Collections.synchronizedSet(new HashSet<>());
 
+    public WebsocketsMessageBus() {
+    }
+    
     @Autowired
     ObjectMapper objectMapper;
 
@@ -180,8 +183,7 @@ public class WebsocketsMessageBus implements IMessageBus {
     public void handleTask(Message message) {
 
         // TODO for now: print out all messages except network status, which clutters
-        // the output. This is
-        // really important for development but obviously should be removed.
+        // the output. This is really important for development but obviously should be removed.
         if (Configuration.INSTANCE.isEchoEnabled() && message.getType() != IMessage.Type.NetworkStatus) {
             System.out.println(JsonUtils.printAsJson(message));
         }

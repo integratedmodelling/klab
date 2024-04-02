@@ -18,8 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.jxpath.JXPathContext;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -28,14 +30,17 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.auth.Authorization;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.rest.EngineEvent;
+import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -47,6 +52,9 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 
 import com.github.underscore.lodash.U;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 
 /**
  * Wraps a WCS service in a decent API.
@@ -89,10 +97,14 @@ public class WCSService {
     private String serviceUrl;
     private Version version;
     // Parser parser;
-
+    private Authorization authorization = null;
     private long cacheExpiration = 0;
     static DB db;
     static Map<String, String> wcsCache;
+
+    static {
+        Unirest.config().verifySsl(false);
+    }
 
     public boolean hasErrors() {
         return errors.size() > 0;
@@ -486,6 +498,22 @@ public class WCSService {
         }
     }
 
+    public static void main(String[] args) {
+
+        /*
+         * TODO: for 1.0, just get the layer names from the capabilities, then use describeCoverage
+         * on all at the beginning.
+         */
+        WCSService service = new WCSService("https://www.geo.euskadi.eus/WCS_KARTOGRAFIA", Version.create("1.0.0"));
+        for (WCSLayer layer : service.getLayers()) {
+            System.out.println(layer);
+            // this fuck wants
+            // https://www.geo.euskadi.eus/geoeuskadi/services/U11/WCS_KARTOGRAFIA/MapServer/WCSServer?SERVICE=WCS&VERSION=1.0.0&REQUEST=DescribeCoverage&COVERAGE=1
+            layer.describeCoverage();
+            System.out.println(layer);
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public WCSService(String serviceUrl, Version version) {
 
@@ -498,10 +526,24 @@ public class WCSService {
                 .parseLong(Configuration.INSTANCE.getProperty("wcs.cache.expiration",
                         "" + (LAYER_INFO_EXPIRATION_MILLISECONDS * 6)));
 
+        ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(serviceUrl);
+        if (credentials != null) {
+            this.authorization = new Authorization(credentials);
+            if (!this.authorization.isOnline()) {
+                throw new KlabAuthorizationException("authorization credentials for " + serviceUrl + " rejected");
+            }
+        }
+
         if (db == null) {
 
-            File dpath = Configuration.INSTANCE
-                    .getDataPath("ogc/wcs/" + Klab.INSTANCE.getRootIdentity().getIdentityType().name().toLowerCase());
+            /*
+             * anonymous is for testing only
+             */
+            String identity = Klab.INSTANCE.getRootIdentity() == null
+                    ? "anonymous"
+                    : Klab.INSTANCE.getRootIdentity().getIdentityType().name().toLowerCase();
+
+            File dpath = Configuration.INSTANCE.getDataPath("ogc/wcs/" + identity);
             dpath.mkdirs();
 
             db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown().transactionEnable()
@@ -513,84 +555,132 @@ public class WCSService {
 
         try {
             // this.parser = new Parser(new WCSConfiguration());
-            URL url = new URL(serviceUrl + "?service=WCS&request=getCapabilities&version=" + version);
+            String url = serviceUrl + "?service=WCS&request=getCapabilities&version=" + version;
 
-            URLConnection con = url.openConnection();
-            con.setConnectTimeout(CONNECT_TIMEOUT_MS);
-            con.setReadTimeout(READ_TIMEOUT_MS);
+            // TODO switch to authorized http client - use Unirest
+            // File tempfile = File.createTempFile("wcsc", ".xml");
+            HttpResponse<String> response = Unirest.get(url).asString();
 
-            /*
-             * save capabilities XML to file
-             */
-            File tempfile = File.createTempFile("wcsc", ".xml");
-            try (InputStream input = con.getInputStream()) {
-                FileUtils.copyInputStreamToFile(input, tempfile);
-            } catch (IOException e) {
-                throw new KlabIOException(e);
-            }
+            if (response.isSuccess()) {
 
-            /*
-             * hash the file and if we have a hash and it's the same, no need to call
-             * describeCoverage yet.
-             */
-            String hash = FileUtils.getFileHash(tempfile);
-            String prev = wcsCache.get(url.toString());
-            boolean skipRefresh = (prev != null && hash.equals(prev));
+                String content = response.getBody();
 
-            if (skipRefresh) {
-                Logging.INSTANCE.info("WCS catalog at " + url + " is unchanged since last read: coverage cache is valid");
-            } else {
-                Logging.INSTANCE.info("WCS catalog at " + url + " has changed since last read: coverage cache expires in 12h");
-            }
+                // URLConnection con = url.openConnection();
+                // con.setConnectTimeout(CONNECT_TIMEOUT_MS);
+                // con.setReadTimeout(READ_TIMEOUT_MS);
+                //
+                // /*
+                // * save capabilities XML to file
+                // */
+                // try (InputStream input = con.getInputStream()) {
+                // FileUtils.copyInputStreamToFile(input, tempfile);
+                // } catch (IOException e) {
+                // throw new KlabIOException(e);
+                // }
 
-            wcsCache.put(url.toString(), hash);
+                /*
+                 * hash the file and if we have a hash and it's the same, no need to call
+                 * describeCoverage yet.
+                 */
+                String hash = DigestUtils.md5Hex(content);
+                // String hash = FileUtils.getFileHash(content);
+                String prev = wcsCache.get(url);
+                boolean skipRefresh = (prev != null && hash.equals(prev));
 
-            /**
-             * Open the file anyway and build the layers following it, even if we have a cache and
-             * the hash is the same.
-             */
-            try (InputStream input = new FileInputStream(tempfile)) {
+                if (skipRefresh) {
+                    Logging.INSTANCE.info("WCS catalog at " + url + " is unchanged since last read: coverage cache is valid");
+                } else {
+                    Logging.INSTANCE
+                            .info("WCS catalog at " + url + " has changed since last read: coverage cache expires in 12h");
+                }
 
-                String content = IOUtils.toString(input, StandardCharsets.UTF_8);
+                wcsCache.put(url.toString(), hash);
+
+                /**
+                 * Open the file anyway and build the layers following it, even if we have a cache
+                 * and the hash is the same.
+                 */
+                // try (InputStream input = new FileInputStream(tempfile)) {
+
+                // String content = IOUtils.toString(input, StandardCharsets.UTF_8);
                 Map<?, ?> capabilitiesType = (Map<?, ?>) U.fromXmlMap(content);
 
-                // JXPathContext context = JXPathContext.newContext(capabilitiesType);
-                // System.out.println(MapUtils.dump(capabilitiesType) + "");
-                for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
-                        Collection.class)) {
-                    Map<String, Object> item = (Map<String, Object>) o;
-                    Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
-                    if (name != null) {
-                        identifiers.add(name.toString());
+                if (version.getMajor() == 1) {
+
+                    /*
+                     * TODO get the POS array at / ** /CoverageOfferingBrief, then use
+                     * describeCoverage on each new layer. ArcShit will have NUMBERS as layer IDs,
+                     * with just informative labels and envelope (projection in srsName).
+                     */
+                    for (Object o : MapUtils.get(capabilitiesType, "WCS_Capabilities/ContentMetadata/CoverageOfferingBrief",
+                            List.class)) {
+                        Map<String, Object> item = (Map<String, Object>) o;
+                        Object name = item.get("name");
+                        Object label = item.get("label");
+                        if (name != null) {
+                            identifiers.add(name.toString());
+                        }
+                    }
+
+                    /**
+                     * build the layers individually
+                     */
+                    for (String identifier : identifiers) {
+                        // https://www.geo.euskadi.eus/geoeuskadi/services/U11/WCS_KARTOGRAFIA/MapServer/WCSServer?SERVICE=WCS&VERSION=1.0.0&REQUEST=DescribeCoverage&COVERAGE=1
+                        String sburl = serviceUrl + "?SERVICE=WCS&VERSION=" + version + "&REQUEST=DescribeCoverage&COVERAGE="
+                                + identifier;
+                        response = Unirest.get(sburl).asString();
+
+                        if (response.isSuccess()) {
+                            Map<?, ?> layer = U.fromXmlMap(response.getBody());
+                            Map<?, ?> offering = MapUtils.get(layer, "CoverageDescription/CoverageOffering", Map.class);
+                            System.out.println(layer);
+                        }
+                    }
+
+                } else {
+
+                    // JXPathContext context = JXPathContext.newContext(capabilitiesType);
+                    // System.out.println(MapUtils.dump(capabilitiesType) + "");
+                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                            Collection.class)) {
+                        Map<String, Object> item = (Map<String, Object>) o;
+                        Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
+                        if (name != null) {
+                            identifiers.add(name.toString());
+                        }
+                    }
+
+                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                            Collection.class)) {
+
+                        Map<String, Object> item = (Map<String, Object>) o;
+
+                        Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
+                        Object bbox = item.get(WGS84_BOUNDING_BOX);
+
+                        if (name instanceof String && bbox instanceof Map) {
+
+                            WCSLayer layer = new WCSLayer(skipRefresh);
+
+                            layer.name = name.toString();
+                            double[] upperCorner = NumberUtils
+                                    .doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(), "\\s+");
+                            double[] lowerCorner = NumberUtils
+                                    .doubleArrayFromString(((Map<?, ?>) bbox).get(LOWER_CORNER).toString(), "\\s+");
+                            layer.wgs84envelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
+                                    Projection.getLatLon());
+
+                            layers.put(layer.name, layer);
+                        }
                     }
                 }
-
-                for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
-                        Collection.class)) {
-
-                    Map<String, Object> item = (Map<String, Object>) o;
-
-                    Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
-                    Object bbox = item.get(WGS84_BOUNDING_BOX);
-
-                    if (name instanceof String && bbox instanceof Map) {
-
-                        WCSLayer layer = new WCSLayer(skipRefresh);
-
-                        layer.name = name.toString();
-                        double[] upperCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(),
-                                "\\s+");
-                        double[] lowerCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(LOWER_CORNER).toString(),
-                                "\\s+");
-                        layer.wgs84envelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
-                                Projection.getLatLon());
-
-                        layers.put(layer.name, layer);
-                    }
-                }
-            } catch (IOException e) {
-                errors.add(e);
-                Logging.INSTANCE.error(e);
+                // } catch (IOException e) {
+                // errors.add(e);
+                // Logging.INSTANCE.error(e);
+                // }
+            } else {
+                Logging.INSTANCE.error("Cannot access content at " + url);
             }
 
         } catch (Throwable e) {

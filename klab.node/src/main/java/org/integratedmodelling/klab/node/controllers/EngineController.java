@@ -13,10 +13,11 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.node.Node;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
-import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
+import org.integratedmodelling.klab.node.utils.PublicCapability;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
@@ -52,7 +53,7 @@ public class EngineController {
 			roles.add(role.name());
 		}
 		for (Group group : u.getGroups()) {
-			groups.add(group.getId());
+			groups.add(group.getName());
 		}
 
 		ret.put("roles", roles);
@@ -65,6 +66,11 @@ public class EngineController {
 		return ret;
 	}
 
+
+    private boolean isPublicCapability(ResourceAdapterReference adapter, String permissions) {
+        return "*".equals(permissions) && PublicCapability.isPublicCapability(adapter.getName());
+    }
+	
 	/**
 	 * In a node, the capabilities endpoint is secured and the result depends on the
 	 * authorized privileges.
@@ -86,7 +92,7 @@ public class EngineController {
 			// check if the adapter is authorized for this user
 			String authorized = Configuration.INSTANCE
 					.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
-			if (isAuthorized(user, authorized)) {
+            if (isAuthorized(user, authorized) || isPublicCapability(adapter, authorized)) {
 				ret.getResourceAdapters().add(adapter);
 				if (adapter.isUniversal()) {
 					IUrnAdapter uad = Resources.INSTANCE.getUrnAdapter(adapter.getName());
@@ -105,11 +111,13 @@ public class EngineController {
 		ret.getResourceNamespaces().addAll(resourceManager.getNamespaces());
 		ret.getResourceCatalogs().add(resourceManager.getDefaultCatalog());
 		ret.getResourceNamespaces().add(resourceManager.getDefaultNamespace());
-
-		for (String urn : resourceManager.getOnlineResources()) {
-			if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
-				ret.getResourceUrns().add(urn);
-			}
+		// if hub is searching for statistics node, the user is null
+		if (user != null) {
+    		for (String urn : resourceManager.getOnlineResources()) {
+    			if (resourceManager.canAccess(urn, (EngineAuthorization) user)) {
+    				ret.getResourceUrns().add(urn);
+    			}
+    		}
 		}
 
 		/**
@@ -137,7 +145,7 @@ public class EngineController {
 		} else {
 			KlabPermissions perms = KlabPermissions.create(permissions);
 			Collection<String> groups = new ArrayList<>();
-			user.getGroups().forEach(g -> groups.add(g.getId()));
+			user.getGroups().forEach(g -> groups.add(g.getName()));
 			return perms.isAuthorized(user.getUsername(), groups);
 		}
 	}

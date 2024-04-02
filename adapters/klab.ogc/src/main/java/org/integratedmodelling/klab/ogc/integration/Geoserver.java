@@ -36,7 +36,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
-import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -201,10 +200,14 @@ public class Geoserver {
                 request = request.basicAuth(username, password);
             }
 
-            return request.body(payload).asEmpty().isSuccess();
+            HttpResponse<String> resp = request.body(payload).asString();
+            if (!resp.isSuccess()) {
+                Logging.INSTANCE.error("Error creating coverage store: HTTP [" + resp.getStatus() + "] - " + resp.getBody());
+            }
+            return resp.isSuccess();
 
         } catch (MalformedURLException e) {
-            // TODO Auto-generated catch block
+            Logging.INSTANCE.error("Error creating coverage store - ", e.getMessage());
         }
 
         return false;
@@ -232,8 +235,11 @@ public class Geoserver {
                 request = request.basicAuth(username, password);
             }
 
-            return request.body(payload).asEmpty().isSuccess();
-
+            HttpResponse<String> resp = request.body(payload).asString();
+            if (!resp.isSuccess()) {
+                Logging.INSTANCE.error("Error creating coverage layer: HTTP [" + resp.getStatus() + "] - " + resp.getBody());
+            }
+            return resp.isSuccess();
         }
         return false;
     }

@@ -14,11 +14,11 @@
 			<artifactId>klab.components.cdm</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.alignment</artifactId>
 			<version>${klab.version}</version>
-		</dependency>
+		</dependency> -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.modeler</artifactId>

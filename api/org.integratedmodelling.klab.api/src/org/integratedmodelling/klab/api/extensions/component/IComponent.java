@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.ITicket;
@@ -64,7 +65,7 @@ public interface IComponent extends IProject {
 	 * @throws KlabException
 	 */
 	ITicket setup() throws KlabException;
-	
+
 	/**
 	 * Return metadata describing the current status of the component, including
 	 * operational status and any information about the setup phase which may be
@@ -73,11 +74,21 @@ public interface IComponent extends IProject {
 	 * @return arbitrary metadata
 	 */
 	IMetadata getStatus();
-	
+
 	/**
-	 * Properties corresponding to ~/.klab/<name>.properties. Never null, possiblyl empty.
+	 * Properties corresponding to ~/.klab/<name>.properties. Never null, possiblyl
+	 * empty.
 	 * 
 	 * @return
 	 */
 	Properties getProperties();
+
+	/**
+	 * Return the implementation of the class if an implementing class is defined,
+	 * creating it if necessary. The implementation may be null and is the class
+	 * annotated with the {@link Component} annotation.
+	 * 
+	 * @return the implementation or null
+	 */
+	Object getImplementation();
 }

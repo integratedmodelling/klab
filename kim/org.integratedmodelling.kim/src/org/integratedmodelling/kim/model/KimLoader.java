@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.eclipse.emf.common.util.URI;
@@ -48,6 +49,53 @@ public class KimLoader implements IKimLoader {
 
 	private Injector injector;
 
+	/**
+	 * Sent to project consumers that want to parse directly from the ECore beans,
+	 * which are guaranteed serializable.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface NamespaceDescriptor {
+
+		enum Role {
+			NAMESPACE, TESTCASE, SCRIPT
+		}
+
+		/**
+		 * The parsed bean. This isn't necessarily serializable so should be adapted
+		 * before transferring.
+		 * 
+		 * @return
+		 */
+		IKimNamespace getNamespace();
+
+		/**
+		 * 
+		 * @return
+		 */
+		Model getNamespaceModel();
+
+		/**
+		 * 
+		 * @return
+		 */
+		String getProjectName();
+
+		/**
+		 * 
+		 * @return
+		 */
+		Role getNamespaceRole();
+
+		/**
+		 * 
+		 * @return
+		 */
+		List<ICompileNotification> getIssues();
+
+	}
+
 	class NsInfo {
 
 		IKimNamespace namespace;
@@ -79,8 +127,21 @@ public class KimLoader implements IKimLoader {
 	private Graph<File, DefaultEdge> dependencyGraph;
 	private Graph<File, DefaultEdge> behaviorGraph;
 	private Set<File> projectLocations = new HashSet<>();
+	private Consumer<List<NamespaceDescriptor>> kimReactor = null;
+	private Consumer<List<File>> kactorsReactor = null;
 
 	public KimLoader() {
+	}
+
+	/**
+	 * Add a reactor to receive the list of namespace descriptors after each
+	 * {@link #loadProjectFiles(Collection)}.
+	 * 
+	 * @param reactor
+	 */
+	public KimLoader(Consumer<List<NamespaceDescriptor>> kimReactor, Consumer<List<File>> kactorsReactor) {
+		this.kimReactor = kimReactor;
+		this.kactorsReactor = kactorsReactor;
 	}
 
 	private Injector getInjector() {
@@ -126,6 +187,33 @@ public class KimLoader implements IKimLoader {
 		loadProjectFiles(projectRoots);
 	}
 
+	// @Override
+	public IKimProject loadProject(File root) {
+
+		IKimProject project = Kim.INSTANCE.getProject(MiscUtilities.getFileName(root));
+		if (project != null && !project.getRoot().equals(root)) {
+			// TODO override in same workspace
+			KimWorkspace workspace = Kim.INSTANCE.getWorkspaceForProject(project.getName());
+			project = workspace.overrideProject(project.getName(), root);
+		}
+
+		// if (!projectLocations.contains(root)) {
+		project = Kim.INSTANCE.getProjectIn(root);
+		if (project == null) {
+			Kim.INSTANCE.userWorkspace.addProjectPath(root);
+			Kim.INSTANCE.userWorkspace.readProjects();
+			Kim.INSTANCE.registerWorkspace(Kim.INSTANCE.userWorkspace);
+			project = Kim.INSTANCE.getProjectIn(root);
+		}
+		if (project == null) {
+			System.err.println("internal: project path " + root + " caused a null project");
+		} else {
+			load(Collections.singleton(project));
+		}
+
+		return project;
+	}
+
 	@Override
 	public Collection<IKimProject> loadProjectFiles(Collection<File> projectRoots) {
 
@@ -141,21 +229,21 @@ public class KimLoader implements IKimLoader {
 				project = workspace.overrideProject(project.getName(), root);
 			}
 
-//			if (!projectLocations.contains(root)) {
+			// if (!projectLocations.contains(root)) {
+			project = Kim.INSTANCE.getProjectIn(root);
+			if (project == null) {
+				Kim.INSTANCE.userWorkspace.addProjectPath(root);
+				Kim.INSTANCE.userWorkspace.readProjects();
+				Kim.INSTANCE.registerWorkspace(Kim.INSTANCE.userWorkspace);
 				project = Kim.INSTANCE.getProjectIn(root);
-				if (project == null) {
-					Kim.INSTANCE.userWorkspace.addProjectPath(root);
-					Kim.INSTANCE.userWorkspace.readProjects();
-					Kim.INSTANCE.registerWorkspace(Kim.INSTANCE.userWorkspace);
-					project = Kim.INSTANCE.getProjectIn(root);
-				}
-				if (project != null) {
-					projects.add(project);
-				} else {
-					System.err.println("internal: project path " + root + " caused a null project");
-				}
 			}
-//		}
+			if (project != null) {
+				projects.add(project);
+			} else {
+				System.err.println("internal: project path " + root + " caused a null project");
+			}
+		}
+		// }
 		if (!projects.isEmpty()) {
 			load(projects);
 		}
@@ -200,7 +288,7 @@ public class KimLoader implements IKimLoader {
 			resource.setModified(true);
 			validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 		}
-		
+
 		if (recurseDependencies) {
 			List<File> ret = new ArrayList<>();
 			Set<File> visited = new HashSet<>();
@@ -329,14 +417,19 @@ public class KimLoader implements IKimLoader {
 
 	@Override
 	public IKimNamespace add(Object namespaceResource) {
-		
+
+		if (namespaceResource instanceof KimProject) {
+			loadProjectFiles(Collections.singletonList(((KimProject) namespaceResource).getRoot()));
+			return null;
+		}
+
 		File file = getFile(namespaceResource);
-		
+
 		if (file.toString().endsWith(".kactor")) {
 			System.out.println("HANDLE THIS NEW ACTOR FILE PLEASE");
 			return null;
 		}
-		
+
 		NamespaceLocation location = WorkspaceUtils.getNamespaceLocation(file);
 		if (location == null) {
 			throw new IllegalArgumentException(
@@ -496,6 +589,7 @@ public class KimLoader implements IKimLoader {
 
 		List<IKimNamespace> ret = new ArrayList<>();
 		IResourceValidator validator = getValidator();
+		List<NamespaceDescriptor> namespaces = new ArrayList<>();
 
 		for (Resource resource : sortedResources) {
 
@@ -511,7 +605,7 @@ public class KimLoader implements IKimLoader {
 				List<Issue> issues = validator.validate(resource, CheckMode.ALL, CancelIndicator.NullImpl);
 				String name = Kim.getNamespaceId(((Model) resource.getContents().get(0)).getNamespace());
 
-				NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
+				final NsInfo info = getNamespaceInfo(fileMap.get(resource.getURI()));
 				info.name = name;
 				info.namespace = Kim.INSTANCE.getNamespace(name);
 				info.issues.clear();
@@ -538,6 +632,35 @@ public class KimLoader implements IKimLoader {
 				}
 
 				ret.add(info.namespace);
+				namespaces.add(new NamespaceDescriptor() {
+
+					@Override
+					public Model getNamespaceModel() {
+						return (Model) ((KimNamespace) info.namespace).getEObject();
+					}
+
+					@Override
+					public String getProjectName() {
+						return info.project.getName();
+					}
+
+					@Override
+					public Role getNamespaceRole() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					@Override
+					public List<ICompileNotification> getIssues() {
+						return info.issues;
+					}
+
+					@Override
+					public IKimNamespace getNamespace() {
+						return info.namespace;
+					}
+
+				});
 
 			} catch (Throwable e) {
 				System.out.println("Unrecoverable parse errors in resource: " + resource);
@@ -545,20 +668,36 @@ public class KimLoader implements IKimLoader {
 			}
 		}
 
-		for (IKimNamespace namespace : ret) {
-			// call notifiers for k.LAB model generation
-			for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
-				notifier.synchronizeNamespaceWithRuntime(namespace);
+		if (!Kim.INSTANCE.getNotifiers().isEmpty()) {
+			for (IKimNamespace namespace : ret) {
+				// call notifiers for k.LAB model generation
+				for (Notifier notifier : Kim.INSTANCE.getNotifiers()) {
+					notifier.synchronizeNamespaceWithRuntime(namespace);
+				}
 			}
 		}
 
+		/*
+		 * if we have a semantic consumer installed, build the dependency graph among
+		 * the info files and send out notifications and beans in order of dependency,
+		 * along with project ID. All info sent through the consumer should be
+		 * serializable. The k.Actors and k.DL loaders should do the same. We will
+		 * eventually keep the IKim* beans only for validation.
+		 */
+		if (kimReactor != null) {
+			kimReactor.accept(namespaces);
+		}
+
 		computeDependencies();
-		
+
 		/**
 		 * Load all behavior files in order of dependency after all the knowledge is in.
 		 */
-		KActors.INSTANCE.loadResources(behaviorFiles);
-		
+		if (kactorsReactor == null) {
+			KActors.INSTANCE.loadResources(behaviorFiles);
+		} else {
+			kactorsReactor.accept(behaviorFiles);
+		}
 		return ret;
 	}
 
@@ -620,7 +759,8 @@ public class KimLoader implements IKimLoader {
 					if (namespaceFiles.containsKey(s)) {
 						File f = namespaceFiles.get(s);
 						if (!f.equals(namespace.getFile())) {
-							// we just trust that no file in catalog means the dependency is on a core
+							// we just trust that no file in catalog means the dependency is on a
+							// core
 							// ontology.
 							this.dependencyGraph.addVertex(f);
 							this.dependencyGraph.addEdge(f, namespace.getFile(), new DefaultEdge() {

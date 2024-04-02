@@ -157,20 +157,20 @@ public class MiscUtilities {
 
     /**
      * Read a properties file into a properties object without making life painful. Silently returns
-     * null if file isn't readable or errors happen.
+     * an empty property object if file isn't readable or errors happen.
      *
      * @param pfile the pfile
      * @return the properties read from the file.
      */
     public static Properties readProperties(File pfile) {
-        if (pfile == null || !pfile.exists() || !pfile.isFile() || !pfile.canRead()) {
-            return null;
-        }
         Properties ret = new Properties();
+        if (pfile == null || !pfile.exists() || !pfile.isFile() || !pfile.canRead()) {
+            return ret;
+        }
         try (InputStream finp = new FileInputStream(pfile)) {
             ret.load(finp);
         } catch (Exception e) {
-            ret = null;
+            // just return the empty object
         }
         return ret;
     }
@@ -1430,7 +1430,7 @@ public class MiscUtilities {
         if (file == null) {
             return null;
         }
-        
+
         String ret = null;
         String string = file.toString();
         int sl = string.lastIndexOf(".");

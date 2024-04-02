@@ -21,25 +21,17 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.clitool.console;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.integratedmodelling.kdl.api.IKdlActuator;
-import org.integratedmodelling.kdl.api.IKdlDataflow;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.cli.ConsoleCommandProvider;
@@ -47,15 +39,9 @@ import org.integratedmodelling.klab.cli.ConsoleCommandProvider.Command;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.clitool.api.IConsole;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 
-import joptsimple.OptionException;
 import joptsimple.OptionParser;
-import joptsimple.OptionSet;
 import joptsimple.OptionSpecBuilder;
 
 public class CommandProcessor extends org.integratedmodelling.klab.clitool.contrib.console.CommandProcessor {

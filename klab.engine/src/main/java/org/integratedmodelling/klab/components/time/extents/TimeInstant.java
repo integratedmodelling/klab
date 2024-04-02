@@ -6,8 +6,10 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Days;
 import org.joda.time.Hours;
@@ -17,6 +19,7 @@ import org.joda.time.Seconds;
 import org.joda.time.Weeks;
 import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.ISODateTimeFormat;
 
 import groovy.lang.GroovyObjectSupport;
 
@@ -30,23 +33,23 @@ public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
 
     DateTime time;
 
-    public static ITimeInstant create(int year, int month, int day) {
+    public static TimeInstant create(int year, int month, int day) {
         return new TimeInstant(year, month, day);
     }
 
-    public static ITimeInstant create(int year) {
+    public static TimeInstant create(int year) {
         return new TimeInstant(year);
     }
 
-    public static ITimeInstant create(DateTime time) {
+    public static TimeInstant create(DateTime time) {
         return new TimeInstant(time);
     }
 
-    public static ITimeInstant create(long milliseconds) {
+    public static TimeInstant create(long milliseconds) {
         return new TimeInstant(milliseconds);
     }
 
-    public static ITimeInstant create() {
+    public static TimeInstant create() {
         return new TimeInstant();
     }
 
@@ -126,7 +129,7 @@ public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
     }
 
     @Override
-    public ITimeInstant plus(int periods, ITime.Resolution resolution) {
+    public TimeInstant plus(int periods, ITime.Resolution resolution) {
         switch(resolution.getType()) {
         case CENTURY:
             return new TimeInstant(time.plusYears((int) (resolution.getMultiplier() * 100 * periods)));
@@ -155,7 +158,7 @@ public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
     }
 
     @Override
-    public ITimeInstant minus(int periods, ITime.Resolution resolution) {
+    public TimeInstant minus(int periods, ITime.Resolution resolution) {
         switch(resolution.getType()) {
         case CENTURY:
             return new TimeInstant(time.minusYears((int) (resolution.getMultiplier() * 100 * periods)));
@@ -289,5 +292,134 @@ public class TimeInstant extends GroovyObjectSupport implements ITimeInstant {
         TimeInstant other = (TimeInstant) obj;
         return Objects.equals(time, other.time);
     }
+
+	@Override
+	public TimeInstant beginOf(Type temporalAggregation) {
+        switch(temporalAggregation) {
+        case CENTURY:
+            return new TimeInstant(new DateTime(
+            		time.getYear() - getYear() % 100,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case DAY:
+            return new TimeInstant(new DateTime(
+            		time.getYear(),
+                    time.getMonthOfYear(),
+                    time.getDayOfMonth(),
+                    0,
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case DECADE:
+            return new TimeInstant(new DateTime(
+            		time.getYear() - getYear() % 10,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case HOUR:
+            return new TimeInstant(new DateTime(
+            		time.getYear(),
+                    time.getMonthOfYear(),
+                    time.getDayOfMonth(),
+                    time.getHourOfDay(),
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case MILLENNIUM:
+            return new TimeInstant(new DateTime(
+            		time.getYear() - getYear() % 1000,
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case MILLISECOND:
+            return new TimeInstant(new DateTime(
+            		time.getYear(),
+                    time.getMonthOfYear(),
+                    time.getDayOfMonth(),
+                    time.getHourOfDay(),
+                    time.getMinuteOfHour(),
+                    time.getSecondOfMinute(),
+                    0,
+                    time.getZone()));
+        case MINUTE:
+            return new TimeInstant(new DateTime(
+            		time.getYear(),
+                    time.getMonthOfYear(),
+                    time.getDayOfMonth(),
+                    time.getHourOfDay(),
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case MONTH:
+            return new TimeInstant(new DateTime(
+            		time.getYear(),
+                    time.getMonthOfYear(),
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case SECOND:
+            return new TimeInstant(new DateTime(
+            		time.getYear(),
+                    time.getMonthOfYear(),
+                    time.getDayOfMonth(),
+                    time.getHourOfDay(),
+                    time.getMinuteOfHour(),
+                    time.getSecondOfMinute(),
+                    0,
+                    time.getZone()));
+        case WEEK:
+        	DateTime monday = time.withDayOfWeek(DateTimeConstants.MONDAY);
+            return new TimeInstant(new DateTime(
+            		monday.getYear(),
+                    monday.getMonthOfYear(),
+                    monday.getDayOfMonth(),
+                    0,
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        case YEAR:
+            return new TimeInstant(new DateTime(
+            		time.getYear(),
+                    1,
+                    1,
+                    0,
+                    0,
+                    0,
+                    0,
+                    time.getZone()));
+        }
+
+        throw new KlabInternalErrorException("cannot adjust time to " + temporalAggregation);
+	}
+
+	@Override
+	public TimeInstant endOf(Type temporalAggregation) {
+		return beginOf(temporalAggregation).plus(1, Time.resolution(1, temporalAggregation));
+	}
+
+	@Override
+	public String toRFC3339String() {
+		return ISODateTimeFormat.dateTime().print(getMilliseconds());
+	}
 
 }

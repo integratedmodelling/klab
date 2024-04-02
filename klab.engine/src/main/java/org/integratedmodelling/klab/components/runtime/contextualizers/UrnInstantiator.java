@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.engine.runtime.ActivityBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -73,15 +74,34 @@ public class UrnInstantiator extends AbstractContextualizer implements IExpressi
             }
         }
 
-        IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope);
+        ActivityBuilder stats = getStatistics() == null ? null : getStatistics().forTarget(resource);
 
-        if (data != null && data.getArtifact() != null) {
-            for (IArtifact artifact : data.getArtifact()) {
-                if (artifact instanceof IObjectArtifact) {
-                    ret.add((IObjectArtifact) artifact);
+        try {
+
+            IKlabData data = Resources.INSTANCE.getResourceData(this.resource, parameters, scope.getScale(), scope);
+
+            if (data != null && data.getArtifact() != null) {
+                for (IArtifact artifact : data.getArtifact()) {
+                    if (artifact instanceof IObjectArtifact) {
+                        ret.add((IObjectArtifact) artifact);
+                    }
+                }
+                if (stats != null) {
+                    stats.success();
+                }
+                
+            } else {
+                if (stats != null) {
+                    stats.error();
                 }
             }
+        } catch (Throwable t) {
+            if (stats != null) {
+                stats.exception(t);
+            }
+            throw t;
         }
+        
         return ret;
     }
 

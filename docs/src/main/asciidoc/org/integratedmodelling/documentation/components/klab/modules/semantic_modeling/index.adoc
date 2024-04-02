@@ -5,15 +5,15 @@ Science has been https://en.wikipedia.org/wiki/Science[defined] as a process tha
 
 Semantic modeling enforces the precise alignment of the _meaning_ of the observed world with the artifacts that science produces to describe it. Often the day-to-day products of science ("variables", "data" such as maps and tables, "models" such as differential equations or computational algorithms) become first-class objects in the scientific narrative, building barriers around the intelligibility and communicability of scientific results. By making semantics the starting and the ending point of a scientific investigation, semantic modeling can help address one of the worst shortcomings of modern science: the "ivory tower" problem of incompatible representations, languages, jargons, methods, scales and, ultimately, communities. 
 
-The science that addresses the life cycle of scientific artifacts through their transformation, analysis, and interpretation is named **provenance**, and provides a useful starting point to clarify the rationale of semantic modeling. The provenance conceptual model (our reference is the http://openprovenance.org[Open Provenance Model - OPM]) provides terminology to refer to this process, such as _entity_ for any scientific artifact that can be stored and communicated, and _activity_ for any process that produces an entity from zero or more others. Semantic modeling builds on provenance to enable a scientific process that hinges on the _meaning_ associated with every scientific entity and activity. We argue that the re-elaboration of the scientific process made in semantic modeling meets, _by design_, all the http://go-fair.org[FAIR] (Findable, Accessible, Interoperable and Reusable) principles, and can greatly enhance the return of investment of science by easing communication across disciplines and societal sectors, and ensuring the longest useful life for its products, much beyond the original rationale for their production.
+The science that addresses the life cycle of scientific artifacts from their source through their transformation, analysis, and interpretation is named **provenance**, and provides a useful starting point to clarify the rationale of semantic modeling. The provenance conceptual model (our reference is the http://openprovenance.org[Open Provenance Model - OPM]) provides terminology to refer to this process, such as _entity_ for any scientific artifact that can be stored and communicated, and _activity_ for any process that produces an entity from zero or more others. Semantic modeling builds on provenance to enable a scientific process that hinges on the _meaning_ associated with every scientific entity and activity. We argue that the re-elaboration of the scientific process made in semantic modeling meets, _by design_, all the http://go-fair.org[FAIR] (Findable, Accessible, Interoperable and Reusable) principles, and can greatly enhance the return of investment of science by easing communication across disciplines and societal sectors, and ensuring the longest useful life for its products, beyond the original rationale for their production.
 
 As described more formally in the https://github.com/integratedmodelling/odo-im[k.LAB core ontology (ODO-IM)] and its xref:semantic_modeling:odo.adoc[documentation], semantic modeling extends the terms of the Open Provenance Model as follows:
 
-* *Resource* is the semantic equivalent of the OPM _entity_, representing any communicable, storeable artifact that embodies scientific knowledge - such as a dataset, report or
+* *Resource* is the equivalent of the OPM _entity_, representing any communicable, storeable artifact that embodies scientific knowledge - such as a dataset, report or
 equation. Resources are always semantically characterized by the concept
 they describe (the _observable_) and are intended as directly
 _actionable_, i.e. machine-readable in all of their parts and
-implications with no need for human intervention. Resources are stored online with their metadata and identified by an unmodifiable Uniform Resource Name (URN).
+implications with no need for human intervention. Resources are _published_ online with their metadata and are identified by an unmodifiable Uniform Resource Name (URN).
 * *Contextualization* is the semantic equivalent of the OPM _activity_,
 representing the production of a Resource (using zero or more other
 Resources) and recognizing that a Resource that serves as _context_ must
@@ -23,7 +23,7 @@ process.
 semantic statement (the _observable_) to a computational strategy to
 build a Resource that represents it. Descriptions can be stored online and perused by a machine-driven process to produce resources based on a semantic query for their observable in a chosen context.
 
-Based on these definitions, semantic modeling proceeds by enabling
+Based on these definitions, semantic modeling proceeds by enabling two main tasks:
 
 . the definition of _observable expressions_, which carry the meaning of observable concepts and allow modelers to capture complex meanings and linguistic distinctions
 commonly adopted in day-to-day scientific practice;

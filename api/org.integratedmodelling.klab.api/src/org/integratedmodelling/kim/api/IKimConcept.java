@@ -685,4 +685,6 @@ public interface IKimConcept extends IKimStatement {
 	 */
 	IKimConcept getTemporalInherent();
 
+	IKimConcept getValidParent();
+
 }

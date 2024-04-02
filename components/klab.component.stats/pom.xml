@@ -13,10 +13,32 @@
 			<artifactId>klab.engine</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+<!-- 		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.node</artifactId>
+			<version>${klab.version}</version>
+		</dependency>-->
   		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authentication</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-test</artifactId>
+		    <version>${spring-boot.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-test</artifactId>
+		    <version>5.5.0</version>
+		    <scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>

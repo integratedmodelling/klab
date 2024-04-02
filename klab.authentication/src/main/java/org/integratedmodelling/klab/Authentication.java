@@ -7,9 +7,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
@@ -32,9 +34,12 @@ import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.auth.NetworkSession;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.auth.Partner;
+import org.integratedmodelling.klab.auth.Role;
+import org.integratedmodelling.klab.auth.api.IAuthenticatedIdentity;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -86,6 +91,12 @@ public enum Authentication implements IAuthenticationService {
     private Map<String, Set<String>> projectPermissions = Collections.synchronizedMap(new HashMap<>());
 
     /**
+     * Can be installed by a service to translate the principal in any authenticated call to a user
+     * identity.
+     */
+    private Function<Principal, IUserIdentity> principalTranslator = null;
+
+    /**
      * Status of a user wrt. the network. Starts at UNKNOWN.
      */
     public enum Status {
@@ -132,7 +143,7 @@ public enum Authentication implements IAuthenticationService {
         externalCredentials = FileCatalog.create(file, ExternalAuthenticationCredentials.class,
                 ExternalAuthenticationCredentials.class);
 
-        Services.INSTANCE.registerService(this, IAuthenticationService.class);
+//        Services.INSTANCE.registerService(this, IAuthenticationService.class);
     }
 
     /**
@@ -164,12 +175,21 @@ public enum Authentication implements IAuthenticationService {
     @SuppressWarnings("unchecked")
     @Override
     public <T extends IIdentity> T getAuthenticatedIdentity(Class<T> type) {
-        for (IIdentity id : identities.values()) {
+        for(IIdentity id : identities.values()) {
             if (type.isAssignableFrom(id.getClass())) {
                 return (T) id;
             }
         }
         return null;
+    }
+
+    /**
+     * Install a server-specific strategy to translate the principal into a user identity
+     * 
+     * @param function
+     */
+    public void setPrincipalTranslator(Function<Principal, IUserIdentity> function) {
+        this.principalTranslator = function;
     }
 
     /**
@@ -218,7 +238,7 @@ public enum Authentication implements IAuthenticationService {
      * @return
      */
     public ISession getDefaultSession() {
-        for (IIdentity id : identities.values()) {
+        for(IIdentity id : identities.values()) {
             if (id instanceof ISession && ((ISession) id).isDefault()) {
                 return (ISession) id;
             }
@@ -226,10 +246,34 @@ public enum Authentication implements IAuthenticationService {
         return null;
     }
 
-    @Override
-    public IIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
+    /**
+     * Check which groups we adopt that define a worldview and extract the root worldview name from
+     * the projects that compose it. Makes lots of assumptions.
+     * 
+     * @return
+     */
+    public String getWorldview(IIdentity user) {
+        String ret = null;
+        if (user instanceof IUserIdentity) {
+            for(Group group : ((IUserIdentity) user).getGroups()) {
+                if (group.isWorldview()) {
+                    for(String project : group.getProjectUrls()) {
+                        String pid = MiscUtilities.getURLBaseName(project);
+                        if (ret == null && !pid.contains(".")) {
+                            ret = pid;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 
-        IIdentity ret = null;
+    @Override
+    public IUserIdentity authenticate(ICertificate certificate) throws KlabAuthorizationException {
+
+        IUserIdentity ret = null;
         EngineAuthenticationResponse authentication = null;
 
         if (certificate instanceof AnonymousEngineCertificate) {
@@ -241,9 +285,17 @@ public enum Authentication implements IAuthenticationService {
             return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
         }
 
+        if (!certificate.isValid()) {
+            /*
+             * expired or invalid certificate: throw away the identity, continue as anonymous.
+             */
+            Logging.INSTANCE.info("Certificate is invalid or expired: continuing in anonymous offline mode");
+
+            return new KlabUser(Authentication.ANONYMOUS_USER_ID, null);
+        }
+
         if (certificate.getType() == Type.NODE && getAuthenticatedIdentity(INodeIdentity.class) != null) {
-            ret = new KlabUser(certificate.getProperty(ICertificate.KEY_NODENAME),
-                    getAuthenticatedIdentity(INodeIdentity.class));
+            ret = new KlabUser(certificate.getProperty(ICertificate.KEY_NODENAME), getAuthenticatedIdentity(INodeIdentity.class));
             registerIdentity(ret);
             return ret;
         }
@@ -265,18 +317,18 @@ public enum Authentication implements IAuthenticationService {
 
         if (authenticationServer != null) {
 
-            Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME)
-                    + " with hub " + authenticationServer);
+            Logging.INSTANCE.info("authenticating " + certificate.getProperty(KlabCertificate.KEY_USERNAME) + " with hub "
+                    + authenticationServer);
 
             /*
              * Authenticate with server(s). If authentication fails because of a 403, invalidate the
              * certificate. If no server can be reached, certificate is valid but engine is offline.
              */
             EngineAuthenticationRequest request = new EngineAuthenticationRequest(
-                    certificate.getProperty(KlabCertificate.KEY_USERNAME),
-                    certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
+                    certificate.getProperty(KlabCertificate.KEY_USERNAME), certificate.getProperty(KlabCertificate.KEY_SIGNATURE),
                     certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel());
+                    certificate.getProperty(KlabCertificate.KEY_CERTIFICATE), certificate.getLevel(),
+                    certificate.getProperty(KlabCertificate.KEY_AGREEMENT));
 
             // add email if we have it, so the hub can notify in any case if so configured
             request.setEmail(certificate.getProperty(KlabCertificate.KEY_USERNAME));
@@ -284,8 +336,8 @@ public enum Authentication implements IAuthenticationService {
             try {
                 authentication = client.authenticateEngine(authenticationServer, request);
             } catch (Throwable e) {
-                Logging.INSTANCE.error("authentication failed for user "
-                        + certificate.getProperty(KlabCertificate.KEY_USERNAME) + ": " + e.getMessage());
+                Logging.INSTANCE.error("authentication failed for user " + certificate.getProperty(KlabCertificate.KEY_USERNAME)
+                        + ": " + e.getMessage());
                 // TODO inspect exception; fatal if 403, warn and proceed offline otherwise
                 System.out.println("AUTH EXCEPTION is " + MiscUtilities.getExceptionPrintout(e));
             }
@@ -300,17 +352,14 @@ public enum Authentication implements IAuthenticationService {
             try {
                 expiry = DateTime.parse(authentication.getUserData().getExpiry());
             } catch (Throwable e) {
-                Logging.INSTANCE
-                        .error("bad date or wrong date format in certificate. Please use latest version of software.");
+                Logging.INSTANCE.error("bad date or wrong date format in certificate. Please use latest version of software.");
                 return null;
             }
             if (expiry == null) {
-                Logging.INSTANCE
-                        .error("certificate has no expiration date. Please obtain a new certificate.");
+                Logging.INSTANCE.error("certificate has no expiration date. Please obtain a new certificate.");
                 return null;
             } else if (expiry.isBeforeNow()) {
-                Logging.INSTANCE
-                        .error("certificate expired on " + expiry + ". Please obtain a new certificate.");
+                Logging.INSTANCE.error("certificate expired on " + expiry + ". Please obtain a new certificate.");
                 return null;
             }
         }
@@ -326,27 +375,23 @@ public enum Authentication implements IAuthenticationService {
                 HubReference hubNode = authentication.getHub();
                 Hub hub = new Hub(hubNode);
                 hub.setOnline(true);
-                NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(),
-                        hub);
+                NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(), hub);
 
-                ret = new KlabUser(authentication.getUserData(), networkSession);
+                ret = new KlabUser(authentication.getUserData(), authentication.getAuthentication(), networkSession);
 
                 Network.INSTANCE.buildNetwork(authentication);
 
-                Logging.INSTANCE
-                        .info("User " + ((IUserIdentity) ret).getUsername() + " logged in through hub "
-                                + hubNode.getId() + " owned by " + hubNode.getPartner().getId());
+                Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " logged in through hub " + hubNode.getId()
+                        + " owned by " + hubNode.getPartner().getId());
 
                 Logging.INSTANCE.info("The following nodes are available:");
-                for (INodeIdentity n : Network.INSTANCE.getNodes()) {
+                for(INodeIdentity n : Network.INSTANCE.getNodes()) {
                     Duration uptime = new Duration(n.getUptime());
                     DateTime boottime = DateTime.now(DateTimeZone.UTC).minus(uptime.toPeriod());
                     IPartnerIdentity partner = n.getParentIdentity();
                     Logging.INSTANCE.info("   " + n.getName() + " online since " + boottime);
-                    Logging.INSTANCE
-                            .info("      " + partner.getName() + " (" + partner.getEmailAddress() + ")");
-                    Logging.INSTANCE
-                            .info("      " + "online " + PeriodFormat.getDefault().print(uptime.toPeriod()));
+                    Logging.INSTANCE.info("      " + partner.getName() + " (" + partner.getEmailAddress() + ")");
+                    Logging.INSTANCE.info("      " + "online " + PeriodFormat.getDefault().print(uptime.toPeriod()));
                 }
 
             } else {
@@ -356,16 +401,14 @@ public enum Authentication implements IAuthenticationService {
                 ((Node) node).setOnline(false);
                 ret = new KlabUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), node);
 
-                Logging.INSTANCE
-                        .info("User " + ((IUserIdentity) ret).getUsername() + " activated in offline mode");
+                Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " activated in offline mode");
             }
 
             ((KlabUser) ret).setOnline(authentication != null);
 
         } else {
             throw new KlabAuthorizationException(
-                    "wrong certificate for an engine: cannot create identity of type "
-                            + certificate.getType());
+                    "wrong certificate for an engine: cannot create identity of type " + certificate.getType());
         }
 
         if (ret != null) {
@@ -373,6 +416,10 @@ public enum Authentication implements IAuthenticationService {
         }
 
         return ret;
+    }
+
+    public ExternalAuthenticationCredentials getCredentials(String hostUrl) {
+        return externalCredentials.get(hostUrl);
     }
 
     /**
@@ -400,8 +447,7 @@ public enum Authentication implements IAuthenticationService {
                     throw new KlabMissingCredentialsException(auth);
                 }
 
-                return new UsernamePasswordCredentials(credentials.getCredentials().get(0),
-                        credentials.getCredentials().get(1));
+                return new UsernamePasswordCredentials(credentials.getCredentials().get(0), credentials.getCredentials().get(1));
             }
 
             @Override
@@ -415,28 +461,28 @@ public enum Authentication implements IAuthenticationService {
     public void setProjectPermissions(String projectId, Set<String> groups) {
         this.projectPermissions.put(projectId, groups);
     }
-    
+
     public Set<String> getProjectPermissions(String projectId) {
-    	if (this.projectPermissions.containsKey(projectId)) {
-    		return this.projectPermissions.get(projectId);
-    	}
-    	return Collections.emptySet();
+        if (this.projectPermissions.containsKey(projectId)) {
+            return this.projectPermissions.get(projectId);
+        }
+        return Collections.emptySet();
     }
-    
+
     public boolean canAccess(IUserIdentity user, String projectId) {
-        Set<String> userGroups = user.getGroups().stream().map((group) -> group.getId()).collect(Collectors.toSet());
+        Set<String> userGroups = user.getGroups().stream().map((group) -> group.getName()).collect(Collectors.toSet());
         Set<String> permissions = this.projectPermissions.get(projectId);
         if (permissions != null && !permissions.isEmpty()) {
             return Sets.intersection(permissions, userGroups).size() > 0;
         }
         return true;
     }
-    
+
     public List<ObservableReference> getDefaultObservables(IIdentity identity) {
         List<ObservableReference> ret = new ArrayList<>();
         IUserIdentity user = identity.getParentIdentity(IUserIdentity.class);
         if (user != null) {
-            for (Group group : user.getGroups()) {
+            for(Group group : user.getGroups()) {
                 ret.addAll(group.getObservables());
             }
         }
@@ -446,7 +492,7 @@ public enum Authentication implements IAuthenticationService {
     @Override
     public Collection<ISession> getSessions() {
         List<ISession> ret = new ArrayList<>();
-        for (IIdentity identity : identities.values()) {
+        for(IIdentity identity : identities.values()) {
             if (identity instanceof ISession) {
                 ret.add((ISession) identity);
             }
@@ -459,5 +505,53 @@ public enum Authentication implements IAuthenticationService {
         externalCredentials.write();
     }
 
+    public IUserIdentity getUserIdentity(Principal principal) {
+        if (principalTranslator != null) {
+            return principalTranslator.apply(principal);
+        }
+        throw new KlabInternalErrorException(
+                "no adapter for the principal identity has been installed in the Authentication instance");
+    }
+
+    public boolean hasEitherGroup(IUserIdentity user, String... groups) {
+        for(Group g : user.getGroups()) {
+            for(String grp : groups) {
+                if (g.getName().equals(grp)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean hasRole(Object user, Role role) {
+        if (user instanceof IAuthenticatedIdentity) {
+            return ((IAuthenticatedIdentity) user).getRoles().contains(role);
+        }
+        return false;
+    }
+
+    public Collection<String> getWorldviewRepositories(IUserIdentity user) {
+        Set<String> ret = new LinkedHashSet<>();
+        if (user != null) {
+            for(Group group : user.getGroups()) {
+                if (group.isWorldview()) {
+                    ret.addAll(group.getProjectUrls());
+                }
+            }
+        }
+        return ret;
+    }
+
+    // public boolean hasEitherRole(IUserIdentity user, String... groups) {
+    // for (Group g : user.getRoles()) {
+    // for (String grp : groups) {
+    // if (g.getId().equals(grp)) {
+    // return true;
+    // }
+    // }
+    // }
+    // return false;
+    // }
 
 }

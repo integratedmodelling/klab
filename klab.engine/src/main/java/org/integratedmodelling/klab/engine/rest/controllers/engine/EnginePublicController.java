@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.PublicAPI;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -66,6 +67,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @CrossOrigin(origins = "*")
 @Secured(Roles.SESSION)
+@PublicAPI
 public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = CREATE_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -165,18 +167,18 @@ public class EnginePublicController implements API.PUBLIC {
 
 	@RequestMapping(value = EXPORT_DATA, method = RequestMethod.GET, produces = { MediaType.APPLICATION_JSON_VALUE,
 			MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.IMAGE_PNG_VALUE, "text/csv",
-			"image/tiff", "application/vnd.ms-excel",
+			"image/tiff", "application/vnd.ms-excel","application/octet-stream",
 			"application/vnd.openxmlformats-officedocument.wordprocessingml.document" })
 	public void exportData(@PathVariable String export, @RequestHeader(name = "Authorization") String session,
 			@PathVariable String observation, @RequestHeader(name = "Accept") String format,
 			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
 			HttpServletResponse response) throws IOException {
-
+	   
 		Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 		if (s == null) {
 			throw new KlabIllegalStateException("observe in context: invalid session ID");
 		}
-
+		response.setCharacterEncoding("UTF-8");
 		boolean done = false;
 		IObservation obs = s.getObservation(observation);
 
@@ -202,7 +204,10 @@ public class EnginePublicController implements API.PUBLIC {
 				outputImage(obs, response, target, viewport, loc);
 				done = true;
 			} else if ("image/tiff".equals(format) && obs instanceof IState && isGrid(obs)) {
-				outputGrid(obs, response, loc);
+			    outputGrid(obs, response, loc, true);
+			    done = true;
+			} else if ("application/octet-stream".equals(format) && obs instanceof IState && isGrid(obs)) {
+				outputGrid(obs, response, loc, false);
 				done = true;
 			} else if (MediaType.APPLICATION_JSON_VALUE.equals(format) && isFeatures(obs)) {
 				outputFeatures(obs, response, target, loc);
@@ -295,13 +300,13 @@ public class EnginePublicController implements API.PUBLIC {
 		return obs instanceof IState && obs.getSpace() instanceof Space && ((Space) obs.getSpace()).getGrid() != null;
 	}
 
-	private void outputGrid(IObservation obs, HttpServletResponse response, ILocator locator) {
+	private void outputGrid(IObservation obs, HttpServletResponse response, ILocator locator, boolean addStyle) {
 		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter("raster");
 		if (adapter != null) {
 			IResourceImporter importer = adapter.getImporter();
 			if (importer != null) {
 				try {
-					File temp = importer.exportObservation(File.createTempFile("ob", ".zip"), obs, locator, "tiff",
+					File temp = importer.exportObservation(File.createTempFile("obs", addStyle ? ".zip" : ".tiff"), obs, locator, "tiff",
 							Klab.INSTANCE.getRootMonitor());
 					if (temp.exists()) {
 						try (InputStream input = new FileInputStream(temp)) {
@@ -311,11 +316,13 @@ public class EnginePublicController implements API.PUBLIC {
 					FileUtils.deleteQuietly(temp);
 					return;
 				} catch (IOException e) {
-					throw new KlabIOException(e);
+				    throw new KlabIOException(e);
+				} catch (Exception e) {
+					throw new KlabException(e);
 				}
 			}
 		}
-		throw new KlabIOException("error exporting to GeoJSON");
+		throw new KlabIOException("error exporting to grid");
 	}
 
 	private void outputImage(IObservation obs, HttpServletResponse response, Export target, String viewport,

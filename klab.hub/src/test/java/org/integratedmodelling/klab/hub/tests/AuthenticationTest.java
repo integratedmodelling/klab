@@ -16,10 +16,10 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.HubApplication;
-import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
+import org.integratedmodelling.klab.hub.licenses.listeners.LicenseStartupReady;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
-import org.integratedmodelling.klab.hub.listeners.LicenseStartupReady;
 import org.integratedmodelling.klab.hub.users.controllers.UserAuthenticationController;
+import org.integratedmodelling.klab.hub.users.exceptions.LoginFailedExcepetion;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
@@ -135,7 +135,8 @@ public class AuthenticationTest extends ApplicationCheck {
 				cert.getProperty(KlabCertificate.KEY_USERNAME),
 				cert.getProperty(KlabCertificate.KEY_SIGNATURE),
 				cert.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE),
-				cert.getProperty(KlabCertificate.KEY_CERTIFICATE), cert.getLevel());
+				cert.getProperty(KlabCertificate.KEY_CERTIFICATE), cert.getLevel(),
+				cert.getProperty(KlabCertificate.KEY_AGREEMENT));
 		engineRequest.setEmail(cert.getProperty(KlabCertificate.KEY_USERNAME));
         headers.clear();
         headers.add("TEST", "false");

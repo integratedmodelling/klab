@@ -80,6 +80,8 @@ public class APIObservationTask extends Thread {
     @Override
     public void run() {
 
+    	((SessionState)session.getState()).setApplicationName("API");
+
         if ((contextRequest != null && contextRequest.isEstimate())
                 || (observationRequest != null && observationRequest.isEstimate())) {
             estimate();
@@ -207,7 +209,7 @@ public class APIObservationTask extends Thread {
             ITask<IObservation> observationTask = ((ISubject) context).observe(observable);
             observationTask.addScenarios(scenarios);
             observationTask.addObservationListener((task, obs) -> {
-                if (obs != null) {
+                if (obs != null && !obs.isEmpty()) {
                     String artifacts = ticket.getData().get("artifacts") == null ? "" : ticket.getData().get("artifacts");
                     artifacts += (artifacts.isEmpty() ? "" : ",") + obs.getId();
                     ticket.update("artifacts", artifacts);

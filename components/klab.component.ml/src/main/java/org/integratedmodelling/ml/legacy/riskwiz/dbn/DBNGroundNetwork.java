@@ -36,10 +36,7 @@ package org.integratedmodelling.ml.legacy.riskwiz.dbn;
 
 import java.util.Vector;
 
-import org.integratedmodelling.ml.legacy.riskwiz.bn.BNEdge;
-import org.integratedmodelling.ml.legacy.riskwiz.bn.BNNode;
 import org.integratedmodelling.ml.legacy.riskwiz.bn.BeliefNetwork;
-import org.jgrapht.EdgeFactory;
 
 
 /**
@@ -50,19 +47,19 @@ public class DBNGroundNetwork extends BeliefNetwork {
 	
     Vector<DBNSlice>  slices;
 
-    /**
-     * 
-     */
-    public DBNGroundNetwork() {
-        super();
-        slices = new Vector<DBNSlice>();
-    }
+//    /**
+//     * 
+//     */
+//    public DBNGroundNetwork() {
+//        super();
+//        slices = new Vector<DBNSlice>();
+//    }
 
     /**
      * @param edgeClass
      */
-    public DBNGroundNetwork(Class<? extends BNEdge> edgeClass) {
-        super(edgeClass);
+    public DBNGroundNetwork() {
+        this(false, false);
         slices = new Vector<DBNSlice>();
     }
 
@@ -71,19 +68,18 @@ public class DBNGroundNetwork extends BeliefNetwork {
      * @param allowMultipleEdges
      * @param allowLoops
      */
-    public DBNGroundNetwork(EdgeFactory<BNNode, BNEdge> ef,
-            boolean allowMultipleEdges, boolean allowLoops) {
-        super(ef, allowMultipleEdges, allowLoops);
+    public DBNGroundNetwork(boolean allowMultipleEdges, boolean allowLoops) {
+        super(allowMultipleEdges, allowLoops);
         slices = new Vector<DBNSlice>();
     }
-
-    /**
-     * @param ef
-     */
-    public DBNGroundNetwork(EdgeFactory<BNNode, BNEdge> ef) {
-        super(ef);
-        slices = new Vector<DBNSlice>();
-    }
+//
+//    /**
+//     * @param ef
+//     */
+//    public DBNGroundNetwork(EdgeFactory<BNNode, BNEdge> ef) {
+//        super(ef);
+//        slices = new Vector<DBNSlice>();
+//    }
 
     /**
      * @param name

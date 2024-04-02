@@ -60,6 +60,10 @@ export number flowdirections
 		"If true, angles are computed as output instead of integer flow direction codes per D8 conventions."
 		default false
 
+    optional parameter number minelev
+        "The minimum elevation processed by the algorithm."
+        default 0.0
+
 	geometry S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.FlowDirectionsResolver
@@ -81,6 +85,55 @@ export number flowaccumulation
 
 	class org.integratedmodelling.geoprocessing.hydrology.ContributingAreaResolver
 }
+
+export process flowaccumulationprocess
+
+	"Perform arbitrary calculation on each cell's neighborhood in the order established by
+	 the flow directions, with access to values upstream and in the neighborhood of each 
+	 raster cell through a 'cell' variable that provides access to neighborhood inspection 
+	 capabilities. Identical to flowaccumulation but used as change process to set the 
+	 values of the changed state."
+	 
+	 label 'Accumulate upstream flow'
+{
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+		
+	import object stream_outlet
+		"Stream outlets. Only the location of the outlets will be used; if the outlet spatial
+		 extent is not a point, the centroid cell will be used."
+
+	value expression evaluate
+		"An expression that returns the value in each cell. The 'cell' variable contains
+		 a proxy to the cell that can produce the neighborhood, the upstream portion of the 
+		 neighborhood, arbitrary neighbors in each direction, and (when the cell is from the
+		 neighborhood) the opposite relative to the focal cell. Each cell knows the values of
+		 all the dependencies in its location. All these values are extracted using cell.xxx
+		 where xxx is: neighbo[u]rhood, upstream, downstream (producing a list of cells); n, s, e, 
+		 w, ne, se, nw, se (producing one cell or null if at the edges); or the name of each
+		 quality dependency (producing the value of that dependency at the cell). The expression
+		 'xxx.self' where xxx is one of the cells returned by 'cell.upstream' produces the value 
+		 of the target state at each upstream location. That is the only context where using 
+		 'self' makes any sense, as it will not have been computed unless the cell is from the
+		 upstream neighborhood."
+		 
+	value expression distribute
+		"An expression that is evaluated in the opposite order as 'evaluate', starting at the 
+		 outlet(s) and moving upstream. All parameters are the same as 'evaluate' except that
+		 'current' is the value of the output at the previously computed downstream cell, evaluated 
+		 before the expression is called, and repeated equal in case the focal cell is not the 
+		 only upstream cell (its value is null at the outlet). The variable 'cell' can be interrogated 
+		 using 'cell.outlet' to check if the
+		 current cell is an outlet. The 'cell.downstream' and 'cell.upstream' are also defined as
+		 before; remember that the upstream values of the output haven't been computed yet. If 
+		 'distribute' is paired with 'evaluate', a flow accumulation step will follow all the 
+		 'distribute' evaluations."
+
+	geometry T1S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.AccumulateFlowProcessResolver
+}
+
 
 export value accumulateflow
 
@@ -485,4 +538,23 @@ export process scsrunoffcalc
 	geometry T1S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.ScsRunoffResolver
+}
+
+export number floodlevels
+	"Expected level of marine flooding"
+	
+{ 
+
+    optional parameter number decay_factor
+        "Describes how the water levels decrease moving from the original sources. 0 means immediate decrease while 1 means constant levels"
+
+	import number elevation
+		"The DEM"
+		
+	import number seeds
+	    "The original water levels"
+
+	geometry S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.MarineFloodResolver
 }

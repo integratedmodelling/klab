@@ -11,11 +11,11 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
-import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.springframework.security.access.annotation.Secured;
@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 // FIXME this must be admin, at the moment it won't let my admin user in
-// @Secured({ Role.ADMINISTRATOR, Role.SYSTEM })
-@Secured(Role.ENGINE)
+@Secured({ Role.ADMINISTRATOR, Role.SYSTEM })
+// @Secured(Role.ENGINE)
 public class AdminController {
 
     @GetMapping(value = API.NODE.ADMIN.COMPONENT_SETUP, produces = "application/json")
@@ -112,5 +112,5 @@ public class AdminController {
         }
         return true;
     }
-
+    
 }

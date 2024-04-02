@@ -376,12 +376,12 @@ public class Prototype implements IPrototype {
 			for (String argument : arguments.keySet()) {
 				Argument arg = arguments.get(argument);
 				ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + argument + (tags ? "</dt>" : "")
-						+ (tags ? "" : ": ");
+						+ (tags ? "" : ":\n");
 				String description = StringUtil.pack(
 						arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
-								: arg.getDescription());
+								: arg.getDescription() + "\n");
 				ret += tags ? ("<dd>" + description + "</dd>")
-						: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+						: StringUtil.indent(StringUtil.justifyLeft(description, 50), 15);
 				ret += (tags ? "" : "\n");
 			}
 			if (tags) {
@@ -396,12 +396,12 @@ public class Prototype implements IPrototype {
 				}
 				for (Argument arg : imports) {
 					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
-							+ (tags ? "</dt>" : "") + (tags ? "" : ": ");
+							+ (tags ? "</dt>" : "") + (tags ? "" : ":\n");
 					String description = StringUtil.pack(
 							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
 									: arg.getDescription());
 					ret += tags ? ("<dd>" + description + "</dd>")
-							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 15);
 					ret += (tags ? "" : "\n");
 				}
 				if (tags) {
@@ -422,7 +422,7 @@ public class Prototype implements IPrototype {
 							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
 									: arg.getDescription());
 					ret += tags ? ("<dd>" + description + "</dd>")
-							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 15);
 					ret += (tags ? "" : "\n");
 				}
 				if (tags) {
@@ -438,12 +438,12 @@ public class Prototype implements IPrototype {
 				}
 				for (Argument arg : outputAnnotations) {
 					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
-							+ (tags ? "</dt>" : "") + (tags ? "" : ": ");
+							+ (tags ? "</dt>" : "") + (tags ? "" : ":\n");
 					String description = StringUtil.pack(
 							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
 									: arg.getDescription());
 					ret += tags ? ("<dd>" + description + "</dd>")
-							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 15);
 					ret += (tags ? "" : "\n");
 				}
 				if (tags) {
@@ -459,12 +459,12 @@ public class Prototype implements IPrototype {
 				}
 				for (Argument arg : outputAnnotations) {
 					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
-							+ (tags ? "</dt>" : "") + (tags ? "" : ": ");
+							+ (tags ? "</dt>" : "") + (tags ? "" : ":\n");
 					String description = StringUtil.pack(
 							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
 									: arg.getDescription());
 					ret += tags ? ("<dd>" + description + "</dd>")
-							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 15);
 					ret += (tags ? "" : "\n");
 				}
 				if (tags) {

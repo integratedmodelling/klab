@@ -31,13 +31,11 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
-import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.Notification;
@@ -428,6 +426,11 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 						+ ".nc");
 	}
 
+	private File adjustDataFilePath(File f) {
+		String newPath = f.getAbsolutePath().replace("-v1.0.nc", "-v1.1.nc");
+		return new File(newPath);
+	}
+
 	@Override
 	protected boolean createAggregatedLayer(String variable, int startTick, int endTick, ITime.Resolution resolution,
 			File destinationFile) {
@@ -440,7 +443,20 @@ public class AgERA5Repository extends CopernicusCDSDatacube {
 
 		List<File> toAggregate = new ArrayList<>();
 		for (int tick = startTick; tick <= endTick; tick++) {
-			toAggregate.add(getDataFile(variable, tick));
+			File dataFile = getDataFile(variable, tick);
+
+			if (dataFile.exists()) {
+				toAggregate.add(dataFile);
+				continue;
+			}
+
+			// Workaround for chunks with mixed file names
+			// The file path includes the version of the CDS API that was requested with
+			// Some chunks contain a mix of *-v1.0.nc and *-v1.1.nc
+			File newPath = adjustDataFilePath(dataFile);
+			if (newPath.exists()) {
+				toAggregate.add(newPath);
+			}
 		}
 
 		/*

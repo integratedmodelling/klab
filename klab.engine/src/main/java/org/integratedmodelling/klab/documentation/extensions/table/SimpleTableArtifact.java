@@ -24,8 +24,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table.Column;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
@@ -33,7 +31,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
-public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
+public class SimpleTableArtifact extends AbstractTableArtifact {
 
 	String emptyValue = "0";
 	String noDataValue = "0";
@@ -296,34 +294,24 @@ public class SimpleTableArtifact extends Artifact implements IKnowledgeView {
 	}
 
 	@Override
-	public IDocumentationView getCompiledView(String mediaType) {
-
-		ITableView ret = null;
-
-		if (TableArtifact.HTML_MEDIA_TYPE.equals(mediaType)) {
-			ret = new TableView();
-		} else if (TableArtifact.EXCEL_MEDIA_TYPE.equals(mediaType)) {
-			ret = new ExcelView();
-		}
-
-		if (ret == null) {
-			throw new KlabValidationException("table view: media type " + mediaType + " is not supported");
-		}
-
-		return getCompiledView(ret, ret.sheet(tableCompiler.getLabel()));
-	}
-
-	private IDocumentationView getCompiledView(ITableView view, int sheetId) {
+	protected IDocumentationView getCompiledView(ITableView view, int sheetId) {
 
 		int hTable = view.table(this.tableCompiler.getTitle(), sheetId);
 		/*
-		 * data and row titles. Row groups can go to hell for now.
+		 * data and row titles. Single level is now managed
 		 */
 		int hBody = view.body(hTable);
+		int headerRow = view.newRow(hBody);
+		if (rowHeaders) {
+			view.write(view.newHeaderCell(headerRow, true), "", Double.NaN, rows.size() > 0 ? rows.get(0).style : null);
+		}
+		for (Dimension column : columns) {
+			view.write(view.newHeaderCell(headerRow, true), column.label != null ? column.label : "", Double.NaN, column.style);
+		}
 		for (Dimension rDesc : rows) {
 			int hRow = view.newRow(hBody);
-			for (Dimension column : columns) {
-				view.write(view.newHeaderCell(hRow, true), column.label, Double.NaN, rDesc.style);
+			if (rowHeaders) {
+				view.write(view.newHeaderCell(hRow, true), rDesc.label != null ? rDesc.label : "", Double.NaN, rDesc.style);
 			}
 			for (Dimension cDesc : columns) {
 				Cell cell = cells.get(new Pair<>(rDesc.id, cDesc.id));

@@ -19,6 +19,7 @@ import org.integratedmodelling.ml.legacy.riskwiz.pfunction.IFunction;
 import org.integratedmodelling.ml.legacy.riskwiz.pfunction.TabularFunction;
 import org.integratedmodelling.ml.legacy.riskwiz.pt.PT;
 import org.integratedmodelling.ml.legacy.riskwiz.pt.TableFactory;
+import org.jgrapht.Graph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 
@@ -48,7 +49,7 @@ public abstract class AbstractSampler implements IInference {
 		
         Vector<BNNode> vect = new Vector<BNNode>();
 
-        for (TopologicalOrderIterator it = new TopologicalOrderIterator(bn); it.hasNext();) {
+        for (TopologicalOrderIterator it = new TopologicalOrderIterator((Graph) bn); it.hasNext();) {
             BNNode node = (BNNode) it.next();
 
             vect.add(node);

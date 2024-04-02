@@ -15,12 +15,7 @@
  */
 package org.integratedmodelling.klab.api.knowledge;
 
-import java.io.File;
 import java.util.Collection;
-
-import org.integratedmodelling.kim.api.IKimLoader;
-import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * The Interface IWorkspace.
@@ -36,34 +31,6 @@ public interface IWorkspace {
      * @return the unique workspace name
      */
     String getName();
-
-    /**
-     * All workspaces in k.LAB are filesystem based for now.
-     *
-     * @return the file location of the root of the workspace on the filesystem.
-     */
-    File getRoot();
-    
-    /**
-     * Load all the knowledge in the namespace, optionally limited to anything that has
-     * changed since last read.
-     *
-     * @param monitor a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-     * @return the loader containing the details of resources and the corresponding namespaces
-     * @throws org.integratedmodelling.klab.exceptions.KlabException in case of I/O or other errors. Syntax errors won't cause
-     *         exceptions.
-     */
-    IKimLoader load(IMonitor monitor) throws KlabException;
-    
-    /**
-     * Like {@link #load(IMonitor)} but adding the knowledge of another loader.
-     * 
-     * @param loader. May be null.
-     * @param monitor
-     * @return
-     * @throws KlabException
-     */
-    IKimLoader load(IKimLoader loader, IMonitor monitor) throws KlabException;
     
     /**
      * Get all the projects in the workspace.
@@ -71,25 +38,6 @@ public interface IWorkspace {
      * @return a {@link java.util.Collection} of all projects.
      */
     Collection<IProject> getProjects();
-
-    /**
-     * Create an empty project in this workspace.
-     * 
-     * @param projectId
-     * @param a monitor 
-     * @return the new project
-     * @throws IllegalStateException if the project already exists in the workspace.
-     */
-	IProject createProject(String projectId, IMonitor monitor);
-
-	/**
-	 * Load a project on demand. Return null without error if the project is not present.
-	 * 
-	 * @param projectId
-	 * @param monitor
-	 * @return
-	 */
-	IProject loadProject(String projectId, IMonitor monitor);
 	
 	/**
 	 * Retrieve the named project.
@@ -98,12 +46,5 @@ public interface IWorkspace {
 	 * @return the project or null if project is not in the workspace
 	 */
 	IProject getProject(String projectId);
-
-	/**
-	 * Workspaces have control over a project's deletion.
-	 * 
-	 * @param project
-	 */
-	void deleteProject(IProject project);
     
 }

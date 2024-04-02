@@ -17,9 +17,6 @@ import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessage
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-//import io.dekorate.kubernetes.annotation.KubernetesApplication;
-//import io.dekorate.kubernetes.annotation.Port;
-
 @Component
 @Singleton
 @EnableAutoConfiguration
@@ -28,11 +25,6 @@ import org.springframework.web.client.RestTemplate;
 								 * "org.integratedmodelling.klab.node.resources",
 								 * "org.integratedmodelling.klab.node.controllers"
 								 */ })
-//@KubernetesApplication(
-//		replicas = 1,
-//		expose = true,
-//	    ports = @Port(name = "http", containerPort = IConfigurationService.DEFAULT_SEMANTIC_SERVER_PORT)
-//		)
 public class SemanticServerApplication {
 	// property specifying the resource online checking interval in seconds
 	public static final String RESOURCE_CHECKING_INTERVAL_SECONDS = "klab.node.resources.checkinterval";

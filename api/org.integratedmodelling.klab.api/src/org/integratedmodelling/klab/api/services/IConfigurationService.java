@@ -40,6 +40,9 @@ public interface IConfigurationService {
     public static final int DEFAULT_SEMANTIC_SERVER_PORT = 8301;
     public static final String DEFAULT_PRODUCTS_BRANCH = "master";
 
+    public static final String KLAB_DEFINED_WORLDVIEW_PROPERTY = "klab.defined.worldview";
+    public static final String KLAB_WORLDVIEW_PROPERTY = "klab.worldview";
+
     public static final String KLAB_LOG_FILE = "klab.log.file";
     public static final String KLAB_OFFLINE = "klab.offline";
     public static final String KLAB_EXPORT_PATH = "klab.export.path";
@@ -53,6 +56,9 @@ public interface IConfigurationService {
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
     public static final String KLAB_PROJECT_BLACKLIST_PROPERTY = "klab.project.blacklist";
     public static final String KLAB_STATS_SERVER_URL_PROPERTY = "stats.server.url";
+    public static final String KLAB_LENIENT_GRID_INTERSECTION = "klab.grid.intersection.lenient";
+    public static final String LOCAL_STATS_ACTIVE_PROPERTY = "org.integratedmodelling.stats.active";
+    public static final String LOCAL_STATS_PRIVATE_PROPERTY = "org.integratedmodelling.stats.private";
 
     /**
      * If false, coverage of merged spatial layers is interpreted strictly, i.e. if a covered

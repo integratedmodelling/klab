@@ -4,7 +4,7 @@
     <locations>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
             <unit id="org.eclipse.emf.mwe2.launcher.feature.group" version="0.0.0"/>
-            <repository location="https://download.eclipse.org/modeling/emft/mwe/updates/releases/2.12.1/"/>
+            <repository location="https://download.eclipse.org/modeling/emft/mwe/updates/releases/2.13.0/"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
             <unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
@@ -14,14 +14,14 @@
             <unit id="org.eclipse.xpand" version="0.0.0"/>
             <unit id="org.eclipse.xtend" version="0.0.0"/>
             <unit id="org.eclipse.xtend.typesystem.emf" version="0.0.0"/>
-            <repository location="https://download.eclipse.org/releases/2021-03/"/>
+            <repository location="https://download.eclipse.org/releases/2022-09/"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
             <unit id="org.eclipse.xtext.sdk.feature.group" version="0.0.0"/>
-            <repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.25.0/"/>
+            <repository location="https://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.27.0/"/>
         </location>
         <location includeAllPlatforms="false" includeConfigurePhase="false" includeMode="planner" includeSource="false" type="InstallableUnit">
-        	<repository location="http://download.eclipse.org/nebula/releases/2.6.0"/>
+        	<repository location="https://download.eclipse.org/nebula/releases/2.6.0"/>
 	        <unit id="org.eclipse.nebula.widgets.opal.commons.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.opal.header.feature.feature.group" version="0.0.0"/>
 	        <unit id="org.eclipse.nebula.widgets.opal.notifier.feature.feature.group" version="0.0.0"/>
@@ -41,7 +41,7 @@
             <unit id="org.eclipse.jgit.pgm.feature.group" version="0.0.0"/>
             <!--<unit id="org.eclipse.jgit.pgm.source.feature.group" version="0.0.0"/>-->
             <unit id="org.eclipse.jgit.source.feature.group" version="0.0.0"/>
-            <repository location="https://download.eclipse.org/egit/updates-stable-nightly/"/>
+            <repository location="https://download.eclipse.org/egit/updates-6.3/"/>
         </location>
     </locations>
 </target>

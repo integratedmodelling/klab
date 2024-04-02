@@ -390,6 +390,9 @@ public class ObservableBuilder implements IObservable.Builder {
             case CHANGE:
                 reset(makeChange(argument, true), type);
                 break;
+            case CHANGED:
+                reset(makeChanged(argument, true), type);
+                break;
             case COUNT:
                 reset(makeCount(argument, true), type);
                 break;
@@ -413,6 +416,9 @@ public class ObservableBuilder implements IObservable.Builder {
                 break;
             case RATIO:
                 reset(makeRatio(argument, this.comparison, true), type);
+                break;
+            case RATE:
+                reset(makeRate(argument, true), type);
                 break;
             case UNCERTAINTY:
                 reset(makeUncertainty(argument, true), type);
@@ -846,6 +852,148 @@ public class ObservableBuilder implements IObservable.Builder {
 
             /*
              * context of the change is the same context as the quality it describes - FIXME this
+             * shouldn't be needed as the inherency is an alternative place to look for context.
+             */
+            if (context != null) {
+                OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
+            }
+
+        }
+
+        return ontology.getConcept(conceptId);
+    }
+
+    /**
+     * Turn a concept into its change if it's not already one, implementing the corresponding
+     * semantic operator.
+     * 
+     * @param concept the untransformed concept
+     * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass true if
+     *        used from outside the builder
+     * @return the transformed concept
+     */
+    public Concept makeRate(IConcept concept, boolean addDefinition) {
+
+        String cName = getCleanId(concept) + "ChangeRate";
+
+        if (!concept.is(Type.QUALITY)) {
+            return null;
+        }
+
+        this.hasUnaryOp = true;
+
+        String definition = UnarySemanticOperator.RATE.declaration[0] + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
+        IConcept context = Observables.INSTANCE.getContextType(concept);
+
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            String reference = UnarySemanticOperator.RATE.getReferenceName(concept.getReferenceName(),
+                    null);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATE.name(),
+                    ((Concept) concept).getTypeSet());
+
+            ArrayList<IAxiom> ax = new ArrayList<>();
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_CHANGE_RATE, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+
+            if (addDefinition) {
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+            }
+            ontology.define(ax);
+
+            IConcept ret = ontology.getConcept(conceptId);
+
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.DESCRIBES_OBSERVABLE_PROPERTY), concept,
+                    ontology);
+
+            /*
+             * context of the change is the same context as the quality it describes - FIXME this
+             * shouldn't be needed as the inherency is an alternative place to look for context.
+             */
+            if (context != null) {
+                OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.HAS_CONTEXT_PROPERTY), context, ontology);
+            }
+
+            if ((concept.is(Type.EXTENSIVE_PROPERTY) || concept.is(Type.INTENSIVE_PROPERTY))) {
+                Object unit1 = Concepts.INSTANCE.getMetadata(concept, NS.SI_UNIT_PROPERTY);
+                Object unit2 = Units.INSTANCE.SECONDS;
+                if (unit1 != null) {
+                    String unit = unit1 + "/" + unit2;
+                    ax.add(Axiom.AnnotationAssertion(conceptId, NS.SI_UNIT_PROPERTY, unit));
+                }
+            }
+
+            
+        }
+
+        return ontology.getConcept(conceptId);
+    }
+
+    
+    /**
+     * Turn a concept into its change if it's not already one, implementing the corresponding
+     * semantic operator.
+     * 
+     * @param concept the untransformed concept
+     * @param addDefinition add the {@link NS#CONCEPT_DEFINITION_PROPERTY} annotation; pass true if
+     *        used from outside the builder
+     * @return the transformed concept
+     */
+    public Concept makeChanged(IConcept concept, boolean addDefinition) {
+
+        String cName = "Changed" + getCleanId(concept);
+
+        if (!concept.is(Type.QUALITY)) {
+            return null;
+        }
+
+        this.hasUnaryOp = true;
+
+        String definition = UnarySemanticOperator.CHANGED.declaration[0] + " " + concept.getDefinition();
+        Ontology ontology = (Ontology) concept.getOntology();
+        String conceptId = ontology.getIdForDefinition(definition);
+        IConcept context = Observables.INSTANCE.getContextType(concept);
+
+        if (conceptId == null) {
+
+            conceptId = ontology.createIdForDefinition(definition);
+
+            String reference = UnarySemanticOperator.CHANGED.getReferenceName(concept.getReferenceName(),
+                    null);
+
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGED.name(),
+                    ((Concept) concept).getTypeSet());
+
+            ArrayList<IAxiom> ax = new ArrayList<>();
+            ax.add(Axiom.ClassAssertion(conceptId, newType));
+            ax.add(Axiom.SubClass(NS.CORE_EVENT, conceptId));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.REFERENCE_NAME_PROPERTY, reference));
+            ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+            ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
+
+            if (addDefinition) {
+                ax.add(Axiom.AnnotationAssertion(conceptId, NS.CONCEPT_DEFINITION_PROPERTY, definition));
+            }
+            ontology.define(ax);
+
+            IConcept ret = ontology.getConcept(conceptId);
+
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.DESCRIBES_OBSERVABLE_PROPERTY), concept,
+                    ontology);
+            OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.CHANGED_PROPERTY), concept, ontology);
+
+            /*
+             * context of the change event is the same context as the quality it describes - FIXME this
              * shouldn't be needed as the inherency is an alternative place to look for context.
              */
             if (context != null) {

@@ -1,20 +1,24 @@
 package org.integratedmodelling.klab.hub.groups.services;
 
 import java.util.Collection;
-import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.commands.CreateMongoGroup;
-import org.integratedmodelling.klab.hub.commands.DeleteMongoGroup;
-import org.integratedmodelling.klab.hub.commands.GetAllMongoGroupNames;
-import org.integratedmodelling.klab.hub.commands.GetAllMongoGroups;
-import org.integratedmodelling.klab.hub.commands.GetMongoGroupById;
-import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
-import org.integratedmodelling.klab.hub.commands.MongoGroupExists;
-import org.integratedmodelling.klab.hub.commands.UpdateMongoGroup;
-import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
-import org.integratedmodelling.klab.hub.exception.GroupExistException;
+import java.util.HashSet;
+import java.util.List;
+
+import org.integratedmodelling.klab.hub.groups.dto.GroupSummary;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
-import org.integratedmodelling.klab.hub.listeners.RemoveGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.users.commands.CreateMongoGroup;
+import org.integratedmodelling.klab.hub.users.commands.DeleteMongoGroup;
+import org.integratedmodelling.klab.hub.users.commands.GetAllMongoGroupNames;
+import org.integratedmodelling.klab.hub.users.commands.GetAllMongoGroups;
+import org.integratedmodelling.klab.hub.users.commands.GetMongoGroupById;
+import org.integratedmodelling.klab.hub.users.commands.GetMongoGroupByName;
+import org.integratedmodelling.klab.hub.users.commands.MongoGroupExists;
+import org.integratedmodelling.klab.hub.users.commands.UpdateMongoGroup;
+import org.integratedmodelling.klab.hub.users.exceptions.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.users.exceptions.GroupExistException;
+import org.integratedmodelling.klab.hub.users.listeners.RemoveGroup;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +46,14 @@ public class GroupServiceImpl implements GroupService {
 	public Collection<String> getGroupNames() {
 		return new GetAllMongoGroupNames(repository).execute();
 	}
+	
+	@Override
+    public Collection<GroupSummary> getGroupsSummary() {
+	    Collection<MongoGroup> groups = new GetAllMongoGroups(repository).execute();
+        Collection<GroupSummary> groupsSummary = new HashSet<>();
+        groups.forEach(g -> groupsSummary.add(new GroupSummary(g.getId(),g.getName(),g.getDescription(),g.getIconUrl(),g.isOptIn())));
+        return groupsSummary;
+    }
 
 	@Override
 	public boolean exists(String groupName) {
@@ -98,5 +110,13 @@ public class GroupServiceImpl implements GroupService {
 			throw new GroupDoesNotExistException("No group by the id: " + id + " was found.");
 		}
 	}
+	
+	@Override
+    public List<MongoGroup> getGroupsDefault() {
+	    return repository.findByComplimentaryIsTrue();        
+    }
+    
+	
+	
 
 }

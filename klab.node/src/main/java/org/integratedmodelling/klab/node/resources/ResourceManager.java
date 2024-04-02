@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.EncodingDataBuilder;
@@ -38,7 +39,6 @@ import org.integratedmodelling.klab.engine.indexing.ResourceIndexer;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.node.NodeApplication;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
-import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.controllers.EngineController;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.ResourceOperationRequest;
@@ -343,7 +343,7 @@ public class ResourceManager {
             }
             List<String> groups = new ArrayList<>();
             for (Group group : user.getGroups()) {
-                groups.add(group.getId());
+                groups.add(group.getName());
             }
             return permissions.isAuthorized(user.getUsername(), groups);
         }

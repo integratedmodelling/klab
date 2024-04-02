@@ -47,7 +47,7 @@ public class Setup implements ICommand {
 			}
 		} else {
 			return "Local authority " + authority + " setup "
-					+ (node.getClient().post(API.AUTHORITY.SETUP.replace(API.AUTHORITY.P_AUTHORITY, authority), options,
+					+ (node.getClient().onBehalfOf(session.getUser()).post(API.AUTHORITY.SETUP.replace(API.AUTHORITY.P_AUTHORITY, authority), options,
 							Boolean.class) ? "" : "in")
 					+ "successful";
 		}

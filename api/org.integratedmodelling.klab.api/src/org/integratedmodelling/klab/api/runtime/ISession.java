@@ -17,6 +17,7 @@ import java.io.Closeable;
 import java.net.URL;
 import java.util.concurrent.Future;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -60,7 +61,6 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
 
         void onClose(ISession session);
     }
-
 
     /**
      * Observe a new context of the passed type, returning an asynchronous future. This is the
@@ -135,6 +135,8 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
     void interruptAllTasks();
 
     /**
+     * The authenticated user that owns the session. The observer returned by {@link #getObserver()}
+     * is an actor identity that represents it. TODO we should merge these two eventually.
      * 
      * @return
      */
@@ -144,4 +146,25 @@ public interface ISession extends IEngineSessionIdentity, Closeable, IObserver<I
 
     boolean isDefault();
 
+    /**
+     * All session have an observer, representing the user owning the session. This is the default
+     * observer for all observations made directly through the API or a client. Observation actions
+     * come from the observer, not the session (TODO this is not how the current API is designed).
+     * The observer's behavior may be defined using the ~/.klab/user.kactors file.
+     * 
+     * @return
+     */
+    IObserver<?> getObserver();
+
+//    /**
+//     * Load a specified behavior in a specified runtime scope. Returns a string
+//     * identifying the running behavior, which can be passed to
+//     * {@link #stop(String)}.
+//     * 
+//     * @param behavior
+//     * @param scope
+//     */
+//    String load(IBehavior behavior, IContextualizationScope scope);
+//
+//    boolean stop(String behaviorId);
 }

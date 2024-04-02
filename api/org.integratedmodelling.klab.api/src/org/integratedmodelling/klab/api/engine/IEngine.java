@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  *
  * @author ferdinando.villa
  * @version $Id: $Id
+ * @deprecated should be obsoleted by IEngineService and the new observation API
  */
 public interface IEngine extends IEngineIdentity, IServer {
 
