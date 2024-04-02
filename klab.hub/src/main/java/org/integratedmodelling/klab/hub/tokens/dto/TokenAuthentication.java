@@ -7,7 +7,11 @@ import java.util.HashSet;
 import java.util.UUID;
 
 import org.integratedmodelling.klab.auth.Role;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,7 +22,7 @@ import org.springframework.security.core.GrantedAuthority;
 public class TokenAuthentication {
 
     private static final int TOKEN_TTL_SECONDS = 60 * 60 * 24 * 7 * 4; // 4 weeks
-    
+
     @Id
     private String id;
 
@@ -27,17 +31,29 @@ public class TokenAuthentication {
 
     @Indexed
     private String username;
-    
+
     private String paretToken;
 
-	public LocalDateTime expiration;
-	
-	boolean authenticated;
+    public LocalDateTime expiration;
 
-	// this essentially overrides this.authorities in the parent class,
+    boolean authenticated;
+
+    // this essentially overrides this.authorities in the parent class,
     // so that we can have a mongo-friendly no-arg constructor (i.e. mutable state)
     // NOTE: the parent class recommends against mutable state.
     private Collection<Role> roles = new HashSet<>();
+
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     // this needs to be here for Mongo (username=null to start)
     public TokenAuthentication() {
@@ -50,19 +66,19 @@ public class TokenAuthentication {
         this.expiration = LocalDateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
     }
 
-	/**
+    /**
      * add an expiration check to the default isAuthenticated() implementation
      */
     public boolean isAuthenticated() {
-    	if (authenticated) {
-    		if(!isExpired()) {
-    			return true;
-    		} else {
-    			return false;
-    		}
-    	} else {
-    		return false;
-    	}
+        if (authenticated) {
+            if (!isExpired()) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
     }
 
     public String getTokenString() {
@@ -95,10 +111,10 @@ public class TokenAuthentication {
         return new ArrayList<GrantedAuthority>(roles);
     }
 
-    public void setAuthorities(Collection<? extends GrantedAuthority> authorities) {
+    public void setAuthorities(Collection< ? extends GrantedAuthority> authorities) {
         // always keep it a hash set
         roles.clear();
-        for (GrantedAuthority authority : authorities) {
+        for(GrantedAuthority authority : authorities) {
             Role role = Role.valueOf(authority.getAuthority());
             if (role != null) {
                 // silently ignore unknown authorities - lets other applications do what they want
@@ -116,16 +132,15 @@ public class TokenAuthentication {
         return getClass().getSimpleName() + ": " + getTokenString();
     }
 
-	public String getParetToken() {
-		return paretToken;
-	}
+    public String getParetToken() {
+        return paretToken;
+    }
 
-	public void setParetToken(String paretToken) {
-		this.paretToken = paretToken;
-	}
-	
+    public void setParetToken(String paretToken) {
+        this.paretToken = paretToken;
+    }
+
     public void setAuthenticated(boolean authenticated) {
-		this.authenticated = authenticated;
-	}
+        this.authenticated = authenticated;
+    }
 }
-

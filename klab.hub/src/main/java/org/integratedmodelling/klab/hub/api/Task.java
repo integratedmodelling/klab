@@ -9,7 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,208 +27,220 @@ import jakarta.persistence.Enumerated;
 @Document(collection = "Tasks")
 public abstract class Task {
 
-	@Id
-	String id;
-	
-	String user;
-	
-	LocalDateTime issued;
-    
-	LocalDateTime closed;
-    
+    @Id
+    String id;
+
+    String user;
+
+    LocalDateTime issued;
+
+    LocalDateTime closed;
+
     @Enumerated(EnumType.STRING)
     Role roleRequirement;
-	
+
     @Enumerated(EnumType.STRING)
     TaskStatus status;
-    
+
     @Enumerated(EnumType.STRING)
     TaskStatus parentStatus;
-    
+
     List<String> log = new ArrayList<String>();
-    
+
     LocalDateTime expirationDate;
-    
+
     /**
      * The next task to be accepted or deny
      */
     @Reference
     List<Task> next = new ArrayList<Task>();
-    
-	/**
+
+    /**
      * If true, after create, we do accept
      */
     boolean autoAccepted;
-    
+
     @JsonInclude()
     @Transient
     private TaskType type;
-    
+
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
+
     public Task() {
-    	this(null, null);
+        this(null, null);
     }
-    
+
     public Task(Role roleRequirement) {
-    	this(roleRequirement, null);
+        this(roleRequirement, null);
     }
-    
+
     public Task(TaskStatus parentStatus) {
-    	this(null, parentStatus);
+        this(null, parentStatus);
     }
     public Task(Role roleRequirement, TaskStatus parentStatus) {
-    	this.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
-    	this.setRoleRequirement(roleRequirement);;
-    	this.setIssued();
-		this.setStatus(TaskStatus.pending);
-		this.setParentStatus(parentStatus);
-		this.setType(); // force to set the type
-		// this.setDescription(this.getType().name());
+        this.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
+        this.setRoleRequirement(roleRequirement);;
+        this.setIssued();
+        this.setStatus(TaskStatus.pending);
+        this.setParentStatus(parentStatus);
+        this.setType(); // force to set the type
+        // this.setDescription(this.getType().name());
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	/**
-	 * @return the user
-	 */
-	public String getUser() {
-		return user;
-	}
+    /**
+     * @return the user
+     */
+    public String getUser() {
+        return user;
+    }
 
-	/**
-	 * @param user the user to set
-	 */
-	public void setUser(String user) {
-		this.user = user;
-	}
+    /**
+     * @param user the user to set
+     */
+    public void setUser(String user) {
+        this.user = user;
+    }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public LocalDateTime getIssued() {
-		return issued;
-	}
+    public LocalDateTime getIssued() {
+        return issued;
+    }
 
-	public void setIssued() {
-		this.issued = LocalDateTime.now();
-	}
+    public void setIssued() {
+        this.issued = LocalDateTime.now();
+    }
 
-	public LocalDateTime getClosed() {
-		return closed;
-	}
+    public LocalDateTime getClosed() {
+        return closed;
+    }
 
-	public void setClosed() {
-		this.closed = LocalDateTime.now();
-	}
+    public void setClosed() {
+        this.closed = LocalDateTime.now();
+    }
 
-	public TaskStatus getStatus() {
-		return status;
-	}
+    public TaskStatus getStatus() {
+        return status;
+    }
 
-	public void setStatus(TaskStatus status) {
-		this.status = status;
-	}
+    public void setStatus(TaskStatus status) {
+        this.status = status;
+    }
 
-	public LocalDateTime getExpirationDate() {
-		return expirationDate;
-	}
+    public LocalDateTime getExpirationDate() {
+        return expirationDate;
+    }
 
-	public void setExpirationDate(LocalDateTime expirationDate) {
-		this.expirationDate = expirationDate;
-	}
+    public void setExpirationDate(LocalDateTime expirationDate) {
+        this.expirationDate = expirationDate;
+    }
 
-	public String getRoleRequirement() {
-		return roleRequirement.toString();
-	}
-	
-	public void setRoleRequirement(Role role) {
-		this.roleRequirement = role;
-	}
+    public String getRoleRequirement() {
+        return roleRequirement.toString();
+    }
 
-	public boolean isAutoAccepted() {
-		return this.autoAccepted;
-	}
-	
-	public void setAutoAccepted(boolean autoAccepted) {
-		this.autoAccepted = autoAccepted;
-	}
-	
-	/**
-	 * @return the parentStatus
-	 */
-	public TaskStatus getParentStatus() {
-		return parentStatus;
-	}
+    public void setRoleRequirement(Role role) {
+        this.roleRequirement = role;
+    }
 
-	/**
-	 * @param parentStatus the parentStatus to set
-	 */
-	public void setParentStatus(TaskStatus parentStatus) {
-		this.parentStatus = parentStatus;
-	}
+    public boolean isAutoAccepted() {
+        return this.autoAccepted;
+    }
 
-	/**
-	 * @return the deniedMessage
-	 */
-	public List<String> getLog() {
-		return log;
-	}
+    public void setAutoAccepted(boolean autoAccepted) {
+        this.autoAccepted = autoAccepted;
+    }
 
-	/**
-	 * @param deniedMessage the deniedMessage to set
-	 */
-	public void addToLog(String message) {
-		this.log.add(message);
-	}
+    /**
+     * @return the parentStatus
+     */
+    public TaskStatus getParentStatus() {
+        return parentStatus;
+    }
 
-	/**
-	 * @return the next
-	 */
-	public List<Task> getNext() {
-		return next;
-	}
+    /**
+     * @param parentStatus the parentStatus to set
+     */
+    public void setParentStatus(TaskStatus parentStatus) {
+        this.parentStatus = parentStatus;
+    }
 
-	/**
-	 * @param next task to add to next
-	 */
-	public void add(Task next) {
-		this.next.add(next);
-	}
+    /**
+     * @return the deniedMessage
+     */
+    public List<String> getLog() {
+        return log;
+    }
 
-	/**
-	 * Specific code for accept action
-	 * The status of task after this operation is the final one, it will be change inside the method 
-	 * The new status is not persisted
-	 * @param request the request, used if needed to check roles
-	 * @throws DeniedException 
-	 */
-	abstract public void acceptTaskAction(HttpServletRequest request);
-	/**
-	 * Specific code for deny action
-	 * The status of task after this operation is the final one, it must be changed inside the method
-	 * The new status is not persisted
-	 * @param request the request, used if needed to check roles
-	 * @return message is necessary or null
-	 */
-	abstract public void denyTaskAction(HttpServletRequest request, String message);
-	
-	/**
-	 * Return the type
-	 * @return the TaskType, 
-	 */
-	public TaskType getType() {
-		return type;
-	}
-	
-	public void setType(TaskType type) {
-		this.type = type;
-	}
-	
-	/**
-	 * Added to force implementation to set the type, is called in constructor
-	 */
-	public abstract void setType();
+    /**
+     * @param deniedMessage the deniedMessage to set
+     */
+    public void addToLog(String message) {
+        this.log.add(message);
+    }
+
+    /**
+     * @return the next
+     */
+    public List<Task> getNext() {
+        return next;
+    }
+
+    /**
+     * @param next task to add to next
+     */
+    public void add(Task next) {
+        this.next.add(next);
+    }
+
+    /**
+     * Specific code for accept action
+     * The status of task after this operation is the final one, it will be change inside the method 
+     * The new status is not persisted
+     * @param request the request, used if needed to check roles
+     * @throws DeniedException 
+     */
+    abstract public void acceptTaskAction(HttpServletRequest request);
+    /**
+     * Specific code for deny action
+     * The status of task after this operation is the final one, it must be changed inside the method
+     * The new status is not persisted
+     * @param request the request, used if needed to check roles
+     * @return message is necessary or null
+     */
+    abstract public void denyTaskAction(HttpServletRequest request, String message);
+
+    /**
+     * Return the type
+     * @return the TaskType, 
+     */
+    public TaskType getType() {
+        return type;
+    }
+
+    public void setType(TaskType type) {
+        this.type = type;
+    }
+
+    /**
+     * Added to force implementation to set the type, is called in constructor
+     */
+    public abstract void setType();
 
 }
