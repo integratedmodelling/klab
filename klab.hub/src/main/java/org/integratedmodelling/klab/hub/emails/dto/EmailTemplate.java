@@ -1,10 +1,16 @@
 package org.integratedmodelling.klab.hub.emails.dto;
 
+import java.time.LocalDateTime;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -32,6 +38,18 @@ public class EmailTemplate extends GenericModel {
     String content;
 
     EmailType type = EmailType.HTML;
+
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     /**
      * @return the id

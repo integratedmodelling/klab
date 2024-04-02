@@ -1,103 +1,119 @@
 package org.integratedmodelling.klab.hub.licenses.dto;
 
+import java.time.LocalDateTime;
+
 import org.integratedmodelling.klab.hub.api.GenericModel;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "LicenseConfigurations")
-public class LicenseConfiguration extends GenericModel{
-	
-	
-	private String email;
-	
-	private String hubId;
-	
-	private String keyString;
-	
-	private String hubUrl;
-	
-	private String passphrase;
-	
-	private ArmoredKeyPair keys;
+public class LicenseConfiguration extends GenericModel {
 
-	private byte[] digest;
-	
-	private Boolean defaultConfig = false;
-	
-	public String getId() {
-		return super.getId();
-	}
+    private String email;
 
-	public String getEmail() {
-		return email;
-	}
+    private String hubId;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    private String keyString;
 
-	public String getHubId() {
-		return hubId;
-	}
+    private String hubUrl;
 
-	public void setHubId(String hubId) {
-		this.hubId = hubId;
-	}
+    private String passphrase;
 
-	public String getKeyString() {
-		return keyString;
-	}
+    private ArmoredKeyPair keys;
 
-	public void setKeyString(String keyString) {
-		this.keyString = keyString;
-	}
+    private byte[] digest;
 
-	public String getName() {
-		return super.getName();
-	}
+    private Boolean defaultConfig = false;
 
-	public void setName(String name) {
-		super.setName(name);
-	}
+    @CreatedBy
+    private String createdBy;
 
-	public ArmoredKeyPair getKeys() {
-		return keys;
-	}
+    @CreatedDate
+    private LocalDateTime createdDate;
 
-	public void setKeys(ArmoredKeyPair keys) {
-		this.keys = keys;
-	}
+    @LastModifiedBy
+    private String lastModifiedBy;
 
-	public String getPassphrase() {
-		return passphrase;
-	}
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
-	public void setPassphrase(String passphrase) {
-		this.passphrase = passphrase;
-	}
+    public String getId() {
+        return super.getId();
+    }
 
-	public void setDigest(byte[] sha256hex) {
-		this.digest = sha256hex;		
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public byte[] getDigest() {
-		return this.digest;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public String getHubUrl() {
-		return hubUrl;
-	}
+    public String getHubId() {
+        return hubId;
+    }
 
-	public void setHubUrl(String hubUrl) {
-		this.hubUrl = hubUrl;
-	}
+    public void setHubId(String hubId) {
+        this.hubId = hubId;
+    }
 
+    public String getKeyString() {
+        return keyString;
+    }
 
-	public Boolean getDefaultConfig() {
-		return defaultConfig;
-	}
+    public void setKeyString(String keyString) {
+        this.keyString = keyString;
+    }
 
-	public void setDefaultConfig(Boolean defaultConfig) {
-		this.defaultConfig = defaultConfig;
-	}
-	
+    public String getName() {
+        return super.getName();
+    }
+
+    public void setName(String name) {
+        super.setName(name);
+    }
+
+    public ArmoredKeyPair getKeys() {
+        return keys;
+    }
+
+    public void setKeys(ArmoredKeyPair keys) {
+        this.keys = keys;
+    }
+
+    public String getPassphrase() {
+        return passphrase;
+    }
+
+    public void setPassphrase(String passphrase) {
+        this.passphrase = passphrase;
+    }
+
+    public void setDigest(byte[] sha256hex) {
+        this.digest = sha256hex;
+    }
+
+    public byte[] getDigest() {
+        return this.digest;
+    }
+
+    public String getHubUrl() {
+        return hubUrl;
+    }
+
+    public void setHubUrl(String hubUrl) {
+        this.hubUrl = hubUrl;
+    }
+
+    public Boolean getDefaultConfig() {
+        return defaultConfig;
+    }
+
+    public void setDefaultConfig(Boolean defaultConfig) {
+        this.defaultConfig = defaultConfig;
+    }
+
 }
