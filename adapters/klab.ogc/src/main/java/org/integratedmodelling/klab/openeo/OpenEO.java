@@ -398,7 +398,7 @@ public class OpenEO {
 		this.endpoint = endpoint;
 		ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
 		if (credentials != null) {
-			this.authorization = new Authorization(credentials);
+			this.authorization = new Authorization(credentials, endpoint);
 		}
 		this.executor.scheduleAtFixedRate(() -> {
 			Set<Job> finished = new HashSet<>();
