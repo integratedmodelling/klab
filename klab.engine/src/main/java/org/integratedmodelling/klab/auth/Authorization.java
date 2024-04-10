@@ -1,12 +1,15 @@
 package org.integratedmodelling.klab.auth;
 
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
+import org.integratedmodelling.klab.utils.Pair;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -64,18 +67,51 @@ public class Authorization {
         return token != null;
     }
 
+    private Pair<String, String> parseProvider(String authEndpoint, String providerId) {
+        HttpResponse<JsonNode> response = Unirest.get(authEndpoint + "/credentials/oidc").asJson();
+        if (!response.isSuccess()) {
+            throw new KlabAuthorizationException("Cannot access " + authEndpoint + " for OIDC authentication");
+        }
+        List<JSONObject> providers = response.getBody().getObject().getJSONArray("providers").toList();
+        for (JSONObject prov : providers) {
+            String id = prov.getString("id");
+            if (!id.equals(providerId)) {
+                continue;
+            }
+            List<String> scopes = prov.getJSONArray("scopes").toList();
+            String scope = scopes.stream().collect(Collectors.joining(" "));
+            return new Pair<>(prov.getString("issuer"), scope);
+        }
+        throw new KlabAuthorizationException("No known provider '" + providerId + "' at " + authEndpoint);
+    }
+
+    private String parseIssuer(String issuerUrl) {
+        HttpResponse<JsonNode> response = Unirest.get(issuerUrl + "/.well-known/openid-configuration").asJson();
+        if (!response.isSuccess()) {
+            throw new KlabAuthorizationException("Cannot access " + issuerUrl + " for OIDC authentication");
+        }
+        return response.getBody().getObject().getString("token_endpoint");
+    }
+
     /**
      * OIDC-style token
      */
     private void refreshToken() {
-        
+        Pair<String, String> issuerAndScope = parseProvider(credentials.getCredentials().get(0), credentials.getCredentials().get(5));
+        String issuer = issuerAndScope.getFirst();
+        String scope = issuerAndScope.getSecond();
+        String tokenServiceUrl = parseIssuer(issuer);
+
         /*
+         * TODO modify the Schema for oidc
          * authenticate and get the first token. Credentials should contain: 0. Auth endpoint 1.
          * grant type 2. client ID 3. client secret 4. scope 5. provider
          */
-        MultipartBody query = Unirest.post(credentials.getCredentials().get(0))
-                .field("grant_type", credentials.getCredentials().get(1)).field("client_id", credentials.getCredentials().get(2))
-                .field("client_secret", credentials.getCredentials().get(3)).field("scope", credentials.getCredentials().get(4));
+        MultipartBody query = Unirest.post(tokenServiceUrl)
+                .field("grant_type", credentials.getCredentials().get(1))
+                .field("client_id", credentials.getCredentials().get(2))
+                .field("client_secret", credentials.getCredentials().get(3))
+                .field("scope", scope);
 
         if (this.token != null) {
             query = query.header("Authorization:",
