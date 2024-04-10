@@ -73,16 +73,11 @@ public class Authorization {
             throw new KlabAuthorizationException("Cannot access " + authEndpoint + " for OIDC authentication");
         }
         List<JSONObject> providers = response.getBody().getObject().getJSONArray("providers").toList();
-        for (JSONObject prov : providers) {
-            String id = prov.getString("id");
-            if (!id.equals(providerId)) {
-                continue;
-            }
-            List<String> scopes = prov.getJSONArray("scopes").toList();
-            String scope = scopes.stream().collect(Collectors.joining(" "));
-            return new Pair<>(prov.getString("issuer"), scope);
-        }
-        throw new KlabAuthorizationException("No known provider '" + providerId + "' at " + authEndpoint);
+        JSONObject provider = providers.stream().filter(prov -> prov.getString("id").equals(providerId)).findFirst()
+                .orElseThrow(() -> new KlabAuthorizationException("No known provider '" + providerId + "' at " + authEndpoint));
+        List<String> scopes = provider.getJSONArray("scopes").toList();
+        String scope = scopes.stream().collect(Collectors.joining(" "));
+        return new Pair<>(provider.getString("issuer"), scope);
     }
 
     private String parseIssuer(String issuerUrl) {
