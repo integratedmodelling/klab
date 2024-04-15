@@ -35,6 +35,11 @@ public class ExternalAuthenticationCredentials {
      */
     private String scheme = "basic";
 
+    /**
+     * The URL of the authentication service
+     */
+    private String url = "";
+
     public List<String> getCredentials() {
         return credentials;
     }
@@ -51,4 +56,11 @@ public class ExternalAuthenticationCredentials {
         this.scheme = scheme;
     }
 
+    public String getURL() {
+        return url;
+    }
+
+    public void setURL(String url) {
+        this.url = url;
+    }
 }
