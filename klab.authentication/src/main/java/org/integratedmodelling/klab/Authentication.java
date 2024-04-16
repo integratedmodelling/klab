@@ -50,6 +50,7 @@ import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.URLUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -418,8 +419,35 @@ public enum Authentication implements IAuthenticationService {
         return ret;
     }
 
-    public ExternalAuthenticationCredentials getCredentials(String hostUrl) {
-        return externalCredentials.get(hostUrl);
+    /**
+     * Returns a credential for the selected host. It can be an ID or an URL as long as it is presented in the credentials.
+     * @param endpoint as a URL or an ID defined in the credentials
+     * @return
+     */
+    public ExternalAuthenticationCredentials getCredentials(String endpoint) {
+        if (URLUtils.isCompliant(endpoint)) {
+            return getCredentialsByUrl(endpoint);
+        }
+        return getCredentialsById(endpoint);
+    }
+
+    /**
+     * Returns a credential for the selected host URL. If multiple host URL are present, the first in alphabetical order will be returned.
+     * @param hostUrl
+     * @return the credential or null if not present
+     */
+    private ExternalAuthenticationCredentials getCredentialsByUrl(String hostUrl) {
+        return externalCredentials.values().stream().filter(credential -> credential.getURL().equals(hostUrl))
+                .sorted().findFirst().orElse(null);
+    }
+
+    /**
+     * Returns a credential for the selected ID.
+     * @param id
+     * @return the credential or null if not present
+     */
+    private ExternalAuthenticationCredentials getCredentialsById(String id) {
+        return externalCredentials.get(id);
     }
 
     /**

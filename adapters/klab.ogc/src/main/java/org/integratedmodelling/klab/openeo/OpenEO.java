@@ -395,8 +395,8 @@ public class OpenEO {
 	}
 
 	public OpenEO(String endpoint) {
-		this.endpoint = endpoint;
 		ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
+		this.endpoint = credentials.getURL();
 		if (credentials != null) {
 			this.authorization = new Authorization(credentials, endpoint);
 		}

@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.cli.commands.credentials;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IServiceCall;
