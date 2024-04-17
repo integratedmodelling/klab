@@ -50,7 +50,6 @@ import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.integratedmodelling.klab.utils.MiscUtilities;
-import org.integratedmodelling.klab.utils.URLUtils;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.Duration;
@@ -425,7 +424,7 @@ public enum Authentication implements IAuthenticationService {
      * @return
      */
     public ExternalAuthenticationCredentials getCredentials(String endpoint) {
-        if (URLUtils.isCompliant(endpoint)) {
+        if (endpoint.startsWith("http://") || endpoint.startsWith("https://")) {
             return getCredentialsByUrl(endpoint);
         }
         return getCredentialsById(endpoint);
