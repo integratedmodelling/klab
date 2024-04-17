@@ -22,7 +22,16 @@ public class Set implements ICommand {
     @Override
     public Object execute(IServiceCall call, ISession session) {
         String ret = "";
+        if (call.getParameters().containsKey("update")) {
+            Authentication.INSTANCE.updateLegacyCredentials();
+            ret += "Credentials updated.";
+        }
+
         List<?> args = (List<?>) call.getParameters().get("arguments");
+        if (args.isEmpty()) {
+            return ret;
+        }
+
         String id = (String) call.getParameters().get("id");
         String url = (String) call.getParameters().get("url");
         String scheme = (String) call.getParameters().get("scheme");

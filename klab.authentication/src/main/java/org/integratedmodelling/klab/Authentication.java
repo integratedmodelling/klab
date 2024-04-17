@@ -537,8 +537,9 @@ public enum Authentication implements IAuthenticationService {
      * - Move the URL as its own parameter
      * - Changes on the scheme of oidc credentials
      */
-    private void updateLegacyCredentials() {
-        boolean isLegacyDetected = externalCredentials.values().stream().anyMatch(cr -> cr.getURL() == null || cr.getURL().isEmpty());
+    public void updateLegacyCredentials() {
+        boolean isLegacyDetected = externalCredentials.values().stream()
+                .anyMatch(credential -> credential.getURL() == null || credential.getURL().isEmpty());
         if (!isLegacyDetected) {
             return;
         }
@@ -568,10 +569,10 @@ public enum Authentication implements IAuthenticationService {
         });
         // We remove the old credentials by their IDs
         legacyCredentialIds.forEach(id -> externalCredentials.remove(id));
+        externalCredentials.write();
     }
 
     public void addExternalCredentials(String id, ExternalAuthenticationCredentials credentials) {
-        updateLegacyCredentials();
         externalCredentials.put(id, credentials);
         externalCredentials.write();
     }
