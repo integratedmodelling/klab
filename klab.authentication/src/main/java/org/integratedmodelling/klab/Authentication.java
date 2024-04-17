@@ -2,11 +2,14 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -527,8 +530,49 @@ public enum Authentication implements IAuthenticationService {
         return ret;
     }
 
-    public void addExternalCredentials(String host, ExternalAuthenticationCredentials credentials) {
-        externalCredentials.put(host, credentials);
+    /**
+     * This method has been created so legacy credential scheme is updated into the new credentials scheme if possible.
+     * The main changes are:
+     * - Use of a unique ID instead of the url as key
+     * - Move the URL as its own parameter
+     * - Changes on the scheme of oidc credentials
+     */
+    private void updateLegacyCredentials() {
+        boolean isLegacyDetected = externalCredentials.values().stream().anyMatch(cr -> cr.getURL() == null || cr.getURL().isEmpty());
+        if (!isLegacyDetected) {
+            return;
+        }
+        Set<String> legacyCredentialIds = new HashSet<String>();
+        externalCredentials.keySet().parallelStream().forEach(id -> {
+            if (externalCredentials.get(id).getURL() != null && !externalCredentials.get(id).getURL().isEmpty()) {
+                return;
+            }
+            if (!(id.startsWith("http://") || id.startsWith("https://"))) {
+                legacyCredentialIds.add(id);
+                return;
+            }
+            ExternalAuthenticationCredentials credentials = externalCredentials.get(id);
+            credentials.setURL(id);
+            // Former scheme of oidc: "url", "grant_type", "client_id", "client_secrets", "scope", "provider_id"
+            if (credentials.getScheme().equals("oidc")) {
+                credentials.getCredentials().remove(4); // Former scope
+                credentials.getCredentials().remove(0); // Former url
+            }
+            try {
+                String hostname = new URL(id).getHost();
+                externalCredentials.put(hostname, credentials);
+                legacyCredentialIds.add(id);
+            } catch (MalformedURLException e) {
+                // Do nothing, this credential will be removed
+            }
+        });
+        // We remove the old credentials by their IDs
+        legacyCredentialIds.forEach(id -> externalCredentials.remove(id));
+    }
+
+    public void addExternalCredentials(String id, ExternalAuthenticationCredentials credentials) {
+        updateLegacyCredentials();
+        externalCredentials.put(id, credentials);
         externalCredentials.write();
     }
 

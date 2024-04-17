@@ -21,7 +21,6 @@ public class Set implements ICommand {
 
     @Override
     public Object execute(IServiceCall call, ISession session) {
-
         String ret = "";
         List<?> args = (List<?>) call.getParameters().get("arguments");
         String id = (String) call.getParameters().get("id");
@@ -45,7 +44,7 @@ public class Set implements ICommand {
             try {
                 id = new URL(url).getHost();
             } catch (MalformedURLException e) {
-                e.printStackTrace();
+               throw new KlabValidationException("Cannot generate credential ID from URL " + url);
             }
         }
 
