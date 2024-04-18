@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.model.KActors;
@@ -58,6 +59,7 @@ import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.cli.IConsole;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
@@ -1587,7 +1589,15 @@ public class Session extends GroovyObjectSupport
                 this.globalState.clear();
                 IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
                 if (behavior != null) {
-                    this.load(behavior, new SimpleRuntimeScope(this));
+                	if (behavior.getMetadata().containsKey(IMetadata.IM_PERMISSIONS)) {
+                		KlabPermissions permissions = (KlabPermissions)behavior.getMetadata().get(IMetadata.IM_PERMISSIONS);
+                		List<String> groups = this.getParentIdentity().getGroups().stream().map((g) -> g.getName()).collect(Collectors.toList());
+                		if (permissions.isAuthorized(this.getUsername(), groups)) {
+                			this.load(behavior, new SimpleRuntimeScope(this));
+                		}
+                	} else {
+                		this.load(behavior, new SimpleRuntimeScope(this));
+                	}
                 }
             }
             break;
@@ -1912,18 +1922,20 @@ public class Session extends GroovyObjectSupport
         ret.setTimeLastJoined(lastJoin);
         ret.setTimeRetrieved(System.currentTimeMillis());
         ret.setTimeLastActivity(lastActivity);
-        for (String app : Actors.INSTANCE.getPublicApps()) {
-            ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
-        }
-        // FIXME remove
-        ret.getAppUrns().addAll(Actors.INSTANCE.getPublicApps());
-        ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
-
+        
         /*
          * TODO add views in context; add running application IDs
          */
 
         IUserIdentity user = getParentIdentity(IUserIdentity.class);
+        Collection<String> publicApps = Actors.INSTANCE.getPublicApps(user); 
+        for (String app : publicApps) {
+            ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
+        }
+        // FIXME remove
+        // ret.getAppUrns().addAll(publicApps);
+        ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
+        
         if (user != null) {
             IdentityReference uid = new IdentityReference();
             uid.setEmail(user.getEmailAddress());

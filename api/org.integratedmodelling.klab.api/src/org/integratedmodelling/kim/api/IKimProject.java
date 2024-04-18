@@ -13,6 +13,7 @@ public interface IKimProject {
 	static final String KLAB_CONFIGURATION_WORLDVIEW_ID = "klab.worldview";
 	static final String KLAB_CONFIGURATION_CLOSED_PROJECT = "klab.closed";
     static final String KLAB_CONFIGURATION_PREREQUISITES = "klab.prerequisites";
+    static final String KLAB_CONFIGURATION_PERMISSIONS = "klab.permissions";
 
 	static public final String SOURCE_FOLDER = "src";
 	static public final String DOCUMENTATION_FOLDER = "docs";

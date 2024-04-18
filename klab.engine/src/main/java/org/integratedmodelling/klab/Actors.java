@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -48,11 +49,13 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage.Semaphor
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Call;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.ILocalWorkspace;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -570,12 +573,27 @@ public enum Actors implements IActorsService {
 
     @Override
     public Collection<String> getPublicApps() {
-        Set<String> ret = new LinkedHashSet<>();
+        return this.getPublicApps(null);
+    }
+    
+    public Collection<String> getPublicApps(IUserIdentity user) {
+    	Set<String> ret = new LinkedHashSet<>();
         for(String key : behaviors.keySet()) {
-            if (behaviors.get(key).getDestination() == Type.APP && behaviors.get(key).getStatement().isPublic()) {
-                // getId() and set semantics ensure that localized instances only appear once with
-                // their original name
-                ret.add(behaviors.get(key).getId());
+        	IBehavior behavior = behaviors.get(key); 
+            if (behavior.getDestination() == Type.APP && behavior.getStatement().isPublic()) {
+            	if (user != null && behavior.getMetadata().containsKey(IMetadata.IM_PERMISSIONS)) {
+            		KlabPermissions permissions = (KlabPermissions)behaviors.get(key).getMetadata().get(IMetadata.IM_PERMISSIONS);
+            		List<String> groups = user.getGroups().stream().map((g) -> g.getName()).collect(Collectors.toList());
+            		if (permissions.isAuthorized(user.getUsername(), groups)) {
+            			ret.add(behaviors.get(key).getId());
+            		}
+            	} else {
+            		// getId() and set semantics ensure that localized instances only appear once with
+                    // their original name
+            		ret.add(behaviors.get(key).getId());
+            	}
+                
+                
             }
         }
         return ret;

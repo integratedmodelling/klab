@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IActorIdentity.Reference;
 import org.integratedmodelling.klab.api.auth.IEngineUserIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.rest.Localization;
 
 /**
@@ -77,6 +78,12 @@ public interface IActorsService {
      * @return
      */
     Collection<String> getPublicApps();
+    
+    /**
+     * @param user
+     * @return
+     */
+    Collection<String> getPublicApps(IUserIdentity user);
 
     /**
      * 

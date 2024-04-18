@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
@@ -14,9 +15,12 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -121,6 +125,11 @@ public class Behavior implements IBehavior {
             BehaviorAction action = new BehaviorAction(a, this);
             actions.put(action.getId(), action);
         }
+        Properties projectProperties = Resources.INSTANCE.getProject(this.projectId).getStatement().getProperties();
+        if (projectProperties.containsKey(IKimProject.KLAB_CONFIGURATION_PERMISSIONS)) {
+        	this.metadata.put(IMetadata.IM_PERMISSIONS, KlabPermissions.create(projectProperties.get(IKimProject.KLAB_CONFIGURATION_PERMISSIONS).toString()));
+        }
+        
     }
 
     private Behavior() {

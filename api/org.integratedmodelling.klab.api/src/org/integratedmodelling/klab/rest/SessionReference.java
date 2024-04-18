@@ -83,10 +83,12 @@ public class SessionReference {
 		this.baseHelpUrl = baseHelpUrl;
 	}
 
+	@Deprecated
 	public List<String> getAppUrns() {
 		return appUrns;
 	}
 
+	@Deprecated
 	public void setAppUrns(List<String> appUrns) {
 		this.appUrns = appUrns;
 	}
