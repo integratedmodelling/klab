@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.hub.licenses.dto.LicenseConfiguration;
 
 public class GenerateLicenseFactory {
 	public LicenseConfiguration getConfiguration(Class<? extends LicenseConfiguration> clazz) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException {
-		if(clazz.getName() == BouncyConfiguration.class.getName()) {
+		if(clazz.getName().equals(BouncyConfiguration.class.getName()) ) {
 			Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
 			BouncyConfiguration config = new NewBouncyConfiguration(hub).get();
 			return config;
