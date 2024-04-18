@@ -34,7 +34,6 @@ public class Authorization {
     private long expiry = -1;
     private String prefix;
     private String tokenType;
-    private String endpoint;
 
     /**
      * Create a new authorization. {@link #isOnline()} should be called after creation.
@@ -67,7 +66,6 @@ public class Authorization {
             if (endpoint == null) {
                 throw new KlabIllegalArgumentException("Attempted to start an OIDC authoritation workflow without an endpoint");
             }
-            this.endpoint = endpoint;
             refreshToken();
         }
     }
@@ -82,13 +80,13 @@ public class Authorization {
     }
 
     private Pair<String, String> parseProvider() {
-        HttpResponse<JsonNode> response = Unirest.get(endpoint + "/credentials/oidc").asJson();
+        HttpResponse<JsonNode> response = Unirest.get(credentials.getURL() + "/credentials/oidc").asJson();
         if (!response.isSuccess()) {
-            throw new KlabAuthorizationException("Cannot access " + endpoint + " for OIDC authentication");
+            throw new KlabAuthorizationException("Cannot access " + credentials.getURL() + " for OIDC authentication");
         }
         List<JSONObject> providers = response.getBody().getObject().getJSONArray("providers").toList();
         JSONObject provider = providers.stream().filter(prov -> prov.getString("id").equals(credentials.getCredentials().get(3))).findFirst()
-                .orElseThrow(() -> new KlabAuthorizationException("No known provider '" + credentials.getCredentials().get(3) + "' at " + endpoint));
+                .orElseThrow(() -> new KlabAuthorizationException("No known provider '" + credentials.getCredentials().get(3) + "' at " + credentials.getURL()));
         List<String> scopes = provider.getJSONArray("scopes").toList();
         String scope = scopes.stream().collect(Collectors.joining(" "));
         return new Pair<>(provider.getString("issuer"), scope);
