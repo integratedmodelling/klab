@@ -78,7 +78,7 @@ public interface IActorsService {
      * @return
      */
     Collection<String> getPublicApps();
-    
+
     /**
      * @param user
      * @return

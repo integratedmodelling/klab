@@ -57,7 +57,7 @@ public class Behavior implements IBehavior {
         public IKActorsValue getValue() {
             return value;
         }
-        
+
         public String getMatchName() {
             return matchName;
         }
@@ -103,7 +103,7 @@ public class Behavior implements IBehavior {
     String projectId;
     Map<String, String> localizedSymbols;
     String locale;
-    
+
     public Behavior(IKActorsBehavior statement, String locale, Map<String, String> localization) {
         this(statement);
         this.locale = locale;
@@ -111,7 +111,7 @@ public class Behavior implements IBehavior {
     }
 
     public Behavior(IKActorsBehavior statement) {
-        
+
         this.statement = statement;
         this.projectId = statement.getProjectId();
 
@@ -121,15 +121,16 @@ public class Behavior implements IBehavior {
         if (statement.getLabel() != null) {
             this.metadata.put(IMetadata.DC_LABEL, statement.getLabel());
         }
-        for (IKActorsAction a : statement.getActions()) {
+        for(IKActorsAction a : statement.getActions()) {
             BehaviorAction action = new BehaviorAction(a, this);
             actions.put(action.getId(), action);
         }
         Properties projectProperties = Resources.INSTANCE.getProject(this.projectId).getStatement().getProperties();
         if (projectProperties.containsKey(IKimProject.KLAB_CONFIGURATION_PERMISSIONS)) {
-        	this.metadata.put(IMetadata.IM_PERMISSIONS, KlabPermissions.create(projectProperties.get(IKimProject.KLAB_CONFIGURATION_PERMISSIONS).toString()));
+            this.metadata.put(IMetadata.IM_PERMISSIONS,
+                    KlabPermissions.create(projectProperties.get(IKimProject.KLAB_CONFIGURATION_PERMISSIONS).toString()));
         }
-        
+
     }
 
     private Behavior() {
@@ -155,7 +156,7 @@ public class Behavior implements IBehavior {
     @Override
     public List<IKimObject> getChildren() {
         List<IKimObject> ret = new ArrayList<>();
-        for (String id : actions.keySet()) {
+        for(String id : actions.keySet()) {
             ret.add(actions.get(id));
         }
         return ret;
@@ -190,13 +191,13 @@ public class Behavior implements IBehavior {
     @Override
     public List<Action> getActions(String... match) {
         List<Action> ret = new ArrayList<>();
-        for (Action action : actions.values()) {
+        for(Action action : actions.values()) {
             if (match == null || match.length == 0) {
                 ret.add(action);
                 continue;
             }
             boolean ok = false;
-            for (String m : match) {
+            for(String m : match) {
                 if (!ok && m.startsWith("@")) {
                     ok = Annotations.INSTANCE.hasAnnotation(action, m.substring(1));
                 } else if (!ok) {
