@@ -89,6 +89,7 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.Localization;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -584,7 +585,7 @@ public enum Actors implements IActorsService {
                 if (user != null && behavior.getMetadata().containsKey(IMetadata.IM_PERMISSIONS)) {
                     KlabPermissions permissions = (KlabPermissions) behaviors.get(key).getMetadata()
                             .get(IMetadata.IM_PERMISSIONS);
-                    List<String> groups = user.getGroups().stream().map((g) -> g.getName()).collect(Collectors.toList());
+                    List<String> groups = user.getGroups().stream().map(Group::getName).toList();
                     if (permissions.isAuthorized(user.getUsername(), groups)) {
                         ret.add(behaviors.get(key).getId());
                     }

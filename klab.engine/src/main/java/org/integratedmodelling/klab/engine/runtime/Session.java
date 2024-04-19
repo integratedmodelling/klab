@@ -1582,16 +1582,14 @@ public class Session extends GroovyObjectSupport
             if (request.isStop()) {
                 stop(request.getBehavior());
                 // TODO should clear the state now, but it comes AFTER initialization of the
-                // next
-                // application!
+                // next application!
             } else {
                 this.globalState.clear();
                 IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
                 if (behavior != null) {
                     if (behavior.getMetadata().containsKey(IMetadata.IM_PERMISSIONS)) {
                         KlabPermissions permissions = (KlabPermissions) behavior.getMetadata().get(IMetadata.IM_PERMISSIONS);
-                        List<String> groups = this.getParentIdentity().getGroups().stream().map((g) -> g.getName())
-                                .collect(Collectors.toList());
+                        List<String> groups = this.getParentIdentity().getGroups().stream().map(Group::getName).toList();
                         if (permissions.isAuthorized(this.getUsername(), groups)) {
                             this.load(behavior, new SimpleRuntimeScope(this));
                         }
@@ -1932,8 +1930,7 @@ public class Session extends GroovyObjectSupport
         for(String app : publicApps) {
             ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
         }
-        // FIXME remove
-        // ret.getAppUrns().addAll(publicApps);
+
         ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
 
         if (user != null) {
