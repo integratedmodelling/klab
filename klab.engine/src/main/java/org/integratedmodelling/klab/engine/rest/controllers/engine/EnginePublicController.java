@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +25,7 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
+import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
@@ -35,7 +38,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
-import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.APIObservationTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Estimate;
@@ -46,6 +49,7 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.rest.ContextRequest;
+import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -172,7 +176,7 @@ public class EnginePublicController implements API.PUBLIC {
 			"image/tiff", "application/vnd.ms-excel","application/octet-stream",
 			"application/vnd.openxmlformats-officedocument.wordprocessingml.document" })
 	public void exportData(@PathVariable String export, @RequestHeader(name = "Authorization") String session,
-			@PathVariable String observation, @RequestHeader(name = "Accept") String format,
+			@PathVariable String observation, @RequestHeader(name = "Accept") String format, @RequestParam(required = false) String view,
 			@RequestParam(required = false) String viewport, @RequestParam(required = false) String locator,
 			HttpServletResponse response) throws IOException {
 	   
@@ -215,6 +219,7 @@ public class EnginePublicController implements API.PUBLIC {
 				outputFeatures(obs, response, target, loc);
 				done = true;
 			} else if (MediaType.TEXT_PLAIN_VALUE.equals(format) && locator != null) {
+			    // User asks for single value on map
 			    Object value = ((IState) obs).get(loc);
                 String descr = Observations.INSTANCE.describeValue(value);
 
@@ -270,6 +275,22 @@ public class EnginePublicController implements API.PUBLIC {
 			}
 			break;
 		case REPORT:
+		    // TODO: implement the report in pdf/odt or other formats
+		    if (MediaType.APPLICATION_JSON_VALUE.equals(format) && view != null) {
+		        try {
+		            View reportView = View.valueOf(view.toUpperCase());
+		            List<DocumentationNode> documentationNodes = new ArrayList<DocumentationNode>();
+		            // TODO: implement the other views
+		            if (reportView.equals(View.RESOURCES)) {
+	                    documentationNodes = ((Report) obs.getScope().getReport()).getView(reportView, null);
+		            }
+		            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                    response.getWriter().write(JsonUtils.asString(documentationNodes));
+                    done = true;
+		        } catch(IllegalArgumentException iae) {
+		            //nothing to do, simply skip
+		        }
+		    }
 			break;
 		case STRUCTURE:
 			ObservationReference ret = Observations.INSTANCE.createArtifactDescriptor((IObservation) obs, loc, 0);
@@ -287,8 +308,10 @@ public class EnginePublicController implements API.PUBLIC {
 			break;
 		case VIEW:
 			break;
+		default:
+            break;
 		}
-
+		    
 		if (!done) {
 			throw new KlabException("export request invalid or contents not available");
 		}
