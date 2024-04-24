@@ -31,9 +31,11 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Structure;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.runtime.APIObservationTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.Session.Estimate;
@@ -212,6 +214,21 @@ public class EnginePublicController implements API.PUBLIC {
 			} else if (MediaType.APPLICATION_JSON_VALUE.equals(format) && isFeatures(obs)) {
 				outputFeatures(obs, response, target, loc);
 				done = true;
+			} else if (MediaType.TEXT_PLAIN_VALUE.equals(format) && locator != null) {
+			    Object value = ((IState) obs).get(loc);
+                String descr = Observations.INSTANCE.describeValue(value);
+
+                if (obs.getObservable().getUnit() != null) {
+                    descr += " " + ((Unit) obs.getObservable().getUnit()).toUTFString();
+                } else if (obs.getObservable().getCurrency() != null) {
+                    descr += " " + obs.getObservable().getCurrency();
+                } else if (obs.getObservable().getRange() != null) {
+                    descr += " [" + obs.getObservable().getRange().getLowerBound() + " to "
+                            + obs.getObservable().getRange().getUpperBound() + "]";
+                }
+                response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+                response.getWriter().write(descr);
+                done = true;
 			}
 			break;
 		case LEGEND:
@@ -263,6 +280,7 @@ public class EnginePublicController implements API.PUBLIC {
 				}
 			}
 			if (MediaType.APPLICATION_JSON_VALUE.equals(format)) {
+			    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 				response.getWriter().write(JsonUtils.asString(ret));
 				done = true;
 			}
