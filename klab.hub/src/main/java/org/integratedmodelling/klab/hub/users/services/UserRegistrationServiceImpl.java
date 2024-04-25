@@ -33,88 +33,16 @@ import org.springframework.stereotype.Service;
 public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private UserRepository userRepository;
-    private PasswordEncoder passwordEncoder;    
+    private PasswordEncoder passwordEncoder;
     private LdapServiceImpl ldapService;
     private LdapUserDetailsManager ldapUserDetailsManager;
     private HubEventPublisher<NewUserAdded> publisher;
     private AgreementService agreementService;
 
-	@Override
-	public User registerNewUser(String username, String email) {
-		Optional<User> pendingUser = checkIfUserPending(username, email);
-		if (pendingUser.isPresent()) {
-			return pendingUser.get();
-		} else {
-			User newUser = new User();
-			newUser.setUsername(username);
-			newUser.setEmail(email);
-			newUser = new CreatePendingUser(userRepository, newUser).execute();
-			publisher.publish(new NewUserAdded(new Object(), newUser));
-			return newUser;
-		}
-		
-	}
-	
-	@Override
-	public User registerUser(User user) {
-		Optional<User> pendingUser = checkIfUserPending(user.getName(), user.getEmail());
-		if (pendingUser.isPresent()) {
-			return pendingUser.get();
-		} else {
-			User newUser = new CreateUserWithRolesAndStatus(user, userRepository/*, ldapUserDetailsManager*/).execute();
-			return newUser;
-		}
-		
-	}
-	
-	private Optional<User> checkIfUserPending(String username, String email) {
-		boolean existInMongo = userRepository.
-				findByNameIgnoreCaseOrEmailIgnoreCase(username, email)
-				.isPresent();
-		
-		if(existInMongo) {
-			boolean usernameExists = userRepository
-				.findByNameIgnoreCase(username)
-				.isPresent();
-			
-			boolean emailExists = userRepository
-					.findByEmailIgnoreCase(email)
-					.isPresent();
-			
-			boolean ldapExists = ldapUserExists(username, email);
-			
-			if(ldapExists && usernameExists && emailExists) {
-				throw new UserExistsException(username);
-			}
-			
-			if(!ldapExists && usernameExists && emailExists) {
-				//we need to return a user who has not activated there account and will be asked to
-				//reactivate with an email.
-				Optional<User> pendingUser = userRepository.findByNameIgnoreCase(username)
-						.filter(u -> u.getAccountStatus().equals(AccountStatus.pendingActivation));
-				pendingUser
-					.orElseThrow(()-> new BadRequestException("User exists but has not set a password. "
-							+ "Please make a forgot password request."));
-				return pendingUser;
-			}
-			
-			if(usernameExists != emailExists) {
-				if (usernameExists)
-					throw new UserExistsException(username);
-				else
-					throw new UserEmailExistsException(email);
-			}
-			
-			throw new UserExistsException("How did we get here?"); 
-				
-		} else {
-			return Optional.empty();
-		}
-	}
     @Autowired
-    public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, LdapServiceImpl ldapServiceImpl,
-            LdapUserDetailsManager ldapUserDetailsManager, HubEventPublisher<NewUserAdded> publisher,
-            AgreementService agreementService) {
+    public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            LdapServiceImpl ldapServiceImpl, LdapUserDetailsManager ldapUserDetailsManager,
+            HubEventPublisher<NewUserAdded> publisher, AgreementService agreementService) {
         super();
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
@@ -148,16 +76,17 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     }
 
     @Override
-    public User createAndAddAgreement(User user, AgreementType agreementType, AgreementLevel agreementLevel) {        
-        List<AgreementEntry> agreements = user.getAgreements().stream().filter((agreement) ->         
-            agreement.getAgreement().getAgreementType().equals(agreementType) && 
-                    agreement.getAgreement().getAgreementLevel().equals(agreementLevel)).toList();        
-        
+    public User createAndAddAgreement(User user, AgreementType agreementType, AgreementLevel agreementLevel) {
+        List<AgreementEntry> agreements = user.getAgreements().stream()
+                .filter((agreement) -> agreement.getAgreement().getAgreementType().equals(agreementType)
+                        && agreement.getAgreement().getAgreementLevel().equals(agreementLevel))
+                .toList();
+
         if (agreements.isEmpty()) {
             Agreement agreement = agreementService.createAgreement(agreementType, agreementLevel).stream().findFirst().get();
             user = addAgreement(user, agreement);
-        }   
-        
+        }
+
         return user;
     }
 
@@ -178,14 +107,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         boolean emailExists = userRepository.findByEmailIgnoreCase(email).isPresent();
 
         if (usernameExists || emailExists) {
-            
+
             boolean ldapExists = false;
             try {
                 ldapExists = ldapService.userExists(username, email);
             } catch (BadRequestException bre) {
                 throw new UserNameOrEmailExistsException();
             }
-            
 
             if (ldapExists && usernameExists && emailExists) {
                 throw new UserExistsException(username);
@@ -235,7 +163,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                     u -> u.getAccountStatus().equals(AccountStatus.verified) | u.getAccountStatus().equals(AccountStatus.active))
                     .orElseThrow(() -> new BadRequestException("User not active or verified"));
 
-            if (user.getAccountStatus().equals(AccountStatus.verified) | !ldapService.userExists(user.getUsername(), user.getEmail())) {
+            if (user.getAccountStatus().equals(AccountStatus.verified)
+                    | !ldapService.userExists(user.getUsername(), user.getEmail())) {
                 user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
                 user = new CreateLdapUser(user, ldapUserDetailsManager).execute();
                 user.setAccountStatus(AccountStatus.active);

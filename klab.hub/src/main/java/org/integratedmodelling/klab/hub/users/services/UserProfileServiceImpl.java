@@ -11,11 +11,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.keycloak.KeycloakPrincipal;
-import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.AccessToken;
-import org.keycloak.representations.IDToken;
 import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
 import org.integratedmodelling.klab.hub.tags.services.TagNotificationService;
 import org.integratedmodelling.klab.hub.tokens.dto.TokenVerifyEmailClickback;
@@ -26,6 +21,10 @@ import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -45,26 +44,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     private UserRepository userRepository;
     private LdapServiceImpl ldapServiceImpl;
 
-	@Override
-	public ProfileResource getCurrentUserProfile() {
-	    KeycloakAuthenticationToken authentication = 
-	            (KeycloakAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-		
-		 Principal principal = (Principal) authentication.getPrincipal();
-
-		    String preferredUsername = "";
-
-		    if (principal instanceof KeycloakPrincipal) {
-		        KeycloakPrincipal<KeycloakSecurityContext> kPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
-		        AccessToken token = kPrincipal.getKeycloakSecurityContext().getToken();
-		        preferredUsername = token.getPreferredUsername();
-		    }
-		User user = userRepository.findByNameIgnoreCase(preferredUsername)
-				.orElseThrow(() ->  
-					new UserDoesNotExistException());
-		ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
-		return profile.getSafeProfile();
-	}
+    private ObjectMapper objectMapper;
 
     private EmailManager emailManager;
 
@@ -114,12 +94,25 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public ProfileResource getCurrentUserProfile(boolean remote) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = getUser(username);
+        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken) SecurityContextHolder.getContext()
+                .getAuthentication();
+
+        Principal principal = (Principal) authentication.getPrincipal();
+
+        String preferredUsername = "";
+
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal<KeycloakSecurityContext> kPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
+            AccessToken token = kPrincipal.getKeycloakSecurityContext().getToken();
+            preferredUsername = token.getPreferredUsername();
+        }
+        User user = userRepository.findByNameIgnoreCase(preferredUsername).orElseThrow(() -> new UserDoesNotExistException());
         ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
+
         if (remote) {
             return profile;
         }
+
         return profile.getSafeProfile();
     }
 

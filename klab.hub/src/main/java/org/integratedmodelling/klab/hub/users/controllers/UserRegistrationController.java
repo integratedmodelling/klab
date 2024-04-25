@@ -110,7 +110,7 @@ public class UserRegistrationController {
 	}
 	
 	@PostMapping(value=API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_REQUEST_PASSWORD)
-	@PreAuthorize("authentication.getPrincipal() == #id" )
+	@PreAuthorize("@securityService.isUser(#id)" )
 	public ResponseEntity<?> authorizedPasswordChange(@PathVariable String id) {
 		TokenChangePasswordClickback token = (TokenChangePasswordClickback)
 				tokenService.createToken(id, TokenType.password);

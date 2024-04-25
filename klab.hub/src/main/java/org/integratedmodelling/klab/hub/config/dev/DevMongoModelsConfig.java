@@ -17,46 +17,37 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 
 @Profile("development")
 @Configuration
-public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshedEvent>{
-	
-	private MongoGroupRepository groupRepo;
-	private UserRepository userRepository;
-//	private LdapUserDetailsManager ldapUserDetailsManager;
-	private PasswordEncoder passwordEncoder;
-	private MongoLeverRepository leverRepo;
-	private MongoNodeRepository nodeRepo;
+public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshedEvent> {
 
-	@Autowired
-	public DevMongoModelsConfig(MongoGroupRepository groupRepo,
-			UserRepository userRepository,
+    private MongoGroupRepository groupRepo;
+    private UserRepository userRepository;
+    private LdapUserDetailsManager ldapUserDetailsManager;
+    private PasswordEncoder passwordEncoder;
+    private MongoLeverRepository leverRepo;
+    private MongoNodeRepository nodeRepo;
+
+    @Autowired
+    public DevMongoModelsConfig(MongoGroupRepository groupRepo, UserRepository userRepository,
 //			LdapUserDetailsManager ldapUserDetailsManager,
-			PasswordEncoder passwordEncoder,
-			MongoLeverRepository leverRepo,
-			MongoNodeRepository nodeRepo) {
-		super();
-		this.groupRepo = groupRepo;
-		this.userRepository = userRepository;
+            PasswordEncoder passwordEncoder, MongoLeverRepository leverRepo, MongoNodeRepository nodeRepo) {
+        super();
+        this.groupRepo = groupRepo;
+        this.userRepository = userRepository;
 //		this.ldapUserDetailsManager = ldapUserDetailsManager;
-		this.passwordEncoder = passwordEncoder;
-		this.leverRepo = leverRepo;
-		this.nodeRepo = nodeRepo;
-	}
+        this.passwordEncoder = passwordEncoder;
+        this.leverRepo = leverRepo;
+        this.nodeRepo = nodeRepo;
+    }
 
-	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
-		new CreateIntialGroups(url, groupRepo).execute();
-		
-		new CreateInitialUsers(
-				groupRepo,
-				userRepository,
-//				ldapUserDetailsManager,
-				passwordEncoder
-				).execute();
-		
-		new CreateInitialLevers(leverRepo).execute();
-		new CreateIntialNodes(nodeRepo, groupRepo).execute();
-	}
-    
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
+        new CreateIntialGroups(url, groupRepo).execute();
+
+        new CreateInitialUsers(groupRepo, userRepository, ldapUserDetailsManager, passwordEncoder).execute();
+
+        new CreateInitialLevers(leverRepo).execute();
+        new CreateIntialNodes(nodeRepo, groupRepo).execute();
+    }
 
 }
