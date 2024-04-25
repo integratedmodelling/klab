@@ -55,6 +55,17 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
+//    @Override
+//    protected void configure(HttpSecurity http) throws Exception {
+//        super.configure(http);
+//        http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements())
+//                .permitAll().antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
+//                .regexMatchers(HttpMethod.POST, HubRequestMatchers.getUsersPost()).permitAll()
+//                .regexMatchers(HttpMethod.GET, HubRequestMatchers.getUsersGet()).permitAll()
+//                .regexMatchers(HttpMethod.PUT, HubRequestMatchers.getUsersPut()).permitAll().anyRequest().authenticated().and()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+//    }
+
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

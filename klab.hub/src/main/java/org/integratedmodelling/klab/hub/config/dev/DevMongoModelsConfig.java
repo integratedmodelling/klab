@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.commands.CreateInitialUsers;
+//import org.integratedmodelling.klab.hub.users.commands.CreateInitialUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
@@ -44,7 +44,7 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
         URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
         new CreateIntialGroups(url, groupRepo).execute();
 
-        new CreateInitialUsers(groupRepo, userRepository, ldapUserDetailsManager, passwordEncoder).execute();
+//        new CreateInitialUsers(groupRepo, userRepository, ldapUserDetailsManager, passwordEncoder).execute();
 
         new CreateInitialLevers(leverRepo).execute();
         new CreateIntialNodes(nodeRepo, groupRepo).execute();

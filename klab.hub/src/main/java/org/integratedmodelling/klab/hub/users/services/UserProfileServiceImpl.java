@@ -9,7 +9,6 @@ import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
-import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
 import org.integratedmodelling.klab.hub.tags.services.TagNotificationService;
@@ -42,7 +41,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     protected static final Logger logger = LoggerFactory.getLogger(UserProfileServiceImpl.class);
 
     private UserRepository userRepository;
-    private LdapServiceImpl ldapServiceImpl;
+//    private LdapServiceImpl ldapServiceImpl;
 
     private ObjectMapper objectMapper;
 
@@ -52,14 +51,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     private TagNotificationService tagNotificationService;
 
     public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, EmailManager emailManager,
-            RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl,
+            RegistrationTokenService tokenService/*, LdapServiceImpl ldapServiceImpl*/,
             TagNotificationService tagNotificationService) {
         super();
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
         this.emailManager = emailManager;
         this.tokenService = tokenService;
-        this.ldapServiceImpl = ldapServiceImpl;
+//        this.ldapServiceImpl = ldapServiceImpl;
         this.tagNotificationService = tagNotificationService;
     }
 
@@ -188,12 +187,12 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         /* update ldap */
-        try {
-            ldapServiceImpl.updateUserEmailAddress(username, email);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new KlabException("Error updating ldap user: " + e.getMessage(), e);
-        }
+//        try {
+//            ldapServiceImpl.updateUserEmailAddress(username, email);
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            throw new KlabException("Error updating ldap user: " + e.getMessage(), e);
+//        }
 
         try {
             tagNotificationService.createWarningUserTagNotification(updatedUser,

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.users.dto;
 
+import java.security.AuthProvider;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.api.IdentityModel;
-import org.integratedmodelling.klab.hub.security.oauth2.AuthProvider;
 import org.integratedmodelling.klab.hub.tags.dto.ITagElement;
 import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
 import org.integratedmodelling.klab.hub.tags.dto.TagEntry;

@@ -9,9 +9,6 @@ import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
-import org.integratedmodelling.klab.hub.ldap.commands.CreateLdapUser;
-import org.integratedmodelling.klab.hub.ldap.commands.UpdateLdapUser;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.commands.CreatePendingUser;
@@ -22,11 +19,9 @@ import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.exceptions.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserExistsException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserNameOrEmailExistsException;
 import org.integratedmodelling.klab.hub.users.listeners.NewUserAdded;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,22 +29,22 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private LdapServiceImpl ldapService;
-    private LdapUserDetailsManager ldapUserDetailsManager;
+//    private LdapServiceImpl ldapService;
+//    private LdapUserDetailsManager ldapUserDetailsManager;
     private HubEventPublisher<NewUserAdded> publisher;
     private AgreementService agreementService;
 
     @Autowired
     public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            LdapServiceImpl ldapServiceImpl, LdapUserDetailsManager ldapUserDetailsManager,
+            /*LdapServiceImpl ldapServiceImpl, LdapUserDetailsManager ldapUserDetailsManager,*/
             HubEventPublisher<NewUserAdded> publisher, AgreementService agreementService) {
         super();
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.ldapUserDetailsManager = ldapUserDetailsManager;
+//        this.ldapUserDetailsManager = ldapUserDetailsManager;
         this.publisher = publisher;
         this.agreementService = agreementService;
-        this.ldapService = ldapServiceImpl;
+//        this.ldapService = ldapServiceImpl;
     }
 
     @Override
@@ -96,7 +91,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         if (pendingUser.isPresent()) {
             return pendingUser.get();
         } else {
-            User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
+            User newUser = new CreateUserWithRolesAndStatus(user, userRepository/*, ldapUserDetailsManager*/).execute();
             return newUser;
         }
 
@@ -108,18 +103,18 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         if (usernameExists || emailExists) {
 
-            boolean ldapExists = false;
-            try {
-                ldapExists = ldapService.userExists(username, email);
-            } catch (BadRequestException bre) {
-                throw new UserNameOrEmailExistsException();
-            }
+//            boolean ldapExists = false;
+//            try {
+//                ldapExists = ldapService.userExists(username, email);
+//            } catch (BadRequestException bre) {
+//                throw new UserNameOrEmailExistsException();
+//            }
 
-            if (ldapExists && usernameExists && emailExists) {
+            if (/*dapExists && */usernameExists && emailExists) {
                 throw new UserExistsException(username);
             }
 
-            if (!ldapExists && usernameExists && emailExists) {
+            if (/*!ldapExists &&*/ usernameExists && emailExists) {
                 // we need to return a user who has not activated there account and will be asked to
                 // reactivate with an email.
                 Optional<User> pendingUser = userRepository.findByNameIgnoreCase(username)
@@ -164,15 +159,15 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                     .orElseThrow(() -> new BadRequestException("User not active or verified"));
 
             if (user.getAccountStatus().equals(AccountStatus.verified)
-                    | !ldapService.userExists(user.getUsername(), user.getEmail())) {
+            /*| !ldapService.userExists(user.getUsername(), user.getEmail())*/) {
                 user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
-                user = new CreateLdapUser(user, ldapUserDetailsManager).execute();
+//                user = new CreateLdapUser(user, ldapUserDetailsManager).execute();
                 user.setAccountStatus(AccountStatus.active);
                 user = new UpdateUser(user, userRepository).execute();
                 return user;
             } else {
                 user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
-                user = new UpdateLdapUser(user, ldapUserDetailsManager).execute();
+//                user = new UpdateLdapUser(user, ldapUserDetailsManager).execute();
                 user = new UpdateUser(user, userRepository).execute();
                 return user;
             }
