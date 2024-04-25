@@ -308,4 +308,12 @@ public enum NodeAuthenticationManager {
 		
 		return ret;
 	}
+
+	public void setJwksVerifiers(Map<String, JwtConsumer> jwksVerifiers) {
+		this.jwksVerifiers = jwksVerifiers;
+	}
+
+	public void setPreValidationExtractor(JwtConsumer preValidationExtractor) {
+		this.preValidationExtractor = preValidationExtractor;
+	}
 }
