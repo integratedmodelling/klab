@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub.agreements.services;
 
-import java.awt.print.Pageable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -8,8 +7,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
-import javax.management.Query;
 
 import org.integratedmodelling.klab.hub.agreements.commands.CreateAgreement;
 import org.integratedmodelling.klab.hub.agreements.commands.UpdateAgreement;
@@ -23,6 +20,8 @@ import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;
@@ -52,7 +51,7 @@ public class AgreementServiceImpl implements AgreementService {
     public List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel) {
         AgreementTemplate agreementTemplate = agreementTemplateService.getAgreementTemplate(agreementType, agreementLevel);
         return createAgreementByAgreementTemplate(agreementTemplate);
-        
+
     }
 
     /**
@@ -137,7 +136,7 @@ public class AgreementServiceImpl implements AgreementService {
         if (agreementTemplate.getDefaultDuration() != 0)
             dates.add(new Date(System.currentTimeMillis() + agreementTemplate.getDefaultDuration()));
 
-        /* If dates isn't empty get minimun date of them */        groupEntry.setExpiration(dates.isEmpty()
+        /* If dates isn't empty get minimun date of them */ groupEntry.setExpiration(dates.isEmpty()
                 ? null
                 : Instant.ofEpochMilli(Collections.min(dates).getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
@@ -155,8 +154,7 @@ public class AgreementServiceImpl implements AgreementService {
     public List<Agreement> updateAgreement(Agreement agreement) {
         return new UpdateAgreement(Sets.newHashSet(agreement), agreementRepository).execute();
     }
-    
-    
+
     /**
      * Call to findAll function with defined page and filters
      */
