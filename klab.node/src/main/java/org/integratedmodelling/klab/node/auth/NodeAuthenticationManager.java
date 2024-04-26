@@ -67,7 +67,6 @@ public enum NodeAuthenticationManager {
 	private String nodeName;
 	private String hubName;
 	private INodeIdentity node;
-	long wtfErrors = 0;
 
 	NodeAuthenticationManager() {
 		Authentication.INSTANCE.setPrincipalTranslator((principal) -> {
@@ -254,18 +253,9 @@ public enum NodeAuthenticationManager {
 			result.setAuthenticated(true);
 
 		} catch (MalformedClaimException | InvalidJwtException e) {
-			// TODO see if we should reauthenticate and if so, try that before throwing an
-			// authorization exception
-			if ((wtfErrors % 100) == 0) {
-				Logging.INSTANCE.error("WTF (" + wtfErrors + " errors)", e);
-			}
-			wtfErrors++;
+			//noop
 		} catch (Exception e) {
-			// it was a JWT token, but some other exception happened.
-			if ((wtfErrors % 100) == 0) {
-				Logging.INSTANCE.error("WTF (" + wtfErrors + " errors)", e);
-			}
-			wtfErrors++;
+			Logging.INSTANCE.error("Error validating JWT", e);
 		}
 		
 		return result;
