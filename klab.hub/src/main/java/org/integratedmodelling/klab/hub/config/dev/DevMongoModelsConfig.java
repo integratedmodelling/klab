@@ -1,11 +1,12 @@
 package org.integratedmodelling.klab.hub.config.dev;
 
 import java.net.URL;
-import org.integratedmodelling.klab.hub.commands.CreateInitialUsers;
+
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.users.commands.CreateInitialUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;

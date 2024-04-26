@@ -99,7 +99,7 @@
 		<dependency>
 			<groupId>org.bitbucket.b_c</groupId>
 			<artifactId>jose4j</artifactId>
-			<version>0.9.3</version>
+			<version>0.9.4</version>
 		</dependency>
 
 		<!-- This section is for K.Lab Dependencies -->
@@ -180,7 +180,7 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
-            <version>1.18.28</version>
+            <version>1.18.32</version>
         </dependency>
 
 		<!-- This section is for Spring Security Dependencies -->

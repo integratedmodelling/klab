@@ -1,35 +1,35 @@
---- 
-email: 
-  replyable: 
-    admin: 
+---
+email:
+  replyable:
+    admin:
       emailaddress: "No replay <no-replay@integratedmodelling.org>"
-    general: 
+    general:
       emailaddress: "General <integratedmodelling@integratedmodelling.com>"
-    support: 
+    support:
       emailaddress: "Support  <support@integratedmodelling>"
   noreply:
     emailaddress: "No replay <no-replay@integratedmodelling.org>"
-  server: 
+  server:
     hostname: localhost
     password: password
     port: 3025
     username: system
-engine: 
+engine:
   url: "https://localhost:8287"
 logging:
-  file:  hub.log
-mongo: 
+  file: hub.log
+mongo:
   hostname: localhost
   port: 27017
-server: 
+server:
   port: ${random.int(5100,5200)}
-  servlet: 
+  servlet:
     contextPath: /hub
-site: 
+site:
   callback: "http://172.17.0.1:8080/hub/ui/index.html"
   clickback: "/clickback/{tokenString}"
   fullname: "Integrated Modelling Dashboard"
-  server: 
+  server:
     id: im
   shortname: im-dashboard
   url: "http://172.17.0.1:8080/hub"
@@ -38,22 +38,22 @@ spring:
     consul:
       discovery:
         health-check-path: ${server.servlet.context-path}/actuator/health
-        health-check-interval: 5s 
-  ldap: 
-    embedded: 
+        health-check-interval: 5s
+  ldap:
+    embedded:
       base-dn: "dc=integratedmodelling,dc=org"
-      credential: 
+      credential:
         password: password
         username: "cn=admin,dc=integratedmodelling,dc=org"
       ldif: "classpath:initial-ldap-structure.ldif"
       port: 8389
-      validation: 
+      validation:
         enabled: true
-  security: 
-    oauth2: 
-      client: 
-        registration: 
-          google: 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
             clientId: Norms_A_TOKEN_g0.apps.googleusercontent.co
             clientSecret: NotGivingAway
             redirectUriTemplace: "{baseUrl}/oauth2/callback/{registrationId}"
@@ -64,7 +64,7 @@ klab:
   hubname: testHub
   partner:
     name: "The Semantic Web of BS, Inc."
-    email:  "godzilla@semanticweb.org"
+    email: "godzilla@semanticweb.org"
     addess: "12 Semantic Street, 00300 Kakazia, Bulland"
     phone: "+000 (323) 232 3434"
     description: "We don't really exist"

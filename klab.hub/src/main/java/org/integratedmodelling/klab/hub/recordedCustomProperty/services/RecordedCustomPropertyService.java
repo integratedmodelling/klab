@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.recordedCustomProperty.services;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
+import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
 import org.springframework.stereotype.Service;
 

@@ -886,7 +886,7 @@
 		<dependency>
 				<groupId>io.minio</groupId>
 				<artifactId>minio</artifactId>
-				<version>8.5.4</version>
+				<version>8.5.9</version>
 				<exclusions>
 					<exclusion>
 						<groupId>com.google.guava</groupId>

@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.auth.Node;
-import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
+import org.integratedmodelling.klab.hub.nodes.commands.GenerateHubReference;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;

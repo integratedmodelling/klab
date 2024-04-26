@@ -6,11 +6,10 @@ import java.util.Optional;
 
 import org.bson.types.ObjectId;
 import org.integratedmodelling.klab.auth.Role;
-import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.stats.controllers.GroupUsersByDate;
+import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.springframework.data.mongodb.repository.Aggregation;
-import org.integratedmodelling.klab.hub.api.User.AccountStatus;
-import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 

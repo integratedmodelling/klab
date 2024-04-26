@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.hub.agreements.commands;
 
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementTemplate;
 import org.integratedmodelling.klab.hub.repository.AgreementTemplateRepository;
 
 public class DeleteAgreementTemplates {

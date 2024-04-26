@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.agreements.services;
 
+import java.awt.print.Pageable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -8,20 +9,20 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.api.Agreement;
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
-import org.integratedmodelling.klab.hub.api.GroupEntry;
-import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.commands.CreateAgreement;
-import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
+import javax.management.Query;
+
+import org.integratedmodelling.klab.hub.agreements.commands.CreateAgreement;
+import org.integratedmodelling.klab.hub.agreements.commands.UpdateAgreement;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementTemplate;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Sets;

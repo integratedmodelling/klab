@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServletRequest;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.api.GroupRequestTask;
 import org.integratedmodelling.klab.hub.api.Task;
-import org.integratedmodelling.klab.hub.api.TaskBuilder;
 import org.integratedmodelling.klab.hub.api.TaskParameters;
-import org.integratedmodelling.klab.hub.api.TaskStatus;
-import org.integratedmodelling.klab.hub.api.TokenClickback;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.TaskRepository;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.support.TaskBuilder;
+import org.integratedmodelling.klab.hub.tokens.dto.TokenClickback;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

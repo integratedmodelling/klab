@@ -53,7 +53,7 @@ public class DebugFile {
         if (DEBUG) {
             if (_debug == null) {
                 try {
-                    _debug = new DebugFile(System.getProperty("user.home") + File.separator + "debug.txt", true);
+                    _debug = new DebugFile(System.getProperty("java.io.tmpdir") + File.separator + "debug.txt", true);
                 } catch (KlabIOException e) {
                 }
             }

@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.net.URISyntaxException;
 
 import org.integratedmodelling.kim.api.IKimNamespace.Role;
-import org.integratedmodelling.klab.hub.api.Agreement;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;

@@ -3,9 +3,9 @@ package org.integratedmodelling.klab.hub.groups.services;
 import java.util.Collection;
 import java.util.List;
 
-import org.integratedmodelling.klab.hub.api.GroupSummary;
-import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.service.GenericHubService;
+import org.integratedmodelling.klab.hub.groups.dto.GroupSummary;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
+import org.integratedmodelling.klab.hub.services.GenericHubService;
 import org.springframework.stereotype.Service;
 
 @Service

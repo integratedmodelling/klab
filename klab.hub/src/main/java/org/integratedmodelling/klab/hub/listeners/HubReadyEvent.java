@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.listeners;
 
+import org.integratedmodelling.klab.hub.licenses.listeners.LicenseStartupReady;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 

@@ -9,6 +9,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Optional;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import io.minio.MinioClient;
@@ -49,6 +50,7 @@ public class MinioExploratoryTests {
     }
 
     @Test
+    @Disabled("There are no known public buckets that will remain unmodified forever.")
     public void knownBucketExists()
             throws InvalidKeyException, ErrorResponseException, InsufficientDataException, InternalException,
             InvalidResponseException, NoSuchAlgorithmException, ServerException, XmlParserException, IOException {
