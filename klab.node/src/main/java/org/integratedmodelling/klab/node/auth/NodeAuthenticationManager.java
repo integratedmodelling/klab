@@ -51,12 +51,9 @@ public enum NodeAuthenticationManager {
 
 	INSTANCE;
 
-	private static final String TOKEN_CLASS_PACKAGE = "org.integratedmodelling.node.resource.token";
-	private static final int ALLOWED_CLOCK_SKEW_MS = 30000;
-	private static final String DEFAULT_TOKEN_CLASS = EngineAuthorization.class.getSimpleName();
-	private static final long JWKS_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // every 10 minutes
+	
+	private static final int ALLOWED_CLOCK_SKEW_MS = 30000;	
 	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
-	private static final String JWT_CLAIM_TOKEN_TYPE = "cls";
 	private static final String ENGINE_AUDIENCE = "engine";
 	private static final String JWT_CLAIM_KEY_ROLES = "roles";
 
