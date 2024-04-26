@@ -31,7 +31,7 @@ public class AuthenticationFilterTest {
 	private MockMvc mvc;
 
 	private static RsaJsonWebKey rsaJsonWebKey;
-	private static long oneHour = 60 * 1000;
+	private static long oneHour = 60 * 60 * 1000;
 
 	@BeforeAll
 	static void setUp() throws Exception {
