@@ -199,7 +199,6 @@ public class STACEncoder implements IResourceEncoder {
             String assetId = resource.getParameters().get("asset", String.class);
             HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
-            scope.getMonitor().info("Coverage: " + coverage);
         } catch (Exception e) {
             scope.getMonitor().error("Cannot create STAC file. " + e.getMessage());
         }
