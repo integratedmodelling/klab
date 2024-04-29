@@ -98,26 +98,36 @@ public class STACEncoder implements IResourceEncoder {
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
     }
 
-    private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics) {
+    private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics, IMonitor monitor) {
         if (targetSemantics == null) {
+            monitor.debug("Using average as merge mode");
             return HMRaster.MergeMode.AVG;
         }
         switch(targetSemantics.getArtifactType()) {
         case CONCEPT:
         case BOOLEAN:
+            monitor.debug("Using substitute as merge mode");
             return HMRaster.MergeMode.SUBSTITUTE;
         case NUMBER:
-            return Observables.INSTANCE.isExtensive(targetSemantics) ? HMRaster.MergeMode.SUM : HMRaster.MergeMode.SUBSTITUTE;
+            if (Observables.INSTANCE.isExtensive(targetSemantics)) {
+                monitor.debug("Using sum as merge mode");
+               return HMRaster.MergeMode.SUM;
+            }
+            monitor.debug("Using substitute as merge mode");
+            return HMRaster.MergeMode.SUBSTITUTE;
         default:
+            monitor.debug("Defaulting to average as merge mode");
             return HMRaster.MergeMode.AVG;
         }
     }
 
-    private void sortByDate(List<HMStacItem> items) {
+    private void sortByDate(List<HMStacItem> items, IMonitor monitor) {
         if (items.stream().anyMatch(i -> i.getTimestamp() == null)) {
             throw new KlabIllegalStateException("STAC items are lacking a timestamp and could not be sorted by date.");
         }
         items.sort((i1, i2) -> i1.getTimestamp().compareTo(i2.getTimestamp()));
+        monitor.debug(
+                "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
     @Override
@@ -126,7 +136,7 @@ public class STACEncoder implements IResourceEncoder {
         IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                 ? ((Observation) scope.getTargetArtifact()).getObservable()
                 : null;
-        HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics);
+        HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
 
         String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
         String collectionId = resource.getParameters().get("collectionId", String.class);
@@ -168,9 +178,10 @@ public class STACEncoder implements IResourceEncoder {
             List<HMStacItem> items = collection.setGeometryFilter(poly)
                     .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
                     .searchItems();
+            scope.getMonitor().debug("Found " + items.size() + " STAC items.");
 
             if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
-                sortByDate(items);
+                sortByDate(items, scope.getMonitor());
             }
 
             if (items.isEmpty()) {
