@@ -1,11 +1,11 @@
 package org.integratedmodelling.klab.hub.users.services;
 
-import org.integratedmodelling.klab.hub.api.Agreement;
-import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
-import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
-import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.exceptions.UserEmailExistsException;
+import org.integratedmodelling.klab.hub.users.exceptions.UserExistsException;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -5,10 +5,10 @@ import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.api.MongoTag;
-import org.integratedmodelling.klab.hub.api.TagEntry;
-import org.integratedmodelling.klab.hub.api.TagNotification;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
+import org.integratedmodelling.klab.hub.tags.dto.TagEntry;
+import org.integratedmodelling.klab.hub.tags.dto.TagNotification;
 import org.integratedmodelling.klab.hub.users.services.UserTagService;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.springframework.beans.factory.annotation.Autowired;

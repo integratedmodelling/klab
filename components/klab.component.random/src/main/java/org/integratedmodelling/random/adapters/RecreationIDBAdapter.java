@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -21,18 +20,28 @@ import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.scale.Scale;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONException;
+import kong.unirest.json.JSONObject;
 
 @UrnAdapter(type = "recreationidb", version = Version.CURRENT)
 public class RecreationIDBAdapter implements IUrnAdapter {
@@ -81,9 +90,6 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 		if (urn.getParameters().containsKey(OFFSET)) {
 			parameters.put(OFFSET, urn.getParameters().get(OFFSET));
 		}
-		if (urn.getParameters().containsKey(STATE)) {
-			parameters.put(STATE, urn.getParameters().get(STATE));
-		}
 		if (urn.getParameters().containsKey(ACTIVITY)) {
 			parameters.put(ACTIVITY, urn.getParameters().get(ACTIVITY));
 		}
@@ -95,6 +101,8 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
 
 		IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
+        IEnvelope envelope = space.getEnvelope();
 
 		if (scale.getSpace() != null) {
 			RecreationIDB ridb = new RecreationIDB();
@@ -106,7 +114,7 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
 			List<String> inputs = new ArrayList<>();
 			try {
-				inputs = buildRecreationIDBInput(parameters);
+                inputs = buildRecreationIDBInput(parameters, envelope);
 			} catch (UnsupportedEncodingException e) {
 				throw new KlabValidationException("Failed to encode the parameters.");
 			}
@@ -127,6 +135,11 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 				// to the areas are points.
 				shape = Shape.create(lon, lat, (Projection) scope.getScale().getSpace().getProjection());
 
+                // Discard points that are not inside the polygon
+                if (!space.contains(shape)) {
+                    continue;
+                }
+
 				Builder obuilder = builder.startObject(scope.getTargetName(), siteName, makeScale(urn, shape, scope));
 
 				// Add attributes to each recreation area like the name and id.
@@ -143,19 +156,28 @@ public class RecreationIDBAdapter implements IUrnAdapter {
 
 	}
 
-	private final List<String> USA_STATES = Arrays.asList("AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA",
-			"HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV",
-			"NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA",
-			"WA", "WV", "WI", "WY");
+    private List<String> getStatesFromEnvelope(IEnvelope envelope) {
+        HttpResponse<JsonNode> response = Unirest.get("https://integratedmodelling.org/aux-geoserver/ows?service=WFS&version=2.0.0&request=GetFeature&typeNames=urban_heat_modelling:gadm_level_1_usa&bbox="
+                + envelope.getMinX() +"," + envelope.getMinY() + "," + envelope.getMaxX() + "," + envelope.getMaxY()
+                + ",EPSG:4326&outputFormat=application/json").asJson();
+        if (!response.isSuccess()) {
+            throw new KlabResourceNotFoundException("Cannot retrieve information from geoserver resource \"urban_heat_modelling:gadm_level_1_usa\".");
+        }
 
-	private List<String> buildRecreationIDBInput(Map<String, String> parameters) throws UnsupportedEncodingException {
-		ArrayList<String> query = new ArrayList<>();
-		List<String> states = parameters.containsKey(STATE) ? Arrays.asList(parameters.get(STATE).split(","))
-				: USA_STATES;
+        JSONObject statesData = response.getBody().getObject();
+        try {
+            return statesData.getJSONArray("features").toList().stream().map(
+                    feature -> ((JSONObject) feature).getJSONObject("properties").getString("iso_1").replaceFirst("US-", "")).toList();
+        } catch (JSONException e) {
+            throw new KlabResourceAccessException("Error while parsing \"urban_heat_modelling:gadm_level_1_usa\"");
+        }
+    }
+
+    private List<String> buildRecreationIDBInput(Map<String, String> parameters, IEnvelope envelope)
+            throws UnsupportedEncodingException {
+        List<String> states = getStatesFromEnvelope(envelope);
+        List<String> query = new ArrayList<>();
 		for (Map.Entry<String, String> entry : parameters.entrySet()) {
-			if (entry.getKey().equals(STATE)) {
-				continue;
-			}
 			String parameter = entry.getKey() + "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8.toString());
 			query.add(parameter);
 		}

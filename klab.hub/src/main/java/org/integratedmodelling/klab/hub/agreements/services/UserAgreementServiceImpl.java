@@ -3,12 +3,12 @@ package org.integratedmodelling.klab.hub.agreements.services;
 import java.util.Collection;
 import java.util.Date;
 
-import org.integratedmodelling.klab.hub.api.Agreement;
-import org.integratedmodelling.klab.hub.api.AgreementEntry;
-import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

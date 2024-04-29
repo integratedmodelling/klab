@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URISyntaxException;
 
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementTemplate;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.repository.AgreementTemplateRepository;

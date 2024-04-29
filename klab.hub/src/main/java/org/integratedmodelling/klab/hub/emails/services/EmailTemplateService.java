@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.hub.emails.services;
 
 import java.util.Collection;
-import org.integratedmodelling.klab.hub.api.EmailTemplate;
-import org.integratedmodelling.klab.hub.service.GenericHubService;
+
+import org.integratedmodelling.klab.hub.emails.dto.EmailTemplate;
+import org.integratedmodelling.klab.hub.services.GenericHubService;
 
 /**
  * The email template service

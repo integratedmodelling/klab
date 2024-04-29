@@ -8,14 +8,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import org.integratedmodelling.klab.hub.api.Agreement;
-import org.integratedmodelling.klab.hub.api.AgreementTemplate;
-import org.integratedmodelling.klab.hub.api.GroupEntry;
-import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.commands.CreateAgreement;
-import org.integratedmodelling.klab.hub.commands.UpdateAgreement;
+import org.integratedmodelling.klab.hub.agreements.commands.CreateAgreement;
+import org.integratedmodelling.klab.hub.agreements.commands.UpdateAgreement;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementTemplate;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,7 @@ public class AgreementServiceImpl implements AgreementService {
     public List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel) {
         AgreementTemplate agreementTemplate = agreementTemplateService.getAgreementTemplate(agreementType, agreementLevel);
         return createAgreementByAgreementTemplate(agreementTemplate);
-        
+
     }
 
     /**
@@ -136,7 +136,7 @@ public class AgreementServiceImpl implements AgreementService {
         if (agreementTemplate.getDefaultDuration() != 0)
             dates.add(new Date(System.currentTimeMillis() + agreementTemplate.getDefaultDuration()));
 
-        /* If dates isn't empty get minimun date of them */        groupEntry.setExpiration(dates.isEmpty()
+        /* If dates isn't empty get minimun date of them */ groupEntry.setExpiration(dates.isEmpty()
                 ? null
                 : Instant.ofEpochMilli(Collections.min(dates).getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
@@ -154,8 +154,7 @@ public class AgreementServiceImpl implements AgreementService {
     public List<Agreement> updateAgreement(Agreement agreement) {
         return new UpdateAgreement(Sets.newHashSet(agreement), agreementRepository).execute();
     }
-    
-    
+
     /**
      * Call to findAll function with defined page and filters
      */

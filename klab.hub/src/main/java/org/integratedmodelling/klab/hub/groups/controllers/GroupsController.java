@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.hub.groups.controllers;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.groups.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

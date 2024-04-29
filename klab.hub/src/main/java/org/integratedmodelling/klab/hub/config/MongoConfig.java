@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub.config;
 
-
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -22,25 +21,24 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
-
 @Profile("production")
 @Configuration
 @EnableMongoRepositories(basePackages = "org.integratedmodelling.klab.hub.repository")
 @EnableMongoAuditing
 public class MongoConfig extends AbstractMongoClientConfiguration {
-	
+
     @Value("${mongo.hostname}")
     private String HOSTNAME;
 
     @Value("${mongo.port}")
     private int PORT;
 
-	@Autowired
+    @Autowired
     private MappingMongoConverter mongoConverter;
-    
+
     @Bean
     public MongoTemplate mongoTemplate(MongoClient mongoClient) {
-    	this.mongoConverter.setMapKeyDotReplacement("#");
+        this.mongoConverter.setMapKeyDotReplacement("#");
         return new MongoTemplate(mongoDbFactory(mongoClient), this.mongoConverter);
     }
 
@@ -48,7 +46,7 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     public MongoDatabaseFactory mongoDbFactory(MongoClient mongoClient) {
         return new SimpleMongoClientDatabaseFactory(mongoClient, getDatabaseName());
     }
-    
+
     @Bean
     public ValidatingMongoEventListener validatingMongoEventListener() {
         return new ValidatingMongoEventListener(validator());
@@ -58,20 +56,26 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     public LocalValidatorFactoryBean validator() {
         return new LocalValidatorFactoryBean();
     }
-    
-    @Override
-    protected Collection<String> getMappingBasePackages(){
-        return Arrays.asList("org.integratedmodelling.klab.hub.api");
-    }
-    
-	@Override
-	protected String getDatabaseName() {
-		return "hub";
-	}
 
-	@Override
-	public MongoClient mongoClient() {
-		String con = "mongodb://" + HOSTNAME + ":" + PORT;
-		return MongoClients.create(con);
-	}
+    @Bean
+    public AuditorAwareImpl auditorProvider() {
+        return new AuditorAwareImpl();
+    }
+
+    @Override
+    protected Collection<String> getMappingBasePackages() {
+        return Arrays.asList("org.integratedmodelling.klab.hub.api", "org.integratedmodelling.klab.hub.tokens.dto",
+                "org.integratedmodelling.klab.hub.licenses.dto");
+    }
+
+    @Override
+    protected String getDatabaseName() {
+        return "hub";
+    }
+
+    @Override
+    public MongoClient mongoClient() {
+        String con = "mongodb://" + HOSTNAME + ":" + PORT;
+        return MongoClients.create(con);
+    }
 }
