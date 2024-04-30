@@ -119,7 +119,7 @@ public class Client extends RestTemplate implements IClient {
         return new Client(custom);
     }
 
-    public static Client create() {
+    public static synchronized Client create() {
 
         if (factory == null) {
             factory = new HttpComponentsClientHttpRequestFactory();
@@ -146,7 +146,7 @@ public class Client extends RestTemplate implements IClient {
      * 
      * @return
      */
-    public static Client createUniversalJSON() {
+    public static synchronized Client createUniversalJSON() {
 
         if (factory == null) {
             factory = new HttpComponentsClientHttpRequestFactory();
