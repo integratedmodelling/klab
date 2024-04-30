@@ -23,7 +23,7 @@ public class UserDeletionController {
     }
 
     @DeleteMapping(value = API.HUB.USER_BASE_ID, produces = "application/json")
-    @PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_SYSTEM')")
+    @PreAuthorize("authentication.getPrincipal() == #username or hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
     public ResponseEntity< ? > deleteUser(@PathVariable("id") String username) {
         userService.deleteUser(username);
         JSONObject resp = new JSONObject();
