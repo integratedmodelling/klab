@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.hub.agreements.services;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.hub.api.Agreement;
-import org.integratedmodelling.klab.hub.api.AgreementEntry;
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.springframework.stereotype.Service;
 
 @Service

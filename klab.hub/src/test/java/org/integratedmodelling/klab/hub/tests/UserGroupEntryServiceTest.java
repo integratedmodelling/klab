@@ -4,20 +4,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
-import org.integratedmodelling.klab.hub.api.Agreement;
-import org.integratedmodelling.klab.hub.api.AgreementEntry;
-import org.integratedmodelling.klab.hub.api.GroupEntry;
-import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.api.User;
-import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
-import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
+import org.integratedmodelling.klab.hub.users.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.users.services.UserGroupEntryServiceImpl;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -64,7 +63,7 @@ public class UserGroupEntryServiceTest {
         MongoGroup mongoGroup = MockitoHelper.mockMongoGroup(GROUP_NAME);
         Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
 
-        userService.addUsersGroupsByNames(updateRequest); 
+        userService.addUsersGroupsByNames(updateRequest);
     }
 
     @Test
@@ -77,7 +76,7 @@ public class UserGroupEntryServiceTest {
         Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
 
         Assertions.assertThrows(UserDoesNotExistException.class, () -> {
-            userService.addUsersGroupsByNames(updateRequest); 
+            userService.addUsersGroupsByNames(updateRequest);
         });
     }
 
@@ -96,7 +95,7 @@ public class UserGroupEntryServiceTest {
         Agreement agreement = MockitoHelper.mockAgreement();
 //        AgreementEntry agreementEntry = MockitoHelper.mockAgreementEntry(agreement);
 
-        userService.addUsersGroupsByNames(updateRequest); 
+        userService.addUsersGroupsByNames(updateRequest);
     }
 
     @Test
@@ -119,6 +118,6 @@ public class UserGroupEntryServiceTest {
         UpdateUsersGroups updateRequest = Mockito.mock(UpdateUsersGroups.class);
         Mockito.when(updateRequest.getGroupNames()).thenReturn(Set.of(GROUP_NAME));
         Mockito.when(updateRequest.getUsernames()).thenReturn(Set.of(USER_NAME));
-        userService.addUsersGroupsByNames(updateRequest); 
+        userService.addUsersGroupsByNames(updateRequest);
     }
 }

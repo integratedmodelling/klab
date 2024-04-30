@@ -1,13 +1,18 @@
 package org.integratedmodelling.klab.hub.api;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.repository.AgreementRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
+import org.integratedmodelling.klab.hub.tasks.commands.TaskCommand;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
+import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
 import org.integratedmodelling.klab.hub.tasks.services.CommandFactory;
+import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

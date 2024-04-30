@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.hub.api.RemoveGroupTask;
 import org.integratedmodelling.klab.hub.api.RemoveRoleTask;
 import org.integratedmodelling.klab.hub.api.SetRoleTask;
 import org.integratedmodelling.klab.hub.api.Task;
-import org.integratedmodelling.klab.hub.api.TaskBuilder;
+import org.integratedmodelling.klab.hub.tasks.support.TaskBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
@@ -21,6 +23,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Observables;
@@ -653,6 +656,42 @@ public class RuntimeBehavior {
             }.start();
         }
     }
+    
+    @Action(id = "save", fires = {}, description = "Save a previous prepared file on export folder")
+    public static class Save extends KlabActionExecutor {
+        public Save(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+        
+        @Override
+        public void run(IKActorsBehavior.Scope scope) {
+
+            Object suggestedFilename = arguments.get("filename");
+            if (suggestedFilename instanceof KActorsValue) {
+                suggestedFilename = ((KActorsValue) suggestedFilename).evaluate(scope, identity, true);
+            }
+
+            if (!arguments.getUnnamedKeys().isEmpty()) {
+
+                Object value = arguments.getUnnamedArguments().get(0);
+                if (value instanceof KActorsValue) {
+                    value = ((KActorsValue) value).evaluate(scope, identity, true);
+                }
+
+                if (value != null && value instanceof File) {
+                    File file = (File)value;
+                    File output = Configuration.INSTANCE.getExportFile(suggestedFilename != null ? suggestedFilename.toString() : file.getName());
+                    try {
+                        FileUtils.copyFile(file, output);
+                    } catch (IOException e) {
+                        fail(scope, e);
+                    }
+                }
+
+            }
+        }
+    }
 
     /**
      * Install a listener in a context that will fire an object to the sender whenever it is
@@ -783,7 +822,7 @@ public class RuntimeBehavior {
                         throw new KlabIllegalArgumentException(
                                 "cannot use additional space unit " + o + " as a context parameter");
                     }
-                } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+                } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((Quantity) o).getUnit()))) {
                     if (!contextDefinition.containsKey("timeunit")) {
                         key = "timeunit";
                         contextDefinition.put(key, ((Quantity) o).getUnitStatement());
@@ -820,6 +859,15 @@ public class RuntimeBehavior {
                     contextDefinition.put(key, o);
                 } else {
                     throw new KlabIllegalArgumentException("cannot use additional space extent " + o + " as a context parameter");
+                }
+            } else if (o instanceof Integer){
+                // is allowed to use an integer to represent the year
+                int year = (Integer)o;
+                if (year > 1900 && year < 2200) {
+                    key = "time";
+                    contextDefinition.put(key, Time.create(year));
+                } else {
+                    throw new KlabIllegalArgumentException("cannot use additional time extent " + o + " as a context parameter");
                 }
             } else if (o instanceof ITime) {
                 if (!contextDefinition.containsKey("time")) {

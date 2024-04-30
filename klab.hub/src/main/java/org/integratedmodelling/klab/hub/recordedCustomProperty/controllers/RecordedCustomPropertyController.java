@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.api.RecordedCustomProperty;
+import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
 import org.integratedmodelling.klab.hub.recordedCustomProperty.payload.RecordedCustomPropertiyRequest;
 import org.integratedmodelling.klab.hub.recordedCustomProperty.services.RecordedCustomPropertyService;

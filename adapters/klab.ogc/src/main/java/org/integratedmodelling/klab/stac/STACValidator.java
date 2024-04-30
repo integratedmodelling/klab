@@ -21,13 +21,13 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.Pair;
 
-import kong.unirest.JsonNode;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -44,10 +44,9 @@ public class STACValidator implements IResourceValidator {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
         String catalogUrl = userData.get("catalogUrl", String.class);
-        STACService service = STACAdapter.getService(catalogUrl);
-
         String collectionId = userData.get("collectionId", String.class);
-        JsonNode metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
+        STACService service = STACAdapter.getService(catalogUrl, collectionId);
+        JSONObject metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
 
         Set<String> extensions = readSTACExtensions(metadata);
         userData.put("stac_extensions", extensions);
@@ -55,6 +54,9 @@ public class STACValidator implements IResourceValidator {
         IGeometry geometry = service.getGeometry(userData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
+
+        // The default URL of the resource is the collection endpoint. May be overwritten. 
+        builder.withMetadata(IMetadata.DC_URL, catalogUrl + "/collections/" + collectionId);
 
         String assetId = userData.get("asset", String.class);
         JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
@@ -74,7 +76,7 @@ public class STACValidator implements IResourceValidator {
         if (type != null) {
             builder.withType(type);
         }
-        readMetadata(metadata.getObject(), builder);
+        readMetadata(metadata, builder);
         return builder;
     }
 
@@ -84,8 +86,8 @@ public class STACValidator implements IResourceValidator {
         }
         if (asset.getJSONArray("raster:bands").isEmpty()
                 || !asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
-            // We could assume that most rasters are numeric. When in doubt, we could set the default to Number
-            return null;
+            // We assume that most rasters are numeric. When in doubt, we set the default to Number
+            return Type.NUMBER;
         }
         String type = asset.getJSONArray("raster:bands").getJSONObject(0).getString("data_type");
         // https://github.com/stac-extensions/raster?tab=readme-ov-file#data-types
@@ -93,7 +95,12 @@ public class STACValidator implements IResourceValidator {
         if (NUMERIC_DATA_TYPES.contains(type)) {
             return Type.NUMBER;
         }
-        // The rest of possible values are either complex numbers or a generic "other"
+        final Set<String> COMPLEX_DATA_TYPES = Set.of("cint16", "cint32", "cfloat32", "cfloat64");
+        if (COMPLEX_DATA_TYPES.contains(type)) {
+            throw new KlabUnimplementedException("STAC resource contains raster of complex numbers.");
+        }
+        // The only possible value left is a generic "other".
+        // It could be boolean, string, higher precision numbers, or any other type.
         return null;
     }
 
@@ -116,13 +123,13 @@ public class STACValidator implements IResourceValidator {
         return codelist;
     }
 
-    private Set<String> readSTACExtensions(JsonNode response) {
+    private Set<String> readSTACExtensions(JSONObject response) {
         Set<String> extensions = new HashSet<>();
-        if (!response.getObject().has("stac_extensions")) {
+        if (!response.has("stac_extensions")) {
             return extensions;
         }
 
-        JSONArray extensionArray = response.getObject().getJSONArray("stac_extensions");
+        JSONArray extensionArray = response.getJSONArray("stac_extensions");
         for (Object ext : extensionArray) {
             extensions.add(STACUtils.getExtensionName(ext.toString()));
         }

@@ -2,9 +2,6 @@ package org.integratedmodelling.klab.hub.security.oauth2;
 
 import java.util.Map;
 
-import org.integratedmodelling.klab.hub.api.AuthProvider;
-import org.integratedmodelling.klab.hub.exception.OAuth2AuthenticationProcessingException;
-
 public class OAuth2UserInfoFactory {
 
     public static OAuth2UserInfo getOAuth2UserInfo(String registrationId, Map<String, Object> attributes) {

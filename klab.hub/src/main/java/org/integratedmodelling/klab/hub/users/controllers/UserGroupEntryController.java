@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.hub.users.controllers;
 import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
+import org.integratedmodelling.klab.hub.users.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.users.services.UserGroupEntryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

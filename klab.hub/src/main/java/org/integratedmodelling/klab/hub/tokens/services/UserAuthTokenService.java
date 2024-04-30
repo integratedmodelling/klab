@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
-import org.integratedmodelling.klab.hub.api.TokenAuthentication;
-import org.integratedmodelling.klab.hub.payload.LoginResponse;
-import org.integratedmodelling.klab.hub.payload.LogoutResponse;
+import org.integratedmodelling.klab.hub.tokens.dto.TokenAuthentication;
+import org.integratedmodelling.klab.hub.users.payload.LoginResponse;
+import org.integratedmodelling.klab.hub.users.payload.LogoutResponse;
 import org.springframework.stereotype.Service;
 
 @Service

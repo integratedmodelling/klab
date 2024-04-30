@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.hub.stats.services;
 
 import java.util.Collection;
 
-import org.integratedmodelling.klab.hub.api.MongoGroup;
-import org.integratedmodelling.klab.hub.service.GenericHubService;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
+import org.integratedmodelling.klab.hub.services.GenericHubService;
 import org.springframework.stereotype.Service;
 
 @Service

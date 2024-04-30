@@ -110,7 +110,7 @@ public class IntelligentMap<T> implements Map<IConcept, T> {
 	@Override
 	public T put(IConcept concept, T data) {
 
-		DebugFile.println("STORING " + concept + ": " + data);
+		//DebugFile.println("STORING " + concept + ": " + data);
 		
 		cache.remove(concept.getDefinition());
 		
