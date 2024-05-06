@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.auth.Node;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -248,6 +249,10 @@ public enum Network implements INetworkService {
         for (INodeIdentity node : onlineNodes.values()) {
             try {
                 ((Node) node).mergeCapabilities(node.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
+            } catch (KlabAuthorizationException e) {
+              Logging.INSTANCE.warn("Attempting re-authentication");
+              Authentication.INSTANCE.reauthenticate();
+              checkNetwork();
             } catch (Exception e) {
                 moveOffline.add(node);
                 if (Services.INSTANCE.getService(IResourceService.class) != null) {
@@ -265,6 +270,10 @@ public enum Network implements INetworkService {
                     Services.INSTANCE.getService(IResourceService.class).getPublicResourceCatalog().updateNode(node);
                 }
                 Logging.INSTANCE.info("node " + node.getName() + " went online");
+            } catch (KlabAuthorizationException e) {
+              Logging.INSTANCE.warn("Attempting re-authentication");
+              Authentication.INSTANCE.reauthenticate();
+              checkNetwork();
             } catch (Exception e) {
                 Long l = nodeWarnings.get(node.getName());
                 if (l == null || (System.currentTimeMillis() - l) > (1000 * 60 * 10)) {

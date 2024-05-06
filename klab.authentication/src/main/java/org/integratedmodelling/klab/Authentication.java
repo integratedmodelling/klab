@@ -2,6 +2,7 @@ package org.integratedmodelling.klab;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -127,6 +128,8 @@ public enum Authentication implements IAuthenticationService {
 
     private Client client = Client.create();
 
+    private ICertificate certificate;
+
     private Authentication() {
 
         /*
@@ -135,7 +138,7 @@ public enum Authentication implements IAuthenticationService {
         File file = new File(Configuration.INSTANCE.getDataPath() + File.separator + "credentials.json");
         if (!file.exists()) {
             try {
-                FileUtils.writeStringToFile(file, "{}");
+                FileUtils.writeStringToFile(file, "{}", StandardCharsets.UTF_8);
             } catch (IOException e) {
                 throw new KlabIOException(e);
             }
@@ -415,7 +418,19 @@ public enum Authentication implements IAuthenticationService {
             registerIdentity(ret);
         }
 
+        this.certificate = certificate;
+
         return ret;
+    }
+
+    /**
+     * Attempts to re-authenticate the engine using a cached version of the certificate
+     */
+    public IUserIdentity reauthenticate() {
+      if (this.certificate == null) {
+        return null;
+      }
+      return authenticate(this.certificate);
     }
 
     public ExternalAuthenticationCredentials getCredentials(String hostUrl) {
