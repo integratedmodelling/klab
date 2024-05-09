@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.LoginFailedExcepetion;
 import org.integratedmodelling.klab.hub.users.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.users.payload.LogoutResponse;
+import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -41,15 +43,18 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	
 	private UserRepository userRepository;
 	
+	private UserProfileService profileService;
+	
 	private TokenRepository tokenRepository;
 	
 	private ObjectMapper objectMapper;
 	
 	public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
-			TokenRepository tokenRepository, ObjectMapper objectMapper) {
+			UserProfileService profileService, TokenRepository tokenRepository, ObjectMapper objectMapper) {
 		super();
 		this.authenticationManager = authenticationManager;
 		this.userRepository = userRepository;
+		this.profileService = profileService;
 		this.tokenRepository = tokenRepository;
 		this.objectMapper = objectMapper;
 	}
@@ -115,6 +120,8 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService{
 	public LoginResponse<?> getAuthResponse(String username, String password, boolean remote) {
 		TokenAuthentication token = getUserAuthenticationToken(username, password);
 		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
+		profile.setLastLogin(LocalDateTime.now());
+        profileService.updateUserByProfile(profile);
 		if (remote) {
             profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
             return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
