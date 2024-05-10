@@ -30,6 +30,11 @@ public class JWTAuthorizationFilter extends BasicAuthenticationFilter {
                 if (token != null && token.isAuthenticated()) {
                     SecurityContextHolder.getContext().setAuthentication(token);
                 }
+                else {
+                    SecurityContextHolder.clearContext();
+                    ((HttpServletResponse) res).sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
+                    return;
+                }
             } catch (Throwable e) {
                 logger.error("Failed to extract JWT token: ", e);
                 throw e;
