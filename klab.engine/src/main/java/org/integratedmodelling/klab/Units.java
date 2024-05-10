@@ -785,6 +785,7 @@ public enum Units implements IUnitService {
 		case CATEGORIZATION:
 		case VERIFICATION:
 			aggregation = Aggregation.MAJORITY;
+			break;
 		case QUANTIFICATION:
 
 			// } else if (aggregates && observable.getUnit() != null) {

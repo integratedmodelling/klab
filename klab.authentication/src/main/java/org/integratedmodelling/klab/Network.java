@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.api.services.IResourceService;
 import org.integratedmodelling.klab.auth.Node;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -36,6 +37,7 @@ public enum Network implements INetworkService {
     INSTANCE;
 
     public static final int NETWORK_CHECK_INTERVAL_SECONDS = 180;
+    private static final int MAX_AUTHENTICATION_ATTEMPTS = 3;
 
     private static int MAX_THREADS = 10;
 
@@ -44,6 +46,7 @@ public enum Network implements INetworkService {
     Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
 
     private Timer timer = new Timer("network checking");
+    private int authenticationAttempts = 0;
 
     private Network() {
         Services.INSTANCE.registerService(this, INetworkService.class);
@@ -248,6 +251,8 @@ public enum Network implements INetworkService {
         for (INodeIdentity node : onlineNodes.values()) {
             try {
                 ((Node) node).mergeCapabilities(node.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
+            } catch (KlabAuthorizationException e) {
+              reauthenticate();
             } catch (Exception e) {
                 moveOffline.add(node);
                 if (Services.INSTANCE.getService(IResourceService.class) != null) {
@@ -265,6 +270,8 @@ public enum Network implements INetworkService {
                     Services.INSTANCE.getService(IResourceService.class).getPublicResourceCatalog().updateNode(node);
                 }
                 Logging.INSTANCE.info("node " + node.getName() + " went online");
+            } catch (KlabAuthorizationException e) {
+              reauthenticate();
             } catch (Exception e) {
                 Long l = nodeWarnings.get(node.getName());
                 if (l == null || (System.currentTimeMillis() - l) > (1000 * 60 * 10)) {
@@ -285,6 +292,20 @@ public enum Network implements INetworkService {
             ((Node) node).setOnline(false);
         }
     }
+
+	private void reauthenticate() {
+		if (authenticationAttempts > MAX_AUTHENTICATION_ATTEMPTS) {
+			return;
+		}
+
+		Logging.INSTANCE.warn("Attempting re-authentication");
+		authenticationAttempts++;
+
+		if (Authentication.INSTANCE.reauthenticate() != null) {
+			checkNetwork();
+		}
+
+	}
 
     @Override
     public INodeIdentity getNodeForResource(Urn urn) {

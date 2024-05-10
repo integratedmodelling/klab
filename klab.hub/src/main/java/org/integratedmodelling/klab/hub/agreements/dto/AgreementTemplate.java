@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.hub.agreements.dto;
 
-
-
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +8,10 @@ import java.util.Set;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,7 +22,7 @@ import jakarta.persistence.Id;
 
 @Document(collection = "AgreementTemplates")
 @TypeAlias("MongoAgreementTemplate")
-public class AgreementTemplate{
+public class AgreementTemplate {
     @Id
     private String id;
 
@@ -34,11 +37,23 @@ public class AgreementTemplate{
     private Boolean defaultTemplate;
 
     private Long defaultDuration;
-        
+
     private Date validDate;
 
     @Reference
     private Set<GroupEntry> defaultGroups = new HashSet<GroupEntry>();
+
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     public String getId() {
         return id;
@@ -80,7 +95,6 @@ public class AgreementTemplate{
         this.defaultTemplate = defaultTemplate;
     }
 
-
     public Long getDefaultDuration() {
         return defaultDuration;
     }
@@ -104,8 +118,5 @@ public class AgreementTemplate{
     public void setValidDate(Date validDate) {
         this.validDate = validDate;
     }
-
-    
-    
 
 }

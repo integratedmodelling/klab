@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.model.KActors;
@@ -58,6 +59,7 @@ import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.auth.KlabPermissions;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.cli.IConsole;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
@@ -416,7 +418,7 @@ public class Session extends GroovyObjectSupport
 
     @Override
     public void close() throws IOException {
-        for (Listener listener : listeners) {
+        for(Listener listener : listeners) {
             listener.onClose(this);
         }
         this.closed = true;
@@ -474,7 +476,7 @@ public class Session extends GroovyObjectSupport
     @Override
     public IObservation getObservation(String observationId) {
         // start at the most recent
-        for (IRuntimeScope context : observationContexts) {
+        for(IRuntimeScope context : observationContexts) {
             IObservation ret = context.getObservation(observationId);
             if (ret != null) {
                 return ret;
@@ -488,7 +490,7 @@ public class Session extends GroovyObjectSupport
      */
     public IRuntimeScope getRootScope(String observationId) {
         // start at the most recent
-        for (IRuntimeScope context : observationContexts) {
+        for(IRuntimeScope context : observationContexts) {
             IObservation ret = context.getObservation(observationId);
             if (ret != null) {
                 return context;
@@ -631,7 +633,7 @@ public class Session extends GroovyObjectSupport
         ret.setHub(Network.INSTANCE.getHub());
         INetworkSessionIdentity network = this.getParentIdentity(INetworkSessionIdentity.class);
         if (network != null) {
-            for (INodeIdentity node : network.getNodes()) {
+            for(INodeIdentity node : network.getNodes()) {
                 NodeReference desc = new NodeReference(node);
                 if (desc != null) {
                     if (node.getPermissions().contains(Permission.PUBLISH)) {
@@ -648,7 +650,7 @@ public class Session extends GroovyObjectSupport
 
         ret.getOnlineUrns().addAll(Resources.INSTANCE.getPublicResourceCatalog().getOnlineUrns());
 
-        for (ITicket resolved : Klab.INSTANCE.getTicketManager().getResolvedAfter(lastNetworkCheck.get())) {
+        for(ITicket resolved : Klab.INSTANCE.getTicketManager().getResolvedAfter(lastNetworkCheck.get())) {
             ret.getResolvedTickets().add(TicketManager.encode(resolved));
         }
 
@@ -848,7 +850,7 @@ public class Session extends GroovyObjectSupport
 
         } else {
 
-            for (String urn : request.getResourceUrns()) {
+            for(String urn : request.getResourceUrns()) {
 
                 IResource resource = Resources.INSTANCE.resolveResource(urn);
                 if (resource == null) {
@@ -929,7 +931,7 @@ public class Session extends GroovyObjectSupport
         if (authority == null) {
             ret.setError("Authority " + request.getAuthorityId() + " is inaccessible or non-existent");
         } else if (authority.getCapabilities().isSearchable()) {
-            for (IAuthority.Identity identity : authority.search(request.getQueryString(), request.getAuthorityCatalog())) {
+            for(IAuthority.Identity identity : authority.search(request.getQueryString(), request.getAuthorityCatalog())) {
                 if (identity instanceof AuthorityIdentity) {
                     ret.getMatches().add((AuthorityIdentity) identity);
                 }
@@ -961,7 +963,7 @@ public class Session extends GroovyObjectSupport
                     @Override
                     public void run() {
                         if (request.isBulkImport()) {
-                            for (IResource resource : Resources.INSTANCE.importResources(request.getImportUrl(), project,
+                            for(IResource resource : Resources.INSTANCE.importResources(request.getImportUrl(), project,
                                     request.getAdapter(), request.getRegex())) {
                                 monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                                         ((Resource) resource).getReference());
@@ -1021,10 +1023,9 @@ public class Session extends GroovyObjectSupport
              * Insert choice into current expression and setup for next search.
              */
             SearchResponse matches = expression.getData("matches", SearchResponse.class);
-            if (matches != null
-                    && matches.getMatches().size() > action.getMatchIndex()/*
-                                                                            * which would be weird
-                                                                            */) {
+            if (matches != null && matches.getMatches().size() > action.getMatchIndex()/*
+                                                                                        * which would be weird
+                                                                                        */) {
                 acceptChoice(expression, matches.getMatches().get(action.getMatchIndex()), action.getContextId());
             }
             return;
@@ -1083,7 +1084,7 @@ public class Session extends GroovyObjectSupport
         response.setCurrentType(expression.getObservableType());
 
         StringBuffer code = new StringBuffer(256);
-        for (StyledKimToken token : response.getCode()) {
+        for(StyledKimToken token : response.getCode()) {
             code.append(token.getValue() + " ");
         }
         String cc = code.toString();
@@ -1169,7 +1170,7 @@ public class Session extends GroovyObjectSupport
     }
 
     private IRuntimeScope findContext(String contextId) {
-        for (IRuntimeScope ctx : observationContexts) {
+        for(IRuntimeScope ctx : observationContexts) {
             if (ctx.getRootSubject().getId().equals(contextId)) {
                 return ctx;
             }
@@ -1308,7 +1309,7 @@ public class Session extends GroovyObjectSupport
      */
     protected void runSemanticSearch(SemanticExpression expression, SearchRequest request, SearchResponse response) {
 
-        for (Match match : Indexer.INSTANCE.query(request.getQueryString(), expression.getCurrent().getScope(),
+        for(Match match : Indexer.INSTANCE.query(request.getQueryString(), expression.getCurrent().getScope(),
                 request.getMaxResults())) {
             response.getMatches().add(((org.integratedmodelling.klab.engine.indexing.SearchMatch) match).getReference());
         }
@@ -1329,7 +1330,7 @@ public class Session extends GroovyObjectSupport
          */
         List<Match> matches = new ArrayList<>();
         int i = 0;
-        for (ObservableReference observable : Authentication.INSTANCE.getDefaultObservables(Session.this)) {
+        for(ObservableReference observable : Authentication.INSTANCE.getDefaultObservables(Session.this)) {
             SearchMatch match = new SearchMatch(observable.getObservable(), observable.getLabel(), observable.getDescription(),
                     observable.getSemantics(), observable.getState(), observable.getExtendedDescription());
             match.setIndex(i++);
@@ -1351,7 +1352,7 @@ public class Session extends GroovyObjectSupport
         // afterwards.
         List<Match> matches = new ArrayList<>();
         int i = 0;
-        for (Location location : Geocoder.INSTANCE.lookup(request.getQueryString())) {
+        for(Location location : Geocoder.INSTANCE.lookup(request.getQueryString())) {
             if ("relation".equals(location.getOsm_type())) {
 
                 SearchMatch match = new SearchMatch(location.getURN(), location.getName(), location.getDescription(),
@@ -1415,7 +1416,7 @@ public class Session extends GroovyObjectSupport
                         // afterwards.
                         List<Match> matches = new ArrayList<>();
                         int i = 0;
-                        for (Location location : Geocoder.INSTANCE.lookup(request.getQueryString())) {
+                        for(Location location : Geocoder.INSTANCE.lookup(request.getQueryString())) {
                             if ("relation".equals(location.getOsm_type())) {
 
                                 SearchMatch match = new SearchMatch(location.getURN(), location.getName(),
@@ -1434,7 +1435,7 @@ public class Session extends GroovyObjectSupport
                          */
                         List<Match> matches = new ArrayList<>();
                         int i = 0;
-                        for (ObservableReference observable : Authentication.INSTANCE.getDefaultObservables(Session.this)) {
+                        for(ObservableReference observable : Authentication.INSTANCE.getDefaultObservables(Session.this)) {
                             SearchMatch match = new SearchMatch(observable.getObservable(), observable.getLabel(),
                                     observable.getDescription(), observable.getSemantics(), observable.getState(),
                                     observable.getExtendedDescription());
@@ -1471,7 +1472,7 @@ public class Session extends GroovyObjectSupport
                                 List<Match> matches = Indexing.INSTANCE.query(request.getQueryString(), context.getFirst());
 
                                 int i = 0;
-                                for (Match match : matches) {
+                                for(Match match : matches) {
                                     SearchMatch m = new SearchMatch();
                                     m.getSemanticType().addAll(match.getConceptType());
                                     m.setMainSemanticType(Kim.INSTANCE.getFundamentalType(match.getConceptType()));
@@ -1581,13 +1582,20 @@ public class Session extends GroovyObjectSupport
             if (request.isStop()) {
                 stop(request.getBehavior());
                 // TODO should clear the state now, but it comes AFTER initialization of the
-                // next
-                // application!
+                // next application!
             } else {
                 this.globalState.clear();
                 IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
                 if (behavior != null) {
-                    this.load(behavior, new SimpleRuntimeScope(this));
+                    if (behavior.getMetadata().containsKey(IMetadata.IM_PERMISSIONS)) {
+                        KlabPermissions permissions = (KlabPermissions) behavior.getMetadata().get(IMetadata.IM_PERMISSIONS);
+                        List<String> groups = this.getParentIdentity().getGroups().stream().map(Group::getName).toList();
+                        if (permissions.isAuthorized(this.getUsername(), groups)) {
+                            this.load(behavior, new SimpleRuntimeScope(this));
+                        }
+                    } else {
+                        this.load(behavior, new SimpleRuntimeScope(this));
+                    }
                 }
             }
             break;
@@ -1816,7 +1824,7 @@ public class Session extends GroovyObjectSupport
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.delete(event.getFile());
             } else {
-                for (IKimNamespace ns : Resources.INSTANCE.getLoader().delete(event.getFile())) {
+                for(IKimNamespace ns : Resources.INSTANCE.getLoader().delete(event.getFile())) {
                     response.getNamespaces().add(ns.getName());
                 }
             }
@@ -1825,7 +1833,7 @@ public class Session extends GroovyObjectSupport
             if (KActors.INSTANCE.isKActorsFile(event.getFile())) {
                 KActors.INSTANCE.touch(event.getFile());
             } else {
-                for (IKimNamespace ns : Resources.INSTANCE.getLoader().touch(event.getFile())) {
+                for(IKimNamespace ns : Resources.INSTANCE.getLoader().touch(event.getFile())) {
                     response.getNamespaces().add(ns.getName());
                 }
             }
@@ -1885,7 +1893,7 @@ public class Session extends GroovyObjectSupport
                 ProjectLoadResponse response = new ProjectLoadResponse();
                 Resources.INSTANCE.getLoader().loadProjectFiles(request.getProjectLocations());
 
-                for (File file : request.getProjectLocations()) {
+                for(File file : request.getProjectLocations()) {
                     IKimProject project = Kim.INSTANCE.getProjectIn(file);
                     if (project != null) {
                         IProject proj = Resources.INSTANCE.getProject(project.getName());
@@ -1912,30 +1920,31 @@ public class Session extends GroovyObjectSupport
         ret.setTimeLastJoined(lastJoin);
         ret.setTimeRetrieved(System.currentTimeMillis());
         ret.setTimeLastActivity(lastActivity);
-        for (String app : Actors.INSTANCE.getPublicApps()) {
-            ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
-        }
-        // FIXME remove
-        ret.getAppUrns().addAll(Actors.INSTANCE.getPublicApps());
-        ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
 
         /*
          * TODO add views in context; add running application IDs
          */
 
         IUserIdentity user = getParentIdentity(IUserIdentity.class);
+        Collection<String> publicApps = Actors.INSTANCE.getPublicApps(user);
+        for(String app : publicApps) {
+            ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
+        }
+
+        ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
+
         if (user != null) {
             IdentityReference uid = new IdentityReference();
             uid.setEmail(user.getEmailAddress());
             uid.setId(user.getUsername());
-            for (Group group : user.getGroups()) {
+            for(Group group : user.getGroups()) {
                 uid.getGroups().add(new GroupReference(group));
             }
             uid.setLastLogin(user.getLastLogin().toString());
             ret.setOwner(uid);
         }
 
-        for (IRuntimeScope ctx : observationContexts) {
+        for(IRuntimeScope ctx : observationContexts) {
             ret.getRootObservations().put(ctx.getRootSubject().getId(), Observations.INSTANCE
                     .createArtifactDescriptor(ctx.getRootSubject()/* , null */, ctx.getScale().initialization(), 0));
         }
@@ -1945,7 +1954,7 @@ public class Session extends GroovyObjectSupport
 
     public List<IObservation> getRootContexts() {
         List<IObservation> ret = new ArrayList<>();
-        for (IRuntimeScope scope : observationContexts) {
+        for(IRuntimeScope scope : observationContexts) {
             ret.add(scope.getRootSubject());
         }
         return ret;
@@ -1986,7 +1995,7 @@ public class Session extends GroovyObjectSupport
         }
         return ret;
     }
-    
+
     @Override
     public IObserver<?> getObserver() {
         return null;
@@ -2008,7 +2017,7 @@ public class Session extends GroovyObjectSupport
                  * when this has a chance to fail (e.g. in a cluster situation), add a timeout, or
                  * figure out the ask pattern.
                  */
-                while(!this.actorSet.get()) {
+                while (!this.actorSet.get()) {
                     try {
                         Thread.sleep(50);
                     } catch (InterruptedException e) {
@@ -2110,7 +2119,7 @@ public class Session extends GroovyObjectSupport
 
     @Override
     public synchronized void interruptAllTasks() {
-        for (Future<?> task : this.tasks.values()) {
+        for(Future<?> task : this.tasks.values()) {
             if (task instanceof ITaskTree<?>) {
                 interruptTask(((AbstractTask<?>) task).getToken(), true);
             }
