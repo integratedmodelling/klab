@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.scale.Scale;
@@ -211,7 +212,7 @@ public class STACEncoder implements IResourceEncoder {
             HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
         } catch (Exception e) {
-            scope.getMonitor().error("Cannot create STAC file. " + e.getMessage());
+            throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
         }
 
         encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
