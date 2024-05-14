@@ -590,7 +590,8 @@ public class RuntimeBehavior {
                         fire(KlabEmail.EmailStatus.SENDING, scope);
                         try {
                             client.withAuthentication(user.getToken()).post(url + API.HUB.USER_SEND_EMAIL,
-                                    new KlabEmail(null, Set.of(to), Set.of(replayTo), subject, content, type, null), ResponseEntity.class);
+                                    new KlabEmail(null, Set.of(to), Set.of(replayTo), subject, content, type, null),
+                                    ResponseEntity.class);
                             fire(KlabEmail.EmailStatus.SENT, scope);
                         } catch (KlabIOException kex) {
                             scope.getRuntimeScope().getMonitor().warn("Error sending mail: " + kex);
@@ -656,14 +657,14 @@ public class RuntimeBehavior {
             }.start();
         }
     }
-    
+
     @Action(id = "save", fires = {}, description = "Save a previous prepared file on export folder")
     public static class Save extends KlabActionExecutor {
         public Save(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, IKActorsBehavior.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, arguments, scope, sender, callId);
         }
-        
+
         @Override
         public void run(IKActorsBehavior.Scope scope) {
 
@@ -680,8 +681,9 @@ public class RuntimeBehavior {
                 }
 
                 if (value != null && value instanceof File) {
-                    File file = (File)value;
-                    File output = Configuration.INSTANCE.getExportFile(suggestedFilename != null ? suggestedFilename.toString() : file.getName());
+                    File file = (File) value;
+                    File output = Configuration.INSTANCE
+                            .getExportFile(suggestedFilename != null ? suggestedFilename.toString() : file.getName());
                     try {
                         FileUtils.copyFile(file, output);
                     } catch (IOException e) {
@@ -860,9 +862,9 @@ public class RuntimeBehavior {
                 } else {
                     throw new KlabIllegalArgumentException("cannot use additional space extent " + o + " as a context parameter");
                 }
-            } else if (o instanceof Integer){
+            } else if (o instanceof Integer) {
                 // is allowed to use an integer to represent the year
-                int year = (Integer)o;
+                int year = (Integer) o;
                 if (year > 1900 && year < 2200) {
                     key = "time";
                     contextDefinition.put(key, Time.create(year));
