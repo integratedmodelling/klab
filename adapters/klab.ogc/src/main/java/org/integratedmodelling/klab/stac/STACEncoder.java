@@ -179,14 +179,13 @@ public class STACEncoder implements IResourceEncoder {
             List<HMStacItem> items = collection.setGeometryFilter(poly)
                     .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
                     .searchItems();
+            if (items.isEmpty()) {
+                throw new KlabIllegalStateException("No STAC items found for this context.");
+            }
             scope.getMonitor().debug("Found " + items.size() + " STAC items.");
 
             if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
                 sortByDate(items, scope.getMonitor());
-            }
-
-            if (items.isEmpty()) {
-                throw new KlabIllegalStateException("No STAC items found for this context.");
             }
 
             LogProgressMonitor lpm = new LogProgressMonitor();
