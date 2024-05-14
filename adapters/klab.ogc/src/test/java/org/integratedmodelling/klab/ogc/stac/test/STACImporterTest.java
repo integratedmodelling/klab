@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.stac.STACImporter;
 import org.junit.jupiter.api.Assertions;
@@ -55,7 +56,7 @@ public class STACImporterTest {
         Mockito.when(identity.getId()).thenReturn("hares");
         Authentication.INSTANCE.registerIdentity(identity);
 
-        Assertions.assertThrows(KlabUnsupportedFeatureException.class, () -> {
+        Assertions.assertThrows(KlabIllegalArgumentException.class, () -> {
             Collection<Builder> ret = importer.importResources(importLocation, project, params, monitor);
         });
     }
