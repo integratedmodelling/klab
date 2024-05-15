@@ -1,5 +1,9 @@
 package org.integratedmodelling.klab.stac;
 
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
@@ -21,8 +25,9 @@ public class STACCollectionParser {
      * @param catalogUrl endpoint of the catalog
      * @param collectionId id of the collection
      * @return The asset list as a JSON
+     * @throws KlabResourceAccessException
      */
-    public static JSONObject readAssets(String catalogUrl, String collectionId) {
+    public static JSONObject readAssets(String catalogUrl, String collectionId) throws KlabResourceAccessException {
         JSONObject assets;
         JSONObject collectionData = Unirest.get(catalogUrl + "/collections/" + collectionId)
                 .asJson().getBody().getObject();
@@ -32,8 +37,11 @@ public class STACCollectionParser {
         if (collectionData.has("item_assets")) {
             assets = STACCollectionParser.readItemAssets(collectionData);
         } else {
-            JSONObject itemsData = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items")
-                    .asJson().getBody().getObject();
+            HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items").asJson();
+            if (!response.isSuccess()) {
+                throw new KlabResourceAccessException("Cannot read items at " + catalogUrl + "/collections/" + collectionId + "/items");
+            }
+            JSONObject itemsData = response.getBody().getObject();
             assets =  STACCollectionParser.readAssets(itemsData);
         }
         return assets;

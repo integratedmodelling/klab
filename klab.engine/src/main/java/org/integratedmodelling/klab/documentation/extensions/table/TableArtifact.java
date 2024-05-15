@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Aggregator;
@@ -1057,6 +1058,10 @@ public class TableArtifact extends AbstractTableArtifact {
 		return this.table.getLabel(); 
 	} 
  
+	public ISpace getSpace() {
+	    return this.scope.getResolutionScale().getSpace();
+	}
+	
 	@Override 
 	public Collection<ExportFormat> getExportFormats() { 
 		List<ExportFormat> ret = new ArrayList<>(); 

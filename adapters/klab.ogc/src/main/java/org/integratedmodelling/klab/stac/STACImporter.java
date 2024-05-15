@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 
@@ -92,7 +92,9 @@ public class STACImporter implements IResourceImporter {
         String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
 
         if (locationElements.length != 2) {
-            throw new KlabUnsupportedFeatureException("Bulk import from a catalog is not supported.");
+            monitor.error("It is not possible to bulk import form the URL " + importLocation + "."
+                    + "Check if the resource is a proper STAC collection.");
+            throw new KlabIllegalArgumentException("Unexpected STAC import location.");
         }
         try {
             monitor.info("Beginning STAC collection import from " + importLocation);
