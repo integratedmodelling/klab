@@ -5,8 +5,6 @@ server:
   error:
     include-message: always
 spring:
-  main:
-    allow-bean-definition-overriding: true
   cloud:
     bus:
       enabled: false
@@ -43,7 +41,7 @@ mongo:
 ldap:
   partitionSuffix: dc=integratedmodelling,dc=org
   principal: cn=admin,dc=integratedmodelling,dc=org
-  password: SuperSecret
+  password: curd-h0cod
   port: 389
   url: ldap://localhost:389
   userGroup: ou=groups
@@ -72,10 +70,10 @@ engine:
 
 email:
   server:
-    hostname: mail.provider.com
+    hostname: mail.privateemail.com
     port: 587
-    username: email@integratedmodelling.org
-    password: someRandomPassword
+    username: noreply@integratedmodelling.org
+    password: r8UtFl9F3m21
 
   default:
     domain: integratedmodelling.org
@@ -112,3 +110,9 @@ license:
   pubRing:
     filename: "keyring/PubRing.pgp"
     digest: "cad134cc3dfcb0e96acb90af56532a96171f858c4c30335541932c0e00a66c9deab764805d9b9f08a49619af211b96305b512d4cf256e8a9c29877d06d207c72"
+
+keycloak:
+  realm: k.Hub
+  auth-server-url: http://localhost:8078
+  resource: spring-boot-keycloack-client
+  bearer-only: true
