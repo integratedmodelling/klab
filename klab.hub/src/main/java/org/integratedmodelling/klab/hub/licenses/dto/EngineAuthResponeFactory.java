@@ -26,10 +26,7 @@ import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
 import org.integratedmodelling.klab.hub.nodes.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenAuthentication;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.integratedmodelling.klab.hub.tokens.exceptions.AuthenticationFailedException;
-import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -39,9 +36,9 @@ import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
+import org.integratedmodelling.klab.rest.HubNotificationMessage.Parameters;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
-import org.integratedmodelling.klab.rest.HubNotificationMessage.Parameters;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class EngineAuthResponeFactory {
@@ -50,15 +47,20 @@ public class EngineAuthResponeFactory {
 
     private LicenseConfigService configService;
 
-    private UserAuthTokenService tokenService;
-
     private AgreementService agreementService;
 
+//    public EngineAuthResponeFactory(UserProfileService profileService, MongoGroupRepository groupRepository,
+//            LicenseConfigService configService, UserAuthTokenService tokenService, AgreementService agreementService) {
+//        this.profileService = profileService;
+//        this.configService = configService;
+//        this.tokenService = tokenService;
+//        this.agreementService = agreementService;
+//    }
+
     public EngineAuthResponeFactory(UserProfileService profileService, MongoGroupRepository groupRepository,
-            LicenseConfigService configService, UserAuthTokenService tokenService, AgreementService agreementService) {
+            LicenseConfigService configService, AgreementService agreementService) {
         this.profileService = profileService;
         this.configService = configService;
-        this.tokenService = tokenService;
         this.agreementService = agreementService;
     }
 
@@ -88,8 +90,10 @@ public class EngineAuthResponeFactory {
             }
             EngineAuthenticationResponse response = remoteEngine(profile, request.getIdAgreement(), request.getCertificate(),
                     config);
-            TokenAuthentication token = tokenService.createToken(profile.getUsername(), TokenType.auth);
-            response.setAuthentication(token.getTokenString());
+            // TODO keycloak get bearer token
+            // TokenAuthentication token = tokenService.createToken(profile.getUsername(),
+            // TokenType.auth);
+            // response.setAuthentication(token.getTokenString());
             profile.setLastConnection(LocalDateTime.now());
             profileService.updateUserByProfile(profile);
             return response;

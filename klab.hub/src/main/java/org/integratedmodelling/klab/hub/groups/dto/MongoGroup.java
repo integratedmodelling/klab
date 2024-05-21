@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub.groups.dto;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -9,10 +8,6 @@ import java.util.Set;
 import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.rest.CustomProperty;
 import org.integratedmodelling.klab.rest.ObservableReference;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -46,18 +41,6 @@ public class MongoGroup extends GenericModel {
     private Set<CustomProperty> customProperties = new HashSet<>();
     /* Name of groups that depending on */
     private List<String> dependsOn = new ArrayList<>();
-
-    @CreatedBy
-    private String createdBy;
-
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @LastModifiedBy
-    private String lastModifiedBy;
-
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
 
     public MongoGroup() {
     }

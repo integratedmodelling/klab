@@ -1,9 +1,8 @@
-package org.integratedmodelling.klab.hub.emails.dto;
+package org.integratedmodelling.klab.hub.api;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
-import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
@@ -37,28 +36,28 @@ public class EmailTemplate extends GenericModel {
      * @return the id
      */
     public String getId() {
-        return super.getId();
+        return id;
     }
 
     /**
      * @param id the id to set
      */
     public void setId(String id) {
-        super.setId(id);
+        this.id = id;
     }
 
     /**
      * @return the name
      */
     public String getName() {
-        return super.getName();
+        return name;
     }
 
     /**
      * @param name the name to set
      */
     public void setName(String name) {
-        super.setName(name);
+        this.name = name;
     }
 
     /**
@@ -146,7 +145,7 @@ public class EmailTemplate extends GenericModel {
     };
 
     public String toString() {
-        return super.getName() + "; Object: " + this.getSubject();
+        return this.name + "; Object: " + this.getSubject();
     }
 
 }

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.config.AbstractMongoClientConfiguration;
-import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 import org.springframework.data.mongodb.core.convert.MappingMongoConverter;
@@ -24,7 +23,6 @@ import com.mongodb.client.MongoClients;
 @Profile("production")
 @Configuration
 @EnableMongoRepositories(basePackages = "org.integratedmodelling.klab.hub.repository")
-@EnableMongoAuditing
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Value("${mongo.hostname}")
@@ -55,11 +53,6 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
     @Bean
     public LocalValidatorFactoryBean validator() {
         return new LocalValidatorFactoryBean();
-    }
-
-    @Bean
-    public AuditorAwareImpl auditorProvider() {
-        return new AuditorAwareImpl();
     }
 
     @Override

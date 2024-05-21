@@ -45,7 +45,7 @@ public class InstanceIdentifier {
 
   /** {@inheritDoc} */
   public boolean equals(Object o) {
-    return o instanceof InstanceIdentifier && __id.equals(((InstanceIdentifier) o).__id);
+    return o instanceof InstanceIdentifier && __id == ((InstanceIdentifier) o).__id;
   }
 
   /**

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.users.dto;
 
+import java.security.AuthProvider;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -13,15 +14,10 @@ import java.util.stream.Collectors;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.api.IdentityModel;
-import org.integratedmodelling.klab.hub.security.oauth2.AuthProvider;
 import org.integratedmodelling.klab.hub.tags.dto.ITagElement;
 import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
 import org.integratedmodelling.klab.hub.tags.dto.TagEntry;
 import org.integratedmodelling.klab.rest.CustomProperty;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
@@ -108,18 +104,6 @@ public class User extends IdentityModel implements UserDetails, ITagElement {
 //        }
 //        return false;
 //    }
-
-    @CreatedBy
-    private String createdBy;
-
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @LastModifiedBy
-    private String lastModifiedBy;
-
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
 
     public String getId() {
         return super.getId();

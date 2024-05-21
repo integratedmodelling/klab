@@ -53,6 +53,7 @@ public class TableValue extends TableProcessor implements IReducible {
 	MultiKeyMap<String, Object> data;
 	Map<String, ICodelist> codelists = new HashMap<>();
 	Object scalar;
+	private StyleDefinition style;
 
 	// compiled views indexed by media type
 	private Map<String, ITableView> compiledViews = new HashMap<>();

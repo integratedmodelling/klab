@@ -376,6 +376,7 @@ public class Flowchart {
 	 */
 	private void compile(Graph<IProvenance.Node, ProvenanceEdge> graph) {
 
+		Map<IProvenance.Node, Element> elements = new HashMap<>();
 		for (Node node : graph.vertexSet()) {
 			Element element = new Element(node);
 			root.children.add(element);

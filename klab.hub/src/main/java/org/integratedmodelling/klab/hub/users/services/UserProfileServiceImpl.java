@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +9,6 @@ import javax.mail.MessagingException;
 
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
-import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
 import org.integratedmodelling.klab.hub.tags.services.TagNotificationService;
@@ -20,6 +20,10 @@ import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
+import org.keycloak.KeycloakPrincipal;
+import org.keycloak.KeycloakSecurityContext;
+import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
+import org.keycloak.representations.AccessToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -37,7 +41,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     protected static final Logger logger = LoggerFactory.getLogger(UserProfileServiceImpl.class);
 
     private UserRepository userRepository;
-    private LdapServiceImpl ldapServiceImpl;
+//    private LdapServiceImpl ldapServiceImpl;
 
     private ObjectMapper objectMapper;
 
@@ -47,14 +51,14 @@ public class UserProfileServiceImpl implements UserProfileService {
     private TagNotificationService tagNotificationService;
 
     public UserProfileServiceImpl(UserRepository userRepository, ObjectMapper objectMapper, EmailManager emailManager,
-            RegistrationTokenService tokenService, LdapServiceImpl ldapServiceImpl,
+            RegistrationTokenService tokenService/*, LdapServiceImpl ldapServiceImpl*/,
             TagNotificationService tagNotificationService) {
         super();
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
         this.emailManager = emailManager;
         this.tokenService = tokenService;
-        this.ldapServiceImpl = ldapServiceImpl;
+//        this.ldapServiceImpl = ldapServiceImpl;
         this.tagNotificationService = tagNotificationService;
     }
 
@@ -89,12 +93,25 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     @Override
     public ProfileResource getCurrentUserProfile(boolean remote) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = getUser(username);
+        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken) SecurityContextHolder.getContext()
+                .getAuthentication();
+
+        Principal principal = (Principal) authentication.getPrincipal();
+
+        String preferredUsername = "";
+
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal<KeycloakSecurityContext> kPrincipal = (KeycloakPrincipal<KeycloakSecurityContext>) principal;
+            AccessToken token = kPrincipal.getKeycloakSecurityContext().getToken();
+            preferredUsername = token.getPreferredUsername();
+        }
+        User user = userRepository.findByNameIgnoreCase(preferredUsername).orElseThrow(() -> new UserDoesNotExistException());
         ProfileResource profile = objectMapper.convertValue(user, ProfileResource.class);
+
         if (remote) {
             return profile;
         }
+
         return profile.getSafeProfile();
     }
 
@@ -170,12 +187,12 @@ public class UserProfileServiceImpl implements UserProfileService {
         }
 
         /* update ldap */
-        try {
-            ldapServiceImpl.updateUserEmailAddress(username, email);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-            throw new KlabException("Error updating ldap user: " + e.getMessage(), e);
-        }
+//        try {
+//            ldapServiceImpl.updateUserEmailAddress(username, email);
+//        } catch (Exception e) {
+//            logger.error(e.getMessage(), e);
+//            throw new KlabException("Error updating ldap user: " + e.getMessage(), e);
+//        }
 
         try {
             tagNotificationService.createWarningUserTagNotification(updatedUser,

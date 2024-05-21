@@ -9,11 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
+import org.keycloak.KeycloakPrincipal;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -64,18 +61,6 @@ public abstract class Task {
     @Transient
     private TaskType type;
 
-    @CreatedBy
-    private String createdBy;
-
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @LastModifiedBy
-    private String lastModifiedBy;
-
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
-
     public Task() {
         this(null, null);
     }
@@ -87,8 +72,9 @@ public abstract class Task {
     public Task(TaskStatus parentStatus) {
         this(null, parentStatus);
     }
-    public Task(Role roleRequirement, TaskStatus parentStatus) {
-        this.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
+    protected Task(Role roleRequirement, TaskStatus parentStatus) {
+        this.setUser(((KeycloakPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .getKeycloakSecurityContext().getToken().getPreferredUsername());
         this.setRoleRequirement(roleRequirement);;
         this.setIssued();
         this.setStatus(TaskStatus.pending);

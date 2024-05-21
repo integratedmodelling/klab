@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.commands.CreateInitialUsers;
+//import org.integratedmodelling.klab.hub.users.commands.CreateInitialUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
@@ -17,45 +17,37 @@ import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 
 @Profile("development")
 @Configuration
-public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshedEvent>{
-	
-	private MongoGroupRepository groupRepo;
-	private UserRepository userRepository;
-	private LdapUserDetailsManager ldapUserDetailsManager;
-	private PasswordEncoder passwordEncoder;
-	private MongoLeverRepository leverRepo;
-	private MongoNodeRepository nodeRepo;
+public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshedEvent> {
 
-	@Autowired
-	public DevMongoModelsConfig(MongoGroupRepository groupRepo,
-			UserRepository userRepository,
-			LdapUserDetailsManager ldapUserDetailsManager,
-			PasswordEncoder passwordEncoder,
-			MongoLeverRepository leverRepo,
-			MongoNodeRepository nodeRepo) {
-		super();
-		this.groupRepo = groupRepo;
-		this.userRepository = userRepository;
-		this.ldapUserDetailsManager = ldapUserDetailsManager;
-		this.passwordEncoder = passwordEncoder;
-		this.leverRepo = leverRepo;
-		this.nodeRepo = nodeRepo;
-	}
+    private MongoGroupRepository groupRepo;
+    private UserRepository userRepository;
+    private LdapUserDetailsManager ldapUserDetailsManager;
+    private PasswordEncoder passwordEncoder;
+    private MongoLeverRepository leverRepo;
+    private MongoNodeRepository nodeRepo;
 
-	@Override
-	public void onApplicationEvent(ContextRefreshedEvent event) {
-		URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
-		new CreateIntialGroups(url, groupRepo).execute();
-		
-		new CreateInitialUsers(
-				groupRepo,
-				userRepository,
-				ldapUserDetailsManager,
-				passwordEncoder).execute();
-		
-		new CreateInitialLevers(leverRepo).execute();
-		new CreateIntialNodes(nodeRepo, groupRepo).execute();
-	}
-    
+    @Autowired
+    public DevMongoModelsConfig(MongoGroupRepository groupRepo, UserRepository userRepository,
+//			LdapUserDetailsManager ldapUserDetailsManager,
+            PasswordEncoder passwordEncoder, MongoLeverRepository leverRepo, MongoNodeRepository nodeRepo) {
+        super();
+        this.groupRepo = groupRepo;
+        this.userRepository = userRepository;
+//		this.ldapUserDetailsManager = ldapUserDetailsManager;
+        this.passwordEncoder = passwordEncoder;
+        this.leverRepo = leverRepo;
+        this.nodeRepo = nodeRepo;
+    }
+
+    @Override
+    public void onApplicationEvent(ContextRefreshedEvent event) {
+        URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
+        new CreateIntialGroups(url, groupRepo).execute();
+
+//        new CreateInitialUsers(groupRepo, userRepository, ldapUserDetailsManager, passwordEncoder).execute();
+
+        new CreateInitialLevers(leverRepo).execute();
+        new CreateIntialNodes(nodeRepo, groupRepo).execute();
+    }
 
 }

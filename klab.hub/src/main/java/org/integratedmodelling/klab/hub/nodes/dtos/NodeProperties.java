@@ -12,7 +12,7 @@ public class NodeProperties implements IProperties {
 	public static final int CERT_FILE_TTL_DAYS = 365/2;
 	
 	public NodeProperties(MongoNode node, LicenseConfiguration config) {
-		if(config.getClass().getName().equals(BouncyConfiguration.class.getName())) {
+		if(config.getClass().getName() == BouncyConfiguration.class.getName()) {
 			BouncyNodeProperties(node, (BouncyConfiguration) config);
 		}
 	}

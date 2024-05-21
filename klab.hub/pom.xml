@@ -260,6 +260,11 @@
 			<version>1.34.0</version>
 		</dependency>
 		<!-- ////////////////////////////////////////////////////////////////// -->
+		<dependency>
+		<groupId>org.keycloak</groupId>
+		<artifactId>keycloak-spring-boot-starter</artifactId>
+		<version>19.0.2</version>
+	</dependency>
 
 		<!--Dependencies for the unit tests -->
 		<dependency>

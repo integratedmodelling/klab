@@ -1,13 +1,8 @@
 package org.integratedmodelling.klab.hub.recordedCustomProperty.dto;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -21,18 +16,6 @@ public class RecordedCustomProperty extends GenericModel {
 
     private boolean isForUser = false;
     private boolean isForGroup = false;
-
-    @CreatedBy
-    private String createdBy;
-
-    @CreatedDate
-    private LocalDateTime createdDate;
-
-    @LastModifiedBy
-    private String lastModifiedBy;
-
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
 
     public RecordedCustomProperty(String name) {
         setName(name);
