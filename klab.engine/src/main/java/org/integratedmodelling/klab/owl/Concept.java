@@ -999,7 +999,19 @@ public class Concept extends Knowledge implements IConcept {
 	}
 
 	public String getHtmlDeclaration() {
-		return "<span class=\"" + Concepts.INSTANCE.getCssClass(this) + "\">" + getDefinition() + "</span>";
+	    String ret = null;
+	    String comment = null;
+	    String url = null;
+	    for (String p: getMetadata().getNamedKeys()) {
+            if (p.equals(IMetadata.DC_COMMENT)) {
+                comment = getMetadata().get(p, String.class);
+            } else if (p.equals(IMetadata.DC_URL)) {
+                url = getMetadata().get(p, String.class);
+            }
+        }
+		return "<span" + (comment != null ? " title=\"" + comment + "\"" : "") + " class=\"" + Concepts.INSTANCE.getCssClass(this) + "\">"
+        + (url != null ? "<a href=\"" + url + "\" target=\"_blank\"" + (comment != null ? " title=\"" + comment + "\"" : "") + ">" : "")
+        + getDefinition() + (url != null ? "</a>" : "") + "</span>";
 	}
 
 	@Override
