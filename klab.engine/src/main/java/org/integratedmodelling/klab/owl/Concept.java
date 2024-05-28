@@ -991,7 +991,6 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     public String getHtmlDeclaration() {
-        String ret = null;
         String comment = null;
         String url = null;
         for(String p : getMetadata().getNamedKeys()) {
