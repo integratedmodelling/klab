@@ -91,15 +91,6 @@ public class STACImporter implements IResourceImporter {
     public Collection<Builder> importResources(String collectionUrl, IProject project, IParameters<String> userData,
             IMonitor monitor) {
         List<Builder> ret = new ArrayList<>();
-        // TODO rethink checks
-        //String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
-
-        //if (locationElements.length != 2) {
-        //    monitor.error("It is not possible to bulk import form the URL " + importLocation + "."
-        //            + "Check if the resource is a proper STAC collection.");
-        //    throw new KlabIllegalArgumentException("Unexpected STAC import location.");
-        //}
-        */
         try {
             monitor.info("Beginning STAC collection import from " + collectionUrl);
 
