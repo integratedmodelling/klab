@@ -49,7 +49,14 @@ public class STACUtils {
         return authors.toString().trim();
     }
 
+    public static boolean usesRelativePath(String collectionUrl) {
+        return collectionUrl.endsWith("/collection.json");
+    }
+
     public static String[] extractCatalogAndCollection(String collectionURI) {
+        if (usesRelativePath(collectionURI)) {
+            // TODO
+        }
         return collectionURI.split("/collections/");
     }
 
@@ -61,18 +68,10 @@ public class STACUtils {
         return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
-    public static JSONObject requestCollectionMetadata(String catalogUrl, String collectionId) {
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
+    public static JSONObject requestCollectionMetadata(String collectionUrl) {
+        HttpResponse<JsonNode> response = Unirest.get(collectionUrl).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the collection at " + catalogUrl + "/collections/" + collectionId);
-        }
-        return response.getBody().getObject();
-    }
-
-    public static JSONObject requestItemMetadata(String catalogUrl, String collectionId, String item) {
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
-        if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the item at " + catalogUrl + "/collections/" + collectionId + "/items/" + item);
+            throw new KlabResourceAccessException("Cannot access the collection at " + collectionUrl);
         }
         return response.getBody().getObject();
     }
@@ -108,4 +107,10 @@ public class STACUtils {
         return Type.TEXT;
     }
 
+    public static String getCatalogUrl(String collectionUrl, String collectionId) {
+        if (usesRelativePath(collectionUrl)) {
+            return collectionUrl.replace(collectionId + "/collection.json", "catalog.json");
+        }
+        return collectionUrl.replace("collections/" + collectionId, "");
+    }
 }

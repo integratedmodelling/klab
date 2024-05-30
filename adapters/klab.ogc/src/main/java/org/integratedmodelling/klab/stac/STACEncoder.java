@@ -53,12 +53,14 @@ public class STACEncoder implements IResourceEncoder {
 
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
-        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
-        String collectionId = resource.getParameters().get("collectionId", String.class);
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
+        String collectionUrl = resource.getParameters().get("collection", String.class);
+
+        boolean usesRelativePath = collectionUrl.endsWith("/collection.json");
+        
+        STACService service = STACAdapter.getService(collectionUrl);
 
         if (service == null) {
-            monitor.error("Service " + resource.getParameters().get("catalogUrl", String.class)
+            monitor.error("Service " + resource.getParameters().get("collectionUrl", String.class)
                     + " does not exist: likely the service URL is wrong or offline");
             return false;
         }
@@ -139,13 +141,12 @@ public class STACEncoder implements IResourceEncoder {
                 : null;
         HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
 
-        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
-        String collectionId = resource.getParameters().get("collectionId", String.class);
+        String collectionUrl = resource.getParameters().get("collection", String.class);
 
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
+        STACService service = STACAdapter.getService(collectionUrl);
         HMStacCollection collection = service.getCollection();
         if (collection == null) {
-            scope.getMonitor().error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
+            scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be find.");
         }
 
         GridCoverage2D coverage = null;
@@ -208,7 +209,7 @@ public class STACEncoder implements IResourceEncoder {
             // data.
             final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
+            HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
         } catch (Exception e) {
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());

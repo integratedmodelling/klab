@@ -46,8 +46,10 @@ public class STACImporter implements IResourceImporter {
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
             throws MalformedURLException {
-        String catalogUrl = parameters.get("catalogUrl", String.class);
-        String collectionId = parameters.get("collectionId", String.class);
+        String collectionUrl = parameters.get("collection", String.class);
+        JSONObject collectionData = STACUtils.requestCollectionMetadata(collectionUrl);
+        String collectionId = STACCollectionParser.readCollectionId(collectionData);
+        parameters.put("collectionId", collectionId);
 
         String regex = null;
         if (parameters.contains("regex")) {
@@ -55,7 +57,7 @@ public class STACImporter implements IResourceImporter {
             parameters.remove(Resources.REGEX_ENTRY);
         }
 
-        JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
+        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
         for(String assetId : assetIds) {
             if (regex != null && !assetId.matches(regex)) {
@@ -72,7 +74,7 @@ public class STACImporter implements IResourceImporter {
             String resourceUrn = collectionId + "-" + assetId;
 
             Builder builder = validator.validate(
-                    Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(catalogUrl + "/collections/" + collectionId),
+                    Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(collectionUrl),
                     parameters, monitor);
 
             if (builder != null) {
@@ -86,23 +88,24 @@ public class STACImporter implements IResourceImporter {
     }
 
     @Override
-    public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
+    public Collection<Builder> importResources(String collectionUrl, IProject project, IParameters<String> userData,
             IMonitor monitor) {
         List<Builder> ret = new ArrayList<>();
-        String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
+        // TODO rethink checks
+        //String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
 
-        if (locationElements.length != 2) {
-            monitor.error("It is not possible to bulk import form the URL " + importLocation + "."
-                    + "Check if the resource is a proper STAC collection.");
-            throw new KlabIllegalArgumentException("Unexpected STAC import location.");
-        }
+        //if (locationElements.length != 2) {
+        //    monitor.error("It is not possible to bulk import form the URL " + importLocation + "."
+        //            + "Check if the resource is a proper STAC collection.");
+        //    throw new KlabIllegalArgumentException("Unexpected STAC import location.");
+        //}
+        */
         try {
-            monitor.info("Beginning STAC collection import from " + importLocation);
+            monitor.info("Beginning STAC collection import from " + collectionUrl);
 
             Parameters<String> parameters = new Parameters<>();
             parameters.putAll(userData);
-            parameters.put("catalogUrl", locationElements[0]);
-            parameters.put("collectionId", locationElements[1]);
+            parameters.put("collection", collectionUrl);
 
             importCollection(ret, parameters, project, monitor);
         } catch (Exception e) {
@@ -110,7 +113,7 @@ public class STACImporter implements IResourceImporter {
             throw new KlabIOException(e);
         }
 
-        monitor.info("STAC: imported collection " + locationElements[1]);
+        monitor.info("STAC: imported collection " + collectionUrl);
         return ret;
     }
 

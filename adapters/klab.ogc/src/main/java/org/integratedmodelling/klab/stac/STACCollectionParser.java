@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.stac;
 
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -12,39 +13,43 @@ public class STACCollectionParser {
         return collection.has("title") ? collection.getString("title") : collection.getString("id");
     }
 
+    public static String readCollectionId(JSONObject collection) {
+        return collection.getString("id");
+    }
+
     private static JSONObject readItemAssets(JSONObject collection) {
         return collection.getJSONObject("item_assets");
     }
 
-    private static JSONObject readAssets(JSONObject items) {
+    private static JSONObject readAssetsFromItems(JSONObject items) {
         return items.getJSONArray("features").getJSONObject(0).getJSONObject("assets"); 
     }
 
     /**
      * Reads the assets of a STAC collection and returns them as a JSON.
-     * @param catalogUrl endpoint of the catalog
-     * @param collectionId id of the collection
+     * @param collection as a JSON
      * @return The asset list as a JSON
      * @throws KlabResourceAccessException
      */
-    public static JSONObject readAssets(String catalogUrl, String collectionId) throws KlabResourceAccessException {
+    public static JSONObject readAssetsFromCollection(String collectionUrl, JSONObject collection) throws KlabResourceAccessException {
         JSONObject assets;
-        JSONObject collectionData = Unirest.get(catalogUrl + "/collections/" + collectionId)
-                .asJson().getBody().getObject();
 
         // item_assets is a shortcut for obtaining information about the assets
         // https://github.com/stac-extensions/item-assets
-        if (collectionData.has("item_assets")) {
-            assets = STACCollectionParser.readItemAssets(collectionData);
+        if (collection.has("item_assets")) {
+            assets = STACCollectionParser.readItemAssets(collection);
         } else {
-            HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId + "/items").asJson();
+            if (STACUtils.usesRelativePath(collectionUrl)) {
+                // TODO read relative path
+                throw new KlabUnsupportedFeatureException();
+            }
+            HttpResponse<JsonNode> response = Unirest.get(collectionUrl + "/items").asJson();
             if (!response.isSuccess()) {
-                throw new KlabResourceAccessException("Cannot read items at " + catalogUrl + "/collections/" + collectionId + "/items");
+                throw new KlabResourceAccessException("Cannot read items at " + collectionUrl + "/items");
             }
             JSONObject itemsData = response.getBody().getObject();
-            assets =  STACCollectionParser.readAssets(itemsData);
+            assets =  STACCollectionParser.readAssetsFromItems(itemsData);
         }
         return assets;
     }
-
 }

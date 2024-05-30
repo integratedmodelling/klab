@@ -14,11 +14,17 @@ import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
+import kong.unirest.json.JSONObject;
+
 public class STACService {
     private HMStacManager catalog;
     private HMStacCollection collection;
 
-    public STACService(String catalogUrl, String collectionId) {
+    public STACService(String collectionUrl) {
+        JSONObject collectionData = STACUtils.requestCollectionMetadata(collectionUrl);
+        String collectionId = STACCollectionParser.readCollectionId(collectionData);
+        String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId);
+
         LogProgressMonitor lpm = new LogProgressMonitor();
         this.catalog = new HMStacManager(catalogUrl, lpm);
         try {
@@ -29,7 +35,7 @@ public class STACService {
         try {
             this.collection = catalog.getCollectionById(collectionId);
         } catch (Exception e) {
-            throw new KlabInternalErrorException("Error at STAC service. Cannot read collection at '" + catalogUrl + "/collections/" + collectionId + "'.");
+            throw new KlabInternalErrorException("Error at STAC service. Cannot read collection at '" + collectionUrl + "'.");
         }
         if (collection == null) {
             throw new KlabInternalErrorException("Error at STAC service. Endpoint '" + catalogUrl + "' has no collection '" + collectionId + "'.");

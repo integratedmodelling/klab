@@ -43,12 +43,12 @@ public class STACValidator implements IResourceValidator {
         if (!canHandle(null, userData)) {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
-        String catalogUrl = userData.get("catalogUrl", String.class);
+        String collectionUrl = userData.get("collection", String.class);
         String collectionId = userData.get("collectionId", String.class);
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
-        JSONObject metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
+        STACService service = STACAdapter.getService(collectionUrl);
+        JSONObject collectionData = STACUtils.requestCollectionMetadata(collectionUrl);
 
-        Set<String> extensions = readSTACExtensions(metadata);
+        Set<String> extensions = readSTACExtensions(collectionData);
         userData.put("stac_extensions", extensions);
 
         IGeometry geometry = service.getGeometry(userData);
@@ -56,10 +56,10 @@ public class STACValidator implements IResourceValidator {
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 
         // The default URL of the resource is the collection endpoint. May be overwritten. 
-        builder.withMetadata(IMetadata.DC_URL, catalogUrl + "/collections/" + collectionId);
+        builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
         String assetId = userData.get("asset", String.class);
-        JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
+        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionId, collectionData);
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
         Type type = readRasterDataType(asset);
@@ -76,7 +76,7 @@ public class STACValidator implements IResourceValidator {
         if (type != null) {
             builder.withType(type);
         }
-        readMetadata(metadata, builder);
+        readMetadata(collectionData, builder);
         return builder;
     }
 
@@ -195,7 +195,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId") && parameters.contains("asset");
+        return resource == null && parameters.contains("collection") && parameters.contains("collectionId") && parameters.contains("asset");
     }
 
     @Override
