@@ -54,20 +54,15 @@ public class STACEncoder implements IResourceEncoder {
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
         String collectionUrl = resource.getParameters().get("collection", String.class);
-
-        boolean usesRelativePath = collectionUrl.endsWith("/collection.json");
-        
-        STACService service = STACAdapter.getService(collectionUrl);
-
-        if (service == null) {
-            monitor.error("Service " + resource.getParameters().get("collectionUrl", String.class)
-                    + " does not exist: likely the service URL is wrong or offline");
+        if (collectionUrl == null) {
+            monitor.error("Resource is lacking a proper schema. Try to reimport the STAC collection.");
             return false;
         }
 
-        HMStacCollection collection = service.getCollection();
-        if (collection == null) {
-            monitor.error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
+        STACService service = STACAdapter.getService(collectionUrl);
+        if (service == null) {
+            monitor.error("Connection with collection " + collectionUrl
+                    + " cannot be opened: likely the service URL is wrong or offline");
             return false;
         }
         return true;
