@@ -816,7 +816,9 @@ public interface API {
              */
             LEGEND,
             /**
-             * Report can be PDF or MS Word
+             * Report can be PDF or MS Word.
+             * If the view parameter is specified, only the corresponding
+             * {@link: org.integratedmodelling.klab.api.documentation.IReport.View} will be returned.
              */
             REPORT,
             /**
