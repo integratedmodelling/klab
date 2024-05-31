@@ -73,6 +73,10 @@ public class STACUtils {
         if (!response.isSuccess() || response.getBody() == null) {
             throw new KlabResourceAccessException("Cannot access the collection at " + collectionUrl);
         }
+        JSONObject data = response.getBody().getObject();
+        if (!"collection".equals(data.getString("type"))) {
+            throw new KlabResourceAccessException("Data at " + collectionUrl + " is not a valid STAC collection");
+        }
         return response.getBody().getObject();
     }
 
