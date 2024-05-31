@@ -204,7 +204,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Override
     public User getUser(String username) {
         return userRepository.findByNameIgnoreCase(username).filter(u -> u.getUsername().equals(username))
-                .orElseThrow(() -> new UserDoesNotExistException());
+                .orElseThrow(() -> new KlabException("Current User doesn't exist"));
     }
 
     @Override

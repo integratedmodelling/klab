@@ -17,4 +17,4 @@ jobs:
     - name: Build with maven
       run: |
         ./mvnw -U clean install -DskipTests
-        ./mvnw -pl :klab.ogc -pl :klab.node test -Dtest="*STAC*,Authentication*"
+        ./mvnw -pl :klab.ogc test -Dtest="*STAC*"

@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +19,6 @@ import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.LoginFailedExcepetion;
 import org.integratedmodelling.klab.hub.users.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.users.payload.LogoutResponse;
-import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,106 +33,101 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.MongoException;
 
 @Service
-public class UserAuthTokenServiceImpl implements UserAuthTokenService {
+public class UserAuthTokenServiceImpl implements UserAuthTokenService{
+	
+	protected static final Logger logger = LoggerFactory.getLogger(UserAuthTokenServiceImpl.class);
+	
+	private AuthenticationManager authenticationManager;
+	
+	private UserRepository userRepository;
+	
+	private TokenRepository tokenRepository;
+	
+	private ObjectMapper objectMapper;
+	
+	public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
+			TokenRepository tokenRepository, ObjectMapper objectMapper) {
+		super();
+		this.authenticationManager = authenticationManager;
+		this.userRepository = userRepository;
+		this.tokenRepository = tokenRepository;
+		this.objectMapper = objectMapper;
+	}
+	
+	private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
 
-    protected static final Logger logger = LoggerFactory.getLogger(UserAuthTokenServiceImpl.class);
+	@Override
+	public TokenAuthentication createToken(String username, TokenType type) {
+		if(TokenType.auth == type) {
+			TokenAuthentication token = null;
+			Optional<User> user = userRepository.findByNameIgnoreCase(username);
+			if(user.isPresent()) {
+				token = new CreateUserAuthenticationToken(tokenRepository, user.get()).execute();
+			}
+			return token;
+		} else {
+			throw new AuthenticationFailedException("Incorrect workflow for creating token");
+		}
+	}
 
-    private AuthenticationManager authenticationManager;
 
-    private UserRepository userRepository;
+	@Override
+	public void deleteToken(String tokenString) {
+		try {
+			new DeleteAuthenticationToken(tokenRepository, tokenString).execute();
+		} catch (MongoException e) {
+			logger.error(e.getMessage(), e);
+			throw new KlabException("Error deleting token, " + e.getMessage(), e);
+		}
+	}
+	
+	private void deleteExpiredTokens(String username) {
+		List<TokenAuthentication> dbTokens = tokenRepository.findByUsername(username);
+		for (TokenAuthentication dbToken : dbTokens) {
+			if (dbToken.isExpired()) {
+				deleteToken(dbToken.getTokenString());
+			}
+		}
+	}
 
-    private UserProfileService profileService;
+	@Override
+	public TokenAuthentication getUserAuthenticationToken(String username, String password) {
+		Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
+		try {
+			authRequest = authenticationManager.authenticate(authRequest);
+		} catch (AuthenticationException e) {
+			throw new LoginFailedExcepetion(username);
+		}
+		if (!authRequest.isAuthenticated()) {
+			String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
+			throw new KlabException(msg);
+		} else {
+			deleteExpiredTokens(username);
+			TokenAuthentication result = createToken(username, TokenType.auth);
+			PreAuthenticatedAuthenticationToken secureToken = new PreAuthenticatedAuthenticationToken(result.getPrincipal(),result.getCredentials(),result.getAuthorities());
+			SecurityContextHolder.getContext().setAuthentication(secureToken);
+			return result;
+		}
+	}
 
-    private TokenRepository tokenRepository;
-
-    private ObjectMapper objectMapper;
-
-    public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
-            UserProfileService profileService, TokenRepository tokenRepository, ObjectMapper objectMapper) {
-        super();
-        this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
-        this.profileService = profileService;
-        this.tokenRepository = tokenRepository;
-        this.objectMapper = objectMapper;
-    }
-
-    private static final JwtToken JWT_TOKEN_FACTORY = new JwtToken();
-
+	@SuppressWarnings("rawtypes")
     @Override
-    public TokenAuthentication createToken(String username, TokenType type) {
-        if (TokenType.auth == type) {
-            TokenAuthentication token = null;
-            Optional<User> user = userRepository.findByNameIgnoreCase(username);
-            if (user.isPresent()) {
-                token = new CreateUserAuthenticationToken(tokenRepository, user.get()).execute();
-            }
-            return token;
-        } else {
-            throw new AuthenticationFailedException("Incorrect workflow for creating token");
-        }
-    }
-
-    @Override
-    public void deleteToken(String tokenString) {
-        try {
-            new DeleteAuthenticationToken(tokenRepository, tokenString).execute();
-        } catch (MongoException e) {
-            logger.error(e.getMessage(), e);
-            throw new KlabException("Error deleting token, " + e.getMessage(), e);
-        }
-    }
-
-    private void deleteExpiredTokens(String username) {
-        List<TokenAuthentication> dbTokens = tokenRepository.findByUsername(username);
-        for(TokenAuthentication dbToken : dbTokens) {
-            if (dbToken.isExpired()) {
-                deleteToken(dbToken.getTokenString());
-            }
-        }
-    }
-
-    @Override
-    public TokenAuthentication getUserAuthenticationToken(String username, String password) {
-        Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
-        try {
-            authRequest = authenticationManager.authenticate(authRequest);
-        } catch (AuthenticationException e) {
-            throw new LoginFailedExcepetion(username);
-        }
-        if (!authRequest.isAuthenticated()) {
-            String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
-            throw new KlabException(msg);
-        } else {
-            deleteExpiredTokens(username);
-            TokenAuthentication result = createToken(username, TokenType.auth);
-            PreAuthenticatedAuthenticationToken secureToken = new PreAuthenticatedAuthenticationToken(result.getPrincipal(),
-                    result.getCredentials(), result.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(secureToken);
-            return result;
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    public LoginResponse< ? > getAuthResponse(String username, String password, boolean remote) {
-        TokenAuthentication token = getUserAuthenticationToken(username, password);
-        ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
-        profile.setLastLogin(LocalDateTime.now());
-        profileService.updateUserByProfile(profile);
-        if (remote) {
+	public LoginResponse<?> getAuthResponse(String username, String password, boolean remote) {
+		TokenAuthentication token = getUserAuthenticationToken(username, password);
+		ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
+		if (remote) {
             profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
             return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
         } else {
             return new LoginResponse<ProfileResource>(token, profile.getSafeProfile());
         }
-    }
+	}
 
-    @Override
-    public LogoutResponse getLogoutResponse(String token) {
-        deleteToken(token);
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        return new LogoutResponse(username);
-    }
+	@Override
+	public LogoutResponse getLogoutResponse(String token) {
+		deleteToken(token);
+		String username = SecurityContextHolder.getContext().getAuthentication().getName();
+		return new LogoutResponse(username);
+	}
 
 }

@@ -358,7 +358,7 @@ public class Client extends RestTemplate implements IClient {
 
     public Client withAuthorization(String authorization) {
 
-        Client ret = new Client(this);
+        Client ret = new Client();
         ret.objectMapper = this.objectMapper;
         ret.authorizationToken = authorization;
         return ret;
@@ -393,7 +393,6 @@ public class Client extends RestTemplate implements IClient {
 
             switch(response.getStatusCodeValue()) {
             case 302:
-            case 401:
             case 403:
                 throw new KlabAuthorizationException("unauthorized request " + url);
             case 404:
@@ -486,7 +485,6 @@ public class Client extends RestTemplate implements IClient {
 
         switch(response.getStatusCodeValue()) {
         case 302:
-        case 401:
         case 403:
             throw new KlabAuthorizationException("unauthorized request " + url);
         case 404:
@@ -560,7 +558,6 @@ public class Client extends RestTemplate implements IClient {
 
         switch(response.getStatusCodeValue()) {
         case 302:
-        case 401:
         case 403:
             throw new KlabAuthorizationException("unauthorized request " + url);
         case 404:
@@ -630,7 +627,6 @@ public class Client extends RestTemplate implements IClient {
 
         switch(response.getStatusCodeValue()) {
         case 302:
-        case 401:
         case 403:
             throw new KlabAuthorizationException("unauthorized request " + url);
         case 404:
@@ -700,7 +696,6 @@ public class Client extends RestTemplate implements IClient {
 
             switch(response.getStatusCodeValue()) {
             case 302:
-            case 401:
             case 403:
                 throw new KlabAuthorizationException("unauthorized request " + url);
             case 404:

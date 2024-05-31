@@ -51,9 +51,12 @@ public enum NodeAuthenticationManager {
 
 	INSTANCE;
 
-	
-	private static final int ALLOWED_CLOCK_SKEW_MS = 30000;	
+	private static final String TOKEN_CLASS_PACKAGE = "org.integratedmodelling.node.resource.token";
+	private static final int ALLOWED_CLOCK_SKEW_MS = 30000;
+	private static final String DEFAULT_TOKEN_CLASS = EngineAuthorization.class.getSimpleName();
+	private static final long JWKS_UPDATE_INTERVAL_MS = 10 * 60 * 1000; // every 10 minutes
 	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
+	private static final String JWT_CLAIM_TOKEN_TYPE = "cls";
 	private static final String ENGINE_AUDIENCE = "engine";
 	private static final String JWT_CLAIM_KEY_ROLES = "roles";
 
@@ -67,6 +70,7 @@ public enum NodeAuthenticationManager {
 	private String nodeName;
 	private String hubName;
 	private INodeIdentity node;
+	long wtfErrors = 0;
 
 	NodeAuthenticationManager() {
 		Authentication.INSTANCE.setPrincipalTranslator((principal) -> {
@@ -253,9 +257,18 @@ public enum NodeAuthenticationManager {
 			result.setAuthenticated(true);
 
 		} catch (MalformedClaimException | InvalidJwtException e) {
-			//noop
+			// TODO see if we should reauthenticate and if so, try that before throwing an
+			// authorization exception
+			if ((wtfErrors % 100) == 0) {
+				Logging.INSTANCE.error("WTF (" + wtfErrors + " errors)", e);
+			}
+			wtfErrors++;
 		} catch (Exception e) {
-			Logging.INSTANCE.error("Error validating JWT", e);
+			// it was a JWT token, but some other exception happened.
+			if ((wtfErrors % 100) == 0) {
+				Logging.INSTANCE.error("WTF (" + wtfErrors + " errors)", e);
+			}
+			wtfErrors++;
 		}
 		
 		return result;
@@ -294,13 +307,5 @@ public enum NodeAuthenticationManager {
 //		Logging.INSTANCE.info("Received groups " + groupStrings + "; authenticated " + authenticated);
 		
 		return ret;
-	}
-
-	public void setJwksVerifiers(Map<String, JwtConsumer> jwksVerifiers) {
-		this.jwksVerifiers = jwksVerifiers;
-	}
-
-	public void setPreValidationExtractor(JwtConsumer preValidationExtractor) {
-		this.preValidationExtractor = preValidationExtractor;
 	}
 }

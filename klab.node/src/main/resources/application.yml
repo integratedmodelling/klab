@@ -9,10 +9,6 @@ spring:
        enabled: true
        max-file-size: -1
        max-request-size: -1
-  autoconfigure:
-     exclude:
-       - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
-       - org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
       
 klab:
    node:
