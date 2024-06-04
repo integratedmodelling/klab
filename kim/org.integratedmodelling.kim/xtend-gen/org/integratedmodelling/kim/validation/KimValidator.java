@@ -2900,10 +2900,6 @@ public class KimValidator extends AbstractKimValidator {
               }
               if (fits) {
                 ret.getEmergenceTriggers().add(countable);
-              } else {
-                this.error("inconsistent use of the \'emerges from\' clause", concept, 
-                  KimPackage.Literals.CONCEPT_STATEMENT_BODY__EMERGENCE_TRIGGERS);
-                ok = false;
               }
               i_2++;
             }
