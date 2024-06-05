@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.scale.Scale;
@@ -139,6 +140,10 @@ public class STACEncoder implements IResourceEncoder {
         String collectionUrl = resource.getParameters().get("collection", String.class);
 
         STACService service = STACAdapter.getService(collectionUrl);
+        if (service.isStatic()) {
+            // TODO implement how to read static collections
+            throw new KlabUnimplementedException("Cannot read a static collection.");
+        }
         HMStacCollection collection = service.getCollection();
         if (collection == null) {
             scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be find.");
