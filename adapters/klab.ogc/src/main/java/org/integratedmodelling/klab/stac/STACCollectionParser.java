@@ -1,5 +1,12 @@
 package org.integratedmodelling.klab.stac;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 
@@ -23,6 +30,28 @@ public class STACCollectionParser {
 
     private static JSONObject readAssetsFromItems(JSONObject items) {
         return items.getJSONArray("features").getJSONObject(0).getJSONObject("assets"); 
+    }
+
+    public static IGeometry readGeometry(JSONObject collection) {
+        GeometryBuilder gBuilder = Geometry.builder();
+        DateTimeFormatter filterTimestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+        JSONObject extent = collection.getJSONObject("extent");
+        List<String> interval = extent.getJSONObject("temporal").getJSONArray("interval").getJSONArray(0).toList();
+
+        if (interval.get(0) != null) {
+            LocalDateTime start = LocalDateTime.parse(interval.get(0), filterTimestampFormatter);
+            gBuilder.time().start(start.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+        }
+        if (interval.size() > 1 && interval.get(1) != null) {
+            LocalDateTime start = LocalDateTime.parse(interval.get(1), filterTimestampFormatter);
+            gBuilder.time().start(start.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+        }
+
+        List<Double> bbox = extent.getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0).toList();
+
+        gBuilder.space().boundingBox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
+        return gBuilder.build();
     }
 
     /**

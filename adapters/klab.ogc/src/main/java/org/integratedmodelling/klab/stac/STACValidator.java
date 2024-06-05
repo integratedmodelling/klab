@@ -45,13 +45,19 @@ public class STACValidator implements IResourceValidator {
         }
         String collectionUrl = userData.get("collection", String.class);
         String collectionId = userData.get("collectionId", String.class);
-        STACService service = STACAdapter.getService(collectionUrl);
         JSONObject collectionData = STACUtils.requestCollectionMetadata(collectionUrl);
+        if (collectionId ==  null) {
+            collectionId = collectionData.getString("id");
+            userData.put("collectionId", collectionId);
+        }
+        STACService service = STACAdapter.getService(collectionUrl);
 
         Set<String> extensions = readSTACExtensions(collectionData);
         userData.put("stac_extensions", extensions);
 
-        IGeometry geometry = service.getGeometry(userData);
+        IGeometry geometry = service.isStatic()
+                ? STACCollectionParser.readGeometry(collectionData)
+                : service.getGeometry(userData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 
@@ -59,7 +65,7 @@ public class STACValidator implements IResourceValidator {
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
         String assetId = userData.get("asset", String.class);
-        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionId, collectionData);
+        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
         Type type = readRasterDataType(asset);
@@ -195,7 +201,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("collection") && parameters.contains("collectionId") && parameters.contains("asset");
+        return resource == null && parameters.contains("collection") && parameters.contains("asset");
     }
 
     @Override
