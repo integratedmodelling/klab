@@ -22,7 +22,7 @@ public class STACService {
     private boolean isStatic;
 
     public STACService(String collectionUrl) {
-        JSONObject collectionData = STACUtils.requestCollectionMetadata(collectionUrl);
+        JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = STACCollectionParser.readCollectionId(collectionData);
         String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId);
 

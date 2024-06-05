@@ -68,14 +68,14 @@ public class STACUtils {
         return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
-    public static JSONObject requestCollectionMetadata(String collectionUrl) {
+    public static JSONObject requestMetadata(String collectionUrl, String type) {
         HttpResponse<JsonNode> response = Unirest.get(collectionUrl).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the collection at " + collectionUrl);
+            throw new KlabResourceAccessException("Cannot access the " + type + " at " + collectionUrl);
         }
         JSONObject data = response.getBody().getObject();
-        if (!"collection".equals(data.getString("type").toLowerCase())) {
-            throw new KlabResourceAccessException("Data at " + collectionUrl + " is not a valid STAC collection");
+        if (!data.getString("type").equalsIgnoreCase(type)) {
+            throw new KlabResourceAccessException("Data at " + collectionUrl + " is not a valid STAC " + type);
         }
         return response.getBody().getObject();
     }

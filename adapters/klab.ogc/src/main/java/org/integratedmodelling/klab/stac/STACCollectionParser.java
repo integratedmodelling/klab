@@ -4,12 +4,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
-import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
-
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -69,8 +68,12 @@ public class STACCollectionParser {
             assets = STACCollectionParser.readItemAssets(collection);
         } else {
             if (STACUtils.usesRelativePath(collectionUrl)) {
-                // TODO read relative path
-                throw new KlabUnsupportedFeatureException();
+                List<JSONObject> items = STACCollectionParser.readItemsFromLinks(collection);
+                // We can take the first one as a model
+                String linkHref = items.get(0).getString("href");
+                String itemUrl = getItemUrl(collectionUrl, linkHref);
+                JSONObject itemData = STACUtils.requestMetadata(itemUrl, "feature");
+                return itemData.getJSONObject("assets");
             }
             HttpResponse<JsonNode> response = Unirest.get(collectionUrl + "/items").asJson();
             if (!response.isSuccess()) {
@@ -80,5 +83,15 @@ public class STACCollectionParser {
             assets =  STACCollectionParser.readAssetsFromItems(itemsData);
         }
         return assets;
+    }
+
+    private static List<JSONObject> readItemsFromLinks(JSONObject collection) {
+        List<JSONObject> links = collection.getJSONArray("links").toList();
+        links.removeIf(l -> !l.getString("rel").equalsIgnoreCase("item"));
+        return links;
+    }
+
+    private static String getItemUrl(String collectionUrl, String itemHref) {
+        return collectionUrl.replace("collection.json", itemHref.replace("./", ""));
     }
 }

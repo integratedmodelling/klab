@@ -45,7 +45,7 @@ public class STACValidator implements IResourceValidator {
         }
         String collectionUrl = userData.get("collection", String.class);
         String collectionId = userData.get("collectionId", String.class);
-        JSONObject collectionData = STACUtils.requestCollectionMetadata(collectionUrl);
+        JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         if (collectionId ==  null) {
             collectionId = collectionData.getString("id");
             userData.put("collectionId", collectionId);

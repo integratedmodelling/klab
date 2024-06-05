@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 
@@ -47,7 +46,7 @@ public class STACImporter implements IResourceImporter {
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
             throws MalformedURLException {
         String collectionUrl = parameters.get("collection", String.class);
-        JSONObject collectionData = STACUtils.requestCollectionMetadata(collectionUrl);
+        JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = STACCollectionParser.readCollectionId(collectionData);
         parameters.put("collectionId", collectionId);
 
