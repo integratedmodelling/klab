@@ -92,6 +92,6 @@ public class STACCollectionParser {
     }
 
     private static String getItemUrl(String collectionUrl, String itemHref) {
-        return collectionUrl.replace("collection.json", itemHref.replace("./", ""));
+        return collectionUrl.replace("collection.json", itemHref.replace("\\", "/").replace("./", ""));
     }
 }
