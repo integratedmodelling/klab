@@ -215,7 +215,7 @@ public class STACEncoder implements IResourceEncoder {
             // data.
             final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
+            HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
         } catch (Exception e) {
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
