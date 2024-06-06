@@ -99,6 +99,24 @@ public class STACEncoder implements IResourceEncoder {
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
     }
 
+    /**
+     * Validates that the temporal dimension of the context can be supported by the resource.
+     * For generic resources, time can be refitted.
+     * @param contextTime
+     * @param resourceTime
+     * @return validated time for the request
+     */
+    private Time validateTemporalDimension(Time contextTime, Time resourceTime) {
+        if (!resourceTime.contains(contextTime)) {
+            if (resourceTime.isGeneric()) {
+                return refitTime(contextTime, resourceTime);
+            } else {
+                throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+            }
+        }
+        return contextTime;
+    }
+
     private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics, IMonitor monitor) {
         if (targetSemantics == null) {
             monitor.debug("Using average as merge mode");
@@ -148,37 +166,26 @@ public class STACEncoder implements IResourceEncoder {
             scope.getMonitor().error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
         }
 
-        GridCoverage2D coverage = null;
-
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
                 .findFirst().orElseThrow();
-        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
-                .findFirst().orElseThrow();
-        ITimeInstant start = time.getStart();
-        ITimeInstant end = time.getEnd();
-
-        Scale resourceScale = Scale.create(resource.getGeometry());
-        Time resourceTime = (Time) resourceScale.getDimension(Type.TIME);
-
-        boolean contextTimeContainedInResource = resourceTime.contains(time);
-        if (!contextTimeContainedInResource) {
-            if (time.isGeneric()) {
-                Time refittedTime = refitTime(time, resourceTime);
-                start = refittedTime.getStart();
-                end = refittedTime.getEnd();
-            } else {
-                throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
-            }
-        }
-
         IEnvelope envelope = space.getEnvelope();
         Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
 
+        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
+                .findFirst().orElseThrow();
+        Scale resourceScale = Scale.create(resource.getGeometry());
+        Time resourceTime = (Time) resourceScale.getDimension(Type.TIME);
+        time = validateTemporalDimension(time, resourceTime);
+
+        GridCoverage2D coverage = null;
         try {
+            ITimeInstant start = time.getStart();
+            ITimeInstant end = time.getEnd();
             List<HMStacItem> items = collection.setGeometryFilter(poly)
                     .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
                     .searchItems();
+
             if (items.isEmpty()) {
                 throw new KlabIllegalStateException("No STAC items found for this context.");
             }
