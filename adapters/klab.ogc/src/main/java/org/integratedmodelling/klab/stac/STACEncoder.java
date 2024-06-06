@@ -171,20 +171,21 @@ public class STACEncoder implements IResourceEncoder {
         IEnvelope envelope = space.getEnvelope();
         Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
+        collection.setGeometryFilter(poly);
 
         Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
                 .findFirst().orElseThrow();
-        Scale resourceScale = Scale.create(resource.getGeometry());
-        Time resourceTime = (Time) resourceScale.getDimension(Type.TIME);
-        time = validateTemporalDimension(time, resourceTime);
+        Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
+        if (resourceTime.getCoveredExtent() > 0) {
+            time = validateTemporalDimension(time, resourceTime);
+            ITimeInstant start = time.getStart();
+            ITimeInstant end = time.getEnd();
+            collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()));
+        }
 
         GridCoverage2D coverage = null;
         try {
-            ITimeInstant start = time.getStart();
-            ITimeInstant end = time.getEnd();
-            List<HMStacItem> items = collection.setGeometryFilter(poly)
-                    .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
-                    .searchItems();
+            List<HMStacItem> items = collection.searchItems();
 
             if (items.isEmpty()) {
                 throw new KlabIllegalStateException("No STAC items found for this context.");
