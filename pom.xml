@@ -111,6 +111,7 @@
 		<mweVersion>2.16.0</mweVersion>
 		<googleJibVersion>3.4.3</googleJibVersion>
 		<jib.jvmFlags>-XshowSettings:vm</jib.jvmFlags>
+		<aws.version>1.12.39</aws.version>
 
 		<!-- the five below go together. Never change one without checking the
 			others. Spring security latest is currently requiring 5.0.4, implying boot
