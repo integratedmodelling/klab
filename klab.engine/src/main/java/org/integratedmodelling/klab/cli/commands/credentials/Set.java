@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.cli.commands.credentials;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -19,26 +21,47 @@ public class Set implements ICommand {
 
     @Override
     public Object execute(IServiceCall call, ISession session) {
-
         String ret = "";
+        if (call.getParameters().containsKey("update")) {
+            Authentication.INSTANCE.updateLegacyCredentials();
+            ret += "Credentials updated.";
+        }
+
         List<?> args = (List<?>) call.getParameters().get("arguments");
-        String scheme = "basic";
-        int nargs = 3;
+        if (args.isEmpty()) {
+            return ret;
+        }
+
+        String id = (String) call.getParameters().get("id");
+        String url = (String) call.getParameters().get("url");
+        String scheme = (String) call.getParameters().get("scheme");
         int astart = 0;
-        if (args.size() > 0) {
-            if (ExternalAuthenticationCredentials.parameterKeys.containsKey(args.get(0).toString())) {
-                scheme = args.get(0).toString();
-                astart = 1;
+
+        if (scheme == null) {
+            scheme = args.get(astart).toString();
+            astart++;
+        }
+        List<String> params = List.of(ExternalAuthenticationCredentials.parameterKeys.get(scheme));
+        int nargs = params.size() + astart;
+
+        if (url == null) {
+            url = args.get(astart).toString();
+            astart++;
+            nargs++;
+        }
+        if (id == null) {
+            try {
+                id = new URL(url).getHost();
+            } catch (MalformedURLException e) {
+               throw new KlabValidationException("Cannot generate credential ID from URL " + url);
             }
         }
 
-        String[] params = ExternalAuthenticationCredentials.parameterKeys.get(scheme);
-        if (params == null) {
+        if (params.isEmpty()) {
             throw new KlabIllegalArgumentException("unrecognized authorization scheme");
         }
 
-        nargs = params.length + 1; // the URL
-        if (args.size() != (nargs + astart)) {
+        if (args.size() != nargs) {
             throw new KlabValidationException("expecting " + nargs + " arguments for scheme " + scheme);
         }
 
@@ -47,13 +70,13 @@ public class Set implements ICommand {
         ExternalAuthenticationCredentials credentials = new ExternalAuthenticationCredentials();
 
         credentials.setScheme(scheme);
-        for (int i = astart + 1; i < (astart + nargs); i++) {
+        credentials.setURL(url);
+        for (int i = astart; i < nargs; i++) {
             credentials.getCredentials().add(args.get(i).toString());
-            ret += "\n   " + params[i - astart - 1] + ": " + args.get(i).toString();
+            ret += "\n   " + params.get(i - astart) + ": " + args.get(i).toString();
+        };
 
-        }
-
-        Authentication.INSTANCE.addExternalCredentials(args.get(astart).toString(), credentials);
+        Authentication.INSTANCE.addExternalCredentials(id, credentials);
 
         return ret;
 
