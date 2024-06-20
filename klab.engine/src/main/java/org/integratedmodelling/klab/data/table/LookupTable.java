@@ -87,8 +87,12 @@ public class LookupTable implements ILookupTable {
 
         if (this.type == Type.CONCEPT) {
             this.key = new LinkedHashMap<>();
-            for (int i = 0; i < table.getRowCount(); i++) {
-                this.key.put((IConcept) table.getRow(i)[searchIndex].asValue(null), i);
+            for (int i = 0, conceptCounter = 0; i < table.getRowCount(); i++) {
+                // Avoid counting multiple table row matches
+                IConcept concept = (IConcept) table.getRow(i)[searchIndex].asValue(null);
+                if (!this.key.containsKey(concept)) {
+                    this.key.put(concept, conceptCounter++);
+                }
             }
         }
 
@@ -125,7 +129,8 @@ public class LookupTable implements ILookupTable {
 
     @Override
     public int size() {
-        return table.getRowCount();
+        //return table.getRowCount();
+        return this.key.size();
     }
 
     @Override
