@@ -15,7 +15,7 @@ public class ExternalAuthenticationCredentials {
     static {
         parameterKeys = new HashMap<>();
         parameterKeys.put("basic", new String[]{"username", "password"});
-        parameterKeys.put("oidc", new String[]{"url", "grant_type", "client_id", "client_secrets", "scope", "provider_id"});
+        parameterKeys.put("oidc", new String[]{"grant_type", "client_id", "client_secrets", "provider_id"});
         parameterKeys.put("s3", new String[]{"accessKey", "secretKey"});
         parameterKeys.put("key", new String[]{"key"});
     }
@@ -24,7 +24,7 @@ public class ExternalAuthenticationCredentials {
      * Credentials, depending on scheme
      * 
      * for basic: username and password
-     * for oidc: Authentication URL, grant type, client ID, client secret, scope, provider
+     * for oidc: grant type, client ID, client secret, provider
      * for s3: endpoint URL, access key, secret key
      * for key: a single key
      */
@@ -34,6 +34,11 @@ public class ExternalAuthenticationCredentials {
      * one of basic, oidc, s3, key...
      */
     private String scheme = "basic";
+
+    /**
+     * The URL of the authentication service
+     */
+    private String url = "";
 
     public List<String> getCredentials() {
         return credentials;
@@ -51,4 +56,11 @@ public class ExternalAuthenticationCredentials {
         this.scheme = scheme;
     }
 
+    public String getURL() {
+        return url;
+    }
+
+    public void setURL(String url) {
+        this.url = url;
+    }
 }

@@ -1,12 +1,15 @@
 package org.integratedmodelling.klab.auth;
 
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
+import org.integratedmodelling.klab.utils.Pair;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -38,7 +41,16 @@ public class Authorization {
      * @param credentials
      */
     public Authorization(ExternalAuthenticationCredentials credentials) {
+        this(credentials, null);
+    }
 
+    /**
+     * Create a new authorization. {@link #isOnline()} should be called after creation.
+     * 
+     * @param credentials
+     * @param endpoint
+     */
+    public Authorization(ExternalAuthenticationCredentials credentials, String endpoint) {
         if (credentials == null) {
             throw new KlabIllegalArgumentException("attempted authorization with null credentials");
         }
@@ -51,6 +63,9 @@ public class Authorization {
                     .encode((credentials.getCredentials().get(0) + ":" + credentials.getCredentials().get(1)).getBytes());
             this.token = new String(encodedBytes);
         } else if ("oidc".equals(credentials.getScheme())) {
+            if (endpoint == null) {
+                throw new KlabIllegalArgumentException("Attempted to start an OIDC authoritation workflow without an endpoint");
+            }
             refreshToken();
         }
     }
@@ -64,18 +79,45 @@ public class Authorization {
         return token != null;
     }
 
+    private Pair<String, String> parseProvider() {
+        HttpResponse<JsonNode> response = Unirest.get(credentials.getURL() + "/credentials/oidc").asJson();
+        if (!response.isSuccess()) {
+            throw new KlabAuthorizationException("Cannot access " + credentials.getURL() + " for OIDC authentication");
+        }
+        List<JSONObject> providers = response.getBody().getObject().getJSONArray("providers").toList();
+        JSONObject provider = providers.stream().filter(prov -> prov.getString("id").equals(credentials.getCredentials().get(3))).findFirst()
+                .orElseThrow(() -> new KlabAuthorizationException("No known provider '" + credentials.getCredentials().get(3) + "' at " + credentials.getURL()));
+        List<String> scopes = provider.getJSONArray("scopes").toList();
+        String scope = scopes.stream().collect(Collectors.joining(" "));
+        return new Pair<>(provider.getString("issuer"), scope);
+    }
+
+    private String parseIssuer(String issuerUrl) {
+        HttpResponse<JsonNode> response = Unirest.get(issuerUrl + "/.well-known/openid-configuration").asJson();
+        if (!response.isSuccess()) {
+            throw new KlabAuthorizationException("Cannot access " + issuerUrl + " for OIDC authentication");
+        }
+        return response.getBody().getObject().getString("token_endpoint");
+    }
+
     /**
      * OIDC-style token
      */
     private void refreshToken() {
-        
         /*
-         * authenticate and get the first token. Credentials should contain: 0. Auth endpoint 1.
-         * grant type 2. client ID 3. client secret 4. scope 5. provider
+         * authenticate and get the first token. Credentials should contain:
+         * 0. grant type 1. client ID 2. client secret 3. provider
          */
-        MultipartBody query = Unirest.post(credentials.getCredentials().get(0))
-                .field("grant_type", credentials.getCredentials().get(1)).field("client_id", credentials.getCredentials().get(2))
-                .field("client_secret", credentials.getCredentials().get(3)).field("scope", credentials.getCredentials().get(4));
+        Pair<String, String> issuerAndScope = parseProvider();
+        String issuer = issuerAndScope.getFirst();
+        String scope = issuerAndScope.getSecond();
+        String tokenServiceUrl = parseIssuer(issuer);
+
+        MultipartBody query = Unirest.post(tokenServiceUrl)
+                .field("grant_type", credentials.getCredentials().get(0))
+                .field("client_id", credentials.getCredentials().get(1))
+                .field("client_secret", credentials.getCredentials().get(2))
+                .field("scope", scope);
 
         if (this.token != null) {
             query = query.header("Authorization:",
@@ -101,7 +143,7 @@ public class Authorization {
             if (token != null && duration < 0) {
                 duration = response.has("expires_in") ? response.getLong("expires_in") : 0;
             }
-            this.prefix = "oidc/" + credentials.getCredentials().get(5) + "/";
+            this.prefix = "oidc/" + credentials.getCredentials().get(3) + "/";
             this.expiry += (duration * 1000l);
         }
     }
@@ -142,9 +184,10 @@ public class Authorization {
     }
 
     public static void main(String[] args) throws InterruptedException {
-        ExternalAuthenticationCredentials crds = Authentication.INSTANCE.getCredentials("https://openeo.vito.be/openeo/1.1.0");
+        String endpoint = "https://openeo.vito.be/openeo/1.1.0";
+        ExternalAuthenticationCredentials crds = Authentication.INSTANCE.getCredentials(endpoint);
         if (crds != null) {
-            Authorization authorization = new Authorization(crds);
+            Authorization authorization = new Authorization(crds, endpoint);
             System.out.println(authorization.getAuthorization());
             System.out.println("Sleeping 300 seconds: don't change the channel");
             Thread.sleep(300000l);
