@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.scale.Scale;
@@ -53,19 +54,16 @@ public class STACEncoder implements IResourceEncoder {
 
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
-        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
-        String collectionId = resource.getParameters().get("collectionId", String.class);
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
-
-        if (service == null) {
-            monitor.error("Service " + resource.getParameters().get("catalogUrl", String.class)
-                    + " does not exist: likely the service URL is wrong or offline");
+        String collectionUrl = resource.getParameters().get("collection", String.class);
+        if (collectionUrl == null) {
+            monitor.error("Resource is lacking a proper schema. Try to reimport the STAC collection.");
             return false;
         }
 
-        HMStacCollection collection = service.getCollection();
-        if (collection == null) {
-            monitor.error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
+        STACService service = STACAdapter.getService(collectionUrl);
+        if (service == null) {
+            monitor.error("Connection with collection " + collectionUrl
+                    + " cannot be opened: likely the service URL is wrong or offline");
             return false;
         }
         return true;
@@ -139,13 +137,16 @@ public class STACEncoder implements IResourceEncoder {
                 : null;
         HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
 
-        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
-        String collectionId = resource.getParameters().get("collectionId", String.class);
+        String collectionUrl = resource.getParameters().get("collection", String.class);
 
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
+        STACService service = STACAdapter.getService(collectionUrl);
+        if (service.isStatic()) {
+            // TODO implement how to read static collections
+            throw new KlabUnimplementedException("Cannot read a static collection.");
+        }
         HMStacCollection collection = service.getCollection();
         if (collection == null) {
-            scope.getMonitor().error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
+            scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be find.");
         }
 
         GridCoverage2D coverage = null;
@@ -208,7 +209,7 @@ public class STACEncoder implements IResourceEncoder {
             // data.
             final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
-            HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
+            HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
         } catch (Exception e) {
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
