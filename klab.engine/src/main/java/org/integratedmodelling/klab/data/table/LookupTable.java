@@ -72,7 +72,7 @@ public class LookupTable implements ILookupTable {
         this.table = StructuredTable.create(lookupTable.getTable());
         this.twoWay = lookupTable.isTwoWay();
 
-        for (IKimLookupTable.Argument a : lookupTable.getArguments()) {
+        for(IKimLookupTable.Argument a : lookupTable.getArguments()) {
             ArgImpl aa = new ArgImpl();
             if (a.id != null) {
                 aa.id = a.id;
@@ -87,16 +87,20 @@ public class LookupTable implements ILookupTable {
 
         if (this.type == Type.CONCEPT) {
             this.key = new LinkedHashMap<>();
-            for (int i = 0; i < table.getRowCount(); i++) {
-                this.key.put((IConcept) table.getRow(i)[searchIndex].asValue(null), i);
+            for(int i = 0, conceptCounter = 0; i < table.getRowCount(); i++) {
+                // Avoid counting multiple table row matches
+                IConcept concept = (IConcept) table.getRow(i)[searchIndex].asValue(null);
+                if (!this.key.containsKey(concept)) {
+                    this.key.put(concept, conceptCounter++);
+                }
             }
         }
 
         if (this.twoWay) {
-            for (IKimClassifier classifier : lookupTable.getColumnClassifiers()) {
+            for(IKimClassifier classifier : lookupTable.getColumnClassifiers()) {
                 columnClassifiers.add(new Classifier(classifier));
             }
-            for (IKimClassifier classifier : lookupTable.getRowClassifiers()) {
+            for(IKimClassifier classifier : lookupTable.getRowClassifiers()) {
                 rowClassifiers.add(new Classifier(classifier));
             }
         }
@@ -125,7 +129,7 @@ public class LookupTable implements ILookupTable {
 
     @Override
     public int size() {
-        return table.getRowCount();
+        return this.key.size();
     }
 
     @Override
@@ -136,7 +140,7 @@ public class LookupTable implements ILookupTable {
     @Override
     public List<String> getLabels() {
         List<String> ret = new ArrayList<>();
-        for (IConcept concept : key.keySet()) {
+        for(IConcept concept : key.keySet()) {
             ret.add(Concepts.INSTANCE.getDisplayName(concept));
         }
         return ret;
@@ -150,7 +154,7 @@ public class LookupTable implements ILookupTable {
     @Override
     public List<Pair<Integer, String>> getAllValues() {
         List<Pair<Integer, String>> ret = new ArrayList<>();
-        for (Entry<IConcept, Integer> entry : key.entrySet()) {
+        for(Entry<IConcept, Integer> entry : key.entrySet()) {
             ret.add(new Pair<>(entry.getValue(), Concepts.INSTANCE.getDisplayName(entry.getKey())));
         }
         return ret;
@@ -168,23 +172,23 @@ public class LookupTable implements ILookupTable {
         Object[] values = new Object[variables.size()];
         int rowDimension = -1;
 
-        for (int i = 0; i < variables.size(); i++) {
-            
+        for(int i = 0; i < variables.size(); i++) {
+
             if (i == searchIndex || (variables.get(i).getId() != null && variables.get(i).getId().charAt(0) == '*')) {
                 continue;
             }
-            if (twoWay && ((ArgImpl)variables.get(i)).dimension == Dimension.ROW) {
+            if (twoWay && ((ArgImpl) variables.get(i)).dimension == Dimension.ROW) {
                 rowDimension = i;
             }
             values[i] = variables.get(i).getId() != null
                     ? parameters.get(variables.get(i).getId())
                     : scope.localizePredicate(variables.get(i).getConcept());
-            
+
             // normal situation during contextualization
             if (values[i] instanceof IState) {
-                values[i] = ((IState)values[i]).get(locator);
+                values[i] = ((IState) values[i]).get(locator);
             }
-            
+
             s.append("|");
             s.append(values[i] == null ? "null" : values[i].toString());
         }
@@ -204,9 +208,9 @@ public class LookupTable implements ILookupTable {
                  * 
                  */
                 Object value = values[rowDimension];
-                for (int rowIndex = 0; rowIndex < rowClassifiers.size(); rowIndex++) {
+                for(int rowIndex = 0; rowIndex < rowClassifiers.size(); rowIndex++) {
                     if (rowClassifiers.get(rowIndex).classify(value, scope)) {
-                        for (int colIndex = 0; colIndex < columnClassifiers.size(); colIndex++) {
+                        for(int colIndex = 0; colIndex < columnClassifiers.size(); colIndex++) {
                             if (columnClassifiers.get(colIndex).classify(values[rowDimension == 0 ? 1 : 0], scope)) {
                                 if (table.getRow(rowIndex)[colIndex].isComputed()) {
                                     doNotCache = true;
@@ -218,12 +222,12 @@ public class LookupTable implements ILookupTable {
                         break;
                     }
                 }
-                
+
             } else {
 
-                for (IClassifier[] row : table.getRows()) {
+                for(IClassifier[] row : table.getRows()) {
                     boolean ok = true;
-                    for (int i = 0; i < variables.size(); i++) {
+                    for(int i = 0; i < variables.size(); i++) {
                         if (i == searchIndex || (variables.get(i).getId() != null && variables.get(i).getId().charAt(0) == '*')) {
                             continue;
                         }
@@ -246,7 +250,7 @@ public class LookupTable implements ILookupTable {
             if (!doNotCache) {
                 cache.put(key, ret == null ? Optional.empty() : (storeProxy ? new RowProxy(rind) : ret));
             }
-            
+
         } else if (ret instanceof RowProxy) {
             ret = table.getRows().get(((RowProxy) ret).row)[searchIndex].asValue(scope);
         } else {
@@ -273,7 +277,7 @@ public class LookupTable implements ILookupTable {
     @Override
     public List<String> getSerializedObjects() {
         List<String> ret = new ArrayList<>();
-        for (IConcept concept : key.keySet()) {
+        for(IConcept concept : key.keySet()) {
             ret.add(concept.getDefinition());
         }
         return ret;
@@ -282,7 +286,7 @@ public class LookupTable implements ILookupTable {
     @Override
     public List<IConcept> getConcepts() {
         List<IConcept> ret = new ArrayList<>();
-        for (IConcept concept : key.keySet()) {
+        for(IConcept concept : key.keySet()) {
             ret.add(concept);
         }
         return ret;
@@ -303,10 +307,10 @@ public class LookupTable implements ILookupTable {
         return twoWay;
     }
 
-	@Override
-	public IAuthority getAuthority() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public IAuthority getAuthority() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
 }
