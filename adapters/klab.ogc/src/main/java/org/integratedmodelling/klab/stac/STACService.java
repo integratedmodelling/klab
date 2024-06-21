@@ -53,22 +53,31 @@ public class STACService {
         return collection;
     }
 
+    /**
+     * Obtains the geometry from the collection data.
+     * Currently, only available for dynamic collections.
+     * @param parameters
+     * @return geometry
+     */
     public IGeometry getGeometry(IParameters<String> parameters) {
         GeometryBuilder gBuilder = Geometry.builder();
-        ReferencedEnvelope envelope = collection.getSpatialBounds();
-        double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
-        double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};
-
-        gBuilder.space().boundingBox(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1]);
-
-        setTemporalInterval(gBuilder);
+        buildSpatialContext(gBuilder);
+        buildTemporalInterval(gBuilder);
 
         Geometry ret = gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE)
                 .withTimeType("grid");
         return ret;
     }
 
-    private void setTemporalInterval(GeometryBuilder gBuilder) {
+    private void buildSpatialContext(GeometryBuilder gBuilder) {
+        ReferencedEnvelope envelope = collection.getSpatialBounds();
+        double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
+        double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};
+
+        gBuilder.space().boundingBox(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1]);
+    }
+
+    private void buildTemporalInterval(GeometryBuilder gBuilder) {
         List<Date> interval = collection.getTemporalBounds();
         if (interval.isEmpty()) {
             return;
