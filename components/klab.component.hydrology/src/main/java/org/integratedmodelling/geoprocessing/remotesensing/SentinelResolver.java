@@ -116,7 +116,7 @@ public class SentinelResolver extends AbstractContextualizer implements IResolve
                         DefaultGeographicCRS.WGS84).transform(outputCrs, true);
                 RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelopeTransformed, (int) cols, (int) rows);
 
-                HMRaster outRaster = HMStacCollection.readRasterBandOnRegion(regionTransformed, stacBand, items, true, HMRaster.MergeMode.AVG, taskMonitor);
+                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, stacBand, items, true, HMRaster.MergeMode.AVG, taskMonitor);
                 
                 
                 GridCoverage2D outCoverage = outRaster.buildCoverage();
