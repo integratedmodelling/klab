@@ -269,10 +269,10 @@ public class LookupTable implements ILookupTable {
     public Object lookup(int index) {
         return (IConcept) table.getRow(index)[searchIndex].asValue(null);
     }
-    
+
     @Override
     public IConcept getConcept(int index) {
-        for (Entry<IConcept, Integer> entry : key.entrySet()) {
+        for(Entry<IConcept, Integer> entry : key.entrySet()) {
             if (entry.getValue().equals(index)) {
                 return entry.getKey();
             }
