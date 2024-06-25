@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -299,9 +300,14 @@ public enum Renderer {
                         for (Pair<Integer, String> data : state.getDataKey().getAllValues()) {
                             Pair<Object, Color> p = mvals.get(data.getFirst());
                             if (p == null) {
-                                Object o = state.getDataKey().lookup(data.getFirst());
+                                Object o;
+                                if (state.getDataKey() instanceof ILookupTable) {
+                                    o =((ILookupTable)state.getDataKey()).getConcept(data.getFirst());
+                                } else {
+                                    o = state.getDataKey().lookup(data.getFirst());
+                                }
                                 p = new Pair<Object, Color>(o, Color.GRAY);
-                                System.err.println("Value " + data.getSecond() + " is not present in colormap");
+                                System.err.println("Value " + data.getSecond() + " is not present in colormap, set to GRAY");
                             }
                             svals.add(p);
                         }

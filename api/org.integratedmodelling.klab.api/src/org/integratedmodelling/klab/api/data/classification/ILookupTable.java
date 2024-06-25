@@ -52,7 +52,14 @@ public interface ILookupTable extends IDataKey {
 	 * @return vars the list of lookup arguments
 	 */
 	List<Argument> getArguments();
-
+    
+    /**
+     * Return the concept associated to the keys index
+     * @param index the index in the keys list
+     * @return the associated concept
+     */
+    IConcept getConcept(int index);
+    
 	/**
 	 * Lookup an object in the search column by matching the other search fields
 	 * with the correspondent values in the passed parameters.
