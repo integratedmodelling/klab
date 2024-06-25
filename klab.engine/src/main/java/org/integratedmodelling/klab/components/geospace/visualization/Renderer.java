@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
@@ -32,11 +31,11 @@ import org.geotools.styling.RasterSymbolizer;
 import org.geotools.styling.ShadedRelief;
 import org.geotools.styling.StyleBuilder;
 import org.geotools.styling.StyleFactory;
-import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -49,7 +48,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
-import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.Colormap;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -60,8 +58,6 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
 import org.opengis.style.ContrastMethod;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -91,15 +87,15 @@ public enum Renderer {
          * 
          * TODO do the same from confDir/colors and components
          */
-		ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-		try {
-			for (Resource res : patternResolver.getResources("colors/*.json")) {
-	            ColorScheme scheme = JsonUtils.load(res.getInputStream(), ColorScheme.class);
-	            colorSchemata.put(scheme.getName(), scheme);
-			}
-		} catch (Exception e) {
-			Logging.INSTANCE.error(e);
-		}
+        ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+        try {
+            for(Resource res : patternResolver.getResources("colors/*.json")) {
+                ColorScheme scheme = JsonUtils.load(res.getInputStream(), ColorScheme.class);
+                colorSchemata.put(scheme.getName(), scheme);
+            }
+        } catch (Exception e) {
+            Logging.INSTANCE.error(e);
+        }
     }
 
     /**
@@ -217,7 +213,7 @@ public enum Renderer {
 
         // TODO parameters for shaded relief and contrast enhancement
 
-        for (IAnnotation annotation : state.getAnnotations()) {
+        for(IAnnotation annotation : state.getAnnotations()) {
 
             if (annotation.getName().equals("colormap")) {
 
@@ -266,13 +262,13 @@ public enum Renderer {
                     }
                 } else if (annotation.containsKey("values")) {
 
-                    Map<?, ?> vals = annotation.getDeclared("values", Map.class);
+                    Map< ? , ? > vals = annotation.getDeclared("values", Map.class);
                     List<Pair<Object, Color>> svals = new ArrayList<>();
                     Map<Integer, Pair<Object, Color>> mvals = new HashMap<Integer, Pair<Object, Color>>();
-                    Class<?> type = null;
+                    Class< ? > type = null;
                     boolean hasDataKey = state.getDataKey() != null;
                     boolean isBoolean = false;
-                    for (Object o : vals.keySet()) {
+                    for(Object o : vals.keySet()) {
 
                         if (type == null) {
                             type = o.getClass();
@@ -296,12 +292,17 @@ public enum Renderer {
                         }
                     }
                     if (mvals.size() > 0) {
-                        for (Pair<Integer, String> data : state.getDataKey().getAllValues()) {
+                        for(Pair<Integer, String> data : state.getDataKey().getAllValues()) {
                             Pair<Object, Color> p = mvals.get(data.getFirst());
                             if (p == null) {
-                                Object o = state.getDataKey().lookup(data.getFirst());
+                                Object o;
+                                if (state.getDataKey() instanceof ILookupTable) {
+                                    o = ((ILookupTable) state.getDataKey()).getConcept(data.getFirst());
+                                } else {
+                                    o = state.getDataKey().lookup(data.getFirst());
+                                }
                                 p = new Pair<Object, Color>(o, Color.GRAY);
-                                System.err.println("Value " + data.getSecond() + " is not present in colormap");
+                                System.err.println("Value " + data.getSecond() + " is not present in colormap, set to GRAY");
                             }
                             svals.add(p);
                         }
@@ -324,7 +325,7 @@ public enum Renderer {
                     colors = new Color[svals.size()];
 
                     int i = 0;
-                    for (Pair<Object, Color> pair : svals) {
+                    for(Pair<Object, Color> pair : svals) {
 
                         // we assume the user has used proper sorting.
                         if (pair.getFirst() instanceof IConcept) {
@@ -347,7 +348,7 @@ public enum Renderer {
                 } else if (annotation.containsKey("colors")) {
 
                     List<Color> clrs = new ArrayList<>();
-                    for (Object o : annotation.get("colors", List.class)) {
+                    for(Object o : annotation.get("colors", List.class)) {
                         clrs.add(parseColor(o));
                     }
                     colors = clrs.toArray(new Color[clrs.size()]);
@@ -399,7 +400,7 @@ public enum Renderer {
 
                     Color[] jetcolors = jet(1.0f);
 
-                    for (int i = 0; i < state.getDataKey().size(); i++) {
+                    for(int i = 0; i < state.getDataKey().size(); i++) {
                         int index = (int) (((double) (i + 1) / (double) state.getDataKey().size())
                                 * (double) (jetcolors.length - 1));
                         colors[i] = jetcolors[index];
@@ -426,7 +427,7 @@ public enum Renderer {
             values = new double[colors.length];
             labels = new String[colors.length];
             if (Double.isNaN(midpoint) || Range.create(summary.getRange()).contains(midpoint)) {
-                for (int i = 0; i < colors.length; i++) {
+                for(int i = 0; i < colors.length; i++) {
                     // TODO handle midpoint
                     values[i] = summary.getRange().get(0) + ((summary.getRange().get(1) - summary.getRange().get(0))
                             * ((double) (i + 1) / (double) colors.length));
@@ -445,7 +446,7 @@ public enum Renderer {
                 if (midpoint <= lowerBound || midpoint >= upperBound) {
                     midpoint = lowerBound + (upperBound - lowerBound) / 2.0;
                 }
-                for (int i = 0; i < colors.length; i++) {
+                for(int i = 0; i < colors.length; i++) {
                     values[i] = colors.length == 3 && i == 1 ? midpoint : (i == 0 ? lowerBound : upperBound);
                     labels[i] = "" + values[i];
                 }
@@ -456,7 +457,7 @@ public enum Renderer {
             values = new double[state.getDataKey().size()];
             labels = new String[state.getDataKey().size()];
             int i = 0;
-            for (Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
+            for(Pair<Integer, String> pair : state.getDataKey().getAllValues()) {
                 if (pair.getSecond() != null) {
                     values[i] = ((Number) pair.getFirst()).doubleValue();
                     labels[i] = pair.getSecond();
@@ -470,7 +471,7 @@ public enum Renderer {
                 double[] nvalues = new double[i];
                 String[] nlabels = new String[i];
                 Color[] ncolors = new Color[i];
-                for (int in = 0; in < i; in++) {
+                for(int in = 0; in < i; in++) {
                     nvalues[in] = values[in];
                     nlabels[in] = labels[in];
                     ncolors[in] = colors[in];
@@ -522,7 +523,7 @@ public enum Renderer {
          */
         Colormap colormap = new Colormap();
         colormap.setColors(new ArrayList<>());;
-        for (Color color : colors) {
+        for(Color color : colors) {
             colormap.getColors().add(ColorUtils.encodeRGB(color));
         }
 
@@ -551,7 +552,7 @@ public enum Renderer {
         Color[] ret = new Color[size];
         // use same seed for repeatability
         Random random = new Random(12345L);
-        for (int i = 0; i < size; i++) {
+        for(int i = 0; i < size; i++) {
             ret[i] = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
         }
         return ret;
@@ -572,8 +573,8 @@ public enum Renderer {
             ret = new Color(color[0], color[1], color[2]);
         } else if (o instanceof List) {
             // TODO more error handling
-            ret = new Color(((Number) ((List<?>) o).get(0)).intValue(), ((Number) ((List<?>) o).get(1)).intValue(),
-                    ((Number) ((List<?>) o).get(2)).intValue());
+            ret = new Color(((Number) ((List< ? >) o).get(0)).intValue(), ((Number) ((List< ? >) o).get(1)).intValue(),
+                    ((Number) ((List< ? >) o).get(2)).intValue());
         }
 
         if (ret == null) {
@@ -620,7 +621,7 @@ public enum Renderer {
         float b = 0;
 
         int n = 256 / 4;
-        for (int i = 0; i < 256; ++i) {
+        for(int i = 0; i < 256; ++i) {
             if (i < n / 2.) {
                 r = 0;
                 g = 0;
@@ -653,7 +654,7 @@ public enum Renderer {
         Color[] ret = new Color[256];
 
         int n = (int) (3. / 8. * 256);
-        for (int i = 0; i < 256; ++i) {
+        for(int i = 0; i < 256; ++i) {
             double r = (1. / n) * (i + 1);
             double g = 0.;
             double b = 0.;
@@ -677,7 +678,7 @@ public enum Renderer {
 
     public Color[] grayscale() {
         Color[] colors = new Color[256];
-        for (int i = 0; i < colors.length; ++i)
+        for(int i = 0; i < colors.length; ++i)
             colors[i] = new Color(i, i, i);
         return colors;
     }
@@ -686,9 +687,9 @@ public enum Renderer {
         Color[] colors = new Color[256];
 
         double half = colors.length / 2.;
-        for (int i = 0; i <= half; ++i)
+        for(int i = 0; i <= half; ++i)
             colors[i] = new Color(255, (int) ((i / half) * 255), (int) ((i / half) * 255));
-        for (int i = (int) half + 1; i < colors.length; ++i)
+        for(int i = (int) half + 1; i < colors.length; ++i)
             colors[i] = new Color(255 - (int) (((i - half) / half) * 255), 255, 255 - (int) (((i - half) / half) * 255));
         return colors;
     }
@@ -698,9 +699,9 @@ public enum Renderer {
         Color[] colors = new Color[256];
 
         double half = colors.length / 2.;
-        for (int i = 0; i <= half; ++i)
+        for(int i = 0; i <= half; ++i)
             colors[i] = new Color(255 - (int) (((i) / half) * 255), 0, 0);
-        for (int i = (int) half + 1; i < colors.length; ++i)
+        for(int i = (int) half + 1; i < colors.length; ++i)
             colors[i] = new Color(0, (int) (((i - half) / half) * 255), 0);
         return colors;
     }
@@ -709,7 +710,7 @@ public enum Renderer {
 
         Color[] colors = new Color[256];
 
-        for (int i = 0; i < colors.length; ++i) {
+        for(int i = 0; i < colors.length; ++i) {
             if (i <= 29)
                 colors[i] = new Color((int) (129.36 - i * 4.36), 0, 255);
             else if (i <= 86)
@@ -727,7 +728,7 @@ public enum Renderer {
     public Color[] wave() {
 
         Color[] colors = new Color[256];
-        for (int i = 0; i < colors.length; ++i) {
+        for(int i = 0; i < colors.length; ++i) {
             colors[i] = new Color((int) ((Math.sin(((double) i / 40 - 3.2)) + 1) * 128),
                     (int) ((1 - Math.sin((i / 2.55 - 3.1))) * 70 + 30), (int) ((1 - Math.sin(((double) i / 40 - 3.1))) * 128));
         }
@@ -740,7 +741,7 @@ public enum Renderer {
         Graphics2D g = img.createGraphics();
 
         double step = height / (double) colors.length;
-        for (int c = 0; c < height; ++c) {
+        for(int c = 0; c < height; ++c) {
             g.setColor(colors[(int) Math.floor(c / step)]);
             g.drawLine(0, height - (c + 1), width, height - (c + 1));
         }
