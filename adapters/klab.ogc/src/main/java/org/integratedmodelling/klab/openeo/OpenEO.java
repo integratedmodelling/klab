@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.Authorization;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.Notification;
@@ -395,11 +396,12 @@ public class OpenEO {
 	}
 
 	public OpenEO(String endpoint) {
-		this.endpoint = endpoint;
 		ExternalAuthenticationCredentials credentials = Authentication.INSTANCE.getCredentials(endpoint);
-		if (credentials != null) {
-			this.authorization = new Authorization(credentials);
+		if (credentials == null) {
+			throw new KlabMissingCredentialsException(endpoint);
 		}
+		this.endpoint = credentials.getURL();
+		this.authorization = new Authorization(credentials, endpoint);
 		this.executor.scheduleAtFixedRate(() -> {
 			Set<Job> finished = new HashSet<>();
 			for (Job job : jobs) {
