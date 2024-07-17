@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.stac;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -35,14 +37,22 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
+import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
+
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -147,6 +157,26 @@ public class STACEncoder implements IResourceEncoder {
                 "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
+    private AmazonS3 buildS3Client(String bucketRegion) throws IOException {
+        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+        BasicAWSCredentials awsCreds = null;
+        try {
+            awsCreds = new BasicAWSCredentials(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
+        } catch (Exception e) {
+            throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
+        }
+        AmazonS3 s3Client = null;
+        try {
+            s3Client = AmazonS3Client.builder()
+                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
+                    .withRegion(bucketRegion)
+                    .build();
+        } catch (Exception e) {
+            throw new KlabIOException("Error building S3 client. " + e.getMessage());
+        }
+        return s3Client;
+    }
+
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
@@ -211,6 +241,13 @@ public class STACEncoder implements IResourceEncoder {
             Set<Integer> EPSGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
             if (EPSGsAtItems.size() > 1) {
                 scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
+            }
+
+            if (resource.getParameters().contains("s3BucketRegion")) {
+                String bucketRegion = resource.getParameters().get("s3BucketRegion", String.class);
+                AmazonS3 s3Client = buildS3Client(bucketRegion);
+                // TODO waiting until the library version is updated
+                // collection.setS3Client(s3Client);
             }
 
             // Allow transform ensures the process to finish, but I would not bet on the resulting
