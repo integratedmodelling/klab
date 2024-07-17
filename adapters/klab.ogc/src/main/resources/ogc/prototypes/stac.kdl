@@ -12,5 +12,8 @@
  		
  	final text 'asset'
  		"The asset that is going to be retrieved from the items."
+ 
+ 	optional text 's3BucketRegion'
+ 		"Region of the S3 Bucket has to be defined if the assets are stored under this protocol."
 
  }
