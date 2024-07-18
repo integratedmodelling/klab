@@ -70,21 +70,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 			return this.type;
 		}
 	}
-    
-	static enum Server {
-		Local(true), Remote(false);
 
-		private boolean type;
-
-		Server(boolean type) {
-			this.type = type;
-		}
-
-		final public boolean getType() {
-			return this.type;
-		}
-	}
-    
 	static enum GeometryCollapser {
 		Centroid("centroid");
 
@@ -98,16 +84,15 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 			return this.type;
 		}
 	}
-    
+
 	private TransportType transportType = TransportType.Auto;
 	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
-	private Server server = Server.Local;
+	private String server;
 	private IContextualizationScope scope;
 	private Valhalla valhalla;
 	private Graph<IObjectArtifact, SpatialEdge> graph;
 	private Map<Pair<IDirectObservation, IDirectObservation>, IShape> trajectories;
 
-    
 	static enum CostingOptions {
 		/*
 		 * Empty for the time being, it is maybe too much unneeded detail. To be
@@ -134,10 +119,10 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 					.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
 		}
 		if (parameters.containsKey("server")) {
-			this.server = Server.valueOf(Utils.removePrefix(parameters.get("server", String.class)));
+			this.server = parameters.get("server", String.class);
 		}
 
-		this.valhalla = new Valhalla();
+		this.valhalla = new Valhalla(server);
 
 	}
 	
