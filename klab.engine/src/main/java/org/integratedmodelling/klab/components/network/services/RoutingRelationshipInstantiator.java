@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -42,6 +43,11 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+
 import org.jgrapht.Graph;
 
 
@@ -104,6 +110,19 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	public RoutingRelationshipInstantiator() {
 		/* to instantiate as expression - do not remove (or use) */}
 
+    private boolean isValhallaServerOnline(String server) {
+        HttpResponse<JsonNode> response;
+        try {
+            response = Unirest.get(server + "/status").asJson();
+        } catch (Exception e) {
+            throw new KlabRemoteException("Cannot access Valhalla server. Reason: " + e.getMessage());
+        }
+        if (response.getStatus() != 200) {
+            return false;
+        }
+        return true;
+    }
+	
 	public RoutingRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope scope) {
 
 		this.scope = scope;
@@ -119,11 +138,15 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 			this.geometryCollapser = GeometryCollapser
 					.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
 		}
-		if (!parameters.containsKey("server")) {
+		if (parameters.get("server") == null || parameters.get("server", String.class).trim().isEmpty()) {
 			throw new KlabIllegalArgumentException("The server for Valhalla has not been defined.");
 		}
 		this.server = parameters.get("server", String.class);
-		this.valhalla = new Valhalla(server);
+		if (isValhallaServerOnline(server)) {
+			this.valhalla = new Valhalla(server);
+		} else {
+			throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
+		}
 	}
 	
 	/*
