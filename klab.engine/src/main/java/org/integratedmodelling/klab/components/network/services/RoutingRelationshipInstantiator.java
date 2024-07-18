@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.components.geospace.routing.ValhallaOutputDe
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -118,12 +119,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 			this.geometryCollapser = GeometryCollapser
 					.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
 		}
-		if (parameters.containsKey("server")) {
-			this.server = parameters.get("server", String.class);
+		if (!parameters.containsKey("server")) {
+			throw new KlabIllegalArgumentException("The server for Valhalla has not been defined.");
 		}
-
+		this.server = parameters.get("server", String.class);
 		this.valhalla = new Valhalla(server);
-
 	}
 	
 	/*

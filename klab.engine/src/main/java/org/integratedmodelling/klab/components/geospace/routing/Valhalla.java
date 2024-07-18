@@ -23,19 +23,6 @@ public class Valhalla {
 	ValhallaOutputDeserializer deserializer;
 	public String service = "";
 
-	public Valhalla() {
-		this("https://routing.integratedmodelling.org");
-	}
-
-	public Valhalla(boolean local) {
-		String serviceUrl;
-		if (local)
-			serviceUrl = "http://localhost:8002";
-		else
-			serviceUrl = "http://192.168.250.240:8002";
-		new Valhalla(serviceUrl);
-	}
-
 	public Valhalla(String serviceUrl) {
 		this.service = serviceUrl;
 		valhalla = new ValhallaRuntimeEnvironment(this.service);
@@ -68,10 +55,7 @@ public class Valhalla {
 	}
 
 	public static void main(String[] args) throws ValhallaException {
-
-		// valhalla.test.Valhalla Java peer. Connected to "http://localhost:8002" by
-		// default.
-		Valhalla valhalla = new Valhalla();
+		Valhalla valhalla = new Valhalla("https://routing.integratedmodelling.org");
 
 		/*
 		 * Matrix API example.

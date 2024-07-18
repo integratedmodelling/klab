@@ -91,7 +91,7 @@ export object route
 		default "Centroid"		
 
 	optional text server
-		"Specify the endpoint for the Valhalla server. Set it as Local for a local installation of the routing service."
+		"Specify the endpoint for the Valhalla server."
 	
 //	TODO configuration to use 
 
