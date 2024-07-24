@@ -5,14 +5,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
-
+import java.util.Vector;
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.utils.Pair;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 
 /*
  * simple query builder optimized for k.LAB's needs.
@@ -149,14 +150,16 @@ public class OSMQuery {
 			}
 		}
 
-		for (String what : getTypes()) {
-			String q = what + getFilters() + "(poly:" + getGeometry() + ");";
-			if (what.equals("way") || what.equals("rel")) {
-				// the result set plus all the composing ways and nodes
-				q += "\n(._; >;);";
-			}
-			ret.add(q);
-		}
+        for(String what : getTypes()) {
+            for(String poly : getPolygons()) {
+                String q = what + getFilters() + "(poly:" + poly + ");";
+                if (what.equals("way") || what.equals("rel")) {
+                    // the result set plus all the composing ways and nodes
+                    q += "\n(._; >;);";
+                }
+                ret.add(q);
+            }
+        }
 
 		return ret;
 	}
@@ -221,14 +224,21 @@ public class OSMQuery {
 		return q ? ("\"" + first + "\"") : first;
 	}
 
-    private String getGeometry() {
-        List<List<Double>> coordinates = (List) ((List) ((Shape) shape).asGeoJSON().get("coordinates")).get(0);
-        String overpassPolygon = "\"";
-        for (List<Double> coord : (List<List<Double>>)coordinates) {
-            overpassPolygon += coord.get(1) + " " + coord.get(0) + " ";
+    private List<String> getPolygons() {
+        List<String> polygons = new Vector<>();
+        Geometry fullGeometry = ((Shape)shape).getStandardizedGeometry();
+        int numberOfPolygons = fullGeometry.getNumGeometries();
+        for (int i = 0; i < numberOfPolygons; i++) {
+            String formattedString = "\"";
+            Geometry polygon = fullGeometry.getGeometryN(i);
+            Coordinate[] coordinates = polygon.getCoordinates();
+            for (Coordinate coordinate : coordinates) {
+                formattedString += coordinate.getY() + " " + coordinate.getX() + " ";
+            }
+            formattedString = formattedString.substring(0, formattedString.length() - 1) + "\"";
+            polygons.add(formattedString);
         }
-        overpassPolygon = overpassPolygon.substring(0, overpassPolygon.length() - 1) + "\"";
-        return overpassPolygon;
+        return polygons;
     }
 
 	private String getBoundingBox() {
