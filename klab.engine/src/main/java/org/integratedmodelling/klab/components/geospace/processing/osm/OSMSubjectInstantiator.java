@@ -1,13 +1,14 @@
 package org.integratedmodelling.klab.components.geospace.processing.osm;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -34,6 +35,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
@@ -63,6 +65,11 @@ import de.topobyte.osm4j.geometry.RegionBuilderResult;
 import de.topobyte.osm4j.geometry.WayBuilder;
 import de.topobyte.osm4j.geometry.WayBuilderResult;
 import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Subject instantiator to extract features from OSM. Either pass an Overpass
@@ -183,13 +190,22 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 
 		Throwable exception = null;
 
-		for (String ourl : Geocoder.OVERPASS_URLS) {
-
-			String url = ourl + "?data=" + Escape.forURL(query);
+		for (String url : Geocoder.OVERPASS_URLS) {
 
 			context.getMonitor().debug("Opening Overpass query " + url);
 
-			try (InputStream input = new URL(url).openStream()) {
+            OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(360, TimeUnit.SECONDS).build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = RequestBody.create(mediaType, query);
+
+            Request request = new Request.Builder().url(url).method("POST", body).build();
+            Response response = null;
+            try {
+                response = client.newCall(request).execute();
+            } catch (IOException ex) {
+                throw new KlabRemoteException(ex);
+            }
+			try (InputStream input = response.body().byteStream()) {
 
 				OsmIterator iterator = new OsmXmlIterator(input, true);
 				InMemoryMapDataSet data = MapDataSetLoader.read(iterator, true, true, true);
