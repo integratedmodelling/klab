@@ -267,7 +267,7 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 				break;
 
 			} catch (Throwable e) {
-				context.getMonitor().debug("Overpass server at " + ourl + " failed to respond");
+				context.getMonitor().debug("Overpass server at " + url + " failed to respond");
 				exception = e;
 			}
 		}
