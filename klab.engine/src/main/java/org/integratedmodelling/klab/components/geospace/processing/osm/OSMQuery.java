@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.processing.osm.OSMSubjectInstantiator.SpatialBoundaries;
 import org.integratedmodelling.klab.utils.Pair;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
@@ -39,6 +40,7 @@ public class OSMQuery {
 	private int maxresults = 0;
 	String output = "xml";
 	IShape shape;
+	SpatialBoundaries spatialBoundaries;
 
 	/**
 	 * Call with an OR of all the intended return types, e.g. OSMQuery(WAY |
@@ -135,6 +137,24 @@ public class OSMQuery {
 		return ret;
 	}
 
+    private String getBboxQuery(String what) {
+        String q = what + getFilters() + getBoundingBox() + ";";
+        if (what.equals("way") || what.equals("rel")) {
+            // the result set plus all the composing ways and nodes
+            q += "\n(._; >;);";
+        }
+        return q;
+    }
+
+    private String getPolygonQuery(String what, String poly) {
+        String q = what + getFilters() + "(poly:" + poly + ");";
+        if (what.equals("way") || what.equals("rel")) {
+            // the result set plus all the composing ways and nodes
+            q += "\n(._; >;);";
+        }
+        return q;
+    }
+
 	private List<String> getQueries() {
 
 		List<String> ret = new ArrayList<>();
@@ -151,13 +171,12 @@ public class OSMQuery {
 		}
 
         for(String what : getTypes()) {
+            if (spatialBoundaries == SpatialBoundaries.bbox) {
+                ret.add(getBboxQuery(what));
+                continue;
+            }
             for(String poly : getPolygons()) {
-                String q = what + getFilters() + "(poly:" + poly + ");";
-                if (what.equals("way") || what.equals("rel")) {
-                    // the result set plus all the composing ways and nodes
-                    q += "\n(._; >;);";
-                }
-                ret.add(q);
+                ret.add(getPolygonQuery(what, poly));
             }
         }
 
@@ -261,5 +280,9 @@ public class OSMQuery {
 		}
 		return ret;
 	}
+
+    public void setSpatialBoundaries(SpatialBoundaries spatialBoundaries) {
+        this.spatialBoundaries = spatialBoundaries;
+    }
 
 }

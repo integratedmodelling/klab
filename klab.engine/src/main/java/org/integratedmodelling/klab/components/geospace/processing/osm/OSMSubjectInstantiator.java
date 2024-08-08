@@ -115,7 +115,18 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 	private int timeout = 600;
 	private boolean simplifyShapes = false;
 	double bufferDistance = Double.NaN;
+    SpatialBoundaries spatialBoundaries;
 
+    public enum SpatialBoundaries {
+        bbox("bbox"),
+        poly("poly"),
+        ;
+
+        public String type;
+        SpatialBoundaries(String type) {
+            this.type = type;
+        }
+    }
 
 	public OSMSubjectInstantiator() {
 	}
@@ -152,6 +163,9 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 		}
 		if (parameters.containsKey("simplify-polygons")) {
 			this.simplifyShapes = parameters.get("simplify-polygons", Boolean.class);
+		}
+		if (parameters.containsKey("spatial-boundaries")) {
+		    this.spatialBoundaries = SpatialBoundaries.valueOf(parameters.get("spatial-boundaries", String.class));
 		}
 	}
 
@@ -323,6 +337,7 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 		if (this.notmatching != null) {
 			query.filterNotMatch(this.notmatching.toArray());
 		}
+        query.setSpatialBoundaries(spatialBoundaries);
 
 		return query.toString();
 	}
