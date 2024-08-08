@@ -80,6 +80,10 @@ public class OSMQuery {
 		this.maxresults = maxresults;
 	}
 
+    public void setSpatialBoundaries(SpatialBoundaries spatialBoundaries) {
+        this.spatialBoundaries = spatialBoundaries;
+    }
+
 	public void filterEqual(Object... strings) {
 		for (int i = 0; i < strings.length; i++) {
 			Object key = strings[i];
@@ -280,9 +284,4 @@ public class OSMQuery {
 		}
 		return ret;
 	}
-
-    public void setSpatialBoundaries(SpatialBoundaries spatialBoundaries) {
-        this.spatialBoundaries = spatialBoundaries;
-    }
-
 }
