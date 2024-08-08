@@ -39,7 +39,6 @@ import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
-import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -95,7 +94,6 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 	boolean isTemporal = false;
 	boolean fixGeometries = false;
 
-	// String outputType = null;
 	String query = null;
 
 	boolean canDispose = false;
@@ -168,12 +166,6 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 		    this.spatialBoundaries = SpatialBoundaries.valueOf(parameters.get("spatial-boundaries", String.class));
 		}
 	}
-
-//    @Override
-//    public IGeometry getGeometry() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
 
 	@Override
 	public Type getType() {
