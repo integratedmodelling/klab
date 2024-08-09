@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.hub.tokens.exceptions.ActivationTokenFailedE
 import org.integratedmodelling.klab.hub.tokens.services.RegistrationTokenService;
 import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.dto.User;
+import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.payload.UpdateEmailResponse;
 import org.integratedmodelling.klab.hub.users.payload.UpdateUserRequest;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -143,12 +144,16 @@ public class UserProfileController {
     }
 
     @GetMapping(API.HUB.CURRENT_PROFILE)
-    // TODO this is call from single user, not need PreAuthorize
-    // @PreAuthorize("authentication.getPrincipal() == #username or
-    // hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
-    // correct the auth should be caught on the token filter side.
     public ResponseEntity< ? > getCurrentUserProfile(@RequestParam(required = false) boolean remote) {
-        ProfileResource profile = userService.getCurrentUserProfile(remote);
+        ProfileResource profile;
+
+        try {
+            profile = userService.getCurrentUserProfile(remote);
+        } catch (UserDoesNotExistException e) {
+            // User is only in keycloak, need to sign the agreement
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
         if (remote) {
             profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
             return new ResponseEntity<>(new EngineProfileResource(profile), HttpStatus.ACCEPTED);

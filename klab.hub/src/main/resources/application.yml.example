@@ -22,8 +22,6 @@ spring:
         enabled: false
   profiles:
     default: true
-  main:
-    allow-bean-definition-overriding: true
   security:
     oauth2:
       client:
@@ -112,3 +110,8 @@ license:
   pubRing:
     filename: "keyring/PubRing.pgp"
     digest: "cad134cc3dfcb0e96acb90af56532a96171f858c4c30335541932c0e00a66c9deab764805d9b9f08a49619af211b96305b512d4cf256e8a9c29877d06d207c72"
+keycloak:
+  realm: im
+  auth-server-url: http://localhost:8078
+  resource: k.Hub
+  bearer-only: true

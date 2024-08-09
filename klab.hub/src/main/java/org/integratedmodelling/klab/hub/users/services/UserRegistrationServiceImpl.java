@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.commands.CreatePendingUser;
+import org.integratedmodelling.klab.hub.users.commands.CreateUser;
 import org.integratedmodelling.klab.hub.users.commands.CreateUserWithRolesAndStatus;
 import org.integratedmodelling.klab.hub.users.commands.SetUserPasswordHash;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
@@ -56,7 +56,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setEmail(email);
-            newUser = new CreatePendingUser(userRepository, newUser).execute();
+            newUser = new CreateUser(userRepository, newUser, AccountStatus.active).execute();
             publisher.publish(new NewUserAdded(new Object(), newUser));
             return newUser;
         }
