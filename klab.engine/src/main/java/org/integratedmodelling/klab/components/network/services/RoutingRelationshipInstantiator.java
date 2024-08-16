@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.network.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -76,6 +77,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		final public String getType() {
 			return this.type;
 		}
+		
+        final static TransportType fromValue(String value) {
+            return Arrays.stream(TransportType.values()).filter(val -> val.getType().equals(value)).findAny()
+                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for TransportType"));
+        }
 	}
 
 	static enum GeometryCollapser {
@@ -90,6 +96,12 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		final public String getType() {
 			return this.type;
 		}
+		
+        final static GeometryCollapser fromValue(String value) {
+            return Arrays.stream(GeometryCollapser.values()).filter(val -> val.getType().equals(value)).findAny()
+                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for GeometryCollapser"));
+        }
+
 	}
 
 	private TransportType transportType = TransportType.Auto;
@@ -132,11 +144,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		this.distanceThreshold = parameters.get("distance_limit", Double.class);
 
 		if (parameters.containsKey("transport")) {
-			this.transportType = TransportType.valueOf(Utils.removePrefix(parameters.get("transport", String.class)));
+			this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
 		}
 		if (parameters.containsKey("collapse_geometry")) {
 			this.geometryCollapser = GeometryCollapser
-					.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
+					.fromValue(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
 		}
 		if (parameters.get("server") == null || parameters.get("server", String.class).trim().isEmpty()) {
 			throw new KlabIllegalArgumentException("The server for Valhalla has not been defined.");
