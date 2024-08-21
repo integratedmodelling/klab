@@ -148,7 +148,9 @@ public class Network extends Pattern implements INetwork {
 		case "gexf":
 			GEXFExporter<IDirectObservation, IRelationship> gexf = new GEXFExporter<>();
 			gexf.setCreator("k.LAB " + Version.CURRENT);
-			gexf.setDescription(emergentObservation.getMetadata().get(IMetadata.DC_COMMENT, "GEXF network export"));
+			if (emergentObservation != null) {
+				gexf.setDescription(emergentObservation.getMetadata().get(IMetadata.DC_COMMENT, "GEXF network export"));
+			}
 			gexf.setVertexAttributeProvider(vertexAttributeProvider);
 			gexf.setEdgeAttributeProvider(edgeAttributeProvider);
 			gexf.exportGraph(network, writer);
