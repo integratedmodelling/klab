@@ -119,6 +119,8 @@ public class Network extends Pattern implements INetwork {
 			double[] xy = v.getSpace().getShape().getCenter(true);
 			map.put("latitude", DefaultAttribute.createAttribute(xy[1]));
 			map.put("longitude", DefaultAttribute.createAttribute(xy[0]));
+			map.put("name", DefaultAttribute.createAttribute(v.getName()));
+			map.put("metadata", DefaultAttribute.createAttribute(v.getMetadata().toString()));
 			return map;
 		};
 
