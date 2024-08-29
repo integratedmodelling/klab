@@ -101,15 +101,15 @@
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS
 			should be the same one that geotools and HM needs. -->
 		<geotools.version>28.0</geotools.version>
-		<hortonmachine.version>0.10.8-SNAPSHOT</hortonmachine.version>
+		<hortonmachine.version>0.10.9-SNAPSHOT</hortonmachine.version>
 		<jts.version>1.18.1</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<tycho-version>2.7.3</tycho-version>
-		<xtextVersion>2.27.0</xtextVersion>
-		<mweVersion>2.13.0</mweVersion>
-		<googleJibVersion>3.3.2</googleJibVersion>
+		<xtextVersion>2.33.0</xtextVersion>
+		<mweVersion>2.16.0</mweVersion>
+		<googleJibVersion>3.4.3</googleJibVersion>
 		<jib.jvmFlags>-XshowSettings:vm</jib.jvmFlags>
 
 		<!-- the five below go together. Never change one without checking the

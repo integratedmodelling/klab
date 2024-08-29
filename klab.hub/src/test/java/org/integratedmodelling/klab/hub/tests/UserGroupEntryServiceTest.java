@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistExcepti
 import org.integratedmodelling.klab.hub.users.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.users.services.UserGroupEntryServiceImpl;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
@@ -63,7 +64,7 @@ public class UserGroupEntryServiceTest {
         MongoGroup mongoGroup = MockitoHelper.mockMongoGroup(GROUP_NAME);
         Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
 
-        userService.addUsersGroupsByNames(updateRequest);
+        userService.addUsersGroupsByNames(updateRequest); 
     }
 
     @Test
@@ -76,7 +77,7 @@ public class UserGroupEntryServiceTest {
         Mockito.when(groupRepository.findByNameIgnoreCase(GROUP_NAME)).thenReturn(Optional.of(mongoGroup));
 
         Assertions.assertThrows(UserDoesNotExistException.class, () -> {
-            userService.addUsersGroupsByNames(updateRequest);
+            userService.addUsersGroupsByNames(updateRequest); 
         });
     }
 
@@ -95,7 +96,7 @@ public class UserGroupEntryServiceTest {
         Agreement agreement = MockitoHelper.mockAgreement();
 //        AgreementEntry agreementEntry = MockitoHelper.mockAgreementEntry(agreement);
 
-        userService.addUsersGroupsByNames(updateRequest);
+        userService.addUsersGroupsByNames(updateRequest); 
     }
 
     @Test
@@ -118,6 +119,6 @@ public class UserGroupEntryServiceTest {
         UpdateUsersGroups updateRequest = Mockito.mock(UpdateUsersGroups.class);
         Mockito.when(updateRequest.getGroupNames()).thenReturn(Set.of(GROUP_NAME));
         Mockito.when(updateRequest.getUsernames()).thenReturn(Set.of(USER_NAME));
-        userService.addUsersGroupsByNames(updateRequest);
+        userService.addUsersGroupsByNames(updateRequest); 
     }
 }

@@ -131,11 +131,11 @@ public class User extends IdentityModel implements UserDetails, ITagElement {
 
     @Override
     public String getUsername() {
-        return super.getName();
+        return getName();
     }
 
     public void setUsername(String username) {
-        super.setName(username);
+        setName(username);
     }
 
     @Override
@@ -272,7 +272,7 @@ public class User extends IdentityModel implements UserDetails, ITagElement {
 
     @Override
     public String toString() {
-        return getName() + roles.toString();
+        return super.getName() + roles.toString();
     }
 
     public String getFullName() {

@@ -88,8 +88,8 @@ pipeline {
         stage('Maven install with jib') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh './mvnw -U clean install -DskipTests jib:build -Djib.httpTimeout=60000'
-                    sh './mvnw -pl :klab.ogc test -Dtest="*STAC*"'
+                    sh './mvnw -U clean install -DskipTests jib:build -Djib.httpTimeout=180000'
+                    sh './mvnw -pl :klab.ogc -pl :klab.node test -Dtest="*STAC*,Authentication*"'
                 }
             }
         }

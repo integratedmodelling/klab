@@ -99,8 +99,8 @@ pipeline {
 					    env.TAG = BRANCH.replace("/","-")
 					    if (BRANCH == MAIN) {
 					        env.BRANCH = MAIN
-					        env.TAG = MAIN
-					        echo "Master"
+					        env.TAG = "latest"
+					        echo "Latest"
 					    } else if (BRANCH == DEVELOP) {
 					        env.BRANCH = DEVELOP
 					        env.TAG = DEVELOP
@@ -159,7 +159,7 @@ pipeline {
         stage('Maven install with jib') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${params.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh './mvnw clean install -U -DskipTests jib:build -Djib.httpTimeout=60000'
+                    sh './mvnw clean install -U -DskipTests jib:build -Djib.httpTimeout=180000'
                 }
             }
         }
@@ -180,7 +180,7 @@ pipeline {
                 expression { PRODUCTS_GEN == "yes" }
             }
             steps {
-                pushProducts(productsFolderName(env.TAG), kmodelers)
+                pushProducts(env.TAG, kmodelers)
             }
         }
     }
@@ -192,9 +192,6 @@ def pushProducts(destination, kmodelers) {
     uploadProducts(destination)
 }
 
-def productsFolderName(branchName) {
-    return branchName == 'master'  ? 'latest' : branchName
-}
 
 def prepareCliUpload(destination) {
     sh """mkdir -p ${WORKSPACE}/minio/${destination}/cli

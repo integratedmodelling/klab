@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.network.services;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +34,8 @@ import org.integratedmodelling.klab.components.geospace.routing.ValhallaOutputDe
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -41,6 +44,11 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+
 import org.jgrapht.Graph;
 
 
@@ -69,22 +77,13 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		final public String getType() {
 			return this.type;
 		}
+		
+        final static TransportType fromValue(String value) {
+            return Arrays.stream(TransportType.values()).filter(val -> val.getType().equals(value)).findAny()
+                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for TransportType"));
+        }
 	}
-    
-	static enum Server {
-		Local(true), Remote(false);
 
-		private boolean type;
-
-		Server(boolean type) {
-			this.type = type;
-		}
-
-		final public boolean getType() {
-			return this.type;
-		}
-	}
-    
 	static enum GeometryCollapser {
 		Centroid("centroid");
 
@@ -97,17 +96,22 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		final public String getType() {
 			return this.type;
 		}
+		
+        final static GeometryCollapser fromValue(String value) {
+            return Arrays.stream(GeometryCollapser.values()).filter(val -> val.getType().equals(value)).findAny()
+                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for GeometryCollapser"));
+        }
+
 	}
-    
+
 	private TransportType transportType = TransportType.Auto;
 	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
-	private Server server = Server.Local;
+	private String server;
 	private IContextualizationScope scope;
 	private Valhalla valhalla;
 	private Graph<IObjectArtifact, SpatialEdge> graph;
 	private Map<Pair<IDirectObservation, IDirectObservation>, IShape> trajectories;
 
-    
 	static enum CostingOptions {
 		/*
 		 * Empty for the time being, it is maybe too much unneeded detail. To be
@@ -118,6 +122,19 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	public RoutingRelationshipInstantiator() {
 		/* to instantiate as expression - do not remove (or use) */}
 
+    private boolean isValhallaServerOnline(String server) {
+        HttpResponse<JsonNode> response;
+        try {
+            response = Unirest.get(server + "/status").asJson();
+        } catch (Exception e) {
+            throw new KlabRemoteException("Cannot access Valhalla server. Reason: " + e.getMessage());
+        }
+        if (response.getStatus() != 200) {
+            return false;
+        }
+        return true;
+    }
+	
 	public RoutingRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope scope) {
 
 		this.scope = scope;
@@ -127,18 +144,21 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		this.distanceThreshold = parameters.get("distance_limit", Double.class);
 
 		if (parameters.containsKey("transport")) {
-			this.transportType = TransportType.valueOf(Utils.removePrefix(parameters.get("transport", String.class)));
+			this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
 		}
 		if (parameters.containsKey("collapse_geometry")) {
 			this.geometryCollapser = GeometryCollapser
-					.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
+					.fromValue(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
 		}
-		if (parameters.containsKey("server")) {
-			this.server = Server.valueOf(Utils.removePrefix(parameters.get("server", String.class)));
+		if (parameters.get("server") == null || parameters.get("server", String.class).trim().isEmpty()) {
+			throw new KlabIllegalArgumentException("The server for Valhalla has not been defined.");
 		}
-
-		this.valhalla = new Valhalla();
-
+		this.server = parameters.get("server", String.class);
+		if (isValhallaServerOnline(server)) {
+			this.valhalla = new Valhalla(server);
+		} else {
+			throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
+		}
 	}
 	
 	/*

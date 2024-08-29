@@ -1,0 +1,112 @@
+server:
+  port: 8284
+  servlet:
+    contextPath: /hub
+  error:
+    include-message: always
+spring:
+  cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
+    consul:
+      enabled: false
+      config:
+        enabled: false
+  data:
+    ldap:
+      repositories:
+        enabled: false
+  profiles:
+    default: true
+  main:
+    allow-bean-definition-overriding: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: xxxx.apps.googleusercontent.com
+            clientSecret: xxxx
+            redirectUriTemplate: '{baseUrl}/oauth2/callback/{registrationId}'
+            scope:
+              - email
+              - profile
+
+mongo:
+  hostname: localhost
+  port: 27018
+
+ldap:
+  partitionSuffix: dc=integratedmodelling,dc=org
+  principal: cn=admin,dc=integratedmodelling,dc=org
+  password: SuperSecret
+  port: 389
+  url: ldap://localhost:389
+  userGroup: ou=groups
+  userDnPattern: (uid={0})
+
+logging:
+  file: hub.log
+  data:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb: INFO
+
+site:
+  callback: http://localhost:8080/#/callback
+  clickback: "/clickback/{tokenString}"
+  fullname: "Integrated Modelling Dashboard"
+  shortname: "im-dashboard"
+  url: http://localhost/hub/
+  server:
+    id: im
+
+engine:
+  url: https://localhost:8287
+
+email:
+  server:
+    hostname: mail.provider.com
+    port: 587
+    username: email@integratedmodelling.org
+    password: someRandomPassword
+
+  default:
+    domain: integratedmodelling.org
+    recipient: support@integratedmodelling.org
+
+  allowed: >
+      info@integratedmodelling.org,
+      support@integratedmodelling.org,
+      admin@integratedmodelling.org,
+      aries@integratedmodelling.org,
+      noreply@integratedmodelling.org,
+
+  replyable:
+    general:
+      emailaddress: General <info@integratedmodelling.org>
+    support:
+      emailaddress: Support <support@integratedmodelling.org>
+    admin:
+      emailaddress: Admin <admin@integratedmodelling.org>
+    noreply:
+      emailaddress: No reply <noreply@integratedmodelling.org>
+
+license:
+  userId: "Klab Hub (This is the key for the Dev Hub) <info@integratedmodelling.org>"
+  password: password
+  key: "<some key>"
+  email: info@integratedmodelling.org
+  name: testHub
+  hubId: Klab Hub (This is the key for the Dev Hub)
+  hubUrl: "http://127.0.0.1:8284/hub"
+  secRing:
+    filename: "keyring/SecRing.pgp"
+    digest:
+  pubRing:
+    filename: "keyring/PubRing.pgp"
+    digest: "cad134cc3dfcb0e96acb90af56532a96171f858c4c30335541932c0e00a66c9deab764805d9b9f08a49619af211b96305b512d4cf256e8a9c29877d06d207c72"

@@ -42,8 +42,6 @@ public class STACService {
 
     public IGeometry getGeometry(IParameters<String> parameters) {
         GeometryBuilder gBuilder = Geometry.builder();
-        gBuilder.time().generic();
-
         ReferencedEnvelope envelope = collection.getSpatialBounds();
         double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
         double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};
@@ -52,7 +50,8 @@ public class STACService {
 
         setTemporalInterval(gBuilder);
 
-        Geometry ret = gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE);
+        Geometry ret = gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE)
+                .withTimeType("grid");
         return ret;
     }
 

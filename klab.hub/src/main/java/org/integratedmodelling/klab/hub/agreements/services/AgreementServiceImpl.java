@@ -51,7 +51,7 @@ public class AgreementServiceImpl implements AgreementService {
     public List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel) {
         AgreementTemplate agreementTemplate = agreementTemplateService.getAgreementTemplate(agreementType, agreementLevel);
         return createAgreementByAgreementTemplate(agreementTemplate);
-
+        
     }
 
     /**
@@ -136,7 +136,7 @@ public class AgreementServiceImpl implements AgreementService {
         if (agreementTemplate.getDefaultDuration() != 0)
             dates.add(new Date(System.currentTimeMillis() + agreementTemplate.getDefaultDuration()));
 
-        /* If dates isn't empty get minimun date of them */ groupEntry.setExpiration(dates.isEmpty()
+        /* If dates isn't empty get minimun date of them */        groupEntry.setExpiration(dates.isEmpty()
                 ? null
                 : Instant.ofEpochMilli(Collections.min(dates).getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime());
     }
@@ -154,7 +154,8 @@ public class AgreementServiceImpl implements AgreementService {
     public List<Agreement> updateAgreement(Agreement agreement) {
         return new UpdateAgreement(Sets.newHashSet(agreement), agreementRepository).execute();
     }
-
+    
+    
     /**
      * Call to findAll function with defined page and filters
      */
