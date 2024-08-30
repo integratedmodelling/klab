@@ -388,6 +388,8 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 			// weird shit happens
 			String tgv = tags.get(tag).replaceAll("\\P{Print}", "");
 			metadata.put(tag, tgv);
+			metadata.put("osm:id", node.getId());
+			metadata.put("osm:element", node.getType());
 		}
 
 		return (ISubject) context.newObservation(observable, id, getScale(shape, contextSubject), metadata);
