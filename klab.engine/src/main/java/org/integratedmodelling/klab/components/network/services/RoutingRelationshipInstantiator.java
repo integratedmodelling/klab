@@ -161,6 +161,31 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		}
 	}
 	
+    /*
+     * Sets the coordinates according to the selected geometry collapser.
+     */
+    private double[] getCoordinates(IDirectObservation observation) {
+        switch(geometryCollapser.getType()) {
+        case "centroid":
+            return observation.getSpace().getStandardizedCentroid();
+        default:
+            throw new KlabException(
+                    "Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
+        }
+    }
+	
+    /*
+     * Calculates the Euclidean distance between source and target. Returns true if there is no distance threshold or the Euclidean distance is under the limit.
+     */
+    private boolean isRouteInsideDistanceThreshold(double[] sourceCoordinates, double[] targetCoordinates) {
+        if (distanceThreshold == null) {
+            return true;
+        }
+        double euclideanDistance = Math.sqrt(Math.pow(sourceCoordinates[0] - targetCoordinates[0], 2)
+                + Math.pow(sourceCoordinates[1] - targetCoordinates[1], 2));
+        return distanceThreshold < euclideanDistance;
+    }
+
 	/*
 	 * This is an adapted copy of the instantiate method of the configurable
 	 * relationship instantiator.
@@ -278,21 +303,10 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 				}
 
 				// Avoid calling to Valhalla if we already know that the route is too far away
-				double[] sourceCoordinates = null;
-				double[] targetCoordinates = null;
-				
-				switch(geometryCollapser.getType()) {
-				case "centroid":
-					sourceCoordinates = ((IDirectObservation) source).getSpace().getStandardizedCentroid();
-					targetCoordinates = ((IDirectObservation) target).getSpace().getStandardizedCentroid();
-					break;
-				default:
-					throw new KlabException(
-							"Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
-				}
-
-				double distance = Math.sqrt(Math.pow(sourceCoordinates[0] - targetCoordinates[0], 2) + Math.pow(sourceCoordinates[1] - targetCoordinates[1], 2));
-				if (distanceThreshold != null && distanceThreshold < distance) {
+				double[] sourceCoordinates = getCoordinates((IDirectObservation) source);
+				double[] targetCoordinates = getCoordinates((IDirectObservation) target);
+				boolean isRouteInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
+				if (isRouteInThreshold) {
 					outOfLimitTrajectories++;
 					continue;
 				}
