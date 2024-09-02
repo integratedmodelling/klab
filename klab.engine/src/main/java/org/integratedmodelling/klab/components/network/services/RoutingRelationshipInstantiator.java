@@ -277,6 +277,26 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 					}
 				}
 
+				// Avoid calling to Valhalla if we already know that the route is too far away
+				double[] sourceCoordinates = null;
+				double[] targetCoordinates = null;
+				
+				switch(geometryCollapser.getType()) {
+				case "centroid":
+					sourceCoordinates = ((IDirectObservation) source).getSpace().getStandardizedCentroid();
+					targetCoordinates = ((IDirectObservation) target).getSpace().getStandardizedCentroid();
+					break;
+				default:
+					throw new KlabException(
+							"Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
+				}
+
+				double distance = Math.sqrt(Math.pow(sourceCoordinates[0] - targetCoordinates[0], 2) + Math.pow(sourceCoordinates[1] - targetCoordinates[1], 2));
+				if (distanceThreshold != null && distanceThreshold < distance) {
+					outOfLimitTrajectories++;
+					continue;
+				}
+
 				// Find the optimal route between target and location.
 
 				// Handle non-0 dimension objects: collapse higher dimension geometries to their
@@ -285,8 +305,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 				// geometry, or for polygons random points
 				// along its border.
 
-				String valhallaInput = Valhalla.buildValhallaJsonInput((IDirectObservation) source,
-						(IDirectObservation) target, transportType.getType(), geometryCollapser.getType());
+				String valhallaInput = Valhalla.buildValhallaJsonInput(sourceCoordinates, targetCoordinates, transportType.getType());
 				ValhallaOutputDeserializer.OptimizedRoute route;
 				IShape trajectory;
 				Map<String, Object> stats;
