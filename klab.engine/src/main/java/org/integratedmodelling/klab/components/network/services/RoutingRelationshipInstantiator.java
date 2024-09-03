@@ -184,7 +184,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         }
         double euclideanDistance = Math.sqrt(Math.pow(sourceCoordinates[0] - targetCoordinates[0], 2)
                 + Math.pow(sourceCoordinates[1] - targetCoordinates[1], 2));
-        return distanceThreshold < euclideanDistance;
+        return euclideanDistance <= distanceThreshold ;
     }
 
     private boolean validateThatAllElementsAreObjectArtifact(List<IObservation> sources, List<IObservation> targets) {
@@ -289,8 +289,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 				// Avoid calling to Valhalla if we already know that the route is too far away
 				double[] sourceCoordinates = getCoordinates((IDirectObservation) source);
 				double[] targetCoordinates = getCoordinates((IDirectObservation) target);
-				boolean isRouteInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
-				if (isRouteInThreshold) {
+				boolean doesRouteFitInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
+				if (!doesRouteFitInThreshold) {
 					outOfLimitTrajectories++;
 					continue;
 				}
