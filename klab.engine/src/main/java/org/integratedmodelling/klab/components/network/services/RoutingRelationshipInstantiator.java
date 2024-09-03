@@ -254,9 +254,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		int outOfLimitTrajectories = 0;
 
 		for (IObservation source : allSources) {
-			if (context.getMonitor().isInterrupted()) {
-				break;
-			}
 			if (connected.contains(source)) {
 				continue;
 			}
@@ -271,14 +268,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 				// Note that closed paths are nevertheless possible.
 				if (source.equals(target)) {
 					continue;
-				}
-
-				if (!(source instanceof IDirectObservation)) {
-					throw new IllegalArgumentException("source observations are not direct observations");
-				}
-
-				if (!(target instanceof IDirectObservation)) {
-					throw new IllegalArgumentException("target observations are not direct observations");
 				}
 
 				// Diego: I don't get the purpose of this.
