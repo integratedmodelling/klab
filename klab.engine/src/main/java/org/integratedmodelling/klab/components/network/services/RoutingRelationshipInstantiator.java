@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.components.network.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -37,7 +36,6 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
@@ -49,10 +47,7 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import org.jgrapht.Graph;
 
-
-
 public class RoutingRelationshipInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
-
 	private String sourceArtifact = null;
 	private String targetArtifact = null;
 
@@ -96,7 +91,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             return Arrays.stream(GeometryCollapser.values()).filter(val -> val.getType().equals(value)).findAny()
                     .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for GeometryCollapser"));
         }
-
 	}
 
 	private TransportType transportType = TransportType.Auto;
@@ -131,7 +125,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
     }
 	
 	public RoutingRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope scope) {
-
 		this.scope = scope;
 		this.sourceArtifact = parameters.get("source", String.class);
 		this.targetArtifact = parameters.get("target", String.class);
@@ -230,66 +223,67 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                     "klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
         }
 
-		// TODO these are the simple methods - enable others separately
-		Collection<IObservation> allSources = CollectionUtils.joinObservations(sources);
-		Collection<IObservation> allTargets = CollectionUtils.joinObservations(targets);
-
 		graph = new DefaultDirectedGraph<>(SpatialEdge.class);
 		trajectories = new HashMap<>();
 
-		Set<IObservation> connected = new HashSet<>();
+        connectSourceToTarget(context, sources, targets);
 
-		int nullTrajectories = 0;
-		int outOfLimitTrajectories = 0;
+        Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " "
+                + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
+		return instantiateRelationships(semantics);
+	}
 
-		for (IObservation source : allSources) {
-			if (connected.contains(source)) {
-				continue;
-			}
+    private void connectSourceToTarget(IContextualizationScope context, List<IObservation> sources, List<IObservation> targets) {
+        Set<IObservation> connected = new HashSet<>();
+        int nullTrajectories = 0;
+        int outOfLimitTrajectories = 0;
+        for(IObservation source : sources) {
+            if (connected.contains(source)) {
+                continue;
+            }
+            for(IArtifact target : targets) {
+                if (context.getMonitor().isInterrupted()) {
+                    logUnsuccessfulTrajectories(nullTrajectories, outOfLimitTrajectories);
+                    return;
+                }
 
-			for (IArtifact target : allTargets) {
-				if (context.getMonitor().isInterrupted()) {
-					break;
-				}
+                // A direct connection of an instance to itself in the context of routing makes
+                // no sense and is thus avoided.
+                // Note that closed paths are nevertheless possible.
+                if (source.equals(target)) {
+                    continue;
+                }
 
-				// A direct connection of an instance to itself in the context of routing makes
-				// no sense and is thus avoided.
-				// Note that closed paths are nevertheless possible.
-				if (source.equals(target)) {
-					continue;
-				}
+                // Avoid calling to Valhalla if we already know that the route is too far away
+                double[] sourceCoordinates = getCoordinates((IDirectObservation) source);
+                double[] targetCoordinates = getCoordinates((IDirectObservation) target);
+                boolean doesRouteFitInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
+                if (!doesRouteFitInThreshold) {
+                    outOfLimitTrajectories++;
+                    continue;
+                }
 
-				// Avoid calling to Valhalla if we already know that the route is too far away
-				double[] sourceCoordinates = getCoordinates((IDirectObservation) source);
-				double[] targetCoordinates = getCoordinates((IDirectObservation) target);
-				boolean doesRouteFitInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
-				if (!doesRouteFitInThreshold) {
-					outOfLimitTrajectories++;
-					continue;
-				}
-
-				// Find the optimal route between target and location.
-				String valhallaInput = Valhalla.buildValhallaJsonInput(sourceCoordinates, targetCoordinates, transportType.getType());
-				ValhallaOutputDeserializer.OptimizedRoute route;
-				IShape trajectory;
-				Map<String, Object> stats;
-				Parameters<String> routeParameters = null;
-				try {
-					route = valhalla.optimized_route(valhallaInput);
-					trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
-					stats = route.getSummaryStatistics();
-					routeParameters = new Parameters<String>(stats);
-
-				} catch (ValhallaException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					route = null;
-					stats = null;
-					trajectory = null;
-				}
+                // Find the optimal route between target and location.
+                String valhallaInput = Valhalla.buildValhallaJsonInput(sourceCoordinates, targetCoordinates, transportType.getType());
+                ValhallaOutputDeserializer.OptimizedRoute route;
+                IShape trajectory;
+                Map<String, Object> stats;
+                Parameters<String> routeParameters = null;
+                try {
+                    route = valhalla.optimized_route(valhallaInput);
+                    trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
+                    stats = route.getSummaryStatistics();
+                    routeParameters = new Parameters<String>(stats);
+                } catch (ValhallaException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    route = null;
+                    stats = null;
+                    trajectory = null;
+                }
 
                 if (trajectory == null || stats == null) {
-                    nullTrajectories += 1;
+                    nullTrajectories++;
                     continue;
                 }
                 if ((timeThreshold == null || ((Double) stats.get("time") < timeThreshold))
@@ -299,12 +293,14 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                     trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
                             (IDirectObservation) target), trajectory);
                 } else {
-                    outOfLimitTrajectories += 1;
+                    outOfLimitTrajectories++;
                 }
-			}
-		}
-		Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " "
-                + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
+            }
+        }
+        logUnsuccessfulTrajectories(nullTrajectories, outOfLimitTrajectories);
+    }
+
+    private void logUnsuccessfulTrajectories(int nullTrajectories, int outOfLimitTrajectories) {
         if (outOfLimitTrajectories > 0) {
             Logging.INSTANCE.debug("Found " + outOfLimitTrajectories + " potential routing relationships that exceeded the distance limits and were not calculated.");
         }
@@ -312,11 +308,9 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             Logging.INSTANCE.debug("Found " + nullTrajectories + " relationships could not be created because a route could not be found, "
                     + "either due to missing data or because travel characteristics exceeded the allowed limits.");
         }
-		return instantiateRelationships(semantics);
-	}
+    }
 
 	private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
-
 		int i = 1;
 		List<IObjectArtifact> ret = new ArrayList<>();
 		// build from graph
@@ -340,7 +334,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	
 	private void connect(IDirectObservation source, IDirectObservation target, ISpace spatialConnection,
 			Parameters<String> routeParameters) {
-
 		// add to graph for bookkeeping unless we don't need it
 		graph.addVertex(source);
 		graph.addVertex(target);
@@ -349,7 +342,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	}
 	
 	class SpatialEdge extends DefaultEdge {
-
 		private static final long serialVersionUID = -6448417928592670704L;
 
 		IShape sourceShape;
