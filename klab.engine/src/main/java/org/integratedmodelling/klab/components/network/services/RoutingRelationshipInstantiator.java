@@ -62,9 +62,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	private Double timeThreshold = null;
 	private Double distanceThreshold = null;
 
-	// Diego: Not sure what is the role of this.
-	Descriptor selectorDescriptor = null;
-
 	static enum TransportType {
 		Auto("auto"), Pedestrian("pedestrian"), Bicycle("bicycle"), Bus("bus"), Truck("truck"), Taxi("taxi"),
 		MotorScooter("motor_scooter"), Multimodal("multimodel");
@@ -235,12 +232,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                     "klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
         }
 
-		ILanguageExpression selector = null;
-		Parameters<String> parameters = new Parameters<>();
-		if (selectorDescriptor != null) {
-			selector = selectorDescriptor.compile();
-		}
-
 		// TODO these are the simple methods - enable others separately
 		Collection<IObservation> allSources = CollectionUtils.joinObservations(sources);
 		Collection<IObservation> allTargets = CollectionUtils.joinObservations(targets);
@@ -268,22 +259,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 				// Note that closed paths are nevertheless possible.
 				if (source.equals(target)) {
 					continue;
-				}
-
-				// Diego: I don't get the purpose of this.
-				if (selector != null) {
-					Object o = selector.eval(context, parameters, "source", source, "target", target);
-					if (o == null) {
-						o = Boolean.FALSE;
-					}
-					if (!(o instanceof Boolean)) {
-						throw new KlabValidationException(
-								"relationship instantiator: selector expression must return true/false");
-					}
-
-					if (!(Boolean) o) {
-						continue;
-					}
 				}
 
 				// Avoid calling to Valhalla if we already know that the route is too far away
