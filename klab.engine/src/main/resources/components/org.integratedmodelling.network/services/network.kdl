@@ -72,11 +72,11 @@ export object route
 		default ""
 		
 	optional number time_limit
-		"Time threshold to consider a route a valid option"
+		"Time threshold to consider a route a valid option in seconds"
 		default "No limit"
 		
 	optional number distance_limit
-		"Distance threshold to consider a route a valid option"
+		"Distance threshold to consider a route a valid option in kilometers"
 		default "No limit"
 	
 	optional enum transport

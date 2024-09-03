@@ -17,7 +17,13 @@ public class ValhallaRuntimeEnvironment {
 	static final Boolean log_only_critical = false;
 
 	public enum HTTPStatusCode {
-		SUCCESS(200), FAIL(400), INVALID_PATH(404), INVALID_MESSAGE(405), SERVER_PROBLEM(500), NOT_IMPLEMENTED(501);
+		SUCCESS(200),
+		FAIL(400),
+		INVALID_PATH(404),
+		INVALID_MESSAGE(405),
+		TOO_MANY_REQUESTS(429),
+		SERVER_PROBLEM(500),
+		NOT_IMPLEMENTED(501);
 
 		private int code;
 
@@ -43,6 +49,9 @@ public class ValhallaRuntimeEnvironment {
 				break;
 			case 405:
 				status = HTTPStatusCode.INVALID_MESSAGE;
+				break;
+			case 429:
+				status = HTTPStatusCode.TOO_MANY_REQUESTS;
 				break;
 			case 500:
 				status = HTTPStatusCode.SERVER_PROBLEM;
@@ -152,6 +161,9 @@ public class ValhallaRuntimeEnvironment {
 				break;
 			case INVALID_MESSAGE:
 				logger.severe("Request to valhalla.test.Valhalla Server has failed: invalid message.");
+				break;
+			case TOO_MANY_REQUESTS:
+				logger.severe("Request to valhalla.test.Valhalla Server has failed: too may requests.");
 				break;
 			case SERVER_PROBLEM:
 				logger.severe("Request to valhalla.test.Valhalla Server has failed: server problem.");
