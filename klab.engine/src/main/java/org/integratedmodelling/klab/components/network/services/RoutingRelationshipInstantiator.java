@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
@@ -49,7 +50,6 @@ import org.jgrapht.graph.DefaultEdge;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
-
 import org.jgrapht.Graph;
 
 
@@ -187,6 +187,10 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         return distanceThreshold < euclideanDistance;
     }
 
+    private boolean validateThatAllElementsAreObjectArtifact(List<IObservation> sources, List<IObservation> targets) {
+        return Stream.concat(sources.parallelStream(), targets.parallelStream()).allMatch(element -> element instanceof IObjectArtifact);
+    }
+
 	/*
 	 * This is an adapted copy of the instantiate method of the configurable
 	 * relationship instantiator.
@@ -194,7 +198,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
 			throws KlabException {
-
 		IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
 		IConcept targetConcept = Observables.INSTANCE.getRelationshipTarget(semantics.getType());
 
@@ -226,15 +229,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 			}
 		}
 
-		// all artifacts must be non-null and objects
-		for (List<?> co : new List[] { sources, targets }) {
-			for (Object o : co) {
-				if (!(o instanceof IObjectArtifact)) {
-					throw new IllegalArgumentException(
-							"klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
-				}
-			}
-		}
+        // all artifacts must be non-null and objects
+        if (!validateThatAllElementsAreObjectArtifact(sources, targets)) {
+            throw new IllegalArgumentException(
+                    "klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
+        }
 
 		ILanguageExpression selector = null;
 		Parameters<String> parameters = new Parameters<>();
@@ -255,17 +254,14 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		int outOfLimitTrajectories = 0;
 
 		for (IObservation source : allSources) {
-
 			if (context.getMonitor().isInterrupted()) {
 				break;
 			}
-
 			if (connected.contains(source)) {
 				continue;
 			}
 
 			for (IArtifact target : allTargets) {
-
 				if (context.getMonitor().isInterrupted()) {
 					break;
 				}
@@ -287,9 +283,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
 				// Diego: I don't get the purpose of this.
 				if (selector != null) {
-
 					Object o = selector.eval(context, parameters, "source", source, "target", target);
-
 					if (o == null) {
 						o = Boolean.FALSE;
 					}
@@ -339,27 +333,19 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 					trajectory = null;
 				}
 
-				if (trajectory != null && stats != null) {
-
-					if ((timeThreshold == null || ((Double) stats.get("time") < timeThreshold))
-							&& (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))
-
-					) {
-
-						connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
-						connected.add((IObservation) target);
-						trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
-								(IDirectObservation) target), trajectory);
-					} else {
-						outOfLimitTrajectories += 1;
-					}
-
-				} else {
-
-					nullTrajectories += 1;
-
-				}
-
+                if (trajectory == null || stats == null) {
+                    nullTrajectories += 1;
+                    continue;
+                }
+                if ((timeThreshold == null || ((Double) stats.get("time") < timeThreshold))
+                        && (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))) {
+                    connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
+                    connected.add((IObservation) target);
+                    trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
+                            (IDirectObservation) target), trajectory);
+                } else {
+                    outOfLimitTrajectories += 1;
+                }
 			}
 		}
 		Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " "
