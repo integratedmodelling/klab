@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -361,18 +362,15 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
 			}
 		}
-        
-		if (nullTrajectories > 0) {
-
-			context.getMonitor().info("creating " + graph.edgeSet().size() + " "
-					+ Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships. \n"
-					+ nullTrajectories + " relationships could not be created because a route "
-					+ "was not found either due to a lack of data or because travel characteristics exceed the allowed limits.");
-
-		} else {
-			context.getMonitor().info("creating " + graph.edgeSet().size() + " "
-					+ Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
-		}
+		Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " "
+                + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
+        if (outOfLimitTrajectories > 0) {
+            Logging.INSTANCE.debug("Found " + outOfLimitTrajectories + " potential routing relationships that exceeded the distance limits and were not calculated.");
+        }
+        if (nullTrajectories > 0) {
+            Logging.INSTANCE.debug("Found " + nullTrajectories + " relationships could not be created because a route could not be found, "
+                    + "either due to missing data or because travel characteristics exceeded the allowed limits.");
+        }
 		return instantiateRelationships(semantics);
 	}
 
