@@ -16,8 +16,6 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
-import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -38,7 +36,6 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -167,6 +164,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         case "centroid":
             return observation.getSpace().getStandardizedCentroid();
         default:
+            //TODO IM-433 In the future, we should allow for more complex ways of finding a geometry
             throw new KlabException(
                     "Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
         }
@@ -271,13 +269,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 				}
 
 				// Find the optimal route between target and location.
-
-				// Handle non-0 dimension objects: collapse higher dimension geometries to their
-				// centroid. This is the easiest.
-				// More complex versions could involve generating N random points within the
-				// geometry, or for polygons random points
-				// along its border.
-
 				String valhallaInput = Valhalla.buildValhallaJsonInput(sourceCoordinates, targetCoordinates, transportType.getType());
 				ValhallaOutputDeserializer.OptimizedRoute route;
 				IShape trajectory;
