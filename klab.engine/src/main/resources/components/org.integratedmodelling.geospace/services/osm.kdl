@@ -60,10 +60,10 @@ const export object query
          default false
 
     optional enum spatial-boundaries
-        "Sets the spatial boundaries of the query. The potential values are bbox and poly, the first
+        "Sets the spatial boundaries of the query. The potential values are bbox and poly, the former
          being the default value. For extremely complex polygons, poly might return a timeout."
            values bbox, poly
-           default bbox
+           default poly
 
 	class org.integratedmodelling.klab.components.geospace.processing.osm.OSMSubjectInstantiator
 }
