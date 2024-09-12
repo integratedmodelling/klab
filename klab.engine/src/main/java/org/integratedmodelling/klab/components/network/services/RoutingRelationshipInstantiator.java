@@ -237,6 +237,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         Set<IObservation> connected = new HashSet<>();
         int nullTrajectories = 0;
         int outOfLimitTrajectories = 0;
+        int currentDecile = 1;
+        int potentialTrajectories = sources.size() * targets.size();
         for(IObservation source : sources) {
             if (connected.contains(source)) {
                 continue;
@@ -247,6 +249,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                     return;
                 }
 
+                int currentTrajectory = trajectories.size() + nullTrajectories + outOfLimitTrajectories;
+                if ((potentialTrajectories / 10) * currentDecile == currentTrajectory ) {
+                    context.getMonitor().debug("Network building progress at " + currentDecile + "0%");
+                    currentDecile++;
+                }
                 // A direct connection of an instance to itself in the context of routing makes
                 // no sense and is thus avoided.
                 // Note that closed paths are nevertheless possible.
