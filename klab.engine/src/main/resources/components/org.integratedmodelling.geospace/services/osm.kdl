@@ -29,7 +29,7 @@ const export object query
 		default ()
 		
 	optional text conditions
-		"Pass conditions to filter the query."
+		"The conditions that will define the query how the query statements are going to be filtered."
 		 default ""
 
 	optional number timeout

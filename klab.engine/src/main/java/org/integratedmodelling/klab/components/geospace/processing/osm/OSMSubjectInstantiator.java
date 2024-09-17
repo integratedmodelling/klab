@@ -87,6 +87,8 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 	List<Object> equal = null;
 	List<Object> notequal = null;
 
+    // These conditions are the query filter mentioned at the OSM wiki. The String is expected to be empty or a valid Evaluator.
+    // https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#The_Query_Filter
     String conditions = "";
 
 	List<Object> filters = null;
