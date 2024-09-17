@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabRemoteException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
@@ -194,6 +194,7 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 
 		}
 
+		boolean hasSuccessfulQuery = false;
 		Throwable exception = null;
 
 		for (String url : Geocoder.OVERPASS_URLS) {
@@ -209,7 +210,9 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
             try {
                 response = client.newCall(request).execute();
             } catch (IOException ex) {
-                throw new KlabRemoteException(ex);
+                // If there is an exception for this instance, try the next Overpass endpoint
+                context.getMonitor().debug("Call to Overpass server at " + url + " was unsuccessful.");
+                continue;
             }
 			try (InputStream input = response.body().byteStream()) {
 
@@ -269,7 +272,7 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 						}
 					}
 				}
-
+				hasSuccessfulQuery = true;
 				break;
 
 			} catch (Throwable e) {
@@ -282,6 +285,9 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 			throw new KlabIOException(exception);
 		}
 
+        if (!hasSuccessfulQuery) {
+            throw new KlabResourceAccessException("Couldn't make a successful Overpass request.");
+        }
 		/*
 		 * TODO cache query and results in session data if OK, unless caching is
 		 * disabled in parameters.
