@@ -92,6 +92,9 @@ export object route
 
 	optional text server
 		"Specify the endpoint for the Valhalla server."
+
+	optional number log_threshold
+		"If the potential routes of a network surpasses the logging threshold, it will log the progress as a debug log. Default 10.000 potential routes."
 	
 //	TODO configuration to use 
 

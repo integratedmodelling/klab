@@ -53,6 +53,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
 	private Double timeThreshold = null;
 	private Double distanceThreshold = null;
+	private int loggingThreshold = 10_000;
 
 	static enum TransportType {
 		Auto("auto"), Pedestrian("pedestrian"), Bicycle("bicycle"), Bus("bus"), Truck("truck"), Taxi("taxi"),
@@ -130,7 +131,10 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		this.targetArtifact = parameters.get("target", String.class);
 		this.timeThreshold = parameters.get("time_limit", Double.class);
 		this.distanceThreshold = parameters.get("distance_limit", Double.class);
-
+		
+		if (parameters.containsKey("log_threshold")) {
+			this.loggingThreshold = parameters.get("log_threshold", Integer.class);
+		}
 		if (parameters.containsKey("transport")) {
 			this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
 		}
@@ -232,11 +236,15 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
 		return instantiateRelationships(semantics);
 	}
-
+	
     private void connectSourceToTarget(IContextualizationScope context, List<IObservation> sources, List<IObservation> targets) {
         Set<IObservation> connected = new HashSet<>();
         int nullTrajectories = 0;
         int outOfLimitTrajectories = 0;
+        int currentDecile = 1;
+        int potentialTrajectories = sources.size() * targets.size();
+        boolean hasToLog = potentialTrajectories > loggingThreshold;
+        context.getMonitor().debug("Potential trajectories in the network: " + potentialTrajectories);
         for(IObservation source : sources) {
             if (connected.contains(source)) {
                 continue;
@@ -247,6 +255,11 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                     return;
                 }
 
+                int currentTrajectory = trajectories.size() + nullTrajectories + outOfLimitTrajectories;
+                if (hasToLog && ((potentialTrajectories / 10) * currentDecile == currentTrajectory)) {
+                    context.getMonitor().debug("Network building progress at " + currentDecile + "0%");
+                    currentDecile++;
+                }
                 // A direct connection of an instance to itself in the context of routing makes
                 // no sense and is thus avoided.
                 // Note that closed paths are nevertheless possible.
