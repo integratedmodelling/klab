@@ -50,8 +50,9 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and().authorizeRequests()
-                .anyRequest().permitAll();
+        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
+//        http.cors().and().csrf().disable().authorizeRequests().anyRequest().permitAll().and().sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
 //    @Override
@@ -70,9 +71,9 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
-        config.setAllowedOrigins(
-                ImmutableList.of("https://integratedmodelling.org", "http://localhost:8080", "https://localhost:8080",
-                        "http://localhost:8081", "https://localhost:8081", "http://localhost:8284", "https://localhost:8284"));
+        config.setAllowedOrigins(ImmutableList.of("https://integratedmodelling.org", "http://localhost:8080",
+                "https://localhost:8080", "http://localhost:8081", "https://localhost:8081", "http://localhost:8284",
+                "https://localhost:8284", "http://localhost:8000", "https://localhost:8000"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");
         config.addExposedHeader(HttpHeaders.LOCATION);
