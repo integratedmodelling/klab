@@ -38,6 +38,7 @@ public class OSMQuery {
 	int targets = 0;
 	private int timeout = 300;
 	private int maxresults = 0;
+	String conditions = "";
 	String output = "xml";
 	IShape shape;
 	SpatialBoundaries spatialBoundaries;
@@ -114,6 +115,10 @@ public class OSMQuery {
 		}
 	}
 
+    public void setConditions(String conditions) {
+        this.conditions = conditions;
+    }
+
 	@Override
 	public String toString() {
 
@@ -151,7 +156,11 @@ public class OSMQuery {
     }
 
     private String getPolygonQuery(String what, String poly) {
-        String q = what + getFilters() + "(poly:" + poly + ");";
+        String q = what + getFilters();
+        if (!conditions.isBlank()) {
+            q += "(if:" + conditions + ")";
+        }
+        q +=  "(poly:" + poly + ");";
         if (what.equals("way") || what.equals("rel")) {
             // the result set plus all the composing ways and nodes
             q += "\n(._; >;);";

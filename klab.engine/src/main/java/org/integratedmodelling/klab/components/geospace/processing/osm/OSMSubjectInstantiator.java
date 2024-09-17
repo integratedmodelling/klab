@@ -87,6 +87,8 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 	List<Object> equal = null;
 	List<Object> notequal = null;
 
+    String conditions = "";
+
 	List<Object> filters = null;
 
 	String type = null;
@@ -147,6 +149,9 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 						|| this.type.equals("line") || this.type.equals("area");
 			}
 		}
+        if (parameters.containsKey("conditions")) {
+            this.conditions = parameters.get("conditions", String.class);
+        }
 		if (parameters.containsKey("max-objects")) {
 			this.maxObjects = parameters.get("max-objects", Number.class).intValue();
 		}
@@ -335,6 +340,9 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 		if (this.notmatching != null) {
 			query.filterNotMatch(this.notmatching.toArray());
 		}
+        if (!this.conditions.isEmpty()) {
+            query.setConditions(this.conditions);
+        }
         query.setSpatialBoundaries(spatialBoundaries);
 
 		return query.toString();

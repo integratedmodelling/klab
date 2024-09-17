@@ -28,6 +28,10 @@ const export object query
 		 a list of terms, which are in OR."
 		default ()
 		
+	optional text conditions
+		"Pass conditions to filter the query."
+		 default ""
+
 	optional number timeout
 		"Timeout in seconds before the request is considered failed. Default is operating system
 		 dependent."
