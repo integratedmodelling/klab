@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,8 +50,9 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.cors().and().csrf().disable().authorizeRequests().anyRequest().authenticated().and().sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
+//        http.cors().and().csrf().disable().authorizeRequests().anyRequest().permitAll().and().sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
 //    @Override
@@ -71,9 +71,9 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
-        config.setAllowedOrigins(
-                ImmutableList.of("https://integratedmodelling.org", "http://localhost:8080", "https://localhost:8080",
-                        "http://localhost:8081", "https://localhost:8081", "http://localhost:8284", "https://localhost:8284"));
+        config.setAllowedOrigins(ImmutableList.of("https://integratedmodelling.org", "http://localhost:8080",
+                "https://localhost:8080", "http://localhost:8081", "https://localhost:8081", "http://localhost:8284",
+                "https://localhost:8284", "http://localhost:8000", "https://localhost:8000"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");
         config.addExposedHeader(HttpHeaders.LOCATION);
