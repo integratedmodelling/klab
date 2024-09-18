@@ -208,7 +208,10 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 
 			context.getMonitor().debug("Opening Overpass query " + url);
 
-            OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout, TimeUnit.SECONDS).build();
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .callTimeout(timeout, TimeUnit.SECONDS)
+                    .readTimeout(timeout, TimeUnit.SECONDS)
+                    .build();
             MediaType mediaType = MediaType.parse("text/plain");
             RequestBody body = RequestBody.create(mediaType, query);
 
