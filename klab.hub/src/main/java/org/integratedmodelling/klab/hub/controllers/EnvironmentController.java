@@ -17,10 +17,10 @@ public class EnvironmentController {
 
     private static final String ENV_PREFIX = "KHUB_";
 
-    @GetMapping(value = "/ui/environments", produces = "application/javascript")
+    @GetMapping(value = "/ui/environments")
     public void getTestData(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
-        response.setContentType("application/javascript");
+        response.setContentType("text/javascript;utf-8");
 
         Map<String, String> environmentVariables = System.getenv();
 
