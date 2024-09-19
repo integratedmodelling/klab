@@ -24,7 +24,7 @@ public class STACService {
     public STACService(String collectionUrl) {
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = STACCollectionParser.readCollectionId(collectionData);
-        String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId);
+        String catalogUrl = STACUtils.getCatalogUrl(collectionData);
 
         LogProgressMonitor lpm = new LogProgressMonitor();
         this.catalog = new HMStacManager(catalogUrl, lpm);
