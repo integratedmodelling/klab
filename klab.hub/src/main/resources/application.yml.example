@@ -115,3 +115,9 @@ keycloak:
   auth-server-url: http://localhost:8078
   resource: k.Hub
   bearer-only: true
+hub_env:
+   KHUB_APP_BASE_URL: http://localhost:8284/hub
+   KHUB_BASE_URL: http://localhost:8284/hub
+   KHUB_ENVIRONMENT: development
+   KHUB_KEYCLOAK_URL: http://localhost:8078
+   KHUB_STATIC_BASE_URL: http://127.0.0.1:90
