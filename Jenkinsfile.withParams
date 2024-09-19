@@ -159,7 +159,7 @@ pipeline {
         stage('Maven install with jib') {
             steps {
                 withCredentials([usernamePassword(credentialsId: "${params.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh './mvnw clean install -U -DskipTests jib:build -Djib.httpTimeout=60000'
+                    sh './mvnw clean install -U -DskipTests jib:build -Djib.httpTimeout=180000'
                 }
             }
         }

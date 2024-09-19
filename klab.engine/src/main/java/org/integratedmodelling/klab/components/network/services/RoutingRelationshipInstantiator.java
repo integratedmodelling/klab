@@ -1,20 +1,20 @@
 package org.integratedmodelling.klab.components.network.services;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
-import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
@@ -33,28 +33,27 @@ import org.integratedmodelling.klab.components.geospace.routing.ValhallaOutputDe
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
+
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 import org.jgrapht.Graph;
 
-
-
 public class RoutingRelationshipInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
-
 	private String sourceArtifact = null;
 	private String targetArtifact = null;
 
 	private Double timeThreshold = null;
 	private Double distanceThreshold = null;
-
-	// Diego: Not sure what is the role of this.
-	Descriptor selectorDescriptor = null;
+	private int loggingThreshold = 10_000;
 
 	static enum TransportType {
 		Auto("auto"), Pedestrian("pedestrian"), Bicycle("bicycle"), Bus("bus"), Truck("truck"), Taxi("taxi"),
@@ -69,22 +68,13 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		final public String getType() {
 			return this.type;
 		}
+		
+        final static TransportType fromValue(String value) {
+            return Arrays.stream(TransportType.values()).filter(val -> val.getType().equals(value)).findAny()
+                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for TransportType"));
+        }
 	}
-    
-	static enum Server {
-		Local(true), Remote(false);
 
-		private boolean type;
-
-		Server(boolean type) {
-			this.type = type;
-		}
-
-		final public boolean getType() {
-			return this.type;
-		}
-	}
-    
 	static enum GeometryCollapser {
 		Centroid("centroid");
 
@@ -97,17 +87,21 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		final public String getType() {
 			return this.type;
 		}
+		
+        final static GeometryCollapser fromValue(String value) {
+            return Arrays.stream(GeometryCollapser.values()).filter(val -> val.getType().equals(value)).findAny()
+                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for GeometryCollapser"));
+        }
 	}
-    
+
 	private TransportType transportType = TransportType.Auto;
 	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
-	private Server server = Server.Local;
+	private String server;
 	private IContextualizationScope scope;
 	private Valhalla valhalla;
 	private Graph<IObjectArtifact, SpatialEdge> graph;
 	private Map<Pair<IDirectObservation, IDirectObservation>, IShape> trajectories;
 
-    
 	static enum CostingOptions {
 		/*
 		 * Empty for the time being, it is maybe too much unneeded detail. To be
@@ -118,29 +112,77 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	public RoutingRelationshipInstantiator() {
 		/* to instantiate as expression - do not remove (or use) */}
 
+    private boolean isValhallaServerOnline(String server) {
+        HttpResponse<JsonNode> response;
+        try {
+            response = Unirest.get(server + "/status").asJson();
+        } catch (Exception e) {
+            throw new KlabRemoteException("Cannot access Valhalla server. Reason: " + e.getMessage());
+        }
+        if (response.getStatus() != 200) {
+            return false;
+        }
+        return true;
+    }
+	
 	public RoutingRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope scope) {
-
 		this.scope = scope;
 		this.sourceArtifact = parameters.get("source", String.class);
 		this.targetArtifact = parameters.get("target", String.class);
 		this.timeThreshold = parameters.get("time_limit", Double.class);
 		this.distanceThreshold = parameters.get("distance_limit", Double.class);
-
+		
+		if (parameters.containsKey("log_threshold")) {
+			this.loggingThreshold = parameters.get("log_threshold", Integer.class);
+		}
 		if (parameters.containsKey("transport")) {
-			this.transportType = TransportType.valueOf(Utils.removePrefix(parameters.get("transport", String.class)));
+			this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
 		}
 		if (parameters.containsKey("collapse_geometry")) {
 			this.geometryCollapser = GeometryCollapser
-					.valueOf(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
+					.fromValue(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
 		}
-		if (parameters.containsKey("server")) {
-			this.server = Server.valueOf(Utils.removePrefix(parameters.get("server", String.class)));
+		if (parameters.get("server") == null || parameters.get("server", String.class).trim().isEmpty()) {
+			throw new KlabIllegalArgumentException("The server for Valhalla has not been defined.");
 		}
-
-		this.valhalla = new Valhalla();
-
+		this.server = parameters.get("server", String.class);
+		if (isValhallaServerOnline(server)) {
+			this.valhalla = new Valhalla(server);
+		} else {
+			throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
+		}
 	}
 	
+    /*
+     * Sets the coordinates according to the selected geometry collapser.
+     */
+    private double[] getCoordinates(IDirectObservation observation) {
+        switch(geometryCollapser.getType()) {
+        case "centroid":
+            return observation.getSpace().getStandardizedCentroid();
+        default:
+            //TODO IM-433 In the future, we should allow for more complex ways of finding a geometry
+            throw new KlabException(
+                    "Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
+        }
+    }
+	
+    /*
+     * Calculates the Euclidean distance between source and target. Returns true if there is no distance threshold or the Euclidean distance is under the limit.
+     */
+    private boolean isRouteInsideDistanceThreshold(double[] sourceCoordinates, double[] targetCoordinates) {
+        if (distanceThreshold == null) {
+            return true;
+        }
+        double euclideanDistance = Math.sqrt(Math.pow(sourceCoordinates[0] - targetCoordinates[0], 2)
+                + Math.pow(sourceCoordinates[1] - targetCoordinates[1], 2));
+        return euclideanDistance <= distanceThreshold ;
+    }
+
+    private boolean validateThatAllElementsAreObjectArtifact(List<IObservation> sources, List<IObservation> targets) {
+        return Stream.concat(sources.parallelStream(), targets.parallelStream()).allMatch(element -> element instanceof IObjectArtifact);
+    }
+
 	/*
 	 * This is an adapted copy of the instantiate method of the configurable
 	 * relationship instantiator.
@@ -148,7 +190,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	@Override
 	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
 			throws KlabException {
-
 		IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
 		IConcept targetConcept = Observables.INSTANCE.getRelationshipTarget(semantics.getType());
 
@@ -180,151 +221,109 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 			}
 		}
 
-		// all artifacts must be non-null and objects
-		for (List<?> co : new List[] { sources, targets }) {
-			for (Object o : co) {
-				if (!(o instanceof IObjectArtifact)) {
-					throw new IllegalArgumentException(
-							"klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
-				}
-			}
-		}
-
-		ILanguageExpression selector = null;
-		Parameters<String> parameters = new Parameters<>();
-		if (selectorDescriptor != null) {
-			selector = selectorDescriptor.compile();
-		}
-
-		// TODO these are the simple methods - enable others separately
-		Collection<IObservation> allSources = CollectionUtils.joinObservations(sources);
-		Collection<IObservation> allTargets = CollectionUtils.joinObservations(targets);
+        // all artifacts must be non-null and objects
+        if (!validateThatAllElementsAreObjectArtifact(sources, targets)) {
+            throw new IllegalArgumentException(
+                    "klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
+        }
 
 		graph = new DefaultDirectedGraph<>(SpatialEdge.class);
 		trajectories = new HashMap<>();
 
-		Set<IObservation> connected = new HashSet<>();
+        connectSourceToTarget(context, sources, targets);
 
-		int nullTrajectories = 0;
-		int outOfLimitTrajectories = 0;
-
-		for (IObservation source : allSources) {
-
-			if (context.getMonitor().isInterrupted()) {
-				break;
-			}
-
-			if (connected.contains(source)) {
-				continue;
-			}
-
-			for (IArtifact target : allTargets) {
-
-				if (context.getMonitor().isInterrupted()) {
-					break;
-				}
-
-				// A direct connection of an instance to itself in the context of routing makes
-				// no sense and is thus avoided.
-				// Note that closed paths are nevertheless possible.
-				if (source.equals(target)) {
-					continue;
-				}
-
-				if (!(source instanceof IDirectObservation)) {
-					throw new IllegalArgumentException("source observations are not direct observations");
-				}
-
-				if (!(target instanceof IDirectObservation)) {
-					throw new IllegalArgumentException("target observations are not direct observations");
-				}
-
-				// Diego: I don't get the purpose of this.
-				if (selector != null) {
-
-					Object o = selector.eval(context, parameters, "source", source, "target", target);
-
-					if (o == null) {
-						o = Boolean.FALSE;
-					}
-					if (!(o instanceof Boolean)) {
-						throw new KlabValidationException(
-								"relationship instantiator: selector expression must return true/false");
-					}
-
-					if (!(Boolean) o) {
-						continue;
-					}
-				}
-
-				// Find the optimal route between target and location.
-
-				// Handle non-0 dimension objects: collapse higher dimension geometries to their
-				// centroid. This is the easiest.
-				// More complex versions could involve generating N random points within the
-				// geometry, or for polygons random points
-				// along its border.
-
-				String valhallaInput = Valhalla.buildValhallaJsonInput((IDirectObservation) source,
-						(IDirectObservation) target, transportType.getType(), geometryCollapser.getType());
-				ValhallaOutputDeserializer.OptimizedRoute route;
-				IShape trajectory;
-				Map<String, Object> stats;
-				Parameters<String> routeParameters = null;
-				try {
-					route = valhalla.optimized_route(valhallaInput);
-					trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
-					stats = route.getSummaryStatistics();
-					routeParameters = new Parameters<String>(stats);
-
-				} catch (ValhallaException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-					route = null;
-					stats = null;
-					trajectory = null;
-				}
-
-				if (trajectory != null && stats != null) {
-
-					if ((timeThreshold == null || ((Double) stats.get("time") < timeThreshold))
-							&& (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))
-
-					) {
-
-						connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
-						connected.add((IObservation) target);
-						trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
-								(IDirectObservation) target), trajectory);
-					} else {
-						outOfLimitTrajectories += 1;
-					}
-
-				} else {
-
-					nullTrajectories += 1;
-
-				}
-
-			}
-		}
-        
-		if (nullTrajectories > 0) {
-
-			context.getMonitor().info("creating " + graph.edgeSet().size() + " "
-					+ Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships. \n"
-					+ nullTrajectories + " relationships could not be created because a route "
-					+ "was not found either due to a lack of data or because travel characteristics exceed the allowed limits.");
-
-		} else {
-			context.getMonitor().info("creating " + graph.edgeSet().size() + " "
-					+ Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
-		}
+        Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " "
+                + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
 		return instantiateRelationships(semantics);
 	}
+	
+    private void connectSourceToTarget(IContextualizationScope context, List<IObservation> sources, List<IObservation> targets) {
+        Set<IObservation> connected = new HashSet<>();
+        int nullTrajectories = 0;
+        int outOfLimitTrajectories = 0;
+        int currentDecile = 1;
+        int potentialTrajectories = sources.size() * targets.size();
+        boolean hasToLog = potentialTrajectories > loggingThreshold;
+        context.getMonitor().debug("Potential trajectories in the network: " + potentialTrajectories);
+        for(IObservation source : sources) {
+            if (connected.contains(source)) {
+                continue;
+            }
+            for(IArtifact target : targets) {
+                if (context.getMonitor().isInterrupted()) {
+                    logUnsuccessfulTrajectories(nullTrajectories, outOfLimitTrajectories);
+                    return;
+                }
+
+                int currentTrajectory = trajectories.size() + nullTrajectories + outOfLimitTrajectories;
+                if (hasToLog && ((potentialTrajectories / 10) * currentDecile == currentTrajectory)) {
+                    context.getMonitor().debug("Network building progress at " + currentDecile + "0%");
+                    currentDecile++;
+                }
+                // A direct connection of an instance to itself in the context of routing makes
+                // no sense and is thus avoided.
+                // Note that closed paths are nevertheless possible.
+                if (source.equals(target)) {
+                    continue;
+                }
+
+                // Avoid calling to Valhalla if we already know that the route is too far away
+                double[] sourceCoordinates = getCoordinates((IDirectObservation) source);
+                double[] targetCoordinates = getCoordinates((IDirectObservation) target);
+                boolean doesRouteFitInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
+                if (!doesRouteFitInThreshold) {
+                    outOfLimitTrajectories++;
+                    continue;
+                }
+
+                // Find the optimal route between target and location.
+                String valhallaInput = Valhalla.buildValhallaJsonInput(sourceCoordinates, targetCoordinates, transportType.getType());
+                ValhallaOutputDeserializer.OptimizedRoute route;
+                IShape trajectory;
+                Map<String, Object> stats;
+                Parameters<String> routeParameters = null;
+                try {
+                    route = valhalla.optimized_route(valhallaInput);
+                    trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
+                    stats = route.getSummaryStatistics();
+                    routeParameters = new Parameters<String>(stats);
+                } catch (ValhallaException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    route = null;
+                    stats = null;
+                    trajectory = null;
+                }
+
+                if (trajectory == null || stats == null) {
+                    nullTrajectories++;
+                    continue;
+                }
+                if ((timeThreshold == null || ((Double) stats.get("time") < timeThreshold))
+                        && (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))) {
+                    connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
+                    connected.add((IObservation) target);
+                    trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
+                            (IDirectObservation) target), trajectory);
+                } else {
+                    outOfLimitTrajectories++;
+                }
+            }
+        }
+        logUnsuccessfulTrajectories(nullTrajectories, outOfLimitTrajectories);
+    }
+
+    private void logUnsuccessfulTrajectories(int nullTrajectories, int outOfLimitTrajectories) {
+        if (outOfLimitTrajectories > 0) {
+            Logging.INSTANCE.debug("Found " + outOfLimitTrajectories + " potential routing relationships that exceeded the distance limits and were not calculated.");
+        }
+        if (nullTrajectories > 0) {
+            Logging.INSTANCE.debug("Found " + nullTrajectories + " relationships could not be created because a route could not be found, "
+                    + "either due to missing data or because travel characteristics exceeded the allowed limits.");
+        }
+    }
 
 	private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
-
 		int i = 1;
 		List<IObjectArtifact> ret = new ArrayList<>();
 		// build from graph
@@ -348,7 +347,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	
 	private void connect(IDirectObservation source, IDirectObservation target, ISpace spatialConnection,
 			Parameters<String> routeParameters) {
-
 		// add to graph for bookkeeping unless we don't need it
 		graph.addVertex(source);
 		graph.addVertex(target);
@@ -357,7 +355,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	}
 	
 	class SpatialEdge extends DefaultEdge {
-
 		private static final long serialVersionUID = -6448417928592670704L;
 
 		IShape sourceShape;

@@ -1,13 +1,14 @@
 package org.integratedmodelling.klab.components.geospace.processing.osm;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -34,10 +35,10 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
-import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.LineString;
@@ -63,6 +64,11 @@ import de.topobyte.osm4j.geometry.RegionBuilderResult;
 import de.topobyte.osm4j.geometry.WayBuilder;
 import de.topobyte.osm4j.geometry.WayBuilderResult;
 import de.topobyte.osm4j.xml.dynsax.OsmXmlIterator;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Subject instantiator to extract features from OSM. Either pass an Overpass
@@ -88,7 +94,6 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 	boolean isTemporal = false;
 	boolean fixGeometries = false;
 
-	// String outputType = null;
 	String query = null;
 
 	boolean canDispose = false;
@@ -108,7 +113,18 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 	private int timeout = 600;
 	private boolean simplifyShapes = false;
 	double bufferDistance = Double.NaN;
+    SpatialBoundaries spatialBoundaries;
 
+    public enum SpatialBoundaries {
+        bbox("bbox"),
+        poly("poly"),
+        ;
+
+        public String type;
+        SpatialBoundaries(String type) {
+            this.type = type;
+        }
+    }
 
 	public OSMSubjectInstantiator() {
 	}
@@ -146,13 +162,10 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 		if (parameters.containsKey("simplify-polygons")) {
 			this.simplifyShapes = parameters.get("simplify-polygons", Boolean.class);
 		}
+		if (parameters.containsKey("spatial-boundaries")) {
+		    this.spatialBoundaries = SpatialBoundaries.valueOf(parameters.get("spatial-boundaries", String.class));
+		}
 	}
-
-//    @Override
-//    public IGeometry getGeometry() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
 
 	@Override
 	public Type getType() {
@@ -181,15 +194,27 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 
 		}
 
+		boolean hasSuccessfulQuery = false;
 		Throwable exception = null;
 
-		for (String ourl : Geocoder.OVERPASS_URLS) {
-
-			String url = ourl + "?data=" + Escape.forURL(query);
+		for (String url : Geocoder.OVERPASS_URLS) {
 
 			context.getMonitor().debug("Opening Overpass query " + url);
 
-			try (InputStream input = new URL(url).openStream()) {
+            OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout, TimeUnit.SECONDS).build();
+            MediaType mediaType = MediaType.parse("text/plain");
+            RequestBody body = RequestBody.create(mediaType, query);
+
+            Request request = new Request.Builder().url(url).method("POST", body).build();
+            Response response = null;
+            try {
+                response = client.newCall(request).execute();
+            } catch (IOException ex) {
+                // If there is an exception for this instance, try the next Overpass endpoint
+                context.getMonitor().debug("Call to Overpass server at " + url + " was unsuccessful.");
+                continue;
+            }
+			try (InputStream input = response.body().byteStream()) {
 
 				OsmIterator iterator = new OsmXmlIterator(input, true);
 				InMemoryMapDataSet data = MapDataSetLoader.read(iterator, true, true, true);
@@ -247,11 +272,11 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 						}
 					}
 				}
-
+				hasSuccessfulQuery = true;
 				break;
 
 			} catch (Throwable e) {
-				context.getMonitor().debug("Overpass server at " + ourl + " failed to respond");
+				context.getMonitor().debug("Overpass server at " + url + " failed to respond");
 				exception = e;
 			}
 		}
@@ -260,6 +285,9 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 			throw new KlabIOException(exception);
 		}
 
+        if (!hasSuccessfulQuery) {
+            throw new KlabResourceAccessException("Couldn't make a successful Overpass request.");
+        }
 		/*
 		 * TODO cache query and results in session data if OK, unless caching is
 		 * disabled in parameters.
@@ -307,6 +335,7 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 		if (this.notmatching != null) {
 			query.filterNotMatch(this.notmatching.toArray());
 		}
+        query.setSpatialBoundaries(spatialBoundaries);
 
 		return query.toString();
 	}
@@ -365,6 +394,8 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
 			// weird shit happens
 			String tgv = tags.get(tag).replaceAll("\\P{Print}", "");
 			metadata.put(tag, tgv);
+			metadata.put("osm:id", node.getId());
+			metadata.put("osm:element", node.getType());
 		}
 
 		return (ISubject) context.newObservation(observable, id, getScale(shape, contextSubject), metadata);

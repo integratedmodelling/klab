@@ -3,10 +3,7 @@ package org.integratedmodelling.klab.components.geospace.routing;
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
-import org.integratedmodelling.klab.exceptions.KlabException;
-
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -22,19 +19,6 @@ public class Valhalla {
 	ValhallaRuntimeEnvironment valhalla;
 	ValhallaOutputDeserializer deserializer;
 	public String service = "";
-
-	public Valhalla() {
-		this("https://routing.integratedmodelling.org");
-	}
-
-	public Valhalla(boolean local) {
-		String serviceUrl;
-		if (local)
-			serviceUrl = "http://localhost:8002";
-		else
-			serviceUrl = "http://192.168.250.240:8002";
-		new Valhalla(serviceUrl);
-	}
 
 	public Valhalla(String serviceUrl) {
 		this.service = serviceUrl;
@@ -68,10 +52,7 @@ public class Valhalla {
 	}
 
 	public static void main(String[] args) throws ValhallaException {
-
-		// valhalla.test.Valhalla Java peer. Connected to "http://localhost:8002" by
-		// default.
-		Valhalla valhalla = new Valhalla();
+		Valhalla valhalla = new Valhalla("https://routing.integratedmodelling.org");
 
 		/*
 		 * Matrix API example.
@@ -139,27 +120,12 @@ public class Valhalla {
 		System.out.println(waypoints);
 	}
 
-	public static String buildValhallaJsonInput(IDirectObservation source, IDirectObservation target,
-			String transportType, String geometryCollapser) {
-
-		double[] sourceCoordinates = null;
-		double[] targetCoordinates = null;
-
-		// Using a switch statement for generality when more methods will be supported.
-		switch (geometryCollapser) {
-		case "centroid":
-			sourceCoordinates = source.getSpace().getStandardizedCentroid();
-			targetCoordinates = target.getSpace().getStandardizedCentroid();
-			break;
-		default:
-			throw new KlabException(
-					"Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
-		}
-
-		double sourceLat = sourceCoordinates[1];
-		double sourceLon = sourceCoordinates[0];
-		double targetLat = targetCoordinates[1];
-		double targetLon = targetCoordinates[0];
+	public static String buildValhallaJsonInput(double[] source, double[] target,
+			String transportType) {
+		double sourceLat = source[1];
+		double sourceLon = source[0];
+		double targetLat = target[1];
+		double targetLon = target[0];
 
 		String input = "{\"locations\": [{\"lat\":" + sourceLat + ",\"lon\":" + sourceLon + "}, {\"lat\":" + targetLat
 				+ ",\"lon\":" + targetLon + "}], \"costing\":" + "\"" + transportType + "\"}";

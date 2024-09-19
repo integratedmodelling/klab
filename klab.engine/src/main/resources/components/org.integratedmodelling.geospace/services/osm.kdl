@@ -58,6 +58,12 @@ const export object query
 		"If true, set the temporal extent for the retrieved features from the OSM metadata. If the
          metadata do not help, set to the temporal extent in the context."
          default false
-		
+
+    optional enum spatial-boundaries
+        "Sets the spatial boundaries of the query. The potential values are bbox and poly, the former
+         being the default value. For extremely complex polygons, poly might return a timeout."
+           values bbox, poly
+           default poly
+
 	class org.integratedmodelling.klab.components.geospace.processing.osm.OSMSubjectInstantiator
 }

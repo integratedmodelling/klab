@@ -5,12 +5,16 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.util.Vector;
 import org.apache.commons.lang3.StringUtils;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.processing.osm.OSMSubjectInstantiator.SpatialBoundaries;
 import org.integratedmodelling.klab.utils.Pair;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Geometry;
 
 /*
  * simple query builder optimized for k.LAB's needs.
@@ -36,6 +40,7 @@ public class OSMQuery {
 	private int maxresults = 0;
 	String output = "xml";
 	IShape shape;
+	SpatialBoundaries spatialBoundaries;
 
 	/**
 	 * Call with an OR of all the intended return types, e.g. OSMQuery(WAY |
@@ -74,6 +79,10 @@ public class OSMQuery {
 	public void setMaxResult(int maxresults) {
 		this.maxresults = maxresults;
 	}
+
+    public void setSpatialBoundaries(SpatialBoundaries spatialBoundaries) {
+        this.spatialBoundaries = spatialBoundaries;
+    }
 
 	public void filterEqual(Object... strings) {
 		for (int i = 0; i < strings.length; i++) {
@@ -132,6 +141,24 @@ public class OSMQuery {
 		return ret;
 	}
 
+    private String getBboxQuery(String what) {
+        String q = what + getFilters() + getBoundingBox() + ";";
+        if (what.equals("way") || what.equals("rel")) {
+            // the result set plus all the composing ways and nodes
+            q += "\n(._; >;);";
+        }
+        return q;
+    }
+
+    private String getPolygonQuery(String what, String poly) {
+        String q = what + getFilters() + "(poly:" + poly + ");";
+        if (what.equals("way") || what.equals("rel")) {
+            // the result set plus all the composing ways and nodes
+            q += "\n(._; >;);";
+        }
+        return q;
+    }
+
 	private List<String> getQueries() {
 
 		List<String> ret = new ArrayList<>();
@@ -147,14 +174,15 @@ public class OSMQuery {
 			}
 		}
 
-		for (String what : getTypes()) {
-			String q = what + getFilters() + getBoundingBox() + ";";
-			if (what.equals("way") || what.equals("rel")) {
-				// the result set plus all the composing ways and nodes
-				q += "\n(._; >;);";
-			}
-			ret.add(q);
-		}
+        for(String what : getTypes()) {
+            if (spatialBoundaries == SpatialBoundaries.bbox) {
+                ret.add(getBboxQuery(what));
+                continue;
+            }
+            for(String poly : getPolygons()) {
+                ret.add(getPolygonQuery(what, poly));
+            }
+        }
 
 		return ret;
 	}
@@ -219,6 +247,23 @@ public class OSMQuery {
 		return q ? ("\"" + first + "\"") : first;
 	}
 
+    private List<String> getPolygons() {
+        List<String> polygons = new Vector<>();
+        Geometry fullGeometry = ((Shape)shape).getStandardizedGeometry();
+        int numberOfPolygons = fullGeometry.getNumGeometries();
+        for (int i = 0; i < numberOfPolygons; i++) {
+            String formattedString = "\"";
+            Geometry polygon = fullGeometry.getGeometryN(i);
+            Coordinate[] coordinates = polygon.getCoordinates();
+            for (Coordinate coordinate : coordinates) {
+                formattedString += coordinate.getY() + " " + coordinate.getX() + " ";
+            }
+            formattedString = formattedString.substring(0, formattedString.length() - 1) + "\"";
+            polygons.add(formattedString);
+        }
+        return polygons;
+    }
+
 	private String getBoundingBox() {
 
 		IEnvelope envelope = shape.getEnvelope().transform(Projection.getDefault(), true);
@@ -239,5 +284,4 @@ public class OSMQuery {
 		}
 		return ret;
 	}
-
 }
