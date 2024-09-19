@@ -121,8 +121,12 @@ public class STACImporter implements IResourceImporter {
         } catch (MalformedURLException e) {
             return false;
         }
-        // TODO make more checks to know if it is a proper STAC endpoint
-        return url != null && url.getProtocol().startsWith("http");
+        if (url == null || !url.getProtocol().startsWith("http")) {
+            return false;
+        }
+        JSONObject collectionData = STACUtils.requestMetadata(importLocation, "collection");
+        return collectionData.getString("type").equalsIgnoreCase("collection") &&
+            collectionData.has("stac_version");
     }
 
     @Override
