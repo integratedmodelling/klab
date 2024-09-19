@@ -32,11 +32,11 @@ public class EnvironmentController {
         response.setContentType("text/javascript;utf-8");
 
         Map<String, String> kHubEnvironmentVariables = Map.ofEntries(
-                Map.entry(KHUB_APP_BASE_URL, env.getProperty(HUB_ENV + KHUB_APP_BASE_URL)),
-                Map.entry(KHUB_BASE_URL, env.getProperty(HUB_ENV + KHUB_BASE_URL)),
-                Map.entry(KHUB_ENVIRONMENT, env.getProperty(HUB_ENV + KHUB_ENVIRONMENT)),
-                Map.entry(KHUB_KEYCLOAK_URL, env.getProperty(HUB_ENV + KHUB_KEYCLOAK_URL)),
-                Map.entry(KHUB_STATIC_BASE_URL, env.getProperty(HUB_ENV + KHUB_STATIC_BASE_URL)));
+                Map.entry(KHUB_APP_BASE_URL, env.getProperty(HUB_ENV + '.' + KHUB_APP_BASE_URL)),
+                Map.entry(KHUB_BASE_URL, env.getProperty(HUB_ENV + '.' + KHUB_BASE_URL)),
+                Map.entry(KHUB_ENVIRONMENT, env.getProperty(HUB_ENV + '.' + KHUB_ENVIRONMENT)),
+                Map.entry(KHUB_KEYCLOAK_URL, env.getProperty(HUB_ENV + '.' + KHUB_KEYCLOAK_URL)),
+                Map.entry(KHUB_STATIC_BASE_URL, env.getProperty(HUB_ENV + '.' + KHUB_STATIC_BASE_URL)));
 
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonValue = objectMapper.writeValueAsString(kHubEnvironmentVariables);
