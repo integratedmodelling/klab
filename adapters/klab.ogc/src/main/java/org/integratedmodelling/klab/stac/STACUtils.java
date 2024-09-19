@@ -53,13 +53,6 @@ public class STACUtils {
         return collectionUrl.endsWith("/collection.json");
     }
 
-    public static String[] extractCatalogAndCollection(String collectionURI) {
-        if (usesRelativePath(collectionURI)) {
-            // TODO
-        }
-        return collectionURI.split("/collections/");
-    }
-
     public static String getExtensionName(String identifier) {
         return StringUtils.substringBetween(identifier, "https://stac-extensions.github.io/", "/v");
     }
@@ -111,10 +104,22 @@ public class STACUtils {
         return Type.TEXT;
     }
 
-    public static String getCatalogUrl(String collectionUrl, String collectionId) {
-        if (usesRelativePath(collectionUrl)) {
-            return collectionUrl.replace(collectionId + "/collection.json", "catalog.json");
+    /**
+     * Reads the collection data and extracts the link pointing to the root element (the catalog).
+     * @param collectionData
+     * @return url of the catalog
+     */
+    public static String getCatalogUrl(JSONObject collectionData) {
+        // The URL of the catalog is the root
+        if (!collectionData.has("links")) {
+            throw new KlabResourceAccessException("STAC collection is missing links. It is not fully complaiant and cannot be accessed by the adapter.");
         }
-        return collectionUrl.replace("collections/" + collectionId, "");
+        JSONArray links = collectionData.getJSONArray("links");
+        Optional<JSONObject> rootLink = links.toList().stream()
+                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase("root")).findFirst();
+        if (rootLink.isEmpty()) {
+            throw new KlabResourceAccessException("STAC collection is missing a relationship to the root catalog");
+        }
+        return rootLink.get().getString("href");
     }
 }
