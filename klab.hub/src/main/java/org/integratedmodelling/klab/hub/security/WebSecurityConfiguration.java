@@ -71,9 +71,8 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
-        config.setAllowedOrigins(ImmutableList.of("https://integratedmodelling.org", "http://localhost:8080",
-                "https://localhost:8080", "http://localhost:8081", "https://localhost:8081", "http://localhost:8284",
-                "https://localhost:8284", "http://localhost:8000", "https://localhost:8000"));
+        config.setAllowedOrigins(ImmutableList.of("https://integratedmodelling.org", "https://test.integratedmodelling.org",
+                "http://localhost:8080", "https://localhost:8080", "http://localhost:8284", "https://localhost:8284"));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");
         config.addExposedHeader(HttpHeaders.LOCATION);
