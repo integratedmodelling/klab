@@ -135,7 +135,7 @@
 		<hamcrest.version>2.2</hamcrest.version>
 		<powermock.version>2.0.9</powermock.version>
 		
-		<aws.version>1.12.772</aws.version>
+		<aws.version>1.12.767</aws.version>
 	</properties>
 
 	<build>
