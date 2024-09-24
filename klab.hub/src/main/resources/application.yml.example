@@ -121,3 +121,6 @@ hub_env:
    KHUB_ENVIRONMENT: development
    KHUB_KEYCLOAK_URL: http://localhost:8078
    KHUB_STATIC_BASE_URL: http://127.0.0.1:90
+cors:
+    hosts:
+        allow: http://localhost:8080, https://localhost:8080, http://localhost:8284, https://localhost:8284
