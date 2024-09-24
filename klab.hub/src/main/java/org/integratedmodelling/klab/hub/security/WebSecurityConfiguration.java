@@ -74,7 +74,6 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
 
-        System.out.println(Arrays.toString(corsHostsAllow));
         config.setAllowedOrigins(Arrays.asList(corsHostsAllow));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");
