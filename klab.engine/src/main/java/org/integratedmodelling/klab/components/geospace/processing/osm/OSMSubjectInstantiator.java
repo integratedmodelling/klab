@@ -345,7 +345,7 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
         if (this.notmatching != null) {
             query.filterNotMatch(this.notmatching.toArray());
         }
-        if (!this.conditions.isEmpty()) {
+        if (!this.conditions.isBlank()) {
             query.setConditions(this.conditions);
         }
         query.setSpatialBoundaries(spatialBoundaries);
