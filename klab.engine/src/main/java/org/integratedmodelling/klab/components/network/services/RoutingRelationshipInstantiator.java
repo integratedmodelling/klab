@@ -75,6 +75,27 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         }
 	}
 
+    static enum IsochroneType {
+        Time("time"),
+        Distance("distance"),
+        ;
+
+        private String type;
+
+        IsochroneType(String type) {
+            this.type = type;
+        }
+
+        final public String getType() {
+            return this.type;
+        }
+
+        final static IsochroneType fromValue(String value) {
+            return Arrays.stream(IsochroneType.values()).filter(val -> val.getType().equals(value)).findAny()
+                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for IsochroneType"));
+        }
+    }
+
 	static enum GeometryCollapser {
 		Centroid("centroid");
 
