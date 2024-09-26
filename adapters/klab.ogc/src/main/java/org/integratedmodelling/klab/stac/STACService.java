@@ -19,7 +19,6 @@ import kong.unirest.json.JSONObject;
 public class STACService {
     private HMStacManager catalog;
     private HMStacCollection collection;
-    private boolean isStatic;
 
     public STACService(String collectionUrl) {
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
@@ -32,11 +31,6 @@ public class STACService {
             this.catalog.open();
         } catch (Exception e) {
             throw new KlabInternalErrorException("Error at STAC service. Cannot read catalog at '" + catalogUrl + "'.");
-        }
-
-        isStatic = STACUtils.usesRelativePath(collectionUrl);
-        if (isStatic) {
-            return;
         }
 
         try {
@@ -88,9 +82,5 @@ public class STACService {
         if (interval.size() > 1 && interval.get(1) != null) {
             gBuilder.time().end(interval.get(1).getTime());
         }
-    }
-
-    public boolean isStatic() {
-        return isStatic;
     }
 }

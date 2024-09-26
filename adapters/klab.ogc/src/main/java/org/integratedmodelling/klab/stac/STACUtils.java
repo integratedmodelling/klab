@@ -61,6 +61,17 @@ public class STACUtils {
         return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
+    /**
+     * Validates of the artifact contains a link to an element of type ref
+     * @param data of a collection, catalog or item
+     * @param rel
+     * @return true if rel exists
+     */
+    public static boolean containsLinkTo(JSONObject data, String rel) {
+        return data.getJSONArray("links").toList().stream()
+                .anyMatch(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel));
+    }
+
     public static JSONObject requestMetadata(String collectionUrl, String type) {
         HttpResponse<JsonNode> response = Unirest.get(collectionUrl).asJson();
         if (!response.isSuccess() || response.getBody() == null) {

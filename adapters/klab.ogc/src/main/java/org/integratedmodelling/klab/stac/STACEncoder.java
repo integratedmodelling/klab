@@ -54,6 +54,8 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 
+import kong.unirest.json.JSONObject;
+
 public class STACEncoder implements IResourceEncoder {
 
     /**
@@ -186,12 +188,17 @@ public class STACEncoder implements IResourceEncoder {
         HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
 
         String collectionUrl = resource.getParameters().get("collection", String.class);
+        JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
+        String catalogUrl = STACUtils.getCatalogUrl(collectionData);
+        JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
-        STACService service = STACAdapter.getService(collectionUrl);
-        if (service.isStatic()) {
+        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
+        if (!hasSearchOption) {
             // TODO implement how to read static collections
             throw new KlabUnimplementedException("Cannot read a static collection.");
         }
+
+        STACService service = STACAdapter.getService(collectionUrl);
         HMStacCollection collection = service.getCollection();
         if (collection == null) {
             scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be find.");

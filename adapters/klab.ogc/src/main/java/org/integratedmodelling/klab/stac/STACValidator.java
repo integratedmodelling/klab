@@ -55,9 +55,13 @@ public class STACValidator implements IResourceValidator {
         Set<String> extensions = readSTACExtensions(collectionData);
         userData.put("stac_extensions", extensions);
 
-        IGeometry geometry = service.isStatic()
-                ? STACCollectionParser.readGeometry(collectionData)
-                : service.getGeometry(userData);
+        String catalogUrl = STACUtils.getCatalogUrl(collectionData);
+        JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
+
+        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
+        IGeometry geometry = hasSearchOption
+                ? service.getGeometry(userData)
+                : STACCollectionParser.readGeometry(collectionData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 
