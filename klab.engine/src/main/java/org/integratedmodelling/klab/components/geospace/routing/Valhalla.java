@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.utils.Pair;
+
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
@@ -132,5 +134,16 @@ public class Valhalla {
 
 		return input;
 	}
+	
+    public static String buildValhallaIsochroneInput(List<Pair<Double, Double>> coordinates, String transportType, String isochroneType, double range) {
+        StringBuffer ret = new StringBuffer("{\"locations\":[");
+        for (Pair<Double, Double> coor : coordinates) {
+            ret.append("{\"lat\":").append(coor.getFirst()).append(",").append("\"lon\":").append(coor.getSecond()).append("},");
+        }
+        ret.replace(0, ret.length() - 1, "],\"costing\":").append(transportType).append("\",");
+
+        ret.append("\"contours\":[{\"").append(isochroneType).append(":").append(range).append("}]}");
+        return transportType;
+    }
 
 }
