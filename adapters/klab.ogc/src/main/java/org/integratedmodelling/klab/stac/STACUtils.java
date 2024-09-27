@@ -72,6 +72,11 @@ public class STACUtils {
                 .anyMatch(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel));
     }
 
+    public static Optional<String> getLinkTo(JSONObject data, String rel) {
+        return data.getJSONArray("links").toList().stream()
+                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel)).findFirst();
+    }
+
     public static JSONObject requestMetadata(String collectionUrl, String type) {
         HttpResponse<JsonNode> response = Unirest.get(collectionUrl).asJson();
         if (!response.isSuccess() || response.getBody() == null) {

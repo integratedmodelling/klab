@@ -4,11 +4,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -60,29 +63,44 @@ public class STACCollectionParser {
      * @throws KlabResourceAccessException
      */
     public static JSONObject readAssetsFromCollection(String collectionUrl, JSONObject collection) throws KlabResourceAccessException {
-        JSONObject assets;
+        String catalogUrl = STACUtils.getCatalogUrl(collection);
+        JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
+
+        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
+        // Static catalogs should have their assets on the Collection
+        if (!hasSearchOption) {
+            // Check the assets
+            if (!collection.has("asset")) {
+                throw new KlabResourceNotFoundException("Static STAC collection \"" + collectionUrl + "\" has no assets");
+            }
+            return collection.getJSONObject("asset");
+        }
 
         // item_assets is a shortcut for obtaining information about the assets
         // https://github.com/stac-extensions/item-assets
         if (collection.has("item_assets")) {
-            assets = STACCollectionParser.readItemAssets(collection);
-        } else {
-            if (STACUtils.usesRelativePath(collectionUrl)) {
-                List<JSONObject> items = STACCollectionParser.readItemsFromLinks(collection);
-                // We can take the first one as a model
-                String linkHref = items.get(0).getString("href");
-                String itemUrl = getItemUrl(collectionUrl, linkHref);
-                JSONObject itemData = STACUtils.requestMetadata(itemUrl, "feature");
-                return itemData.getJSONObject("assets");
-            }
-            HttpResponse<JsonNode> response = Unirest.get(collectionUrl + "/items").asJson();
-            if (!response.isSuccess()) {
-                throw new KlabResourceAccessException("Cannot read items at " + collectionUrl + "/items");
-            }
-            JSONObject itemsData = response.getBody().getObject();
-            assets =  STACCollectionParser.readAssetsFromItems(itemsData);
+            return STACCollectionParser.readItemAssets(collection);
         }
-        return assets;
+
+        Optional<String> searchEndpoint = STACUtils.getLinkTo(catalogData, "search");
+        if (searchEndpoint.isEmpty()) {
+            throw new KlabResourceAccessException("Cannot search in the STAC collection " + collectionUrl);
+        }
+
+        // TODO allow POST and GET. Move the query to another place. 
+        String body = "{collections:[\"" + searchEndpoint.get() + "\"], \"limit\": 1}";
+        HttpResponse<JsonNode> response = Unirest.post(collectionUrl).body(body).asJson();
+
+        if (!response.isSuccess()) {
+            throw new KlabResourceAccessException(); //TODO set message
+        }
+
+        JSONObject searchResponse = response.getBody().getObject();
+        if (searchResponse.getJSONArray("features").length() == 0) {
+            throw new KlabResourceAccessException(); // TODO set message there is no feature
+        }
+
+        return searchResponse.getJSONArray("features").getJSONObject(0).getJSONObject("assets");
     }
 
     private static List<JSONObject> readItemsFromLinks(JSONObject collection) {
