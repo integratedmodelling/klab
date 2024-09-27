@@ -30,10 +30,6 @@ public class STACCollectionParser {
         return collection.getJSONObject("item_assets");
     }
 
-    private static JSONObject readAssetsFromItems(JSONObject items) {
-        return items.getJSONArray("features").getJSONObject(0).getJSONObject("assets"); 
-    }
-
     public static IGeometry readGeometry(JSONObject collection) {
         GeometryBuilder gBuilder = Geometry.builder();
         DateTimeFormatter filterTimestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
@@ -101,15 +97,5 @@ public class STACCollectionParser {
         }
 
         return searchResponse.getJSONArray("features").getJSONObject(0).getJSONObject("assets");
-    }
-
-    private static List<JSONObject> readItemsFromLinks(JSONObject collection) {
-        List<JSONObject> links = collection.getJSONArray("links").toList();
-        links.removeIf(l -> !l.getString("rel").equalsIgnoreCase("item"));
-        return links;
-    }
-
-    private static String getItemUrl(String collectionUrl, String itemHref) {
-        return collectionUrl.replace("collection.json", itemHref.replace("\\", "/").replace("./", ""));
     }
 }

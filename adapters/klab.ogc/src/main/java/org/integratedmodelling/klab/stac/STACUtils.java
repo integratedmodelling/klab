@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.DOIReader;
@@ -49,16 +48,8 @@ public class STACUtils {
         return authors.toString().trim();
     }
 
-    public static boolean usesRelativePath(String collectionUrl) {
-        return collectionUrl.endsWith("/collection.json");
-    }
-
     public static String getExtensionName(String identifier) {
         return StringUtils.substringBetween(identifier, "https://stac-extensions.github.io/", "/v");
-    }
-
-    public static Version getExtensionVersion(String identifier) {
-        return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
     }
 
     /**
