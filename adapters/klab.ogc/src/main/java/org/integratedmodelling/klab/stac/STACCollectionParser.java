@@ -66,10 +66,10 @@ public class STACCollectionParser {
         // Static catalogs should have their assets on the Collection
         if (!hasSearchOption) {
             // Check the assets
-            if (!collection.has("asset")) {
+            if (!collection.has("assets")) {
                 throw new KlabResourceNotFoundException("Static STAC collection \"" + collectionUrl + "\" has no assets");
             }
-            return collection.getJSONObject("asset");
+            return collection.getJSONObject("assets");
         }
 
         // item_assets is a shortcut for obtaining information about the assets
