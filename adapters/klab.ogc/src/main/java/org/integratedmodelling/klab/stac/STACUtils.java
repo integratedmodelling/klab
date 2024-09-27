@@ -48,10 +48,6 @@ public class STACUtils {
         return authors.toString().trim();
     }
 
-    public static String getExtensionName(String identifier) {
-        return StringUtils.substringBetween(identifier, "https://stac-extensions.github.io/", "/v");
-    }
-
     /**
      * Validates of the artifact contains a link to an element of type ref
      * @param data of a collection, catalog or item

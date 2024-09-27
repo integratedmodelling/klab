@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -28,7 +27,6 @@ import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.Pair;
 
-import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 /**
@@ -51,9 +49,6 @@ public class STACValidator implements IResourceValidator {
             userData.put("collectionId", collectionId);
         }
         STACService service = STACAdapter.getService(collectionUrl);
-
-        Set<String> extensions = readSTACExtensions(collectionData);
-        userData.put("stac_extensions", extensions);
 
         String catalogUrl = STACUtils.getCatalogUrl(collectionData);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
@@ -131,20 +126,6 @@ public class STACValidator implements IResourceValidator {
         codelist.setDirectMapping(direct);
         codelist.setInverseMapping(inverse);
         return codelist;
-    }
-
-    private Set<String> readSTACExtensions(JSONObject response) {
-        Set<String> extensions = new HashSet<>();
-        if (!response.has("stac_extensions")) {
-            return extensions;
-        }
-
-        JSONArray extensionArray = response.getJSONArray("stac_extensions");
-        for (Object ext : extensionArray) {
-            extensions.add(STACUtils.getExtensionName(ext.toString()));
-        }
-
-        return extensions;
     }
 
     private void readMetadata(final JSONObject json, Builder builder) {
