@@ -53,8 +53,8 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues()).and().authorizeRequests()
-                .anyRequest().permitAll();
+        http.cors().and().csrf().disable().authorizeRequests().anyRequest().permitAll();
+
     }
 
 //    @Override
