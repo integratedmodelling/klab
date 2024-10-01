@@ -38,6 +38,8 @@ public class EnvironmentController {
         ObjectMapper objectMapper = new ObjectMapper();
         String jsonValue = objectMapper.writeValueAsString(kHubEnvironmentVariables);
 
+        System.out.println(jsonValue);
+
         response.getWriter().append("var __ENV__= " + jsonValue + ";");
     }
 
