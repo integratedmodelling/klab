@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
-import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
@@ -48,15 +47,7 @@ public class STACValidator implements IResourceValidator {
             collectionId = collectionData.getString("id");
             userData.put("collectionId", collectionId);
         }
-        STACService service = STACAdapter.getService(collectionUrl);
-
-        String catalogUrl = STACUtils.getCatalogUrl(collectionData);
-        JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
-
-        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
-        IGeometry geometry = hasSearchOption
-                ? service.getGeometry(userData)
-                : STACCollectionParser.readGeometry(collectionData);
+        IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 

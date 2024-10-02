@@ -1,14 +1,13 @@
 package org.integratedmodelling.klab.stac;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
@@ -30,26 +29,30 @@ public class STACCollectionParser {
         return collection.getJSONObject("item_assets");
     }
 
+    /**
+     * Obtains the geometry from the collection data.
+     * Currently, only available for dynamic collections.
+     * @param parameters
+     * @return geometry
+     */
     public static IGeometry readGeometry(JSONObject collection) {
         GeometryBuilder gBuilder = Geometry.builder();
-        DateTimeFormatter filterTimestampFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-
+        
         JSONObject extent = collection.getJSONObject("extent");
-        List<String> interval = extent.getJSONObject("temporal").getJSONArray("interval").getJSONArray(0).toList();
+        List bbox = extent.getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0).toList();
+        gBuilder.space().boundingBox(Double.valueOf(bbox.get(0).toString()), Double.valueOf(bbox.get(1).toString()),
+                Double.valueOf(bbox.get(2).toString()), Double.valueOf(bbox.get(3).toString()));
 
+        List interval = extent.getJSONObject("temporal").getJSONArray("interval").getJSONArray(0).toList();
         if (interval.get(0) != null) {
-            LocalDateTime start = LocalDateTime.parse(interval.get(0), filterTimestampFormatter);
-            gBuilder.time().start(start.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+            gBuilder.time().start(Instant.parse(interval.get(0).toString()).toEpochMilli());
         }
         if (interval.size() > 1 && interval.get(1) != null) {
-            LocalDateTime start = LocalDateTime.parse(interval.get(1), filterTimestampFormatter);
-            gBuilder.time().start(start.atZone(ZoneId.of("UTC")).toInstant().toEpochMilli());
+            gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
         }
 
-        List<Double> bbox = extent.getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0).toList();
-
-        gBuilder.space().boundingBox(bbox.get(0), bbox.get(1), bbox.get(2), bbox.get(3));
-        return gBuilder.build();
+        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE)
+                .withTimeType("grid");
     }
 
     /**

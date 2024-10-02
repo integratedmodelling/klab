@@ -1,17 +1,8 @@
 package org.integratedmodelling.klab.stac;
 
-import java.util.Date;
-import java.util.List;
-
-import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
-import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.GeometryBuilder;
-import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
 import kong.unirest.json.JSONObject;
@@ -45,42 +36,5 @@ public class STACService {
 
     public HMStacCollection getCollection() {
         return collection;
-    }
-
-    /**
-     * Obtains the geometry from the collection data.
-     * Currently, only available for dynamic collections.
-     * @param parameters
-     * @return geometry
-     */
-    public IGeometry getGeometry(IParameters<String> parameters) {
-        GeometryBuilder gBuilder = Geometry.builder();
-        buildSpatialContext(gBuilder);
-        buildTemporalInterval(gBuilder);
-
-        Geometry ret = gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE)
-                .withTimeType("grid");
-        return ret;
-    }
-
-    private void buildSpatialContext(GeometryBuilder gBuilder) {
-        ReferencedEnvelope envelope = collection.getSpatialBounds();
-        double[] upperCorner = {envelope.getMaxX(), envelope.getMaxY()};
-        double[] lowerCorner = {envelope.getMinX(), envelope.getMinY()};
-
-        gBuilder.space().boundingBox(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1]);
-    }
-
-    private void buildTemporalInterval(GeometryBuilder gBuilder) {
-        List<Date> interval = collection.getTemporalBounds();
-        if (interval.isEmpty()) {
-            return;
-        }
-        if (interval.get(0) != null) {
-            gBuilder.time().start(interval.get(0).getTime());
-        }
-        if (interval.size() > 1 && interval.get(1) != null) {
-            gBuilder.time().end(interval.get(1).getTime());
-        }
     }
 }
