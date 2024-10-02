@@ -3,8 +3,12 @@ package org.integratedmodelling.klab.components.geospace.routing;
 import java.util.List;
 import java.util.Map;
 
+import org.geotools.data.geojson.GeoJSONReader;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
-import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
+import org.integratedmodelling.klab.exceptions.KlabException;
+import org.locationtech.jts.geom.Geometry;
 
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
@@ -49,8 +53,9 @@ public class Valhalla {
 		return deserializer.deserializeOptimizedRoutes();
 	}
 
-	public String isochrone(String input) throws ValhallaException {
-		return valhalla.valhallaSendRequest(input, ValhallaRuntimeEnvironment.ValhallaRequestType.ISOCHRONE);
+	public Geometry isochrone(String input) throws ValhallaException {
+		String response = valhalla.valhallaSendRequest(input, ValhallaRuntimeEnvironment.ValhallaRequestType.ISOCHRONE);
+		return GeoJSONReader.parseGeometry(response);
 	}
 
 	public static void main(String[] args) throws ValhallaException {
@@ -135,15 +140,27 @@ public class Valhalla {
 		return input;
 	}
 	
-    public static String buildValhallaIsochroneInput(List<Pair<Double, Double>> coordinates, String transportType, String isochroneType, double range) {
+    public static String buildValhallaIsochroneInput(double[] coordinates, String transportType, String isochroneType, double range) {
         StringBuffer ret = new StringBuffer("{\"locations\":[");
-        for (Pair<Double, Double> coor : coordinates) {
-            ret.append("{\"lat\":").append(coor.getFirst()).append(",").append("\"lon\":").append(coor.getSecond()).append("},");
-        }
-        ret.replace(0, ret.length() - 1, "],\"costing\":").append(transportType).append("\",");
+        ret.append("{\"lat\":").append(coordinates[0]).append(",").append("\"lon\":").append(coordinates[1])
+                .append("}],\"costing\":").append(transportType).append("\",");
 
         ret.append("\"contours\":[{\"").append(isochroneType).append(":").append(range).append("}]}");
         return transportType;
+    }
+
+    /*
+     * Sets the coordinates according to the selected geometry collapser.
+     */
+    public static double[] getCoordinates(IDirectObservation observation, GeometryCollapser geometryCollapser) {
+        switch(geometryCollapser.getType()) {
+        case "centroid":
+            return observation.getSpace().getStandardizedCentroid();
+        default:
+            //TODO IM-433 In the future, we should allow for more complex ways of finding a geometry
+            throw new KlabException(
+                    "Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
+        }
     }
 
 }

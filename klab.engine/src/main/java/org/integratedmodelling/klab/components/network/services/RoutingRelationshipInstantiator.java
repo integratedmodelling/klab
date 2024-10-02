@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.components.network.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,6 +27,8 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.routing.Valhalla;
+import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
+import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.TransportType;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaException;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaOutputDeserializer;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
@@ -54,66 +55,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	private Double timeThreshold = null;
 	private Double distanceThreshold = null;
 	private int loggingThreshold = 10_000;
-
-	static enum TransportType {
-		Auto("auto"), Pedestrian("pedestrian"), Bicycle("bicycle"), Bus("bus"), Truck("truck"), Taxi("taxi"),
-		MotorScooter("motor_scooter"), Multimodal("multimodel");
-
-		private String type;
-
-		TransportType(String type) {
-			this.type = type;
-		}
-
-		final public String getType() {
-			return this.type;
-		}
-		
-        final static TransportType fromValue(String value) {
-            return Arrays.stream(TransportType.values()).filter(val -> val.getType().equals(value)).findAny()
-                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for TransportType"));
-        }
-	}
-
-    static enum IsochroneType {
-        Time("time"),
-        Distance("distance"),
-        ;
-
-        private String type;
-
-        IsochroneType(String type) {
-            this.type = type;
-        }
-
-        final public String getType() {
-            return this.type;
-        }
-
-        final static IsochroneType fromValue(String value) {
-            return Arrays.stream(IsochroneType.values()).filter(val -> val.getType().equals(value)).findAny()
-                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for IsochroneType"));
-        }
-    }
-
-	static enum GeometryCollapser {
-		Centroid("centroid");
-
-		private String type;
-
-		GeometryCollapser(String type) {
-			this.type = type;
-		}
-
-		final public String getType() {
-			return this.type;
-		}
-		
-        final static GeometryCollapser fromValue(String value) {
-            return Arrays.stream(GeometryCollapser.values()).filter(val -> val.getType().equals(value)).findAny()
-                    .orElseThrow(() -> new KlabIllegalArgumentException("Value " +  value + " unknown for GeometryCollapser"));
-        }
-	}
 
 	private TransportType transportType = TransportType.Auto;
 	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
@@ -173,20 +114,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 			throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
 		}
 	}
-	
-    /*
-     * Sets the coordinates according to the selected geometry collapser.
-     */
-    private double[] getCoordinates(IDirectObservation observation) {
-        switch(geometryCollapser.getType()) {
-        case "centroid":
-            return observation.getSpace().getStandardizedCentroid();
-        default:
-            //TODO IM-433 In the future, we should allow for more complex ways of finding a geometry
-            throw new KlabException(
-                    "Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
-        }
-    }
 	
     /*
      * Calculates the Euclidean distance between source and target. Returns true if there is no distance threshold or the Euclidean distance is under the limit.
@@ -289,8 +216,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 }
 
                 // Avoid calling to Valhalla if we already know that the route is too far away
-                double[] sourceCoordinates = getCoordinates((IDirectObservation) source);
-                double[] targetCoordinates = getCoordinates((IDirectObservation) target);
+                double[] sourceCoordinates = Valhalla.getCoordinates((IDirectObservation) source, geometryCollapser);
+                double[] targetCoordinates = Valhalla.getCoordinates((IDirectObservation) target, geometryCollapser);
                 boolean doesRouteFitInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
                 if (!doesRouteFitInThreshold) {
                     outOfLimitTrajectories++;
