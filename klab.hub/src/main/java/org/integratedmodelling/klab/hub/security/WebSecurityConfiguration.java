@@ -57,7 +57,7 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         super.configure(http);
         http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements())
                 .permitAll().antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
-                .antMatchers(HttpMethod.GET, HubRequestMatchers.getEnvironments()).permitAll().anyRequest().authenticated().and()
+                .antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
@@ -66,7 +66,6 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
-
         config.setAllowedOrigins(Arrays.asList(corsHostsAllow));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");

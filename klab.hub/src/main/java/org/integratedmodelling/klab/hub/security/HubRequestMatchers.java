@@ -9,7 +9,7 @@ public final class HubRequestMatchers {
 
     private static final String[] agreements = new String[]{API.HUB.AGREEMENT_TEMPLATE_TYPE_LEVEL + "*"};
 
-    private static final String[] environments = new String[]{API.HUB.ENVIRONMENTS};
+    private static final String[] ui = new String[]{API.HUB.UI + "*"};
 
     public static String[] getAuthentication() {
         return authentication;
@@ -19,8 +19,7 @@ public final class HubRequestMatchers {
         return agreements;
     }
 
-    public static String[] getEnvironments() {
-        return environments;
+    public static String[] getUi() {
+        return ui;
     }
-
 }
