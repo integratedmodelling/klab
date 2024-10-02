@@ -9,6 +9,7 @@ import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,12 +23,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.net.HttpHeaders;
 
 @KeycloakConfiguration
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapter {
+
+    @Value("${cors.hosts.allow}")
+    String[] corsHostsAllow;
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -50,9 +53,8 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
-//        http.cors().and().csrf().disable().authorizeRequests().anyRequest().permitAll().and().sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.cors().and().csrf().disable().authorizeRequests().anyRequest().permitAll();
+
     }
 
 //    @Override
@@ -71,8 +73,8 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
-        config.setAllowedOrigins(ImmutableList.of("https://integratedmodelling.org", "https://test.integratedmodelling.org",
-                "http://localhost:8080", "https://localhost:8080", "http://localhost:8284", "https://localhost:8284"));
+
+        config.setAllowedOrigins(Arrays.asList(corsHostsAllow));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");
         config.addExposedHeader(HttpHeaders.LOCATION);
