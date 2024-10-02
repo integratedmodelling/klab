@@ -470,6 +470,10 @@ public interface API {
          * Base URL path for custom properties related to a single user.
          */
         public static final String USER_ID_CUSTOM_PROPERTIES = USER_BASE_ID + "/custom-properties";
+        /**
+         * URL path for get environments
+         */
+        public static final String ENVIRONMENTS = "/ui/environments";
 
         public static interface PARAMETERS {
             /**
