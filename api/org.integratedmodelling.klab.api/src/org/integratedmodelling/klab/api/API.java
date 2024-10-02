@@ -471,9 +471,9 @@ public interface API {
          */
         public static final String USER_ID_CUSTOM_PROPERTIES = USER_BASE_ID + "/custom-properties";
         /**
-         * URL path for get environments
+         * URL path for get SPA pages
          */
-        public static final String ENVIRONMENTS = "/ui/environments";
+        public static final String UI = "/ui/*";
 
         public static interface PARAMETERS {
             /**
