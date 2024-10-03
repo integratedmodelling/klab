@@ -11,9 +11,11 @@ import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurer
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,27 +55,17 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.cors().and().csrf().disable().authorizeRequests().anyRequest().permitAll();
-
+        http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements())
+                .permitAll().antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
+                .antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated().and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
-
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        super.configure(http);
-//        http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements())
-//                .permitAll().antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
-//                .regexMatchers(HttpMethod.POST, HubRequestMatchers.getUsersPost()).permitAll()
-//                .regexMatchers(HttpMethod.GET, HubRequestMatchers.getUsersGet()).permitAll()
-//                .regexMatchers(HttpMethod.PUT, HubRequestMatchers.getUsersPut()).permitAll().anyRequest().authenticated().and()
-//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         final CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(false);
-
         config.setAllowedOrigins(Arrays.asList(corsHostsAllow));
         config.setAllowedHeaders(Collections.singletonList("*"));
         config.addExposedHeader("Content-disposition");
