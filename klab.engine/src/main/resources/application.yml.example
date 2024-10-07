@@ -1,0 +1,14 @@
+spring:
+   jackson:
+      serialization:
+         FAIL_ON_EMPTY_BEANS: false
+   main:
+      allow-bean-definition-overriding: true
+         
+keycloak:
+   realm: im
+   auth-server-url: http://localhost:8078
+   resource: k.Engine
+   credentials:
+      secret: XdJ1bXrcdXXC53YaI3N9ROkb7HGUuW9j
+   

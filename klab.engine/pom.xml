@@ -918,6 +918,10 @@
 				<version>${junit5.version}</version>
 				<scope>test</scope>
 			</dependency>
-
+			<dependency>
+				<groupId>org.keycloak</groupId>
+				<artifactId>keycloak-spring-boot-starter</artifactId>
+				<version>24.0.4</version>
+			</dependency>
 	</dependencies>
 </project>
