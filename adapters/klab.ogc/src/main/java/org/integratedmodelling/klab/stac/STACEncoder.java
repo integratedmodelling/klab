@@ -111,18 +111,14 @@ public class STACEncoder implements IResourceEncoder {
 
     /**
      * Validates that the temporal dimension of the context can be supported by the resource.
-     * For generic resources, time can be refitted.
+     * Due to the nature of the STAC search query, time can be refitted if needed.
      * @param contextTime
      * @param resourceTime
      * @return validated time for the request
      */
     private Time validateTemporalDimension(Time contextTime, Time resourceTime) {
         if (!resourceTime.contains(contextTime)) {
-            if (resourceTime.isGeneric()) {
-                return refitTime(contextTime, resourceTime);
-            } else {
-                throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
-            }
+            return refitTime(contextTime, resourceTime);
         }
         return contextTime;
     }
@@ -214,12 +210,13 @@ public class STACEncoder implements IResourceEncoder {
         Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
                 .findFirst().orElseThrow();
         Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
-        if (resourceTime.getCoveredExtent() > 0) {
+        
+        if (resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
             time = validateTemporalDimension(time, resourceTime);
-            ITimeInstant start = time.getStart();
-            ITimeInstant end = time.getEnd();
-            collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()));
         }
+        ITimeInstant start = time.getStart();
+        ITimeInstant end = time.getEnd();
+        collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()));
 
         GridCoverage2D coverage = null;
         try {
