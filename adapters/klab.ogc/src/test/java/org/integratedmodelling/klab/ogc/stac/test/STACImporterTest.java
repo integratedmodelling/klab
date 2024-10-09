@@ -56,7 +56,7 @@ public class STACImporterTest {
         Mockito.when(identity.getId()).thenReturn("hares");
         Authentication.INSTANCE.registerIdentity(identity);
 
-        Assertions.assertThrows(KlabIllegalArgumentException.class, () -> {
+        Assertions.assertThrows(KlabIOException.class, () -> {
             Collection<Builder> ret = importer.importResources(importLocation, project, params, monitor);
         });
     }

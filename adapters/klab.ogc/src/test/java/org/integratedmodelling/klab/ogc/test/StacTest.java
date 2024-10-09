@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.ogc.test;
 
 import java.util.Date;
 import java.util.List;
-import org.hortonmachine.gears.io.stac.EarthAwsElement84Sentinel2Bands;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
