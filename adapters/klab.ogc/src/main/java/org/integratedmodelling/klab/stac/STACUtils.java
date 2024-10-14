@@ -61,7 +61,8 @@ public class STACUtils {
 
     public static Optional<String> getLinkTo(JSONObject data, String rel) {
         return data.getJSONArray("links").toList().stream()
-                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel)).findFirst();
+                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel))
+                .map(link -> ((JSONObject)link).getString("href")).findFirst();
     }
 
     public static JSONObject requestMetadata(String collectionUrl, String type) {

@@ -65,9 +65,12 @@ public class STACCollectionParser {
         String catalogUrl = STACUtils.getCatalogUrl(collection);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
-        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
+        Optional<String> searchEndpoint = STACUtils.containsLinkTo(catalogData, "search") 
+                ? STACUtils.getLinkTo(catalogData, "search")
+                : STACUtils.getLinkTo(collection, "search");
+
         // Static catalogs should have their assets on the Collection
-        if (!hasSearchOption) {
+        if (searchEndpoint.isEmpty()) {
             // Check the assets
             if (!collection.has("assets")) {
                 throw new KlabResourceNotFoundException("Static STAC collection \"" + collectionUrl + "\" has no assets");
@@ -81,14 +84,10 @@ public class STACCollectionParser {
             return STACCollectionParser.readItemAssets(collection);
         }
 
-        Optional<String> searchEndpoint = STACUtils.getLinkTo(catalogData, "search");
-        if (searchEndpoint.isEmpty()) {
-            throw new KlabResourceAccessException("Cannot search in the STAC collection " + collectionUrl);
-        }
-
-        // TODO allow POST and GET. Move the query to another place. 
-        String body = "{collections:[\"" + searchEndpoint.get() + "\"], \"limit\": 1}";
-        HttpResponse<JsonNode> response = Unirest.post(collectionUrl).body(body).asJson();
+        // TODO Move the query to another place. 
+        String parameters = "?collections=" + collectionUrl + "&limit=1";
+        HttpResponse<JsonNode> response = Unirest.get(searchEndpoint.get() + parameters).asJson();
+//        HttpResponse<JsonNode> response = Unirest.post(searchEndpoint.get()).body(body).asJson();
 
         if (!response.isSuccess()) {
             throw new KlabResourceAccessException(); //TODO set message
