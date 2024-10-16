@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin(origins = "*")
-@Secured(Roles.SESSION)
+//@Secured(Roles.SESSION)
 public class EngineSessionController {
 
 	@RequestMapping(value = API.ENGINE.SESSION.INFO, method = RequestMethod.GET, produces = "application/json")

@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
  *
  */
 @RestController
-@Secured({ Roles.ENGINE_USER, Roles.ADMIN })
+//@Secured({ Roles.ENGINE_USER, Roles.ADMIN })
 public class EngineController {
 
 	@RequestMapping(value = API.ENGINE.SESSION.AUTHORIZE, params = { "join",

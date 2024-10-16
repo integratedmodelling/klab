@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.API;
@@ -36,9 +38,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * This hub service is used to authenticate a user request to login to an engine
@@ -265,6 +270,8 @@ public class HubUserService implements RemoteUserService {
 
     private ResponseEntity<HubLoginResponse> hubLogin(UserAuthenticationRequest login) {
         HttpHeaders headers = new HttpHeaders();
+        
+        headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(login, headers);
         return restTemplate.postForEntity(getLoginUrl(), request, HubLoginResponse.class);
     }

@@ -65,7 +65,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class ResourceController {
 
 	@CrossOrigin(origins = "*")
-	@Secured(Roles.SESSION)
+	// @Secured(Roles.SESSION)
 	@RequestMapping(value = API.NODE.RESOURCE.UPLOAD_URN, method = RequestMethod.POST)
 	public ResponseEntity<HttpStatus> uploadResource(Principal principal, @RequestParam(required = false) String refId,
 			@RequestParam("files[]") MultipartFile[] files) throws Exception {

@@ -1,42 +1,122 @@
-//package org.integratedmodelling.klab.engine.rest.security;
-//
-//import java.io.IOException;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//import javax.servlet.ServletException;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-//
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//import org.springframework.security.authentication.AuthenticationManager;
-//import org.springframework.security.authentication.AuthenticationProvider;
-//import org.springframework.security.authentication.ProviderManager;
-//import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
-//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-//import org.springframework.security.config.http.SessionCreationPolicy;
-//import org.springframework.security.core.AuthenticationException;
-//import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
-//import org.springframework.security.web.AuthenticationEntryPoint;
-//import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
-//import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
-//import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
-//
-//@Configuration
-//@EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-//class SecurityConfig extends WebSecurityConfigurerAdapter {
+package org.integratedmodelling.klab.engine.rest.security;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
+import org.springframework.security.web.SecurityFilterChain;
+
+@Configuration
+@EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
+class SecurityConfig {
 //	
 //  @Autowired
 //  private PreauthenticatedUserDetailsService customUserDetailsService;
-//
+
 //  @Autowired
 //  private EngineDirectoryAuthenticationProvider authProvider;
-//  
+  
+  interface AuthoritiesConverter extends Converter<Map<String, Object>, Collection<GrantedAuthority>> {}
+
+  @Bean
+  AuthoritiesConverter realmRolesAuthoritiesConverter() {
+      return claims -> {
+          final var realmAccess = Optional.ofNullable((Map<String, Object>) claims.get("realm_access"));
+          final var roles =
+                  realmAccess.flatMap(map -> Optional.ofNullable((List<String>) map.get("roles")));
+          return roles.map(List::stream).orElse(Stream.empty()).map(SimpleGrantedAuthority::new)
+                  .map(GrantedAuthority.class::cast).toList();
+      };
+  }
+  
+  @Bean
+  JwtAuthenticationConverter authenticationConverter(
+          Converter<Map<String, Object>, Collection<GrantedAuthority>> authoritiesConverter) {
+      JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+      jwtAuthenticationConverter
+              .setJwtGrantedAuthoritiesConverter(jwt -> authoritiesConverter.convert(jwt.getClaims()));
+      return jwtAuthenticationConverter;
+  }
+
+  @Bean
+  SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
+          Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter) throws Exception {
+      http.oauth2ResourceServer(resourceServer -> {
+          resourceServer.jwt(jwtDecoder -> {
+              jwtDecoder.jwtAuthenticationConverter(jwtAuthenticationConverter);
+          });
+      });
+
+      http.sessionManagement(sessions -> {
+          sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+      }).csrf(csrf -> {
+          csrf.disable();
+      });
+
+
+      http.cors().and().csrf().disable().authorizeRequests()
+//      
+      .antMatchers(HttpMethod.GET, "/").permitAll()
+      .antMatchers(HttpMethod.GET, "/css/**").permitAll()
+      .antMatchers(HttpMethod.GET, "/fonts/**").permitAll()
+      .antMatchers(HttpMethod.GET, "/images/**").permitAll()
+      .antMatchers(HttpMethod.GET, "/js/**").permitAll()
+      .antMatchers(HttpMethod.GET, "/icons/**").permitAll()      
+      .antMatchers(HttpMethod.GET, EngineRequestMatchers.getEngine()).permitAll()
+      .antMatchers(HttpMethod.GET, EngineRequestMatchers.getCapabilities()).permitAll()
+      .antMatchers(HttpMethod.POST, EngineRequestMatchers.getTemplate()).permitAll()
+      .antMatchers(HttpMethod.GET, EngineRequestMatchers.getSchema()).permitAll()
+      .antMatchers(HttpMethod.GET, EngineRequestMatchers.getPing()).permitAll()
+      .antMatchers(HttpMethod.HEAD, EngineRequestMatchers.getPing()).permitAll()
+      .antMatchers(HttpMethod.GET, EngineRequestMatchers.getUi()).permitAll()
+      .anyRequest().authenticated();
+      
+//      http.cors().disable().authorizeHttpRequests(requests -> {    	  	
+//    	  	requests.antMatchers(HttpMethod.GET, EngineRequestMatchers.getEngine()).permitAll();
+//    	  	requests.antMatchers(HttpMethod.GET, EngineRequestMatchers.getCapabilities()).permitAll();
+//    	  	requests.antMatchers(HttpMethod.POST, EngineRequestMatchers.getTemplate()).permitAll();
+//    	  	requests.antMatchers(HttpMethod.GET, EngineRequestMatchers.getSchema()).permitAll();
+//    	  	requests.antMatchers(HttpMethod.GET, EngineRequestMatchers.getPing()).permitAll();
+//    	  	requests.antMatchers(HttpMethod.HEAD, EngineRequestMatchers.getPing()).permitAll();
+//    	    requests.anyRequest().authenticated();
+//    	  });
+//      
+      
+
+      return http.build();
+  }
+  
+//  @Bean
+//  CorsConfigurationSource corsConfigurationSource() {
+//      final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//      final CorsConfiguration config = new CorsConfiguration();
+//      config.setAllowCredentials(false);
+//      config.setAllowedOrigins(Arrays.asList("*"));
+//      config.setAllowedHeaders(Arrays.asList("*"));
+//      config.addExposedHeader("Content-disposition");
+//      config.addExposedHeader(HttpHeaders.LOCATION);
+//      config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH", "HEAD"));
+//      source.registerCorsConfiguration("/**", config);
+//      return source;
+//  }
+  
+  
 //  @Override
 //  protected void configure(HttpSecurity http) throws Exception {
 //	  http
@@ -67,7 +147,7 @@
 //      .and()
 //      .headers().frameOptions().disable();
 //  }
-//
+
 //	@Bean
 //	@Override
 //	protected AuthenticationManager authenticationManager()  {
@@ -97,6 +177,6 @@
 //		wrapper.setUserDetailsService(customUserDetailsService);
 //		return wrapper;
 //	}
-//
-//    
-//}
+
+    
+}

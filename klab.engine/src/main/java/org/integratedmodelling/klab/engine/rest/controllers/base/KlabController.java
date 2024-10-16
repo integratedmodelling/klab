@@ -65,7 +65,6 @@ import org.springframework.web.servlet.HandlerMapping;
  */
 @RestController
 @CrossOrigin(origins = "*")
-@Secured(Roles.PUBLIC)
 public class KlabController {
 
     @RequestMapping(value = API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE, method = RequestMethod.GET)
