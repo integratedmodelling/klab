@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import org.geotools.geometry.jts.GeometryBuilder;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
@@ -42,7 +43,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
-
+import org.locationtech.jts.geom.Geometry;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -193,11 +194,22 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         int potentialTrajectories = sources.size() * targets.size();
         boolean hasToLog = potentialTrajectories > loggingThreshold;
         context.getMonitor().debug("Potential trajectories in the network: " + potentialTrajectories);
+        //TODO make the filter use this
+        boolean useReverse = sources.size() < targets.size();
         for(IObservation source : sources) {
             if (connected.contains(source)) {
                 continue;
             }
-            for(IArtifact target : targets) {
+            // Lambda-filter those that are not inside the range
+            double[] coordinates = Valhalla.getCoordinates((IDirectObservation) source, geometryCollapser);
+            String isochroneRequest = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), "time", timeThreshold, useReverse);
+            Geometry isochrone = valhalla.isochrone(isochroneRequest);
+            List<IObservation> inRangeTargets = targets.stream().filter( t -> {
+                double[] targetCoordinates = Valhalla.getCoordinates((IDirectObservation) t, geometryCollapser);
+                Geometry coords = new GeometryBuilder().point(targetCoordinates[0], targetCoordinates[1]);
+                return isochrone.intersects(coords);
+            }).toList();
+            for(IArtifact target : inRangeTargets) {
                 if (context.getMonitor().isInterrupted()) {
                     logUnsuccessfulTrajectories(nullTrajectories, outOfLimitTrajectories);
                     return;
