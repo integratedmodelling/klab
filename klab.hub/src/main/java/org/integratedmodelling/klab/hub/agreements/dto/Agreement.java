@@ -59,17 +59,61 @@ public class Agreement {
     @Reference
     private Set<GroupEntry> groupEntries = new HashSet<>(); // research groups, etc. in web tool
 
-    @CreatedBy
-    private String createdBy;
+    public String getId() {
+        return id;
+    }
 
-    @CreatedDate
-    private LocalDateTime createdDate;
+    public void setId(String id) {
+        this.id = id;
+    }
 
-    @LastModifiedBy
-    private String lastModifiedBy;
+    public AgreementLevel getAgreementLevel() {
+        return agreementLevel;
+    }
 
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
+    public void setAgreementLevel(AgreementLevel agreementLevel) {
+        this.agreementLevel = agreementLevel;
+    }
+
+    public AgreementType getAgreementType() {
+        return agreementType;
+    }
+
+    public void setAgreementType(AgreementType agreementType) {
+        this.agreementType = agreementType;
+    }
+
+    public Date getTransactionDate() {
+        return transactionDate;
+    }
+
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+    public Date getValidDate() {
+        return validDate;
+    }
+
+    public void setValidDate(Date validDate) {
+        this.validDate = validDate;
+    }
+
+    public Date getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Date expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public Date getRevokedDate() {
+        return revokedDate;
+    }
+
+    public void setRevokedDate(Date revokedDate) {
+        this.revokedDate = revokedDate;
+    }
 
     public void addGroupEntries(GroupEntry... groups) {
         this.groupEntries.addAll(Arrays.asList(groups));
@@ -77,6 +121,10 @@ public class Agreement {
 
     public void addGroupEntries(Set<GroupEntry> groups) {
         this.groupEntries.addAll(groups);
+    }
+
+    public void setGroupEntries(Set<GroupEntry> groups) {
+        this.groupEntries = groups;
     }
 
     public void removeGroupEntries(Set<GroupEntry> groupEntries) {
@@ -97,6 +145,10 @@ public class Agreement {
 
     }
 
+    public Set<GroupEntry> getGroupEntries() {
+        return groupEntries;
+    }
+
     public boolean userGroupsOverlapWith(HashSet<GroupEntry> groups) {
         if (groups == null) {
             // force this to be checked by set intersection, rather than instantly failing
@@ -115,6 +167,14 @@ public class Agreement {
         }
 
         return false;
+    }
+
+    public String getOwnAgreement() {
+        return ownAgreement;
+    }
+
+    public void setOwnAgreement(String ownAgreement) {
+        this.ownAgreement = ownAgreement;
     }
 
     public boolean isRevoked() {

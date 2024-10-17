@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub.tokens.services;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,16 +16,12 @@ import org.integratedmodelling.klab.hub.tokens.exceptions.AuthenticationFailedEx
 import org.integratedmodelling.klab.hub.users.commands.GetUserProfile;
 import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.dto.User;
-import org.integratedmodelling.klab.hub.users.exceptions.LoginFailedExcepetion;
 import org.integratedmodelling.klab.hub.users.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.users.payload.LogoutResponse;
-import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -39,22 +34,18 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService {
 
     protected static final Logger logger = LoggerFactory.getLogger(UserAuthTokenServiceImpl.class);
 
-    private AuthenticationManager authenticationManager;
+//    private AuthenticationManager authenticationManager;
 
     private UserRepository userRepository;
-
-    private UserProfileService profileService;
 
     private TokenRepository tokenRepository;
 
     private ObjectMapper objectMapper;
 
-    public UserAuthTokenServiceImpl(AuthenticationManager authenticationManager, UserRepository userRepository,
-            UserProfileService profileService, TokenRepository tokenRepository, ObjectMapper objectMapper) {
+    public UserAuthTokenServiceImpl(UserRepository userRepository, TokenRepository tokenRepository, ObjectMapper objectMapper) {
         super();
-        this.authenticationManager = authenticationManager;
+//        this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-        this.profileService = profileService;
         this.tokenRepository = tokenRepository;
         this.objectMapper = objectMapper;
     }
@@ -97,22 +88,22 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService {
     @Override
     public TokenAuthentication getUserAuthenticationToken(String username, String password) {
         Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
-        try {
-            authRequest = authenticationManager.authenticate(authRequest);
-        } catch (AuthenticationException e) {
-            throw new LoginFailedExcepetion(username);
-        }
-        if (!authRequest.isAuthenticated()) {
-            String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
-            throw new KlabException(msg);
-        } else {
+//        try {
+//            authRequest = authenticationManager.authenticate(authRequest);
+//        } catch (AuthenticationException e) {
+//            throw new LoginFailedExcepetion(username);
+//        }
+//        if (!authRequest.isAuthenticated()) {
+//            String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
+//            throw new KlabException(msg);
+//        } else {
             deleteExpiredTokens(username);
             TokenAuthentication result = createToken(username, TokenType.auth);
             PreAuthenticatedAuthenticationToken secureToken = new PreAuthenticatedAuthenticationToken(result.getPrincipal(),
                     result.getCredentials(), result.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(secureToken);
             return result;
-        }
+//        }
     }
 
     @SuppressWarnings("rawtypes")
@@ -120,9 +111,7 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService {
     public LoginResponse< ? > getAuthResponse(String username, String password, boolean remote) {
         TokenAuthentication token = getUserAuthenticationToken(username, password);
         ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
-        profile.setLastLogin(LocalDateTime.now());
-        profileService.updateUserByProfile(profile);
-        if (remote) {
+         if (remote) {
             profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
             return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
         } else {

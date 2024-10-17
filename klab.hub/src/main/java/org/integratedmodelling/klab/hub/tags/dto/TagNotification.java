@@ -1,13 +1,7 @@
 package org.integratedmodelling.klab.hub.tags.dto;
 
-import java.time.LocalDateTime;
-
 import org.integratedmodelling.klab.rest.HubNotificationMessage.Type;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
@@ -42,17 +36,46 @@ public class TagNotification {
     private Type type;
 
     private String title;
+    public String getTitle() {
+        return title;
+    }
 
-    @CreatedBy
-    private String createdBy;
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
-    @CreatedDate
-    private LocalDateTime createdDate;
+    private String message;
 
-    @LastModifiedBy
-    private String lastModifiedBy;
+    public void setTag(MongoTag tag) {
+        this.tag = tag;
+    }
 
-    @LastModifiedDate
-    private LocalDateTime lastModifiedDate;
+    public MongoTag getTag() {
+        return tag;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
 }

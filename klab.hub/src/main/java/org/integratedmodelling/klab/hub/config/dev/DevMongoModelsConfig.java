@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.repository.MongoLeverRepository;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.commands.CreateInitialUsers;
+//import org.integratedmodelling.klab.hub.users.commands.CreateInitialUsers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Configuration;
@@ -27,16 +27,13 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
 	private MongoNodeRepository nodeRepo;
 
 	@Autowired
-	public DevMongoModelsConfig(MongoGroupRepository groupRepo,
-			UserRepository userRepository,
-			LdapUserDetailsManager ldapUserDetailsManager,
-			PasswordEncoder passwordEncoder,
-			MongoLeverRepository leverRepo,
-			MongoNodeRepository nodeRepo) {
+    public DevMongoModelsConfig(MongoGroupRepository groupRepo, UserRepository userRepository,
+//			LdapUserDetailsManager ldapUserDetailsManager,
+            PasswordEncoder passwordEncoder, MongoLeverRepository leverRepo, MongoNodeRepository nodeRepo) {
 		super();
 		this.groupRepo = groupRepo;
 		this.userRepository = userRepository;
-		this.ldapUserDetailsManager = ldapUserDetailsManager;
+//		this.ldapUserDetailsManager = ldapUserDetailsManager;
 		this.passwordEncoder = passwordEncoder;
 		this.leverRepo = leverRepo;
 		this.nodeRepo = nodeRepo;
@@ -47,11 +44,7 @@ public class DevMongoModelsConfig implements ApplicationListener<ContextRefreshe
 		URL url = DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json");
 		new CreateIntialGroups(url, groupRepo).execute();
 		
-		new CreateInitialUsers(
-				groupRepo,
-				userRepository,
-				ldapUserDetailsManager,
-				passwordEncoder).execute();
+//        new CreateInitialUsers(groupRepo, userRepository, ldapUserDetailsManager, passwordEncoder).execute();
 		
 		new CreateInitialLevers(leverRepo).execute();
 		new CreateIntialNodes(nodeRepo, groupRepo).execute();
