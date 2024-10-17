@@ -9,10 +9,11 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.locationtech.jts.geom.Geometry;
-
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import kong.unirest.JsonNode;
+import kong.unirest.json.JSONObject;
 
 /**
  * Java peer to interact with the valhalla.test.Valhalla server via simple
@@ -55,7 +56,8 @@ public class Valhalla {
 
 	public Geometry isochrone(String input) throws ValhallaException {
 		String response = valhalla.valhallaSendRequest(input, ValhallaRuntimeEnvironment.ValhallaRequestType.ISOCHRONE);
-		return GeoJSONReader.parseGeometry(response);
+		JSONObject json = new JsonNode(response).getObject();
+		return GeoJSONReader.parseGeometry(json.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").toString());
 	}
 
 	public static void main(String[] args) throws ValhallaException {
@@ -140,13 +142,15 @@ public class Valhalla {
 		return input;
 	}
 	
-    public static String buildValhallaIsochroneInput(double[] coordinates, String transportType, String isochroneType, double range) {
+    public static String buildValhallaIsochroneInput(double[] coordinates, String transportType, String isochroneType, double range, boolean isReverse) {
         StringBuffer ret = new StringBuffer("{\"locations\":[");
-        ret.append("{\"lat\":").append(coordinates[0]).append(",").append("\"lon\":").append(coordinates[1])
-                .append("}],\"costing\":").append(transportType).append("\",");
+        ret.append("{\"lat\":").append(coordinates[1]).append(",").append("\"lon\":").append(coordinates[0])
+                .append("}],\"costing\":\"").append(transportType).append("\",");
 
-        ret.append("\"contours\":[{\"").append(isochroneType).append(":").append(range).append("}]}");
-        return transportType;
+        ret.append("\"contours\":[{\"").append(isochroneType).append("\":").append(range).append("}],\"polygons\":true}");
+        //TODO add isReverse
+        //TODO clean this ret a bit
+        return ret.toString();
     }
 
     /*
