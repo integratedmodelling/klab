@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,13 +21,11 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
-import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.Pair;
 
-import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 /**
@@ -43,23 +40,22 @@ public class STACValidator implements IResourceValidator {
         if (!canHandle(null, userData)) {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
-        String catalogUrl = userData.get("catalogUrl", String.class);
+        String collectionUrl = userData.get("collection", String.class);
         String collectionId = userData.get("collectionId", String.class);
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
-        JSONObject metadata = STACUtils.requestCollectionMetadata(catalogUrl, collectionId);
-
-        Set<String> extensions = readSTACExtensions(metadata);
-        userData.put("stac_extensions", extensions);
-
-        IGeometry geometry = service.getGeometry(userData);
+        JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
+        if (collectionId ==  null) {
+            collectionId = collectionData.getString("id");
+            userData.put("collectionId", collectionId);
+        }
+        IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
 
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
 
         // The default URL of the resource is the collection endpoint. May be overwritten. 
-        builder.withMetadata(IMetadata.DC_URL, catalogUrl + "/collections/" + collectionId);
+        builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
         String assetId = userData.get("asset", String.class);
-        JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
+        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
         JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
         Type type = readRasterDataType(asset);
@@ -76,7 +72,7 @@ public class STACValidator implements IResourceValidator {
         if (type != null) {
             builder.withType(type);
         }
-        readMetadata(metadata, builder);
+        readMetadata(collectionData, builder);
         return builder;
     }
 
@@ -121,20 +117,6 @@ public class STACValidator implements IResourceValidator {
         codelist.setDirectMapping(direct);
         codelist.setInverseMapping(inverse);
         return codelist;
-    }
-
-    private Set<String> readSTACExtensions(JSONObject response) {
-        Set<String> extensions = new HashSet<>();
-        if (!response.has("stac_extensions")) {
-            return extensions;
-        }
-
-        JSONArray extensionArray = response.getJSONArray("stac_extensions");
-        for (Object ext : extensionArray) {
-            extensions.add(STACUtils.getExtensionName(ext.toString()));
-        }
-
-        return extensions;
     }
 
     private void readMetadata(final JSONObject json, Builder builder) {
@@ -195,7 +177,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("catalogUrl") && parameters.contains("collectionId") && parameters.contains("asset");
+        return resource == null && parameters.contains("collection") && parameters.contains("asset");
     }
 
     @Override
