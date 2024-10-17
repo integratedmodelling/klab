@@ -55,7 +55,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
 	private Double timeThreshold = null;
 	private Double distanceThreshold = null;
-	private int loggingThreshold = 10_000;
 
 	private TransportType transportType = TransportType.Auto;
 	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
@@ -95,9 +94,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		this.timeThreshold = parameters.get("time_limit", Double.class);
 		this.distanceThreshold = parameters.get("distance_limit", Double.class);
 		
-		if (parameters.containsKey("log_threshold")) {
-			this.loggingThreshold = parameters.get("log_threshold", Integer.class);
-		}
 		if (parameters.containsKey("transport")) {
 			this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
 		}
@@ -188,12 +184,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	
     private void connectSourceToTarget(IContextualizationScope context, List<IObservation> sources, List<IObservation> targets) {
         Set<IObservation> connected = new HashSet<>();
-        int nullTrajectories = 0;
-        int outOfLimitTrajectories = 0;
-        int currentDecile = 1;
-        int potentialTrajectories = sources.size() * targets.size();
-        boolean hasToLog = potentialTrajectories > loggingThreshold;
-        context.getMonitor().debug("Potential trajectories in the network: " + potentialTrajectories);
         //TODO make the filter use this
         boolean useReverse = sources.size() < targets.size();
         for(IObservation source : sources) {
@@ -211,15 +201,9 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             }).toList();
             for(IArtifact target : inRangeTargets) {
                 if (context.getMonitor().isInterrupted()) {
-                    logUnsuccessfulTrajectories(nullTrajectories, outOfLimitTrajectories);
                     return;
                 }
 
-                int currentTrajectory = trajectories.size() + nullTrajectories + outOfLimitTrajectories;
-                if (hasToLog && ((potentialTrajectories / 10) * currentDecile == currentTrajectory)) {
-                    context.getMonitor().debug("Network building progress at " + currentDecile + "0%");
-                    currentDecile++;
-                }
                 // A direct connection of an instance to itself in the context of routing makes
                 // no sense and is thus avoided.
                 // Note that closed paths are nevertheless possible.
@@ -232,7 +216,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 double[] targetCoordinates = Valhalla.getCoordinates((IDirectObservation) target, geometryCollapser);
                 boolean doesRouteFitInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
                 if (!doesRouteFitInThreshold) {
-                    outOfLimitTrajectories++;
                     continue;
                 }
 
@@ -256,7 +239,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 }
 
                 if (trajectory == null || stats == null) {
-                    nullTrajectories++;
                     continue;
                 }
                 if ((timeThreshold == null || ((Double) stats.get("time") < timeThreshold))
@@ -265,21 +247,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                     connected.add((IObservation) target);
                     trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
                             (IDirectObservation) target), trajectory);
-                } else {
-                    outOfLimitTrajectories++;
                 }
             }
-        }
-        logUnsuccessfulTrajectories(nullTrajectories, outOfLimitTrajectories);
-    }
-
-    private void logUnsuccessfulTrajectories(int nullTrajectories, int outOfLimitTrajectories) {
-        if (outOfLimitTrajectories > 0) {
-            Logging.INSTANCE.debug("Found " + outOfLimitTrajectories + " potential routing relationships that exceeded the distance limits and were not calculated.");
-        }
-        if (nullTrajectories > 0) {
-            Logging.INSTANCE.debug("Found " + nullTrajectories + " relationships could not be created because a route could not be found, "
-                    + "either due to missing data or because travel characteristics exceeded the allowed limits.");
         }
     }
 
