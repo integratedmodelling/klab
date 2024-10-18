@@ -143,14 +143,10 @@ public class Valhalla {
 	}
 	
     public static String buildValhallaIsochroneInput(double[] coordinates, String transportType, String isochroneType, double range, boolean isReverse) {
-        StringBuffer ret = new StringBuffer("{\"locations\":[");
-        ret.append("{\"lat\":").append(coordinates[1]).append(",").append("\"lon\":").append(coordinates[0])
-                .append("}],\"costing\":\"").append(transportType).append("\",");
-
-        ret.append("\"contours\":[{\"").append(isochroneType).append("\":").append(range).append("}],\"polygons\":true}");
-        //TODO add isReverse
-        //TODO clean this ret a bit
-        return ret.toString();
+        return new StringBuffer("{\"locations\":[").append("{\"lat\":").append(coordinates[1]).append(",").append("\"lon\":")
+                .append(coordinates[0]).append("}],\"costing\":\"").append(transportType).append("\",")
+                .append("\"contours\":[{\"").append(isochroneType).append("\":").append(range)
+                .append("}],\"polygons\":true,\"reverse\":").append(isReverse).append("}").toString();
     }
 
     /*

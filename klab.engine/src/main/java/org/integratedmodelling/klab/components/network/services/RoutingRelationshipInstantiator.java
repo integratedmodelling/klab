@@ -54,7 +54,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	private String targetArtifact = null;
 
 	private Double timeThreshold = null;
-	private Double distanceThreshold = null;
+    private Double distanceThreshold = null;
 
 	private TransportType transportType = TransportType.Auto;
 	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
@@ -112,18 +112,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		}
 	}
 	
-    /*
-     * Calculates the Euclidean distance between source and target. Returns true if there is no distance threshold or the Euclidean distance is under the limit.
-     */
-    private boolean isRouteInsideDistanceThreshold(double[] sourceCoordinates, double[] targetCoordinates) {
-        if (distanceThreshold == null) {
-            return true;
-        }
-        double euclideanDistance = Math.sqrt(Math.pow(sourceCoordinates[0] - targetCoordinates[0], 2)
-                + Math.pow(sourceCoordinates[1] - targetCoordinates[1], 2));
-        return euclideanDistance <= distanceThreshold ;
-    }
-
     private boolean validateThatAllElementsAreObjectArtifact(List<IObservation> sources, List<IObservation> targets) {
         return Stream.concat(sources.parallelStream(), targets.parallelStream()).allMatch(element -> element instanceof IObjectArtifact);
     }
@@ -175,81 +163,90 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		graph = new DefaultDirectedGraph<>(SpatialEdge.class);
 		trajectories = new HashMap<>();
 
-        connectSourceToTarget(context, sources, targets);
+        connectSourcesToTargets(context, sources, targets);
 
         Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " "
                 + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
 		return instantiateRelationships(semantics);
 	}
 	
-    private void connectSourceToTarget(IContextualizationScope context, List<IObservation> sources, List<IObservation> targets) {
+    private boolean connectSourceToTarget(IArtifact source, IArtifact target) {
+        // A direct connection of an instance to itself in the context of routing makes no sense and is thus avoided.
+        // Note that closed paths are nevertheless possible.
+        if (source.equals(target)) {
+            return false;
+        }
+        // Find the optimal route between target and location.
+        double[] sourceCoordinates = Valhalla.getCoordinates((IDirectObservation) source, geometryCollapser);
+        double[] targetCoordinates = Valhalla.getCoordinates((IDirectObservation) target, geometryCollapser);
+        String valhallaInput = Valhalla.buildValhallaJsonInput(sourceCoordinates, targetCoordinates, transportType.getType());
+        ValhallaOutputDeserializer.OptimizedRoute route;
+        try {
+            route = valhalla.optimized_route(valhallaInput);
+        } catch (ValhallaException e) {
+            return false;
+        }
+
+        IShape trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
+        Map<String, Object> stats = route.getSummaryStatistics();
+        if (!isRouteInsideTheThresholds(stats)) {
+            return false;
+        }
+
+        Parameters<String> routeParameters = new Parameters<String>(stats);
+        connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
+        trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source, (IDirectObservation) target), trajectory);
+        return true;
+    }
+
+    private Geometry getIsochrone(IDirectObservation node, boolean isReverse) {
+        double[] coordinates = Valhalla.getCoordinates(node, geometryCollapser);
+        String isochroneRequest = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), "time", timeThreshold, isReverse);
+        return valhalla.isochrone(isochroneRequest);
+    }
+
+    private void connectSourcesToTargets(IContextualizationScope context, List<IObservation> sources, List<IObservation> targets) {
         Set<IObservation> connected = new HashSet<>();
-        //TODO make the filter use this
-        boolean useReverse = sources.size() < targets.size();
-        for(IObservation source : sources) {
-            if (connected.contains(source)) {
+        // If there are less targets than sources, the optimal way of using isochrones is by defining reverse isochrones from the targets and exclude the sources outside the polygon
+        boolean useReverseIsochrones = targets.size() < sources.size();
+        boolean iterateOverSourcesFirst = !useReverseIsochrones;
+        List<IObservation> firstNodes = iterateOverSourcesFirst ? sources : targets;
+        List<IObservation> secondNodes = iterateOverSourcesFirst ? targets : sources;
+        for (IObservation node1 : firstNodes) {
+            if (iterateOverSourcesFirst && connected.contains(node1)) {
                 continue;
             }
-            // Lambda-filter those that are not inside the range
-            double[] coordinates = Valhalla.getCoordinates((IDirectObservation) source, geometryCollapser);
-            String isochroneRequest = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), "time", timeThreshold, useReverse);
-            Geometry isochrone = valhalla.isochrone(isochroneRequest);
-            List<IObservation> inRangeTargets = targets.stream().filter( t -> {
-                double[] targetCoordinates = Valhalla.getCoordinates((IDirectObservation) t, geometryCollapser);
-                Geometry coords = new GeometryBuilder().point(targetCoordinates[0], targetCoordinates[1]);
-                return isochrone.intersects(coords);
-            }).toList();
-            for(IArtifact target : inRangeTargets) {
+            // Filter those nodes that are not inside the range
+            Geometry isochrone = getIsochrone((IDirectObservation) node1, useReverseIsochrones);
+            List<IObservation> inRangeNodes = filterNodesInRange(secondNodes, isochrone);
+            for(IArtifact node2 : inRangeNodes) {
                 if (context.getMonitor().isInterrupted()) {
                     return;
                 }
+                boolean isConnected = iterateOverSourcesFirst ? connectSourceToTarget(node1, node2) : connectSourceToTarget(node2, node1);
+                if (isConnected) {
+                    if (iterateOverSourcesFirst) {
+                        connected.add((IObservation) node1);
 
-                // A direct connection of an instance to itself in the context of routing makes
-                // no sense and is thus avoided.
-                // Note that closed paths are nevertheless possible.
-                if (source.equals(target)) {
-                    continue;
-                }
-
-                // Avoid calling to Valhalla if we already know that the route is too far away
-                double[] sourceCoordinates = Valhalla.getCoordinates((IDirectObservation) source, geometryCollapser);
-                double[] targetCoordinates = Valhalla.getCoordinates((IDirectObservation) target, geometryCollapser);
-                boolean doesRouteFitInThreshold = isRouteInsideDistanceThreshold(sourceCoordinates, targetCoordinates);
-                if (!doesRouteFitInThreshold) {
-                    continue;
-                }
-
-                // Find the optimal route between target and location.
-                String valhallaInput = Valhalla.buildValhallaJsonInput(sourceCoordinates, targetCoordinates, transportType.getType());
-                ValhallaOutputDeserializer.OptimizedRoute route;
-                IShape trajectory;
-                Map<String, Object> stats;
-                Parameters<String> routeParameters = null;
-                try {
-                    route = valhalla.optimized_route(valhallaInput);
-                    trajectory = route.getPath().transform(scope.getScale().getSpace().getProjection());
-                    stats = route.getSummaryStatistics();
-                    routeParameters = new Parameters<String>(stats);
-                } catch (ValhallaException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                    route = null;
-                    stats = null;
-                    trajectory = null;
-                }
-
-                if (trajectory == null || stats == null) {
-                    continue;
-                }
-                if ((timeThreshold == null || ((Double) stats.get("time") < timeThreshold))
-                        && (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold))) {
-                    connect((IDirectObservation) source, (IDirectObservation) target, trajectory, routeParameters);
-                    connected.add((IObservation) target);
-                    trajectories.put(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
-                            (IDirectObservation) target), trajectory);
+                    }
+                    connected.add((IObservation) node2);
                 }
             }
         }
+    }
+
+    private List<IObservation> filterNodesInRange(List<IObservation> nodes, Geometry isochrone) {
+        return nodes.stream().filter( t -> {
+            double[] coordinates = Valhalla.getCoordinates((IDirectObservation) t, geometryCollapser);
+            Geometry point = new GeometryBuilder().point(coordinates[0], coordinates[1]);
+            return isochrone.intersects(point);
+        }).toList();
+    }
+
+    private boolean isRouteInsideTheThresholds(Map<String, Object> stats) {
+        // We define the time using minutes, but receive the stats in seconds
+        return (timeThreshold == null || ((Double) stats.get("time") < timeThreshold * 60))
+                && (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold));
     }
 
 	private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
