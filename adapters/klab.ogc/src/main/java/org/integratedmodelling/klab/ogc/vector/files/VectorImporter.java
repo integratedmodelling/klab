@@ -96,7 +96,9 @@ public class VectorImporter extends AbstractFilesetImporter {
 					: null;
 		}
 		if (observation instanceof IDirectObservation) {
-			if (observation.getScale().getSpace() != null && !observation.getScale().getSpace().isRegular()) {
+			if (observation.getScale().getSpace() != null && 
+			        (!observation.getScale().getSpace().isRegular()||
+			        (observation.getScale().getSpace().getShape()!= null && !observation.getScale().getSpace().getShape().isRegular()))) {
 				ret.add(new Triple<>("shp", "ESRI Shapefile", "zip"));
 			}
 		}
