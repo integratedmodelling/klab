@@ -4,6 +4,11 @@ spring:
   cloud:
     consul:
       enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8078/realms/im
         
 stats:
   server:
@@ -19,3 +24,4 @@ server:
   port: 8283
   servlet: 
     context-path: /modeler
+    

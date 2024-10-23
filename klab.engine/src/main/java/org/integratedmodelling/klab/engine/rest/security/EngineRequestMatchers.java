@@ -15,7 +15,7 @@ public class EngineRequestMatchers {
     
     private static final String[] ping = new String[]{API.PING + "*"};
     
-    private static final String[] ui = new String[]{API.ENGINE.UI + "*"};
+    private static final String[] ui = new String[]{"/ui/*"};
     
 
 	public static String[] getEngine() {
