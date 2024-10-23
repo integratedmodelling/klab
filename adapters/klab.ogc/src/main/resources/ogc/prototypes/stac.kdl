@@ -10,7 +10,7 @@
  	final text 'collection'
  		"The URL pointing to the STAC collection file that contains the resource dataset."
  		
- 	final text 'asset'
+ 	optional text 'asset'
  		"The asset that is going to be retrieved from the items."
  
  }

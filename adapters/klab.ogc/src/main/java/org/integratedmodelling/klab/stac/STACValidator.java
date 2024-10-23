@@ -54,24 +54,26 @@ public class STACValidator implements IResourceValidator {
         // The default URL of the resource is the collection endpoint. May be overwritten. 
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
-        String assetId = userData.get("asset", String.class);
-        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
-        JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
+        if (userData.contains("asset")) {
+            String assetId = userData.get("asset", String.class);
+            JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
+            JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
-        Type type = readRasterDataType(asset);
-        // Currently, only files:values is supported. If needed, the classification extension could be used too.
-        Map<String, Object> vals = STACAssetParser.getFileValues(asset);
-        if (!vals.isEmpty()) {
-            CodelistReference codelist = populateCodelist(assetId, vals);
-            if (type == null) {
-                type = codelist.getType();
+            Type type = readRasterDataType(asset);
+            // Currently, only files:values is supported. If needed, the classification extension could be used too.
+            Map<String, Object> vals = STACAssetParser.getFileValues(asset);
+            if (!vals.isEmpty()) {
+                CodelistReference codelist = populateCodelist(assetId, vals);
+                if (type == null) {
+                    type = codelist.getType();
+                }
+                builder.addCodeList(codelist);
             }
-            builder.addCodeList(codelist);
+            if (type != null) {
+                builder.withType(type);
+            }
         }
 
-        if (type != null) {
-            builder.withType(type);
-        }
         readMetadata(collectionData, builder);
         return builder;
     }
@@ -177,7 +179,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("collection") && parameters.contains("asset");
+        return resource == null && parameters.contains("collection");
     }
 
     @Override

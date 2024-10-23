@@ -56,6 +56,21 @@ public class STACImporter implements IResourceImporter {
             parameters.remove(Resources.REGEX_ENTRY);
         }
 
+        // TODO refactor to reuse code
+        if (parameters.contains("asset")) {
+            Builder builder = validator.validate(
+                    Resources.INSTANCE.createLocalResourceUrn(collectionId, project), new URL(collectionUrl),
+                    parameters, monitor);
+
+            if (builder != null) {
+                builder.withLocalName(collectionId).setResourceId(collectionId);
+                ret.add(builder);
+                monitor.info("STAC collection " + collectionId + " added");
+            } else {
+                monitor.warn("STAC collection " + collectionId + " is invalid");
+            }
+            return;
+        }
         JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
         for(String assetId : assetIds) {
