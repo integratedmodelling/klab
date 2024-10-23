@@ -124,7 +124,7 @@ public class STACValidator implements IResourceValidator {
     private void readMetadata(final JSONObject json, Builder builder) {
         // We could check the doi only if the Scientific Notation extension is provided, but we can try anyway
         String doi = STACUtils.readDOI(json);
-        if (doi != null) {
+        if (doi != null && !doi.isBlank()) {
             builder.withMetadata(IMetadata.DC_URL, doi);
             String authors = STACUtils.readDOIAuthors(doi);
             if (authors != null) {
@@ -133,22 +133,22 @@ public class STACValidator implements IResourceValidator {
         }
 
         String description = STACUtils.readDescription(json);
-        if (description != null) {
+        if (description != null && !description.isBlank()) {
             builder.withMetadata(IMetadata.DC_COMMENT, description);
         }
 
         String keywords = STACUtils.readKeywords(json);
-        if (keywords != null) {
+        if (keywords != null && !keywords.isBlank()) {
             builder.withMetadata(IMetadata.IM_KEYWORDS, keywords);
         }
 
         String title = STACUtils.readTitle(json);
-        if (title != null) {
+        if (title != null && !title.isBlank()) {
             builder.withMetadata(IMetadata.DC_TITLE, title);
         }
 
         String license = STACUtils.readLicense(json);
-        if (license != null) {
+        if (license != null && !license.isBlank()) {
             builder.withMetadata(IMetadata.DC_RIGHTS, license);
         }
     }
