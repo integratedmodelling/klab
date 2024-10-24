@@ -12,6 +12,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
+import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
@@ -40,6 +41,7 @@ import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
@@ -194,8 +196,16 @@ public class STACEncoder implements IResourceEncoder {
             throw new KlabUnimplementedException("Cannot read a static collection.");
         }
 
-        STACService service = STACAdapter.getService(collectionUrl);
-        HMStacCollection collection = service.getCollection();
+        LogProgressMonitor lpm = new LogProgressMonitor();
+        HMStacManager manager = new HMStacManager(catalogUrl, lpm);
+        HMStacCollection collection = null;
+        try {
+            manager.open();
+            collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+        } catch (Exception e1) {
+            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
+        }
+
         if (collection == null) {
             scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be find.");
         }
@@ -231,7 +241,6 @@ public class STACEncoder implements IResourceEncoder {
                 sortByDate(items, scope.getMonitor());
             }
 
-            LogProgressMonitor lpm = new LogProgressMonitor();
             IGrid grid = space.getGrid();
 
             RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
