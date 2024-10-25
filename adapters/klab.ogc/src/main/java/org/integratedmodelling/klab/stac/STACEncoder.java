@@ -2,13 +2,24 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.data.FeatureSource;
+import org.geotools.data.collection.ListFeatureCollection;
+import org.geotools.data.geojson.GeoJSONReader;
+import org.geotools.data.memory.MemoryDataStore;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.feature.DefaultFeatureCollection;
+import org.geotools.geojson.GeoJSON;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -44,27 +55,35 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
+import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.fasterxml.jackson.core.JsonParseException;
 
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACEncoder implements IResourceEncoder {
 
     /**
-     * The raster encoder that does the actual work after we get our coverage from
-     * the service.
+     * The raster or vector encoder that does the actual work after we get our coverage from the service.
      */
-    RasterEncoder encoder = new RasterEncoder();
+    IResourceEncoder encoder;
 
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
@@ -191,9 +210,39 @@ public class STACEncoder implements IResourceEncoder {
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
-        if (!hasSearchOption) {
+        // This is part of a WIP that will be removed in the future
+        boolean isIIASA = catalogUrl.contains("iiasa.blob");
+        if (!hasSearchOption && !isIIASA) {
             // TODO implement how to read static collections
             throw new KlabUnimplementedException("Cannot read a static collection.");
+        }
+        
+        if (isIIASA) {
+            String searchLink = STACUtils.getLinkTo(collectionData, "search").get();
+            try {
+                HttpResponse<JsonNode> response = Unirest.get(searchLink).asJson();
+                JSONArray features = response.getBody().getObject().getJSONArray("features");
+                Iterator<Object> featureIterator = features.iterator();
+                List<SimpleFeature> featureList = new ArrayList<>();
+                while (featureIterator.hasNext()) {
+                    JSONObject feature = (JSONObject) featureIterator.next();
+                    SimpleFeature geoJSON = GeoJSONReader.parseFeature(feature.toString());
+                    featureList.add(geoJSON);
+                }
+                SimpleFeatureType type = featureList.get(0).getType();
+                MemoryDataStore dataStore = new org.geotools.data.memory.MemoryDataStore(type);
+                dataStore.addFeatures(featureList);
+                FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(type.getTypeName());
+
+                SimpleFeatureCollection collection = new ListFeatureCollection(type, featureList);
+                collection.size();
+                encoder = new VectorEncoder();
+                ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+                return;
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
 
         LogProgressMonitor lpm = new LogProgressMonitor();
@@ -272,8 +321,8 @@ public class STACEncoder implements IResourceEncoder {
         } catch (Exception e) {
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
         }
-
-        encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+        encoder = new RasterEncoder();
+        ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
     }
 
     @Override
