@@ -64,7 +64,7 @@ public class STACAdapter implements IResourceAdapter {
                         .getActuators().iterator().next(), null));
     }
 
-    public static STACService getService(String catalogUrl, String collectionId) {
-        return new STACService(catalogUrl, collectionId);
+    public static STACService getService(String collectionUrl) {
+        return new STACService(collectionUrl);
     }
 }
