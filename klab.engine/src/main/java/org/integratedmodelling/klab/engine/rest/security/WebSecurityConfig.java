@@ -38,14 +38,13 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter; 
  
 @Configuration
-class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+class WebSecurityConfig {
 	
 	interface AuthoritiesConverter extends Converter<Map<String, Object>, Collection<GrantedAuthority>> {} 
 	
 	@Profile("engine.remote")
 	@EnableWebSecurity 
 	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) 
-	@Order(50)
 	class WebSecurityConfigRemote extends WebSecurityConfigurerAdapter{ 
  
 	  @Bean 
@@ -71,12 +70,9 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		  http
 		  .cors().and().csrf().disable()
 	      .authorizeRequests()
-	      .antMatchers("/**").permitAll()
-	      .antMatchers("/api/**").authenticated();
+	      .antMatchers("/api/**").authenticated()
+	      .antMatchers("/**").permitAll();
 		  
-//		  http.authorizeHttpRequests( 
-//				  authorize -> authorize.mvcMatchers("/api/**").authenticated().mvcMatchers("/**").permitAll()) 
-//				.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt).cors(cors -> cors.disable());; 
 	  }
 	     
 	}
@@ -85,7 +81,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Profile("engine.local")
 	@EnableWebSecurity
 	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
-	@Order(200)
 	class WebSecurityConfigLocal extends WebSecurityConfigurerAdapter {
 		
 	  @Autowired
