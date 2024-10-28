@@ -1283,6 +1283,11 @@ public interface API {
             }
 
         }
+        
+        /**
+         * URL path for get SPA pages
+         */
+        public static final String UI = "/ui/*";
 
     }
 
