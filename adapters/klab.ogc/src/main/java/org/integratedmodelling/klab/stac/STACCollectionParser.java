@@ -51,8 +51,9 @@ public class STACCollectionParser {
             gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
         }
 
-        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE)
-                .withTimeType("grid");
+        return collection.getJSONArray("providers").toList().stream().anyMatch(provider -> ((JSONObject)provider).getString("name").equalsIgnoreCase("IIASA"))
+                ? gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical")
+                : gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");
     }
 
     /**
