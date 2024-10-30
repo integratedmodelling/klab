@@ -2,24 +2,14 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.FeatureSource;
-import org.geotools.data.collection.ListFeatureCollection;
-import org.geotools.data.geojson.GeoJSONReader;
-import org.geotools.data.memory.MemoryDataStore;
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.feature.DefaultFeatureCollection;
-import org.geotools.geojson.GeoJSON;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -59,9 +49,9 @@ import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -70,12 +60,6 @@ import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.fasterxml.jackson.core.JsonParseException;
-
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
-import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACEncoder implements IResourceEncoder {
@@ -218,31 +202,15 @@ public class STACEncoder implements IResourceEncoder {
         }
         
         if (isIIASA) {
-            String searchLink = STACUtils.getLinkTo(collectionData, "search").get();
+            FeatureSource<SimpleFeatureType, SimpleFeature> source;
             try {
-                HttpResponse<JsonNode> response = Unirest.get(searchLink).asJson();
-                JSONArray features = response.getBody().getObject().getJSONArray("features");
-                Iterator<Object> featureIterator = features.iterator();
-                List<SimpleFeature> featureList = new ArrayList<>();
-                while (featureIterator.hasNext()) {
-                    JSONObject feature = (JSONObject) featureIterator.next();
-                    SimpleFeature geoJSON = GeoJSONReader.parseFeature(feature.toString());
-                    featureList.add(geoJSON);
-                }
-                SimpleFeatureType type = featureList.get(0).getType();
-                MemoryDataStore dataStore = new org.geotools.data.memory.MemoryDataStore(type);
-                dataStore.addFeatures(featureList);
-                FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(type.getTypeName());
-
-                SimpleFeatureCollection collection = new ListFeatureCollection(type, featureList);
-                collection.size();
-                encoder = new VectorEncoder();
-                ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
-                return;
+                source = STACIIASAExtension.getFeatures(collectionData);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+               throw new KlabResourceAccessException("Cannot extract features from IIASA catalog - " + e.getMessage());
             }
+            encoder = new VectorEncoder();
+            ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+            return;
         }
 
         LogProgressMonitor lpm = new LogProgressMonitor();
