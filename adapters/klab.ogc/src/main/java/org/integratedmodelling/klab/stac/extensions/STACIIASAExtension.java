@@ -19,8 +19,11 @@ import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACIIASAExtension {
-    public static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatures(JSONObject collectionData) throws IOException {
+    public static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatures(JSONObject collectionData, List<Double> bbox) throws IOException {
         String queryFilter = "?query=True";
+        for (double val : bbox) {
+            queryFilter += "&bbox=" + val;
+        }
         String searchLink = STACUtils.getLinkTo(collectionData, "search").get();
         HttpResponse<JsonNode> response = Unirest.get(searchLink + queryFilter).asJson();
         JSONArray features = response.getBody().getObject().getJSONArray("features");
