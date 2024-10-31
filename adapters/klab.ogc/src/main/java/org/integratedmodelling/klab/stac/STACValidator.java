@@ -49,7 +49,10 @@ public class STACValidator implements IResourceValidator {
         }
         IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
 
-        Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
+        Builder builder = new ResourceBuilder(urn)
+                .withParameters(userData)
+                .withGeometry(geometry)
+                .withType(Type.OBJECT);
 
         // The default URL of the resource is the collection endpoint. May be overwritten. 
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
