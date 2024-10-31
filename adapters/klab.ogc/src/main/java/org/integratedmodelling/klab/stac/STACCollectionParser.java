@@ -51,9 +51,11 @@ public class STACCollectionParser {
             gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
         }
 
-        return collection.getJSONArray("providers").toList().stream().anyMatch(provider -> ((JSONObject)provider).getString("name").equalsIgnoreCase("IIASA"))
-                ? gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical")
-                : gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");
+        if (collection.has("providers")
+                && collection.getJSONArray("providers").toList().stream().anyMatch(provider -> ((JSONObject)provider).getString("name").equalsIgnoreCase("IIASA"))) {
+            gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
+        }
+        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");
     }
 
     /**
@@ -64,6 +66,7 @@ public class STACCollectionParser {
      */
     public static JSONObject readAssetsFromCollection(String collectionUrl, JSONObject collection) throws KlabResourceAccessException {
         String catalogUrl = STACUtils.getCatalogUrl(collection);
+        String collectonId = collection.getString("id");
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
         Optional<String> searchEndpoint = STACUtils.containsLinkTo(catalogData, "search") 
@@ -86,9 +89,8 @@ public class STACCollectionParser {
         }
 
         // TODO Move the query to another place. 
-        String parameters = "?collections=" + collectionUrl + "&limit=1";
+        String parameters = "?collections=" + collectonId + "&limit=1";
         HttpResponse<JsonNode> response = Unirest.get(searchEndpoint.get() + parameters).asJson();
-//        HttpResponse<JsonNode> response = Unirest.post(searchEndpoint.get()).body(body).asJson();
 
         if (!response.isSuccess()) {
             throw new KlabResourceAccessException(); //TODO set message
