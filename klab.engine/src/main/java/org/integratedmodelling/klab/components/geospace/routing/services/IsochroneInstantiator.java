@@ -2,19 +2,17 @@ package org.integratedmodelling.klab.components.geospace.routing.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.routing.Valhalla;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaException;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
@@ -22,11 +20,17 @@ import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfigur
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.TransportType;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabRemoteException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Utils;
 import org.locationtech.jts.geom.Geometry;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 
 public class IsochroneInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
-    private String sourceArtifact = null;
+    private String source = null;
     private TransportType transportType = TransportType.Auto;
     private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
     private IsochroneType isochroneType;
@@ -35,8 +39,40 @@ public class IsochroneInstantiator extends AbstractContextualizer implements IEx
 
     private double range;
 
-    public IsochroneInstantiator(Parameters<Object> create, IContextualizationScope context) {
-        // TODO Auto-generated constructor stub
+    public IsochroneInstantiator() {
+    }
+
+    // TODO merge with the one in RoutingRelationshipInstantiator
+    private boolean isValhallaServerOnline(String server) {
+        HttpResponse<JsonNode> response;
+        try {
+            response = Unirest.get(server + "/status").asJson();
+        } catch (Exception e) {
+            throw new KlabRemoteException("Cannot access Valhalla server. Reason: " + e.getMessage());
+        }
+        if (response.getStatus() != 200) {
+            return false;
+        }
+        return true;
+    }
+
+    public IsochroneInstantiator(Parameters<Object> parameters, IContextualizationScope scope) {
+        this.server = parameters.get("server", String.class);
+        this.source = parameters.get("source", String.class);
+        if (isValhallaServerOnline(server)) {
+            this.valhalla = new Valhalla(server);
+        } else {
+            throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
+        }
+        if (parameters.containsKey("transport")) {
+            this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
+        }
+        if (parameters.containsKey("collapse_geometry")) {
+            this.geometryCollapser = GeometryCollapser
+                    .fromValue(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
+        }
+        this.range = 10.0;
+        this.isochroneType = IsochroneType.Time;
     }
 
     @Override
@@ -45,48 +81,30 @@ public class IsochroneInstantiator extends AbstractContextualizer implements IEx
     }
 
     @Override
-    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope) throws KlabException {
-        IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
-
-        List<IObservation> sources = new ArrayList<>();
-        if (sourceArtifact == null) {
-            sources.addAll(scope.getObservations(sourceConcept));
-        } else {
-            IArtifact src = scope.getArtifact(sourceArtifact);
-            if (src instanceof IObservationGroup) {
-                for (IArtifact a : src) {
-                    sources.add((IObservation) a);
-                }
-            }
-        }
-
-        boolean sourcesAreObjectArtifact = sources.parallelStream().allMatch(element -> element instanceof IObjectArtifact);
-        if (!sourcesAreObjectArtifact) {
-            throw new IllegalArgumentException(
-                    "klab.networks.routing: at least one source does not exist or is not an object artifact");
-        }
-
-        List<Geometry> isochrones = new Vector();
-        for(IObservation source : sources) {
-            double[] sourceCoordinates = Valhalla.getCoordinates((IDirectObservation) source, geometryCollapser);
-
-            String valhallaInput = Valhalla.buildValhallaIsochroneInput(sourceCoordinates, transportType.getType(), isochroneType.getType(), range);
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
+        List<IObjectArtifact> ret = new ArrayList<>();
+        IArtifact sources = context.getArtifact(this.source);
+        int isochroneCount = 0;
+        for(IArtifact source : sources) {
+            double[] coordinates = Valhalla.getCoordinates((IDirectObservation) source, geometryCollapser);
+            //TODO avoid the false part and pass it as a parameter
+            String valhallaInput = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), isochroneType.getType(), range, false);
             try {
                 Geometry geometry = valhalla.isochrone(valhallaInput);
-                isochrones.add(geometry);
+                ret.add(context.newObservation(semantics, Observables.INSTANCE.getDisplayName(semantics) + "_" + isochroneCount++,
+                        Scale.substituteExtent(context.getScale(), Shape.create(geometry.toText(), Projection.getDefault())),
+                        /* TODO send useful metadata */null));
             } catch (ValhallaException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-
-        // TODO return the value
-        return null;
+        return ret;
     }
 
     @Override
-    public Object eval(IContextualizationScope scope, Object... parameters) {
-        return new IsochroneInstantiator(Parameters.create(parameters), scope);
+    public Object eval(IContextualizationScope context, Object... parameters) {
+        return new IsochroneInstantiator(Parameters.create(parameters), context);
     }
 
 }
