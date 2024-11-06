@@ -37,7 +37,7 @@
 					</to>
 					<container>
 						<user>klab:klab</user>
-						<jvmFlags>${jib.jvmFlags}</jvmFlags>
+						<jvmFlags><jvmFlag>${jib.jvmFlags}</jvmFlag></jvmFlags>
 						<mainClass>org.integratedmodelling.klab.hub.HubApplication</mainClass>
 						<args>
 						</args>

@@ -34,7 +34,7 @@
 					<container>
 						<!-- <expandClasspathDependencies>true</expandClasspathDependencies> -->
 						<user>klab:klab</user>
-						<jvmFlags>${jib.jvmFlags}</jvmFlags>
+						<jvmFlags><jvmFlag>${jib.jvmFlags}</jvmFlag></jvmFlags>
 						<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
 						<args></args>
 						<ports>
