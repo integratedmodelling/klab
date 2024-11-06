@@ -110,7 +110,7 @@
 		<xtextVersion>2.33.0</xtextVersion>
 		<mweVersion>2.16.0</mweVersion>
 		<googleJibVersion>3.4.3</googleJibVersion>
-		<jib.jvmFlags>-XshowSettings:vm -XshowSettings:system</jib.jvmFlags>
+		<jib.jvmFlags>-XshowSettings:vm -XshowSettings:system -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/var/tmp/java_heapdump.hprof</jib.jvmFlags>
 
 		<!-- the five below go together. Never change one without checking the
 			others. Spring security latest is currently requiring 5.0.4, implying boot
