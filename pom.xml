@@ -84,8 +84,6 @@
 		<module>klab.node</module>
 		<module>products</module>
 		<module>components</module>
-		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
-		<!-- <module>docs</module> -->
 		<module>authorities</module>
 		<module>klab.authentication</module>
 		<module>klab.activity</module>
@@ -129,12 +127,10 @@
 		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
-
 		<junit5.version>5.10.1</junit5.version>
 		<mockito.version>5.6.0</mockito.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<powermock.version>2.0.9</powermock.version>
-		
 		<aws.version>1.12.767</aws.version>
 	</properties>
 
