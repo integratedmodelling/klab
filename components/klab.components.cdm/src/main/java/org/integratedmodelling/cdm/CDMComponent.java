@@ -1,7 +1,5 @@
 package org.integratedmodelling.cdm;
 
-import java.io.RandomAccessFile;
-
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
