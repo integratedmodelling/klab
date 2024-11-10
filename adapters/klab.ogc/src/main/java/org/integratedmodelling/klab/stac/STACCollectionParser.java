@@ -51,8 +51,8 @@ public class STACCollectionParser {
             gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
         }
 
-        if (collection.has("providers")
-                && collection.getJSONArray("providers").toList().stream().anyMatch(provider -> ((JSONObject)provider).getString("name").equalsIgnoreCase("IIASA"))) {
+        // TODO find non-ad-hoc cases
+        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012")) {
             gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
         }
         return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");
