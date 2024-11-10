@@ -132,9 +132,8 @@ public class Rasterizer<T> {
 
         Geometry geometry = ((Shape) shape).getJTSGeometry();
         Color valueColor = new Color(255, 255, 255);
-        Color holeColor = new Color(0, 0, 0);
 
-        draw(geometry, valueColor, holeColor);
+        draw(geometry, valueColor);
 
         int[] xy = new int[2];
         for (int x = 0; x < this.raster.getWidth(); x++) {
@@ -166,14 +165,12 @@ public class Rasterizer<T> {
         Geometry geometry = ((Shape) shape).getJTSGeometry();
 
         int rgbVal = floatBitsToInt(encodeToFloat(value));
-        int holeVal = floatBitsToInt(Float.NaN);
         Color valueColor = new Color(rgbVal, true);
-        Color holeColor = new Color(holeVal, true);
 
-        draw(geometry, valueColor, holeColor);
+        draw(geometry, valueColor);
     }
 
-    private void draw(Geometry geometry, Color valueColor, Color holeColor) {
+    private void draw(Geometry geometry, Color valueColor) {
 
         Geometries geomType = Geometries.get(geometry);
         if (geomType == Geometries.MULTIPOLYGON || geomType == Geometries.MULTILINESTRING
@@ -181,7 +178,7 @@ public class Rasterizer<T> {
             final int numGeom = geometry.getNumGeometries();
             for (int i = 0; i < numGeom; i++) {
                 Geometry geomN = geometry.getGeometryN(i);
-                draw(geomN, valueColor, holeColor);
+                draw(geomN, valueColor);
             }
         } else /* if (geometry.intersects(((Grid) extent).getShape().getJTSGeometry())) */ {
 
@@ -192,7 +189,7 @@ public class Rasterizer<T> {
                     boolean hasHoles = poly.getNumInteriorRing() > 0;
                     if (hasHoles) {
                         Geometry triangles = PolygonTriangulator.triangulate(poly);
-                        draw(triangles, valueColor, holeColor);
+                        draw(triangles, valueColor);
                     } else {
                         drawGeometry(poly, valueColor);
                     }
