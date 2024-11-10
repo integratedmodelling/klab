@@ -20,10 +20,7 @@ import kong.unirest.json.JSONObject;
 
 public class STACIIASAExtension {
     public static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatures(JSONObject collectionData, List<Double> bbox) throws IOException {
-        String queryFilter = "?query=True";
-        for (double val : bbox) {
-            queryFilter += "&bbox=" + val;
-        }
+        String queryFilter = "?query=True&bbox="+bbox.get(0) + "," + bbox.get(1) + "," + bbox.get(2) + "," + bbox.get(3);
         String searchLink = STACUtils.getLinkTo(collectionData, "search").get();
         HttpResponse<JsonNode> response = Unirest.get(searchLink + queryFilter).asJson();
         JSONArray features = response.getBody().getObject().getJSONArray("features");
