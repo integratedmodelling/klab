@@ -6,8 +6,7 @@ Bundle-Version: 0.11.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.integratedmodelling.klab.ide.Activator
 Bundle-Vendor: org.integratedmodelling
-Require-Bundle: javax.annotation,
- org.eclipse.osgi.services,
+Require-Bundle: org.eclipse.osgi.services,
  org.eclipse.osgi,
  org.eclipse.jface,
  org.eclipse.e4.ui.model.workbench,
@@ -51,8 +50,7 @@ Require-Bundle: javax.annotation,
  ch.qos.logback.classic;bundle-version="1.1.0",
  ch.qos.logback.core;bundle-version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Import-Package: javax.annotation;version="1.0.0";resolution:=optional,
- org.slf4j;version="1.7.30"
+Import-Package: org.slf4j;version="1.7.30"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.eclipse.wb.swt,
  org.integratedmodelling.klab.ide,
