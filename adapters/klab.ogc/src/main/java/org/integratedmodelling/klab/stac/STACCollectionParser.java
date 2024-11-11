@@ -51,8 +51,11 @@ public class STACCollectionParser {
             gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
         }
 
-        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE)
-                .withTimeType("grid");
+        // TODO find non-ad-hoc cases
+        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012")) {
+            gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
+        }
+        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");
     }
 
     /**
@@ -63,6 +66,7 @@ public class STACCollectionParser {
      */
     public static JSONObject readAssetsFromCollection(String collectionUrl, JSONObject collection) throws KlabResourceAccessException {
         String catalogUrl = STACUtils.getCatalogUrl(collection);
+        String collectonId = collection.getString("id");
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
         Optional<String> searchEndpoint = STACUtils.containsLinkTo(catalogData, "search") 
@@ -85,9 +89,8 @@ public class STACCollectionParser {
         }
 
         // TODO Move the query to another place. 
-        String parameters = "?collections=" + collectionUrl + "&limit=1";
+        String parameters = "?collections=" + collectonId + "&limit=1";
         HttpResponse<JsonNode> response = Unirest.get(searchEndpoint.get() + parameters).asJson();
-//        HttpResponse<JsonNode> response = Unirest.post(searchEndpoint.get()).body(body).asJson();
 
         if (!response.isSuccess()) {
             throw new KlabResourceAccessException(); //TODO set message
