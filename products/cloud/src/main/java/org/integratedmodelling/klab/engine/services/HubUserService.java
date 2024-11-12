@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -58,6 +59,9 @@ public class HubUserService implements RemoteUserService {
 
     @Autowired
     RestTemplate restTemplate;
+    
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
     /*
      * Generates a response entity a url to the session generated after succesful
@@ -66,7 +70,8 @@ public class HubUserService implements RemoteUserService {
     @Override
     public ResponseEntity< ? > login(RemoteUserAuthenticationRequest login) {
         ResponseEntity<HubLoginResponse> result = null;
-        if (!"".equals(login.getUsername()) && !"".equals(login.getPassword())) {
+        //if (!"".equals(login.getUsername()) && !"".equals(login.getPassword())) {
+        if (activeProfile.equals("engine.remote")) {
             login.setRemote(true);
             try {
                 result = hubLogin(login);
@@ -275,6 +280,7 @@ public class HubUserService implements RemoteUserService {
     private URI hubLogout(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
+        headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         return restTemplate.postForLocation(getLogOutUrll(), request);
     }
@@ -282,6 +288,7 @@ public class HubUserService implements RemoteUserService {
     private ResponseEntity<HubUserProfile> hubToken(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
+        headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         ResponseEntity<HubUserProfile> response = restTemplate.exchange(getProfileUrl(), HttpMethod.GET, request,
                 HubUserProfile.class, true);

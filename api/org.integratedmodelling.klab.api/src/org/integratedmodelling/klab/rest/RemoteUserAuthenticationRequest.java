@@ -47,6 +47,6 @@ public class RemoteUserAuthenticationRequest extends UserAuthenticationRequest {
 
 	@Override
 	public String toString() {
-		return "RemoteUserAuthenticationRequest [username=" + getUsername() + ", password=" + getPassword() + ", token="+getToken()+"]";
+		return "RemoteUserAuthenticationRequest [username=" + getUsername() + ", token="+getToken()+"]";
 	}
 }
