@@ -113,21 +113,20 @@ public class STACValidatorTest {
     }
 
     @Test
-    public void canHandle_failEmptyUserData() {
+    public void canHandle_passNoAsset() {
         STACValidator validator = new STACValidator();
         IParameters<String> userData = new Parameters<>();
+         userData.put("collection", "https://planetarycomputer.microsoft.com/api/stac/v1/collections/io-lulc-9-class");
 
         boolean ret = validator.canHandle(null, userData);
 
-        assertFalse(ret);
+        assertTrue(ret);
     }
 
     @Test
-    public void canHandle_failIncompleteUserData() {
+    public void canHandle_failEmptyUserData() {
         STACValidator validator = new STACValidator();
         IParameters<String> userData = new Parameters<>();
-        userData.put("collection", "https://planetarycomputer.microsoft.com/api/stac/v1/collections/io-lulc-9-class");
-        // Missing "collectionId" and "asset"
 
         boolean ret = validator.canHandle(null, userData);
 

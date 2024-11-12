@@ -66,7 +66,6 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Utils;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -134,7 +133,7 @@ public class VectorEncoder implements IResourceEncoder {
      * @param builder
      * @param scope
      */
-    private void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
+    public void encodeFromFeatures(FeatureSource<SimpleFeatureType, SimpleFeature> source, IResource resource,
             Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope scope) {
 
         Filter filter = null;

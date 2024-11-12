@@ -56,6 +56,17 @@ public class STACImporter implements IResourceImporter {
             parameters.remove(Resources.REGEX_ENTRY);
         }
 
+        boolean isBulkImport = parameters.contains("bulkImport");
+        parameters.remove("bulkImport");
+        if (!parameters.contains("asset") && !isBulkImport) {
+            Builder builder = buildResource(parameters, project, monitor, collectionId);
+            if (builder != null) {
+                ret.add(builder);
+            } else {
+                monitor.warn("STAC collection " + collectionId + " is invalid and cannot be imported");
+            }
+            return;
+        }
         JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
         for(String assetId : assetIds) {
@@ -72,18 +83,26 @@ public class STACImporter implements IResourceImporter {
             parameters.put("asset", assetId);
             String resourceUrn = collectionId + "-" + assetId;
 
-            Builder builder = validator.validate(
-                    Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(collectionUrl),
-                    parameters, monitor);
-
+            Builder builder = buildResource(parameters, project, monitor, resourceUrn);
             if (builder != null) {
-                builder.withLocalName(resourceUrn).setResourceId(resourceUrn);
                 ret.add(builder);
-                monitor.info("STAC collection " + collectionId + " added");
             } else {
-                monitor.warn("STAC collection " + collectionId + " is invalid");
+                monitor.warn("STAC resource with asset " + resourceUrn + " is invalid and cannot be imported");
             }
         }
+    }
+
+    private Builder buildResource(IParameters<String> parameters, IProject project, IMonitor monitor, String resourceUrn) throws MalformedURLException {
+        Builder builder = validator.validate(
+                Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(parameters.get("collection", String.class)),
+                parameters, monitor);
+
+        if (builder == null) {
+            return null;
+        }
+        builder.withLocalName(resourceUrn).setResourceId(resourceUrn);
+        monitor.info("STAC collection " + resourceUrn + " added");
+        return builder;
     }
 
     @Override
@@ -96,6 +115,7 @@ public class STACImporter implements IResourceImporter {
             Parameters<String> parameters = new Parameters<>();
             parameters.putAll(userData);
             parameters.put("collection", collectionUrl);
+            parameters.put("bulkImport", true);
 
             importCollection(ret, parameters, project, monitor);
         } catch (Exception e) {
