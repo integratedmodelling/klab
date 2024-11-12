@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ogc.vector.files;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 import java.io.Writer;
@@ -97,6 +98,7 @@ public class VectorImporter extends AbstractFilesetImporter {
 			        (!observation.getScale().getSpace().isRegular()||
 			        (observation.getScale().getSpace().getShape()!= null && !observation.getScale().getSpace().getShape().isRegular()))) {
 				ret.add(new Triple<>("shp", "ESRI Shapefile", "zip"));
+                ret.add(new Triple<>("json", "GeoJSON", "json"));
 			}
 		}
 		return ret;
@@ -232,16 +234,12 @@ public class VectorImporter extends AbstractFilesetImporter {
 	public File exportObservation(File file, IObservation observation, ILocator locator, String format,
 			IMonitor monitor) {
 
-		if (format.equals("shp")) {
-			Pair<SimpleFeatureType, FeatureCollection<SimpleFeatureType, SimpleFeature>> collected = getFeatureCollection(
-					observation, locator, monitor);
+        Pair<SimpleFeatureType, FeatureCollection<SimpleFeatureType, SimpleFeature>> collected = getFeatureCollection(
+                observation, locator, monitor);
+        File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
+        dir.mkdirs();
 
-			/*
-			 * create a directory from the file name and write the file there, along with
-			 * all the sidecar BS.
-			 */
-			File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
-			dir.mkdirs();
+		if (format.equals("shp")) {
 			File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
 			File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
 
@@ -276,8 +274,20 @@ public class VectorImporter extends AbstractFilesetImporter {
 
 			file = zip;
 		} else if (format.equals("json")) {
-
-			// TODO GeoJson output
+            File json = new File(MiscUtilities.changeExtension(file.toString(), "json"));
+            FeatureJSON fjson = new FeatureJSON();
+            String geojsonString = null;
+            try {
+                geojsonString = fjson.toString(collected.getSecond());
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+            try (Writer writer = new FileWriter(json)) {
+                writer.write(geojsonString);
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+            file = json;
 		}
 
 		return file;
@@ -288,6 +298,7 @@ public class VectorImporter extends AbstractFilesetImporter {
 	public Map<String, String> getExportCapabilities(IResource resource) {
 		Map<String, String> ret = new HashMap<>();
 		ret.put("shp", "ESRI shapefile");
+		ret.put("json", "GeoJSON file");
 		return ret;
 	}
 
