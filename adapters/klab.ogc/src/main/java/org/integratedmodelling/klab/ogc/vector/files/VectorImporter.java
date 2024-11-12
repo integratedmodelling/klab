@@ -1,10 +1,7 @@
 package org.integratedmodelling.klab.ogc.vector.files;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Serializable;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -236,121 +233,6 @@ public class VectorImporter extends AbstractFilesetImporter {
 			IMonitor monitor) {
 
 		if (format.equals("shp")) {
-
-//            IObservation first = observation instanceof IObservationGroup
-//                    ? (IObservation) ((IObservationGroup) observation).iterator().next()
-//                    : observation;
-//
-//            SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-//            builder.setCRS(((Projection) first.getScale().getSpace().getProjection())
-//                    .getCoordinateReferenceSystem());
-//
-//            builder.setName("the_geom");
-//            switch (first.getScale().getSpace().getDimensionality()) {
-//            case 0:
-//                builder.add("the_geom", Point.class, ((Projection) first.getScale().getSpace()
-//                        .getProjection())
-//                                .getCoordinateReferenceSystem());
-//                break;
-//            case 1:
-//                builder.add("the_geom", MultiLineString.class, ((Projection) first.getScale().getSpace()
-//                        .getProjection())
-//                                .getCoordinateReferenceSystem());
-//                break;
-//            case 2:
-//                builder.add("the_geom", MultiPolygon.class, ((Projection) first.getScale().getSpace()
-//                        .getProjection())
-//                                .getCoordinateReferenceSystem());
-//                break;
-//            default:
-//                throw new IllegalStateException("trying to build shape attributes for a spatial feature with unsupported dimensionality");
-//            }
-//
-//            builder.add("name", String.class);
-//
-//            List<Pair<String, String>> metadataId = new ArrayList<>();
-//            for (String s : first.getMetadata().keySet()) {
-//                if (Utils.isPOD(first.getMetadata().get(s))) {
-//                    String attr = s;
-//                    if (s.length() > 10) {
-//                        attr = attr.substring(0, 10);
-//                    }
-//                    attr = attr.replaceAll(":", "_");
-//                    if (s.length() != attr.length()) {
-//                        monitor.info("shapefile export: shortening metadata field name "
-//                                + s + " to " + attr);
-//                    }
-//                    metadataId.add(new Pair<>(s, attr));
-//                    builder.add(attr, Utils.getPODClass(first.getMetadata().get(s)));
-//                }
-//            }
-//
-//            List<Pair<String, String>> stateId = new ArrayList<>();
-//            if (first instanceof IDirectObservation) {
-//                for (IState state : ((IDirectObservation) first).getStates()) {
-//                    Class<?> type = Utils.getClassForType(state.getObservable().getArtifactType());
-//                    if (!Utils.isPOD(type)) {
-//                        type = String.class;
-//                    }
-//                    String attr = state.getObservable().getName();
-//                    if (attr.length() > 10) {
-//                        attr = attr.substring(0, 10);
-//                        monitor.info("shapefile export: shortening attribute name "
-//                                + state.getObservable().getName() + " to " + attr);
-//                    }
-//                    stateId.add(new Pair<>(state.getObservable().getName(), attr));
-//                    builder.add(attr, type);
-//                }
-//            }
-//
-//            SimpleFeatureType type = builder.buildFeatureType();
-//            DefaultFeatureCollection collection = new DefaultFeatureCollection(null, null);
-//            // GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-//            SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
-//
-//            Iterable<IArtifact> observations = null;
-//            if (observation instanceof IObservationGroup) {
-//                observations = ((IObservationGroup) observation);
-//            } else {
-//                observations = new ArrayList<IArtifact>();
-//                ((ArrayList<IArtifact>) observations).add(observation);
-//            }
-//
-//            for (IArtifact obs : observations) {
-//                if (obs instanceof IDirectObservation) {
-//                	
-//                	/*
-//                	 * TODO filter for time span vs. locator
-//                	 */
-//                	
-//                    featureBuilder.add(((Shape) ((IDirectObservation) obs).getScale().getSpace().getShape())
-//                            .getJTSGeometry());
-//
-//                    featureBuilder.add(((IDirectObservation) obs).getName());
-//
-//                    for (Pair<String, String> s : metadataId) {
-//                        featureBuilder.add(obs.getMetadata().get(s.getFirst()));
-//                    }
-//                    for (Pair<String, String> s : stateId) {
-//                        Object value = null;
-//                        boolean found = false;
-//                        for (IState state : ((IDirectObservation) obs).getStates()) {
-//                            if (state.getObservable().getName().equals(s.getFirst())) {
-//                                value = state.aggregate(((IDirectObservation) obs).getScale()
-//                                        .at(locator), Utils
-//                                                .getClassForType(state.getObservable().getArtifactType()));
-//                                found = true;
-//                                break;
-//                            }
-//                        }
-//                        if (found) {
-//                            featureBuilder.add(value);
-//                        }
-//                    }
-//                    collection.add(featureBuilder.buildFeature(null));
-//                }
-//            }
-
 			Pair<SimpleFeatureType, FeatureCollection<SimpleFeatureType, SimpleFeature>> collected = getFeatureCollection(
 					observation, locator, monitor);
 
