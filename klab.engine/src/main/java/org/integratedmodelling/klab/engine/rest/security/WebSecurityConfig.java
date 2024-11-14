@@ -49,6 +49,12 @@ class WebSecurityConfig {
 	@EnableWebSecurity 
 	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) 
 	class WebSecurityConfigRemote extends WebSecurityConfigurerAdapter{ 
+		
+	  @Autowired
+	  private PreauthenticatedUserDetailsService customUserDetailsService;
+
+	  @Autowired
+	  private EngineDirectoryAuthenticationProvider authProvider;
  
 	  @Bean 
 	  AuthoritiesConverter realmRolesAuthoritiesConverter() { 
@@ -74,34 +80,46 @@ class WebSecurityConfig {
 	              .setJwtGrantedAuthoritiesConverter(jwt -> authoritiesConverter.convert(jwt.getClaims()));
 	      return jwtAuthenticationConverter;
 	  }
-	  
-//	  @Bean
-//	  SecurityFilterChain resourceServerSecurityFilterChain(HttpSecurity http,
-//	          Converter<Jwt, AbstractAuthenticationToken> jwtAuthenticationConverter) throws Exception {
-//	      http.oauth2ResourceServer(resourceServer -> {
-//	          resourceServer.jwt(jwtDecoder -> {
-//	              jwtDecoder.jwtAuthenticationConverter(jwtAuthenticationConverter);
-//	          });
-//	      });
-//
-//	      http.sessionManagement(sessions -> {
-//	          sessions.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-//	      });
-//
-//	      http.cors().and().csrf().disable().authorizeHttpRequests( 
-//					authorize -> authorize.mvcMatchers("/api/**").authenticated().mvcMatchers("/**").permitAll());
-//	      
-//	      return http.build();
-//	  }
 	   
 	  @Override 
 	  protected void configure(HttpSecurity http) throws Exception { 
 		  
-		  http.cors().and().csrf().disable().authorizeHttpRequests( 
+		  http.cors().and().csrf().disable().addFilterBefore(certFilter(), RequestHeaderAuthenticationFilter.class)
+		  .authorizeHttpRequests( 
 					authorize -> authorize.mvcMatchers("/api/**").authenticated().mvcMatchers("/**").permitAll()) 
 					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt); 
 		  
 	  }
+	  
+	  @Bean
+		@Override
+		protected AuthenticationManager authenticationManager()  {
+			final List<AuthenticationProvider> providers = new ArrayList<>(2);
+			providers.add(preauthAuthProvider());
+			providers.add(authProvider);
+			return new ProviderManager(providers);
+		}
+
+	  	@Bean(name="certFilter")
+	  	PreauthenticationFilter certFilter() {
+	  		PreauthenticationFilter ret = new PreauthenticationFilter();
+			ret.setAuthenticationManager(authenticationManager());
+	  		return ret;
+	  	}
+	  
+		@Bean(name = "preAuthProvider")
+		PreAuthenticatedAuthenticationProvider preauthAuthProvider()  {
+			PreAuthenticatedAuthenticationProvider provider = new PreAuthenticatedAuthenticationProvider();
+			provider.setPreAuthenticatedUserDetailsService(userDetailsServiceWrapper());
+			return provider;
+		}
+
+		@Bean
+		UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> userDetailsServiceWrapper()  {
+			UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> wrapper = new UserDetailsByNameServiceWrapper<>();
+			wrapper.setUserDetailsService(customUserDetailsService);
+			return wrapper;
+		}
 	     
 	}
 	
