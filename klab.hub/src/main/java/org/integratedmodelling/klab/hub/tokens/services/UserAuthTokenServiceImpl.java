@@ -20,8 +20,6 @@ import org.integratedmodelling.klab.hub.users.payload.LoginResponse;
 import org.integratedmodelling.klab.hub.users.payload.LogoutResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
@@ -87,7 +85,7 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService {
 
     @Override
     public TokenAuthentication getUserAuthenticationToken(String username, String password) {
-        Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
+//        Authentication authRequest = new UsernamePasswordAuthenticationToken(username, password);
 //        try {
 //            authRequest = authenticationManager.authenticate(authRequest);
 //        } catch (AuthenticationException e) {
@@ -97,21 +95,21 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService {
 //            String msg = "Something went wrong with authentication. Result.isAuthenticated() == false, but no exception was thrown.";
 //            throw new KlabException(msg);
 //        } else {
-            deleteExpiredTokens(username);
-            TokenAuthentication result = createToken(username, TokenType.auth);
-            PreAuthenticatedAuthenticationToken secureToken = new PreAuthenticatedAuthenticationToken(result.getPrincipal(),
-                    result.getCredentials(), result.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(secureToken);
-            return result;
+        deleteExpiredTokens(username);
+        TokenAuthentication result = createToken(username, TokenType.auth);
+        PreAuthenticatedAuthenticationToken secureToken = new PreAuthenticatedAuthenticationToken(result.getPrincipal(),
+                result.getCredentials(), result.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(secureToken);
+        return result;
 //        }
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    public LoginResponse< ? > getAuthResponse(String username, String password, boolean remote) {
-        TokenAuthentication token = getUserAuthenticationToken(username, password);
+    public LoginResponse< ? > getAuthResponse(String username, boolean remote) {
+        TokenAuthentication token = getUserAuthenticationToken(username, "");
         ProfileResource profile = new GetUserProfile(userRepository, username, objectMapper).execute();
-         if (remote) {
+        if (remote) {
             profile.setJwtToken(JWT_TOKEN_FACTORY.createEngineJwtToken(profile));
             return new LoginResponse<EngineProfileResource>(token, new EngineProfileResource(profile));
         } else {
@@ -123,6 +121,7 @@ public class UserAuthTokenServiceImpl implements UserAuthTokenService {
     public LogoutResponse getLogoutResponse(String token) {
         deleteToken(token);
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
         return new LogoutResponse(username);
     }
 
