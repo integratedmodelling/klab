@@ -4,7 +4,8 @@ import java.util.Objects;
 
 public class UserAuthenticationRequest {
 
-    private String username;
+	private String username;
+	private boolean remote = false;
 
     private boolean remote = false;
 
@@ -12,11 +13,7 @@ public class UserAuthenticationRequest {
         return username;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public boolean isRemote() {
+	public boolean isRemote() {
         return remote;
     }
 
