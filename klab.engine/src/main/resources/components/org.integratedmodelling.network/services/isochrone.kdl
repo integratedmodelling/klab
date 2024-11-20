@@ -1,0 +1,30 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace klab.isochrone
+
+export object isochrone
+	"Generates the Isochrone for a point based on the parameters."
+{
+	text source
+		"Semantics for the type of the subjects used as source for the isochrone"
+	
+	optional enum collapse_geometry
+		"Method used to collapse line and polygon sources and targets to a single point or a set of points."
+		values Centroid
+		default "Centroid"
+
+	optional enum transport
+		"Type of transport used to find a route"
+		values Auto, Pedestrian, Bicycle, Bus, Truck, Taxi, MotorScooter, Multimodal
+		default "Auto"	
+
+	optional number limit
+		"Distance or time threshold for creating the isochrone."
+		default 10
+
+	optional text server
+		"Specify the endpoint for the Valhalla server."
+
+	class org.integratedmodelling.klab.components.geospace.routing.services.IsochroneInstantiator
+
+}

@@ -49,29 +49,34 @@ public class STACValidator implements IResourceValidator {
         }
         IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
 
-        Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry);
+        Builder builder = new ResourceBuilder(urn)
+                .withParameters(userData)
+                .withGeometry(geometry)
+                .withType(Type.OBJECT);
 
         // The default URL of the resource is the collection endpoint. May be overwritten. 
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
-        String assetId = userData.get("asset", String.class);
-        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
-        JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
+        if (userData.contains("asset")) {
+            String assetId = userData.get("asset", String.class);
+            JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
+            JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
-        Type type = readRasterDataType(asset);
-        // Currently, only files:values is supported. If needed, the classification extension could be used too.
-        Map<String, Object> vals = STACAssetParser.getFileValues(asset);
-        if (!vals.isEmpty()) {
-            CodelistReference codelist = populateCodelist(assetId, vals);
-            if (type == null) {
-                type = codelist.getType();
+            Type type = readRasterDataType(asset);
+            // Currently, only files:values is supported. If needed, the classification extension could be used too.
+            Map<String, Object> vals = STACAssetParser.getFileValues(asset);
+            if (!vals.isEmpty()) {
+                CodelistReference codelist = populateCodelist(assetId, vals);
+                if (type == null) {
+                    type = codelist.getType();
+                }
+                builder.addCodeList(codelist);
             }
-            builder.addCodeList(codelist);
+            if (type != null) {
+                builder.withType(type);
+            }
         }
 
-        if (type != null) {
-            builder.withType(type);
-        }
         readMetadata(collectionData, builder);
         return builder;
     }
@@ -122,7 +127,7 @@ public class STACValidator implements IResourceValidator {
     private void readMetadata(final JSONObject json, Builder builder) {
         // We could check the doi only if the Scientific Notation extension is provided, but we can try anyway
         String doi = STACUtils.readDOI(json);
-        if (doi != null) {
+        if (doi != null && !doi.isBlank()) {
             builder.withMetadata(IMetadata.DC_URL, doi);
             String authors = STACUtils.readDOIAuthors(doi);
             if (authors != null) {
@@ -131,22 +136,22 @@ public class STACValidator implements IResourceValidator {
         }
 
         String description = STACUtils.readDescription(json);
-        if (description != null) {
+        if (description != null && !description.isBlank()) {
             builder.withMetadata(IMetadata.DC_COMMENT, description);
         }
 
         String keywords = STACUtils.readKeywords(json);
-        if (keywords != null) {
+        if (keywords != null && !keywords.isBlank()) {
             builder.withMetadata(IMetadata.IM_KEYWORDS, keywords);
         }
 
         String title = STACUtils.readTitle(json);
-        if (title != null) {
+        if (title != null && !title.isBlank()) {
             builder.withMetadata(IMetadata.DC_TITLE, title);
         }
 
         String license = STACUtils.readLicense(json);
-        if (license != null) {
+        if (license != null && !license.isBlank()) {
             builder.withMetadata(IMetadata.DC_RIGHTS, license);
         }
     }
@@ -177,7 +182,7 @@ public class STACValidator implements IResourceValidator {
 
     @Override
     public boolean canHandle(File resource, IParameters<String> parameters) {
-        return resource == null && parameters.contains("collection") && parameters.contains("asset");
+        return resource == null && parameters.contains("collection");
     }
 
     @Override

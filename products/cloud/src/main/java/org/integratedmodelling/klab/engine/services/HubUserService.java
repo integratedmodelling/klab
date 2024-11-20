@@ -39,6 +39,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * This hub service is used to authenticate a user request to login to an engine
@@ -265,6 +267,7 @@ public class HubUserService implements RemoteUserService {
 
     private ResponseEntity<HubLoginResponse> hubLogin(UserAuthenticationRequest login) {
         HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(login, headers);
         return restTemplate.postForEntity(getLoginUrl(), request, HubLoginResponse.class);
     }
