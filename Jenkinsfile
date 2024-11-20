@@ -7,7 +7,7 @@ def kmodelers = [
 ]
 
 pipeline {
-    agent { label "klab-agent-jdk17"}
+    agent { label "maven-3-9-5-eclipse-temurin-21"}
     options { skipDefaultCheckout(true) }
     environment {
         VERSION_DATE = sh(

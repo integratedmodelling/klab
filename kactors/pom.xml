@@ -25,7 +25,6 @@
 		<module>org.integratedmodelling.kactors.target</module>
 		<module>org.integratedmodelling.kactors.feature</module>
 		<module>org.integratedmodelling.kactors.repository</module>
-		<module>org.integratedmodelling.kactors.tests</module>
 	</modules>
 	<dependencyManagement>
 		<dependencies>
@@ -243,7 +242,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<execute></execute>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>

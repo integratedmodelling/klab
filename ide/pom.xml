@@ -188,7 +188,7 @@
 										</goals>
 									</pluginExecutionFilter>
 									<action>
-										<ignore></ignore>
+										<execute></execute>
 									</action>
 								</pluginExecution>
 							</pluginExecutions>
@@ -200,8 +200,8 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>eclipse-2022-09</id>
-			<url>https://download.eclipse.org/releases/2022-09/</url>
+			<id>eclipse-2024-09</id>
+			<url>https://download.eclipse.org/releases/2024-09/</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
