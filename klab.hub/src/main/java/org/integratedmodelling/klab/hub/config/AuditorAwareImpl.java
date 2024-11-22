@@ -18,6 +18,9 @@ public class AuditorAwareImpl implements AuditorAware<String> {
     @Override
     public Optional<String> getCurrentAuditor() {
 
+        if (request.getUserPrincipal() == null)
+            return null;
+
         AccessToken accessToken = this.getKeycloakToken(request.getUserPrincipal());
         String userName = accessToken.getPreferredUsername();
 

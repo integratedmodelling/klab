@@ -14,25 +14,24 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class UserAuthenticationController {
-	
-	private UserAuthTokenService userAuthService;
-	
-	@Autowired
-	UserAuthenticationController(UserAuthTokenService userAuthService) {
-		this.userAuthService = userAuthService;
-	}
-	
-	@PostMapping(API.HUB.AUTHENTICATE_USER)
-	public ResponseEntity<?> loginResponse(@RequestBody UserAuthenticationRequest request) {
-        LoginResponse< ? > response = userAuthService.getAuthResponse(request.getUsername(), request.getPassword(),
-                request.isRemote());
-		return response.getResponse();
-	}
-	
-	@PostMapping(API.HUB.DEAUTHENTICATE_USER)
-	public ResponseEntity<?> logoutResponse(@RequestHeader("Authentication") String token) {
-		LogoutResponse response = userAuthService.getLogoutResponse(token);
-		return response.getResponse();
-	}
+
+    private UserAuthTokenService userAuthService;
+
+    @Autowired
+    UserAuthenticationController(UserAuthTokenService userAuthService) {
+        this.userAuthService = userAuthService;
+    }
+
+    @PostMapping(API.HUB.AUTHENTICATE_USER)
+    public ResponseEntity< ? > loginResponse(@RequestBody UserAuthenticationRequest request) {
+        LoginResponse< ? > response = userAuthService.getAuthResponse(request.getUsername(), request.isRemote());
+        return response.getResponse();
+    }
+
+    @PostMapping(API.HUB.DEAUTHENTICATE_USER)
+    public ResponseEntity< ? > logoutResponse(@RequestHeader("Authentication") String token) {
+        LogoutResponse response = userAuthService.getLogoutResponse(token);
+        return response.getResponse();
+    }
 
 }

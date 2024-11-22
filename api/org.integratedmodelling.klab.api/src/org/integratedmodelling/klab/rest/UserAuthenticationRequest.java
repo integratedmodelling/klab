@@ -7,13 +7,11 @@ public class UserAuthenticationRequest {
 	private String username;
 	private boolean remote = false;
 
-	public String getUsername() {
-		return username;
-	}
+    private boolean remote = false;
 
-	public void setUsername(String username) {
-		this.username = username;
-	}
+    public String getUsername() {
+        return username;
+    }
 
 	public boolean isRemote() {
         return remote;
