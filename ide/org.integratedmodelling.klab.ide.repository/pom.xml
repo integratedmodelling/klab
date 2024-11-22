@@ -31,6 +31,10 @@
 							<rootFolder>kmodeler</rootFolder>
        						</product>
 					</products>
+					<formats>
+						<linux>zip</linux>
+						<macosx>zip</macosx>
+					</formats>
 				</configuration>
 				<executions>
 					<execution>
