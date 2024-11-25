@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.services;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,8 +36,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -85,8 +88,23 @@ public class HubUserService implements RemoteUserService {
                 HubUserProfile profile = result.getBody().getProfile();
                 String authToken = result.getBody().getAuthentication().getTokenString();
                 profile.setAuthToken(authToken);
+                
                 RemoteUserLoginResponse response = getLoginResponse(profile, null);
+                
+                // Add ROLE_SESSION to OAuth2 securityContext
                 response.setAuthorization(authToken);
+                Collection<SimpleGrantedAuthority> oldAuthorities = (Collection<SimpleGrantedAuthority>)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
+                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(Roles.SESSION);
+                List<SimpleGrantedAuthority> updatedAuthorities = new ArrayList<SimpleGrantedAuthority>();
+                updatedAuthorities.add(authority);
+                updatedAuthorities.addAll(oldAuthorities);
+
+                SecurityContextHolder.getContext().setAuthentication(
+                        new UsernamePasswordAuthenticationToken(
+                                SecurityContextHolder.getContext().getAuthentication().getPrincipal(),
+                                SecurityContextHolder.getContext().getAuthentication().getCredentials(),
+                                updatedAuthorities)
+                );
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
             } else {
                 throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
@@ -277,8 +295,7 @@ public class HubUserService implements RemoteUserService {
         
         if (authorization != null) {
         	HttpHeaders headers = new HttpHeaders();
-        	headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
-        	request.getHeaders().addAll(headers);
+        	headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));        	
         }
                 
         return restTemplate.postForEntity(getLoginUrl(), request, HubLoginResponse.class);

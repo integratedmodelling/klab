@@ -66,7 +66,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin(origins = "*")
-@Secured(Roles.SESSION)
+//@Secured(Roles.SESSION)
 public class EngineViewController {
 
 	/**

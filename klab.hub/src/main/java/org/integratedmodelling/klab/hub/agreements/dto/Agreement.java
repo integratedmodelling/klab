@@ -58,6 +58,18 @@ public class Agreement {
 
     @Reference
     private Set<GroupEntry> groupEntries = new HashSet<>(); // research groups, etc. in web tool
+    
+    @CreatedBy
+    private String createdBy;
+
+    @CreatedDate
+    private LocalDateTime createdDate;
+
+    @LastModifiedBy
+    private String lastModifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
 
     public String getId() {
         return id;

@@ -54,30 +54,30 @@ class WebSecurityConfig {
 	  private PreauthenticatedUserDetailsService customUserDetailsService;
 
 
-//	  @Bean 
-//	  AuthoritiesConverter realmRolesAuthoritiesConverter() { 
-//	      return claims -> { 
-//	          final var realmAccess = Optional.ofNullable((Map<String, Object>) claims.get("realm_access")); 
-//	          final var roles = 
-//	                  realmAccess.flatMap(map -> Optional.ofNullable((List<String>) map.get("roles"))); 
-//	          
-//	          roles.ifPresent(role -> role.add(Roles.PUBLIC));
-//	          
-//	          List<GrantedAuthority> rolesList = roles.map(List::stream).orElse(Stream.empty()).map(SimpleGrantedAuthority::new) 
-//	                  .map(GrantedAuthority.class::cast).toList();
-//	          
-//	          return rolesList;
-//	      }; 
-//	  } 
-//	  
-//	  @Bean
-//	  JwtAuthenticationConverter authenticationConverter(
-//	          Converter<Map<String, Object>, Collection<GrantedAuthority>> authoritiesConverter) {
-//	      JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-//	      jwtAuthenticationConverter
-//	              .setJwtGrantedAuthoritiesConverter(jwt -> authoritiesConverter.convert(jwt.getClaims()));
-//	      return jwtAuthenticationConverter;
-//	  }
+	  @Bean 
+	  AuthoritiesConverter realmRolesAuthoritiesConverter() { 
+	      return claims -> { 
+	          final var realmAccess = Optional.ofNullable((Map<String, Object>) claims.get("realm_access")); 
+	          final var roles = 
+	                  realmAccess.flatMap(map -> Optional.ofNullable((List<String>) map.get("roles"))); 
+	          
+	          roles.ifPresent(role -> role.add(Roles.PUBLIC));
+	          
+	          List<GrantedAuthority> rolesList = roles.map(List::stream).orElse(Stream.empty()).map(SimpleGrantedAuthority::new) 
+	                  .map(GrantedAuthority.class::cast).toList();
+	          
+	          return rolesList;
+	      }; 
+	  } 
+	  
+	  @Bean
+	  JwtAuthenticationConverter authenticationConverter(
+	          Converter<Map<String, Object>, Collection<GrantedAuthority>> authoritiesConverter) {
+	      JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
+	      jwtAuthenticationConverter
+	              .setJwtGrantedAuthoritiesConverter(jwt -> authoritiesConverter.convert(jwt.getClaims()));
+	      return jwtAuthenticationConverter;
+	  }
 	   
 	  @Override 
 	  protected void configure(HttpSecurity http) throws Exception { 
