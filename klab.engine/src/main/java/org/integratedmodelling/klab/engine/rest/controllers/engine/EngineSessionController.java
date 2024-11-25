@@ -39,7 +39,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
  */
 @RestController
 @CrossOrigin(origins = "*")
-//@Secured(Roles.SESSION)
+@Secured(Roles.SESSION)
 public class EngineSessionController {
 
 	private static final Logger logger = LoggerFactory.getLogger(EngineSessionController.class);

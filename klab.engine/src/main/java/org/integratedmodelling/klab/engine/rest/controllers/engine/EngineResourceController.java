@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @CrossOrigin(origins = "*")
-//@Secured(Roles.SESSION)
+@Secured(Roles.SESSION)
 public class EngineResourceController {
     
     @RequestMapping(value = API.ENGINE.RESOURCE.GET_RESOURCE_SPATIAL_IMAGE, method = RequestMethod.GET)

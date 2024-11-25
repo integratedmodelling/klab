@@ -17,6 +17,7 @@ public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingF
 
 	@Override
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
+
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
 
 		Map<String, String> headers = Collections.list(httpRequest.getHeaderNames())
@@ -48,9 +49,7 @@ public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingF
 
 	@Override
 	protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
-		Map<String, String> headers = Collections.list(request.getHeaderNames())
-			    .stream()
-			    .collect(Collectors.toMap(h -> h, request::getHeader));
+
 		String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String klabAuth = request.getHeader(KlabHttpHeaders.KLAB_AUTHORIZATION);
 		// returning null will refuse authentication

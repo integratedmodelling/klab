@@ -60,6 +60,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -72,7 +73,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "*")
-//@Secured(Roles.SESSION)
+@Secured(Roles.SESSION)
 @PublicAPI
 public class EnginePublicController implements API.PUBLIC {
 
@@ -81,7 +82,7 @@ public class EnginePublicController implements API.PUBLIC {
     public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request,
             @RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth) {
     	
-    	String session = klabAuth == null ? klabAuth : auth;
+    	String session = klabAuth != null ? klabAuth : auth;
 
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
@@ -113,7 +114,7 @@ public class EnginePublicController implements API.PUBLIC {
     public TicketResponse.Ticket observationRequest(@RequestBody ObservationRequest request,
     		@RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth, @PathVariable String context) {
 
-    	String session = klabAuth == null ? klabAuth : auth;
+    	String session = klabAuth != null ? klabAuth : auth;
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 
         if (s == null) {
@@ -149,7 +150,7 @@ public class EnginePublicController implements API.PUBLIC {
     public TicketResponse.Ticket submitEstimate(@RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth,
             @PathVariable String estimate) {
 
-    	String session = klabAuth == null ? klabAuth : auth;
+    	String session = klabAuth != null ? klabAuth : auth;
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
             // FIXME not illegitimate in case of server failure or restart with persistent
@@ -182,8 +183,8 @@ public class EnginePublicController implements API.PUBLIC {
             @PathVariable String observation, @RequestHeader(name = "Accept") String format,
             @RequestParam(required = false) String view, @RequestParam(required = false) String viewport,
             @RequestParam(required = false) String locator, HttpServletResponse response) throws IOException {
-
-    	String session = klabAuth == null ? klabAuth : auth;
+    	
+    	String session = klabAuth != null ? klabAuth : auth;
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
             throw new KlabIllegalStateException("observe in context: invalid session ID");
@@ -394,7 +395,7 @@ public class EnginePublicController implements API.PUBLIC {
     public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth,
             @PathVariable String ticket) {
 
-    	String session = klabAuth == null ? klabAuth : auth;
+    	String session = klabAuth != null ? klabAuth : auth;
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
             // FIXME not illegitimate in case of server failure or restart with persistent
