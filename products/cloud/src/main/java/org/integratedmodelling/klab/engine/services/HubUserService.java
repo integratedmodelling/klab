@@ -90,21 +90,8 @@ public class HubUserService implements RemoteUserService {
                 profile.setAuthToken(authToken);
                 
                 RemoteUserLoginResponse response = getLoginResponse(profile, null);
-                
-                // Add ROLE_SESSION to OAuth2 securityContext
                 response.setAuthorization(authToken);
-                Collection<SimpleGrantedAuthority> oldAuthorities = (Collection<SimpleGrantedAuthority>)SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-                SimpleGrantedAuthority authority = new SimpleGrantedAuthority(Roles.SESSION);
-                List<SimpleGrantedAuthority> updatedAuthorities = new ArrayList<SimpleGrantedAuthority>();
-                updatedAuthorities.add(authority);
-                updatedAuthorities.addAll(oldAuthorities);
 
-                SecurityContextHolder.getContext().setAuthentication(
-                        new UsernamePasswordAuthenticationToken(
-                                SecurityContextHolder.getContext().getAuthentication().getPrincipal(),
-                                SecurityContextHolder.getContext().getAuthentication().getCredentials(),
-                                updatedAuthorities)
-                );
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
             } else {
                 throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());

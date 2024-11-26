@@ -3,11 +3,9 @@ package org.integratedmodelling.klab.engine.rest.security;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.servlet.ServletException;
@@ -18,7 +16,7 @@ import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.KlabHttpHeaders;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.rest.utils.EngineHttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,7 +66,7 @@ class WebSecurityConfig {
 
 				roles.ifPresent(role -> role.add(Roles.PUBLIC));
 
-				HttpServletRequest request = getCurrentHttpRequest();
+				HttpServletRequest request = EngineHttpUtils.getCurrentHttpRequest();
 
 				String klabAuth = request.getHeader(KlabHttpHeaders.KLAB_AUTHORIZATION);
 
@@ -102,7 +100,6 @@ class WebSecurityConfig {
 					.authorizeHttpRequests(authorize -> authorize.mvcMatchers("/api/**").authenticated()
 							.mvcMatchers("/**").permitAll())
 					.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
-
 		}
 
 		@Bean
@@ -132,16 +129,6 @@ class WebSecurityConfig {
 			UserDetailsByNameServiceWrapper<PreAuthenticatedAuthenticationToken> wrapper = new UserDetailsByNameServiceWrapper<>();
 			wrapper.setUserDetailsService(customUserDetailsService);
 			return wrapper;
-		}
-
-		public static HttpServletRequest getCurrentHttpRequest() {
-			RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-			if (requestAttributes instanceof ServletRequestAttributes) {
-				HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-				return request;
-			}
-			// logger.debug("Not called in the context of an HTTP request");
-			return null;
 		}
 
 	}

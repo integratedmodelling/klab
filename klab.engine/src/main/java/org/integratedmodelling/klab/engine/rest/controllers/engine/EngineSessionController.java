@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.KlabHttpHeaders;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.engine.rest.utils.EngineHttpUtils;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.SessionReference;
@@ -47,9 +48,7 @@ public class EngineSessionController {
 	@RequestMapping(value = API.ENGINE.SESSION.INFO, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
 	public SessionReference describeObservation(Principal principal, HttpServletRequest httpRequest) {
-
-		Map<String, String> headers = Collections.list(httpRequest.getHeaderNames()).stream()
-				.collect(Collectors.toMap(h -> h, httpRequest::getHeader));
+;
 		ISession session = getSession(principal);
 		return ((Session) session).getSessionReference();
 	}
@@ -60,8 +59,8 @@ public class EngineSessionController {
 			return (ISession) ((PreAuthenticatedAuthenticationToken) principal).getPrincipal();
 		}
 
-		if (getCurrentHttpRequest() != null) {
-			String klabAuth = getCurrentHttpRequest().getHeader(KlabHttpHeaders.KLAB_AUTHORIZATION);
+		if (EngineHttpUtils.getCurrentHttpRequest() != null) {
+			String klabAuth = EngineHttpUtils.getCurrentHttpRequest().getHeader(KlabHttpHeaders.KLAB_AUTHORIZATION);
 
 			if (klabAuth != null) {
 				// send anything already known downstream
@@ -85,14 +84,6 @@ public class EngineSessionController {
 
 	}
 
-	private static HttpServletRequest getCurrentHttpRequest() {
-		RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-		if (requestAttributes instanceof ServletRequestAttributes) {
-			HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
-			return request;
-		}
-		logger.debug("Not called in the context of an HTTP request");
-		return null;
-	}
+	
 
 }
