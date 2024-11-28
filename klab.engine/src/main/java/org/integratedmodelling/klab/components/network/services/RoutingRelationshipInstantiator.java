@@ -53,8 +53,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 	private String sourceArtifact = null;
 	private String targetArtifact = null;
 
-	private Double timeThreshold = null;
-    private Double distanceThreshold = null;
+	private Double timeThresholdInSeconds = null;
+    private Double distanceThresholdInKilometers = null;
 
 	private TransportType transportType = TransportType.Auto;
 	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
@@ -91,8 +91,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 		this.scope = scope;
 		this.sourceArtifact = parameters.get("source", String.class);
 		this.targetArtifact = parameters.get("target", String.class);
-		this.timeThreshold = parameters.get("time_limit", Double.class);
-		this.distanceThreshold = parameters.get("distance_limit", Double.class);
+		this.timeThresholdInSeconds = parameters.get("time_limit", Double.class);
+		this.distanceThresholdInKilometers = parameters.get("distance_limit", Double.class);
 		
 		if (parameters.containsKey("transport")) {
 			this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
@@ -201,7 +201,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
     private Geometry getIsochrone(IDirectObservation node, boolean isReverse) {
         double[] coordinates = Valhalla.getCoordinates(node, geometryCollapser);
-        String isochroneRequest = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), "time", timeThreshold, isReverse);
+        String isochroneRequest = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), "time", timeThresholdInSeconds, isReverse);
         return valhalla.isochrone(isochroneRequest);
     }
 
@@ -218,7 +218,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             }
 
             List<IObservation> inRangeNodes = secondNodes;
-            if (timeThreshold != null) {
+            if (timeThresholdInSeconds != null) {
                 // Filter those nodes that are not inside the range
                 inRangeNodes = filterNodesInRange((IDirectObservation) node1, secondNodes, useReverseIsochrones);
             }
@@ -248,9 +248,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
     }
 
     private boolean isRouteInsideTheThresholds(Map<String, Object> stats) {
-        // We define the time using minutes, but receive the stats in seconds
-        return (timeThreshold == null || ((Double) stats.get("time") < timeThreshold * 60))
-                && (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold));
+        return (timeThresholdInSeconds == null || ((Double) stats.get("time") < timeThresholdInSeconds))
+                && (distanceThresholdInKilometers == null || ((Double) stats.get("length") < distanceThresholdInKilometers));
     }
 
 	private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
