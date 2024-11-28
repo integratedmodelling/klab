@@ -216,9 +216,13 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             if (iterateOverSourcesFirst && connected.contains(node1)) {
                 continue;
             }
-            // Filter those nodes that are not inside the range
-            Geometry isochrone = getIsochrone((IDirectObservation) node1, useReverseIsochrones);
-            List<IObservation> inRangeNodes = filterNodesInRange(secondNodes, isochrone);
+
+            List<IObservation> inRangeNodes = secondNodes;
+            if (timeThreshold != null) {
+                // Filter those nodes that are not inside the range
+                inRangeNodes = filterNodesInRange((IDirectObservation) node1, secondNodes, useReverseIsochrones);
+            }
+
             for(IArtifact node2 : inRangeNodes) {
                 if (context.getMonitor().isInterrupted()) {
                     return;
@@ -227,7 +231,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 if (isConnected) {
                     if (iterateOverSourcesFirst) {
                         connected.add((IObservation) node1);
-
                     }
                     connected.add((IObservation) node2);
                 }
@@ -235,7 +238,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         }
     }
 
-    private List<IObservation> filterNodesInRange(List<IObservation> nodes, Geometry isochrone) {
+    private List<IObservation> filterNodesInRange(IDirectObservation sourceNode, List<IObservation> nodes, boolean useReverseIsochrones) {
+        Geometry isochrone = getIsochrone(sourceNode, useReverseIsochrones);
         return nodes.stream().filter( t -> {
             double[] coordinates = Valhalla.getCoordinates((IDirectObservation) t, geometryCollapser);
             Geometry point = new GeometryBuilder().point(coordinates[0], coordinates[1]);
