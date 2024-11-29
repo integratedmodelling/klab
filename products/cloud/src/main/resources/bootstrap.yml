@@ -20,7 +20,8 @@ engine:
   session:
     inactive: 60
   env:
-    appBaseUrl: http://localhost:8082/modeler
+    #appBaseUrl: http://localhost:8082/modeler
+    appBaseUrl: http://localhost:8283/modeler
     keycloakUrl: http://localhost:8078
     
 server: 

@@ -80,10 +80,8 @@ public class EnginePublicController implements API.PUBLIC {
     @RequestMapping(value = CREATE_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request,
-            @RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth) {
+            @RequestHeader(name = "Klab_Authorization") String session) {
     	
-    	String session = klabAuth != null ? klabAuth : auth;
-
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
             throw new KlabIllegalStateException("create context: invalid session ID");
@@ -112,9 +110,8 @@ public class EnginePublicController implements API.PUBLIC {
     @RequestMapping(value = OBSERVE_IN_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public TicketResponse.Ticket observationRequest(@RequestBody ObservationRequest request,
-    		@RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth, @PathVariable String context) {
+    		@RequestHeader(name = "Klab_Authorization") String session, @PathVariable String context) {
 
-    	String session = klabAuth != null ? klabAuth : auth;
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 
         if (s == null) {
@@ -147,10 +144,9 @@ public class EnginePublicController implements API.PUBLIC {
 
     @RequestMapping(value = SUBMIT_ESTIMATE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TicketResponse.Ticket submitEstimate(@RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth,
+    public TicketResponse.Ticket submitEstimate(@RequestHeader(name = "Klab_Authorization") String session,
             @PathVariable String estimate) {
 
-    	String session = klabAuth != null ? klabAuth : auth;
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
             // FIXME not illegitimate in case of server failure or restart with persistent
@@ -169,22 +165,21 @@ public class EnginePublicController implements API.PUBLIC {
 
         if (est.contextRequest != null) {
         	//TODO only 1 sessioin parameter
-            return contextRequest(est.contextRequest, session, session);
+            return contextRequest(est.contextRequest, session);
         }
 
-        return observationRequest(est.observationRequest, session, session, est.observationRequest.getContextId());
+        return observationRequest(est.observationRequest, session, est.observationRequest.getContextId());
     }
 
     @RequestMapping(value = EXPORT_DATA, method = RequestMethod.GET, produces = {MediaType.APPLICATION_JSON_VALUE,
             MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.IMAGE_PNG_VALUE, "text/csv", "image/tiff",
             "application/vnd.ms-excel", "application/octet-stream",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"})
-    public void exportData(@PathVariable String export, @RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth,
+    public void exportData(@PathVariable String export, @RequestHeader(name = "Klab_Authorization") String session,
             @PathVariable String observation, @RequestHeader(name = "Accept") String format,
             @RequestParam(required = false) String view, @RequestParam(required = false) String viewport,
             @RequestParam(required = false) String locator, HttpServletResponse response) throws IOException {
-    	
-    	String session = klabAuth != null ? klabAuth : auth;
+    	    	
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
             throw new KlabIllegalStateException("observe in context: invalid session ID");
@@ -392,10 +387,9 @@ public class EnginePublicController implements API.PUBLIC {
 
     @RequestMapping(value = TICKET_INFO, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = "Klab_Authorization") String klabAuth, @RequestHeader(name = "Authorization") String auth,
+    public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = "Klab_Authorization") String session,
             @PathVariable String ticket) {
 
-    	String session = klabAuth != null ? klabAuth : auth;
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
             // FIXME not illegitimate in case of server failure or restart with persistent

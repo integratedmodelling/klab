@@ -1,16 +1,11 @@
 package org.integratedmodelling.klab.engine.rest.security;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.KlabHttpHeaders;
 import org.integratedmodelling.klab.utils.IPUtils;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.web.authentication.preauth.AbstractPreAuthenticatedProcessingFilter;
 
 public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingFilter {
@@ -18,15 +13,7 @@ public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingF
 	@Override
 	protected Object getPreAuthenticatedPrincipal(HttpServletRequest request) {
 
-		String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String klabAuth = request.getHeader(KlabHttpHeaders.KLAB_AUTHORIZATION);
-		
-		if (auth != null ) {
-		    // send anything already known downstream
-			if (Authentication.INSTANCE.getIdentity(auth, IIdentity.class) != null) {
-			    return auth;
-			}
-		}
 		
 		if (klabAuth != null ) {
 		    // send anything already known downstream
@@ -44,17 +31,12 @@ public class PreauthenticationFilter extends AbstractPreAuthenticatedProcessingF
 	@Override
 	protected Object getPreAuthenticatedCredentials(HttpServletRequest request) {
 
-		String auth = request.getHeader(HttpHeaders.AUTHORIZATION);
 		String klabAuth = request.getHeader(KlabHttpHeaders.KLAB_AUTHORIZATION);
 		// returning null will refuse authentication
-		if (auth == null && klabAuth == null) {
+		if (klabAuth == null) {
 			return "dummycredentials";
-		} else if (auth != null && klabAuth != null) {
-			return klabAuth;
-		} else if (auth == null && klabAuth != null) {
-			return klabAuth;
 		} else {
-			return auth;
+			return klabAuth;
 		}
 		
 	}
