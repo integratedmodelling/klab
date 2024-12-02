@@ -50,29 +50,29 @@ import kong.unirest.Unirest;
 import org.jgrapht.Graph;
 
 public class RoutingRelationshipInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
-	private String sourceArtifact = null;
-	private String targetArtifact = null;
+    private String sourceArtifact = null;
+    private String targetArtifact = null;
 
-	private Double timeThreshold = null;
-    private Double distanceThreshold = null;
+    private Double timeThresholdInSeconds = null;
+    private Double distanceThresholdInKilometers = null;
 
-	private TransportType transportType = TransportType.Auto;
-	private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
-	private String server;
-	private IContextualizationScope scope;
-	private Valhalla valhalla;
-	private Graph<IObjectArtifact, SpatialEdge> graph;
-	private Map<Pair<IDirectObservation, IDirectObservation>, IShape> trajectories;
+    private TransportType transportType = TransportType.Auto;
+    private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
+    private String server;
+    private IContextualizationScope scope;
+    private Valhalla valhalla;
+    private Graph<IObjectArtifact, SpatialEdge> graph;
+    private Map<Pair<IDirectObservation, IDirectObservation>, IShape> trajectories;
 
-	static enum CostingOptions {
-		/*
-		 * Empty for the time being, it is maybe too much unneeded detail. To be
-		 * developed as needed.
-		 */
-	}
-	
-	public RoutingRelationshipInstantiator() {
-		/* to instantiate as expression - do not remove (or use) */}
+    static enum CostingOptions {
+        /*
+         * Empty for the time being, it is maybe too much unneeded detail. To be
+         * developed as needed.
+         */
+    }
+
+    public RoutingRelationshipInstantiator() {
+        /* to instantiate as expression - do not remove (or use) */}
 
     private boolean isValhallaServerOnline(String server) {
         HttpResponse<JsonNode> response;
@@ -87,72 +87,71 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         return true;
     }
 	
-	public RoutingRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope scope) {
-		this.scope = scope;
-		this.sourceArtifact = parameters.get("source", String.class);
-		this.targetArtifact = parameters.get("target", String.class);
-		this.timeThreshold = parameters.get("time_limit", Double.class);
-		this.distanceThreshold = parameters.get("distance_limit", Double.class);
-		
-		if (parameters.containsKey("transport")) {
-			this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
-		}
-		if (parameters.containsKey("collapse_geometry")) {
-			this.geometryCollapser = GeometryCollapser
-					.fromValue(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
-		}
-		if (parameters.get("server") == null || parameters.get("server", String.class).trim().isEmpty()) {
-			throw new KlabIllegalArgumentException("The server for Valhalla has not been defined.");
-		}
-		this.server = parameters.get("server", String.class);
-		if (isValhallaServerOnline(server)) {
-			this.valhalla = new Valhalla(server);
-		} else {
-			throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
-		}
-	}
+    public RoutingRelationshipInstantiator(IParameters<String> parameters, IContextualizationScope scope) {
+        this.scope = scope;
+        this.sourceArtifact = parameters.get("source", String.class);
+        this.targetArtifact = parameters.get("target", String.class);
+        this.timeThresholdInSeconds = parameters.get("time_limit", Double.class);
+        this.distanceThresholdInKilometers = parameters.get("distance_limit", Double.class);
+
+        if (parameters.containsKey("transport")) {
+            this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
+        }
+        if (parameters.containsKey("collapse_geometry")) {
+            this.geometryCollapser = GeometryCollapser
+                    .fromValue(Utils.removePrefix(parameters.get("collapse_geometry", String.class)));
+        }
+        if (parameters.get("server") == null || parameters.get("server", String.class).trim().isEmpty()) {
+            throw new KlabIllegalArgumentException("The server for Valhalla has not been defined.");
+        }
+        this.server = parameters.get("server", String.class);
+        if (isValhallaServerOnline(server)) {
+            this.valhalla = new Valhalla(server);
+        } else {
+            throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
+        }
+    }
 	
     private boolean validateThatAllElementsAreObjectArtifact(List<IObservation> sources, List<IObservation> targets) {
         return Stream.concat(sources.parallelStream(), targets.parallelStream()).allMatch(element -> element instanceof IObjectArtifact);
     }
 
-	/*
-	 * This is an adapted copy of the instantiate method of the configurable
-	 * relationship instantiator.
-	 */
-	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
-			throws KlabException {
-		IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
-		IConcept targetConcept = Observables.INSTANCE.getRelationshipTarget(semantics.getType());
+    /*
+     * This is an adapted copy of the instantiate method of the configurable
+     * relationship instantiator.
+     */
+    @Override
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
+        IConcept sourceConcept = Observables.INSTANCE.getRelationshipSource(semantics.getType());
+        IConcept targetConcept = Observables.INSTANCE.getRelationshipTarget(semantics.getType());
 
-		/*
-		 * recover artifacts according to parameterization or lack thereof. Source and
-		 * target artifacts may be the same artifact.
-		 */
-		List<IObservation> sources = new ArrayList<>();
-		if (sourceArtifact == null) {
-			sources.addAll(context.getObservations(sourceConcept));
-		} else {
-			IArtifact src = context.getArtifact(sourceArtifact);
-			if (src instanceof IObservationGroup) {
-				for (IArtifact a : src) {
-					sources.add((IObservation) a);
-				}
-			}
-		}
+        /*
+         * recover artifacts according to parameterization or lack thereof. Source and
+         * target artifacts may be the same artifact.
+         */
+        List<IObservation> sources = new ArrayList<>();
+        if (sourceArtifact == null) {
+            sources.addAll(context.getObservations(sourceConcept));
+        } else {
+            IArtifact src = context.getArtifact(sourceArtifact);
+            if (src instanceof IObservationGroup) {
+                for (IArtifact a : src) {
+                    sources.add((IObservation) a);
+                }
+            }
+        }
 
-		List<IObservation> targets = new ArrayList<>();
-		if (targetArtifact == null) {
-			targets.addAll(context.getObservations(targetConcept));
-		} else {
-			IArtifact src = context.getArtifact(targetArtifact);
-			if (src instanceof IObservationGroup) {
-				for (IArtifact a : src) {
-					targets.add((IObservation) a);
-				}
-			}
-		}
+        List<IObservation> targets = new ArrayList<>();
+        if (targetArtifact == null) {
+            targets.addAll(context.getObservations(targetConcept));
+        } else {
+            IArtifact src = context.getArtifact(targetArtifact);
+            if (src instanceof IObservationGroup) {
+                for (IArtifact a : src) {
+                    targets.add((IObservation) a);
+                }
+            }
+        }
 
         // all artifacts must be non-null and objects
         if (!validateThatAllElementsAreObjectArtifact(sources, targets)) {
@@ -160,15 +159,15 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                     "klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
         }
 
-		graph = new DefaultDirectedGraph<>(SpatialEdge.class);
-		trajectories = new HashMap<>();
+        graph = new DefaultDirectedGraph<>(SpatialEdge.class);
+        trajectories = new HashMap<>();
 
         connectSourcesToTargets(context, sources, targets);
 
-        Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " "
-                + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " routing relationships.");
-		return instantiateRelationships(semantics);
-	}
+        Logging.INSTANCE.info("Creating " + graph.edgeSet().size() + " " + Concepts.INSTANCE.getDisplayName(semantics.getType())
+                + " routing relationships.");
+        return instantiateRelationships(semantics);
+    }
 	
     private boolean connectSourceToTarget(IArtifact source, IArtifact target) {
         // A direct connection of an instance to itself in the context of routing makes no sense and is thus avoided.
@@ -201,7 +200,7 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
 
     private Geometry getIsochrone(IDirectObservation node, boolean isReverse) {
         double[] coordinates = Valhalla.getCoordinates(node, geometryCollapser);
-        String isochroneRequest = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), "time", timeThreshold, isReverse);
+        String isochroneRequest = Valhalla.buildValhallaIsochroneInput(coordinates, transportType.getType(), "time", timeThresholdInSeconds, isReverse);
         return valhalla.isochrone(isochroneRequest);
     }
 
@@ -216,9 +215,13 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
             if (iterateOverSourcesFirst && connected.contains(node1)) {
                 continue;
             }
-            // Filter those nodes that are not inside the range
-            Geometry isochrone = getIsochrone((IDirectObservation) node1, useReverseIsochrones);
-            List<IObservation> inRangeNodes = filterNodesInRange(secondNodes, isochrone);
+
+            List<IObservation> inRangeNodes = secondNodes;
+            if (timeThresholdInSeconds != null) {
+                // Filter those nodes that are not inside the range
+                inRangeNodes = filterNodesInRange((IDirectObservation) node1, secondNodes, useReverseIsochrones);
+            }
+
             for(IArtifact node2 : inRangeNodes) {
                 if (context.getMonitor().isInterrupted()) {
                     return;
@@ -227,7 +230,6 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
                 if (isConnected) {
                     if (iterateOverSourcesFirst) {
                         connected.add((IObservation) node1);
-
                     }
                     connected.add((IObservation) node2);
                 }
@@ -235,7 +237,8 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
         }
     }
 
-    private List<IObservation> filterNodesInRange(List<IObservation> nodes, Geometry isochrone) {
+    private List<IObservation> filterNodesInRange(IDirectObservation sourceNode, List<IObservation> nodes, boolean useReverseIsochrones) {
+        Geometry isochrone = getIsochrone(sourceNode, useReverseIsochrones);
         return nodes.stream().filter( t -> {
             double[] coordinates = Valhalla.getCoordinates((IDirectObservation) t, geometryCollapser);
             Geometry point = new GeometryBuilder().point(coordinates[0], coordinates[1]);
@@ -244,74 +247,71 @@ public class RoutingRelationshipInstantiator extends AbstractContextualizer impl
     }
 
     private boolean isRouteInsideTheThresholds(Map<String, Object> stats) {
-        // We define the time using minutes, but receive the stats in seconds
-        return (timeThreshold == null || ((Double) stats.get("time") < timeThreshold * 60))
-                && (distanceThreshold == null || ((Double) stats.get("length") < distanceThreshold));
+        return (timeThresholdInSeconds == null || ((Double) stats.get("time") < timeThresholdInSeconds))
+                && (distanceThresholdInKilometers == null || ((Double) stats.get("length") < distanceThresholdInKilometers));
     }
 
-	private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
-		int i = 1;
-		List<IObjectArtifact> ret = new ArrayList<>();
-		// build from graph
-		for (SpatialEdge edge : graph.edgeSet()) {
+    private List<IObjectArtifact> instantiateRelationships(IObservable observable) {
+        int i = 1;
+        List<IObjectArtifact> ret = new ArrayList<>();
+        // build from graph
+        for (SpatialEdge edge : graph.edgeSet()) {
 
-			IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
-			IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
-			Parameters<String> routeParameters = edge.getParameters();
+            IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
+            IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
+            Parameters<String> routeParameters = edge.getParameters();
 
-			IScale scale = Scale.substituteExtent(scope.getScale(),
-					trajectories.get(new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source,
-							(IDirectObservation) target)));
+            IScale scale = Scale.substituteExtent(scope.getScale(), trajectories.get(
+                    new Pair<IDirectObservation, IDirectObservation>((IDirectObservation) source, (IDirectObservation) target)));
 
-			ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target,
-					new Metadata(routeParameters)));
+            ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target,
+                    new Metadata(routeParameters)));
 
-			i++;
-		}
-		return ret;
-	}
+            i++;
+        }
+        return ret;
+    }
 	
-	private void connect(IDirectObservation source, IDirectObservation target, ISpace spatialConnection,
-			Parameters<String> routeParameters) {
-		// add to graph for bookkeeping unless we don't need it
-		graph.addVertex(source);
-		graph.addVertex(target);
-		graph.addEdge(source, target, new SpatialEdge(null,
-				spatialConnection == null ? null : spatialConnection.getShape(), routeParameters));
-	}
-	
-	class SpatialEdge extends DefaultEdge {
-		private static final long serialVersionUID = -6448417928592670704L;
+    private void connect(IDirectObservation source, IDirectObservation target, ISpace spatialConnection,
+            Parameters<String> routeParameters) {
+        // add to graph for bookkeeping unless we don't need it
+        graph.addVertex(source);
+        graph.addVertex(target);
+        graph.addEdge(source, target,
+                new SpatialEdge(null, spatialConnection == null ? null : spatialConnection.getShape(), routeParameters));
+    }
 
-		IShape sourceShape;
-		IShape targetShape;
+    class SpatialEdge extends DefaultEdge {
+        private static final long serialVersionUID = -6448417928592670704L;
 
-		Parameters<String> routeParameters;
+        IShape sourceShape;
+        IShape targetShape;
 
-		SpatialEdge() {
-		}
+        Parameters<String> routeParameters;
 
-		SpatialEdge(IShape s, IShape t, Parameters<String> rp) {
-			this.sourceShape = s;
-			this.targetShape = t;
-			this.routeParameters = rp;
-		}
+        SpatialEdge() {
+        }
 
-		public Parameters<String> getParameters() {
-			return this.routeParameters;
-		}
+        SpatialEdge(IShape s, IShape t, Parameters<String> rp) {
+            this.sourceShape = s;
+            this.targetShape = t;
+            this.routeParameters = rp;
+        }
 
-	}
-	
-	
-	@Override
-	public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
-		return new RoutingRelationshipInstantiator(Parameters.create(parameters), context);
-	}
+        public Parameters<String> getParameters() {
+            return this.routeParameters;
+        }
 
-	@Override
-	public Type getType() {
-		return Type.OBJECT;
-	}
+    }
+
+    @Override
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
+        return new RoutingRelationshipInstantiator(Parameters.create(parameters), context);
+    }
+
+    @Override
+    public Type getType() {
+        return Type.OBJECT;
+    }
 
 }

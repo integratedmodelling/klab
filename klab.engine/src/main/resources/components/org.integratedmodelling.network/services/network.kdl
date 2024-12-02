@@ -61,7 +61,7 @@ export object connect
 
 export object route 
 	"Connects subjects through routes computed along a specified spatial configuration. Relationships are only
-	 created if a route exists."
+	 created if a route exists. Output values are given in kilometers and seconds."
 {
 	optional import object source
 		"Semantics for the type of the subjects used as source for the relationships"
