@@ -36,7 +36,8 @@ import org.springframework.web.client.RestTemplate;
 		"org.integratedmodelling.klab.engine.rest.controllers.engine",
 		"org.integratedmodelling.klab.engine.rest.controllers.network",
 		"org.integratedmodelling.klab.engine.rest.messaging",
-		"org.integratedmodelling.klab.engine.rest.controllers.resources" })
+		"org.integratedmodelling.klab.engine.rest.controllers.resources",
+		"org.integratedmodelling.klab.engine.rest.api"})
 public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 
 	private static Engine engine;

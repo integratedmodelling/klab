@@ -62,9 +62,6 @@ public class HubUserService implements RemoteUserService {
 
     @Autowired
     RestTemplate restTemplate;
-    
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
 
     /*
      * Generates a response entity a url to the session generated after succesful
@@ -74,7 +71,6 @@ public class HubUserService implements RemoteUserService {
     public ResponseEntity< ? > login(RemoteUserAuthenticationRequest login) {
         ResponseEntity<HubLoginResponse> result = null;
         if (!"".equals(login.getUsername()) && null==login.getToken()) {
-//        if (activeProfile.equals("engine.remote")) {
             login.setRemote(true);
             try {
                 result = hubLogin(login);
