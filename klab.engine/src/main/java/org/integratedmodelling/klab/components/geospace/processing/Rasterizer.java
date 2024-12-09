@@ -29,6 +29,7 @@ import org.locationtech.jts.geom.MultiPoint;
 import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.triangulate.polygon.PolygonTriangulator;
 
 /**
  * Simple, flexible rasterizer using an AWT image as a backend and closures to determine (a) the
@@ -131,9 +132,8 @@ public class Rasterizer<T> {
 
         Geometry geometry = ((Shape) shape).getJTSGeometry();
         Color valueColor = new Color(255, 255, 255);
-        Color holeColor = new Color(0, 0, 0);
 
-        draw(geometry, valueColor, holeColor);
+        draw(geometry, valueColor);
 
         int[] xy = new int[2];
         for (int x = 0; x < this.raster.getWidth(); x++) {
@@ -165,14 +165,12 @@ public class Rasterizer<T> {
         Geometry geometry = ((Shape) shape).getJTSGeometry();
 
         int rgbVal = floatBitsToInt(encodeToFloat(value));
-        int holeVal = floatBitsToInt(Float.NaN);
         Color valueColor = new Color(rgbVal, true);
-        Color holeColor = new Color(holeVal, true);
 
-        draw(geometry, valueColor, holeColor);
+        draw(geometry, valueColor);
     }
 
-    private void draw(Geometry geometry, Color valueColor, Color holeColor) {
+    private void draw(Geometry geometry, Color valueColor) {
 
         Geometries geomType = Geometries.get(geometry);
         if (geomType == Geometries.MULTIPOLYGON || geomType == Geometries.MULTILINESTRING
@@ -180,7 +178,7 @@ public class Rasterizer<T> {
             final int numGeom = geometry.getNumGeometries();
             for (int i = 0; i < numGeom; i++) {
                 Geometry geomN = geometry.getGeometryN(i);
-                draw(geomN, valueColor, holeColor);
+                draw(geomN, valueColor);
             }
         } else /* if (geometry.intersects(((Grid) extent).getShape().getJTSGeometry())) */ {
 
@@ -188,13 +186,12 @@ public class Rasterizer<T> {
 
                 for (int i = 0; i < geometry.getNumGeometries(); i++) {
                     Polygon poly = (Polygon) geometry.getGeometryN(i);
-                    LinearRing lr = geoFactory.createLinearRing(poly.getExteriorRing().getCoordinates());
-                    Polygon part = geoFactory.createPolygon(lr, null);
-                    drawGeometry(part, valueColor);
-                    for (int j = 0; j < poly.getNumInteriorRing(); j++) {
-                        lr = geoFactory.createLinearRing(poly.getInteriorRingN(j).getCoordinates());
-                        part = geoFactory.createPolygon(lr, null);
-                        drawGeometry(part, holeColor);
+                    boolean hasHoles = poly.getNumInteriorRing() > 0;
+                    if (hasHoles) {
+                        Geometry triangles = PolygonTriangulator.triangulate(poly);
+                        draw(triangles, valueColor);
+                    } else {
+                        drawGeometry(poly, valueColor);
                     }
                 }
             } else {
