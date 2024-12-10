@@ -70,7 +70,7 @@ public class HubUserService implements RemoteUserService {
     @Override
     public ResponseEntity< ? > login(RemoteUserAuthenticationRequest login) {
         ResponseEntity<HubLoginResponse> result = null;
-        if (!"".equals(login.getUsername()) && null==login.getToken()) {
+        if (!"".equals(login.getUsername()) && null == login.getToken()) {
             login.setRemote(true);
             try {
                 result = hubLogin(login);
@@ -84,7 +84,7 @@ public class HubUserService implements RemoteUserService {
                 HubUserProfile profile = result.getBody().getProfile();
                 String authToken = result.getBody().getAuthentication().getTokenString();
                 profile.setAuthToken(authToken);
-                
+
                 RemoteUserLoginResponse response = getLoginResponse(profile, null);
                 response.setAuthorization(authToken);
 
@@ -272,30 +272,35 @@ public class HubUserService implements RemoteUserService {
     }
 
     private ResponseEntity<HubLoginResponse> hubLogin(UserAuthenticationRequest login) {
-    	HttpEntity< ? > request = new HttpEntity<>(login);
-        
-        String authorization = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization");
-        
+        HttpHeaders headers = new HttpHeaders();
+        String authorization = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
+                .getHeader("Authorization");
+
         if (authorization != null) {
-        	HttpHeaders headers = new HttpHeaders();
-        	headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));        	
+            
+            headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
+                    .getHeader("Authorization"));
         }
-                
+
+        HttpEntity< ? > request = new HttpEntity<>(login, headers);
+
         return restTemplate.postForEntity(getLoginUrl(), request, HubLoginResponse.class);
     }
 
     private URI hubLogout(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
-        headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
+        headers.add("Authorization",
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         return restTemplate.postForLocation(getLogOutUrll(), request);
     }
 
     private ResponseEntity<HubUserProfile> hubToken(String token) {
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authentication", token);        
-        headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
+        headers.add("Authentication", token);
+        headers.add("Authorization",
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         ResponseEntity<HubUserProfile> response = restTemplate.exchange(getProfileUrl(), HttpMethod.GET, request,
                 HubUserProfile.class, true);
