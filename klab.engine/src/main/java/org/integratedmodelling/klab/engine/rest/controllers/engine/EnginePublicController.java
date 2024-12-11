@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.PublicAPI;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.auth.KlabHttpHeaders;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -80,7 +81,7 @@ public class EnginePublicController implements API.PUBLIC {
     @RequestMapping(value = CREATE_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public TicketResponse.Ticket contextRequest(@RequestBody ContextRequest request,
-            @RequestHeader(name = "Klab_Authorization") String session) {
+            @RequestHeader(name = KlabHttpHeaders.KLAB_AUTHORIZATION) String session) {
     	
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
         if (s == null) {
@@ -110,7 +111,7 @@ public class EnginePublicController implements API.PUBLIC {
     @RequestMapping(value = OBSERVE_IN_CONTEXT, method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public TicketResponse.Ticket observationRequest(@RequestBody ObservationRequest request,
-    		@RequestHeader(name = "Klab_Authorization") String session, @PathVariable String context) {
+    		@RequestHeader(name = KlabHttpHeaders.KLAB_AUTHORIZATION) String session, @PathVariable String context) {
 
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
 
@@ -144,7 +145,7 @@ public class EnginePublicController implements API.PUBLIC {
 
     @RequestMapping(value = SUBMIT_ESTIMATE, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TicketResponse.Ticket submitEstimate(@RequestHeader(name = "Klab_Authorization") String session,
+    public TicketResponse.Ticket submitEstimate(@RequestHeader(name = KlabHttpHeaders.KLAB_AUTHORIZATION) String session,
             @PathVariable String estimate) {
 
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
@@ -175,7 +176,7 @@ public class EnginePublicController implements API.PUBLIC {
             MediaType.TEXT_PLAIN_VALUE, MediaType.APPLICATION_PDF_VALUE, MediaType.IMAGE_PNG_VALUE, "text/csv", "image/tiff",
             "application/vnd.ms-excel", "application/octet-stream",
             "application/vnd.openxmlformats-officedocument.wordprocessingml.document"})
-    public void exportData(@PathVariable String export, @RequestHeader(name = "Klab_Authorization") String session,
+    public void exportData(@PathVariable String export, @RequestHeader(name = KlabHttpHeaders.KLAB_AUTHORIZATION) String session,
             @PathVariable String observation, @RequestHeader(name = "Accept") String format,
             @RequestParam(required = false) String view, @RequestParam(required = false) String viewport,
             @RequestParam(required = false) String locator, HttpServletResponse response) throws IOException {
@@ -387,7 +388,7 @@ public class EnginePublicController implements API.PUBLIC {
 
     @RequestMapping(value = TICKET_INFO, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = "Klab_Authorization") String session,
+    public TicketResponse.Ticket getTicketInfo(@RequestHeader(name = KlabHttpHeaders.KLAB_AUTHORIZATION) String session,
             @PathVariable String ticket) {
 
         Session s = Authentication.INSTANCE.getIdentity(session, Session.class);
