@@ -15,6 +15,6 @@ public interface KlabHttpHeaders {
 	/**
 	 *  Designed to send session information with requests.
 	 **/
-	public static final String KLAB_AUTHORIZATION = "Klab_Authorization"; 
+	public static final String KLAB_AUTHORIZATION = "klab-authorization"; 
 
 }
