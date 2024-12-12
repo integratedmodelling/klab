@@ -71,21 +71,12 @@ class WebSecurityConfig {
 
                 HttpServletRequest request = EngineHttpUtils.getCurrentHttpRequest();
                 
-                Map<String, String> headers = Collections.list(request.getHeaderNames())
-                        .stream()
-                        .collect(Collectors.toMap(h -> h, request::getHeader));
-                
-                logger.info(headers.toString().replace(',', '\n'));
-                
-
                 String klabAuth = request.getHeader(KlabHttpHeaders.KLAB_AUTHORIZATION);
-                
-                logger.info(klabAuth);
 
                 if (klabAuth != null) {
                     // send anything already known downstream
                     if (Authentication.INSTANCE.getIdentity(klabAuth, IIdentity.class) != null) {
-                        logger.info("Add ROLE_SESSION");
+                        logger.trace("Add ROLE_SESSION");
                         roles.ifPresent(role -> role.add(Roles.SESSION));
                     }
                 }
