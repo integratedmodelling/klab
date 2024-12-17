@@ -11,9 +11,9 @@ import java.util.Objects;
  */
 public class RemoteUserAuthenticationRequest extends UserAuthenticationRequest {
 
-	private String token;
-	
-	/**
+    private String token;
+    
+    /**
 	 * @return the token
 	 */
 	public String getToken() {
@@ -47,6 +47,6 @@ public class RemoteUserAuthenticationRequest extends UserAuthenticationRequest {
 
 	@Override
 	public String toString() {
-		return "RemoteUserAuthenticationRequest [username=" + getUsername() + ", password=" + getPassword() + ", token="+getToken()+"]";
+		return "RemoteUserAuthenticationRequest [username=" + getUsername() + ", token="+getToken()+"]";
 	}
 }

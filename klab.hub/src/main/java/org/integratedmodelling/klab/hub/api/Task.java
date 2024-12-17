@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.tasks.enums.TaskStatus;
 import org.integratedmodelling.klab.hub.tasks.enums.TaskType;
+import org.keycloak.KeycloakPrincipal;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
@@ -87,8 +88,9 @@ public abstract class Task {
     public Task(TaskStatus parentStatus) {
         this(null, parentStatus);
     }
-    public Task(Role roleRequirement, TaskStatus parentStatus) {
-        this.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
+    protected Task(Role roleRequirement, TaskStatus parentStatus) {
+        this.setUser(((KeycloakPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal())
+                .getKeycloakSecurityContext().getToken().getPreferredUsername());
         this.setRoleRequirement(roleRequirement);;
         this.setIssued();
         this.setStatus(TaskStatus.pending);
