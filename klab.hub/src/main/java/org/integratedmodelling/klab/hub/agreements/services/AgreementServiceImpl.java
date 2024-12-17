@@ -67,7 +67,7 @@ public class AgreementServiceImpl implements AgreementService {
         agreement.setAgreementType(agreementTemplate.getAgreementType());
 
         agreement.addGroupEntries(getAgreementDefault(agreementTemplate));
-        agreement.setValidDate(now);
+        agreement.setValidDate(null);
         agreement.setTransactionDate(now);
         agreement.setExpirationDate(agreementTemplate.getDefaultDuration() == 0
                 ? null
@@ -155,7 +155,8 @@ public class AgreementServiceImpl implements AgreementService {
         return new UpdateAgreement(Sets.newHashSet(agreement), agreementRepository).execute();
     }
     
-        /**
+    
+    /**
      * Call to findAll function with defined page and filters
      */
     @Override

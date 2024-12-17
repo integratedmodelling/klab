@@ -20,7 +20,7 @@ public class AcceptanceTestUtils {
         URI uri = new URI(baseUrl);
         HttpHeaders headers = new HttpHeaders();
         UserAuthenticationRequest auth= new UserAuthenticationRequest();
-        
+        auth.setPassword("password");
         auth.setUsername("system");
         HttpEntity<?> request = new HttpEntity<>(auth, headers);
         RestTemplate restTemplate = new RestTemplate();

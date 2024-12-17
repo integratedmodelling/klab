@@ -53,24 +53,12 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 
     private TagNotificationService tagNotificationService;
 
-//    @Autowired
-//    EngineLicenseController(UserProfileService userProfileService, LicenseConfigService configService,
-//            MongoGroupRepository groupRepository, EmailManager emailManager, UserAuthTokenService authTokenService,
-//            AgreementService agreementService, TagNotificationService tagNotificationService) {
-//        this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, authTokenService,
-//                agreementService);
-//        this.licenseGenerator = new LicenseGenerator(configService);
-//        this.userProfileService = userProfileService;
-//        this.emailManager = emailManager;
-//        this.agreementService = agreementService;
-//        this.tagNotificationService = tagNotificationService;
-//    }
-
     @Autowired
     EngineLicenseController(UserProfileService userProfileService, LicenseConfigService configService,
-            MongoGroupRepository groupRepository, EmailManager emailManager, AgreementService agreementService,
-            TagNotificationService tagNotificationService) {
-        this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, agreementService);
+            MongoGroupRepository groupRepository, EmailManager emailManager, UserAuthTokenService authTokenService,
+            AgreementService agreementService, TagNotificationService tagNotificationService) {
+        this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, authTokenService,
+                agreementService);
         this.licenseGenerator = new LicenseGenerator(configService);
         this.userProfileService = userProfileService;
         this.emailManager = emailManager;
@@ -79,7 +67,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
     }
 
     @GetMapping(value = API.HUB.USER_AGREEMENT_BASE_ID, params = "certificate")
-    @PreAuthorize("@securityService.isUser(#id)")
+    @PreAuthorize("authentication.getPrincipal() == #id")
     public void generateCertFile(@PathVariable("id") String id, @PathVariable("agreementId") String agreementId,
             HttpServletResponse response) throws IOException {
 

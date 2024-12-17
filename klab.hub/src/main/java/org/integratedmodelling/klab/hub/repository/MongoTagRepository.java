@@ -15,6 +15,4 @@ public interface MongoTagRepository extends ResourceRepository<MongoTag, String>
 
     List<MongoTag> findAllByTagElementId(String id);
 
-    List<MongoTag> findAllByTagElementIdIsNull();
-
 }

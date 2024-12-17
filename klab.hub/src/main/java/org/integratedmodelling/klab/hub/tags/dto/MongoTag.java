@@ -73,48 +73,4 @@ public class MongoTag {
         this.name = name;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public Period getTimeToExpiration() {
-        return timeToExpiration;
-    }
-
-    public void setTimeToExpiration(Period timeToExpiration) {
-        this.timeToExpiration = timeToExpiration;
-    }
-
-    public String getTagElementId() {
-        return tagElementId;
-    }
-
-    public void setTagElementId(String tagElementId) {
-        this.tagElementId = tagElementId;
-    }
-
-    public ITagElement getITagElement() {
-        return iTagElement;
-    }
-
-    public void setITagElement(ITagElement iTagElement) {
-        this.iTagElement = iTagElement;
-    }
-
-    public Boolean getVisible() {
-        return visible;
-    }
-
-    public void setVisible(Boolean visible) {
-        this.visible = visible;
-    }
-
-    public String getName() {
-        return name;
-    }
-
 }

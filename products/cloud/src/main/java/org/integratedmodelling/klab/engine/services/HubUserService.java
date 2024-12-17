@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.engine.services;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -29,22 +28,17 @@ import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * This hub service is used to authenticate a user request to login to an engine
@@ -70,7 +64,7 @@ public class HubUserService implements RemoteUserService {
     @Override
     public ResponseEntity< ? > login(RemoteUserAuthenticationRequest login) {
         ResponseEntity<HubLoginResponse> result = null;
-        if (!"".equals(login.getUsername()) && null == login.getToken()) {
+        if (!"".equals(login.getUsername()) && !"".equals(login.getPassword())) {
             login.setRemote(true);
             try {
                 result = hubLogin(login);
@@ -84,10 +78,8 @@ public class HubUserService implements RemoteUserService {
                 HubUserProfile profile = result.getBody().getProfile();
                 String authToken = result.getBody().getAuthentication().getTokenString();
                 profile.setAuthToken(authToken);
-
                 RemoteUserLoginResponse response = getLoginResponse(profile, null);
                 response.setAuthorization(authToken);
-
                 return ResponseEntity.status(HttpStatus.ACCEPTED).body(response);
             } else {
                 throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());
@@ -273,25 +265,13 @@ public class HubUserService implements RemoteUserService {
 
     private ResponseEntity<HubLoginResponse> hubLogin(UserAuthenticationRequest login) {
         HttpHeaders headers = new HttpHeaders();
-        String authorization = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
-                .getHeader("Authorization");
-
-        if (authorization != null) {
-            
-            headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
-                    .getHeader("Authorization"));
-        }
-
         HttpEntity< ? > request = new HttpEntity<>(login, headers);
-
         return restTemplate.postForEntity(getLoginUrl(), request, HubLoginResponse.class);
     }
 
     private URI hubLogout(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
-        headers.add("Authorization",
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         return restTemplate.postForLocation(getLogOutUrll(), request);
     }
@@ -299,8 +279,6 @@ public class HubUserService implements RemoteUserService {
     private ResponseEntity<HubUserProfile> hubToken(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
-        headers.add("Authorization",
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         ResponseEntity<HubUserProfile> response = restTemplate.exchange(getProfileUrl(), HttpMethod.GET, request,
                 HubUserProfile.class, true);

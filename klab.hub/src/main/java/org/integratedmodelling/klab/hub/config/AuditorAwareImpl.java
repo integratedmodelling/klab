@@ -1,34 +1,24 @@
 package org.integratedmodelling.klab.hub.config;
 
-import java.security.Principal;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.AccessToken;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.AuditorAware;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class AuditorAwareImpl implements AuditorAware<String> {
-
-    @Autowired
-    private HttpServletRequest request;
 
     @Override
     public Optional<String> getCurrentAuditor() {
 
-        if (request.getUserPrincipal() == null)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
             return null;
+        }
 
-        AccessToken accessToken = this.getKeycloakToken(request.getUserPrincipal());
-        String userName = accessToken.getPreferredUsername();
+        String username = (String) authentication.getPrincipal();
 
-        return Optional.ofNullable(userName);
-    }
-
-    private AccessToken getKeycloakToken(Principal principal) {
-        KeycloakAuthenticationToken keycloakAuthenticationToken = (KeycloakAuthenticationToken) principal;
-        return keycloakAuthenticationToken.getAccount().getKeycloakSecurityContext().getToken();
+        return Optional.of(username);
     }
 }

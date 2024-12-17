@@ -4,16 +4,24 @@ import java.util.Objects;
 
 public class UserAuthenticationRequest {
 
-	private String username;	
-
+	private String username;
+	private String password;
 	private boolean remote = false;
 
-    public String getUsername() {
-        return username;
-    }
-    
-    public void setUsername(String username) {
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
 		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public boolean isRemote() {
@@ -26,7 +34,7 @@ public class UserAuthenticationRequest {
 
     @Override
     public int hashCode() {
-        return Objects.hash(remote, username);
+        return Objects.hash(remote, password, username);
     }
 
     @Override
@@ -38,12 +46,12 @@ public class UserAuthenticationRequest {
             return false;
         }
         UserAuthenticationRequest other = (UserAuthenticationRequest) obj;
-        return remote == other.remote && Objects.equals(username, other.username);
+        return remote == other.remote && Objects.equals(password, other.password) && Objects.equals(username, other.username);
     }
 
     @Override
     public String toString() {
-        return "UserAuthenticationRequest [username=" + username + ", remote=" + remote + "]";
+        return "UserAuthenticationRequest [username=" + username + ", password=" + password + ", remote=" + remote + "]";
     }
 
 }

@@ -16,17 +16,17 @@ import net.minidev.json.JSONObject;
 public class AcceptanceTestUtils {
 
     public static String getSessionTokenForDefaultAdministrator(int port) throws URISyntaxException {
-        final String baseUrl = "http://localhost:" + port + "/hub" + API.HUB.AUTHENTICATE_USER;
+        final String baseUrl = "http://localhost:"+ port + "/hub" + API.HUB.AUTHENTICATE_USER;
         URI uri = new URI(baseUrl);
         HttpHeaders headers = new HttpHeaders();
-        UserAuthenticationRequest auth = new UserAuthenticationRequest();
-//        auth.setPassword("password");
+        UserAuthenticationRequest auth= new UserAuthenticationRequest();
+        auth.setPassword("password");
         auth.setUsername("system");
-        HttpEntity< ? > request = new HttpEntity<>(auth, headers);
+        HttpEntity<?> request = new HttpEntity<>(auth, headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<JSONObject> result = restTemplate.postForEntity(uri, request, JSONObject.class);
         JSONObject body = result.getBody();
-        return ((Map< ? , ? >) body.get("Authentication")).get("tokenString").toString();
+        return ((Map<?,?>) body.get("Authentication")).get("tokenString").toString();
     }
 
 }

@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.hub.tasks.services.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -41,8 +40,7 @@ public class TasksController {
 	}
 	
 	@GetMapping(value=API.HUB.TASK_BASE, produces = "application/json")
-	//@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	@PreAuthorize("hasRole('ROLE_ADMINISTRATOR') or hasRole('ROLE_SYSTEM')")
+	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> getTasks(@RequestParam("type") Optional<TaskType> type,
 			@RequestParam("status") Optional<TaskStatus> status) {
 		List<Task> tasks = new ArrayList<>();

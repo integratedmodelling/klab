@@ -32,16 +32,14 @@ public class UserDeletionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(resp);
     }
 
-//	@DeleteMapping(value= API.HUB.DELETED_USER_ID, produces = "application/json", params = "delete-ldap")
-//	@PreAuthorize("hasRole('ROLE_SYSTEM')")
-//	public ResponseEntity<?> deleteLdap(@PathVariable("id") String username){
-////		userService.deleteUserLdap(username);
-//		JSONObject resp = new JSONObject();
-//		resp.appendField("User", username);
-//		resp.appendField("message", "Deleted the ldap for deleted user");
-//    	return ResponseEntity
-//    			  .status(HttpStatus.CREATED)
-//    			  .body(resp);
-//	}
+    @DeleteMapping(value = API.HUB.DELETED_USER_ID, produces = "application/json", params = "delete-ldap")
+    @PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
+    public ResponseEntity< ? > deleteLdap(@PathVariable("id") String username) {
+        userService.deleteUserLdap(username);
+        JSONObject resp = new JSONObject();
+        resp.appendField("User", username);
+        resp.appendField("message", "Deleted the ldap for deleted user");
+        return ResponseEntity.status(HttpStatus.CREATED).body(resp);
+    }
 
 }

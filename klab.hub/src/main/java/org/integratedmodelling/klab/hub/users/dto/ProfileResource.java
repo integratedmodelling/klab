@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.users.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.integratedmodelling.klab.rest.CustomProperty;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
@@ -101,10 +103,10 @@ public class ProfileResource implements OAuth2User{
         }
 
         ProfileResource other = (ProfileResource) obj;
-        return new EqualsBuilder().append(name, other.name).append(email, other.email).append(serverUrl, other.serverUrl)
-                .append(firstName, other.firstName).append(lastName, other.lastName).append(initials, other.initials)
-                .append(address, other.address).append(jobTitle, other.jobTitle).append(phone, other.phone)
-                .append(affiliation, other.affiliation).append(agreements, other.agreements)
+        return new EqualsBuilder().append(name, other.name).append(email, other.email)
+                .append(serverUrl, other.serverUrl).append(firstName, other.firstName).append(lastName, other.lastName)
+                .append(initials, other.initials).append(address, other.address).append(jobTitle, other.jobTitle)
+                .append(phone, other.phone).append(affiliation, other.affiliation).append(agreements, other.agreements)
                 .append(sendUpdates, other.sendUpdates).append(comments, other.comments)
                 .append(accountStatus, other.accountStatus).isEquals();
     }
@@ -147,12 +149,12 @@ public class ProfileResource implements OAuth2User{
         return attributes;
     }
 
-//    public void setAttributes(Map<String, Object> attributes) {
-//        this.attributes = attributes;
-//        this.authorities = Collections.
-//                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
-//        this.roles.add(Role.ROLE_USER);
-//    }
+    public void setAttributes(Map<String, Object> attributes) {
+        this.attributes = attributes;
+        this.authorities = Collections.
+                singletonList(new SimpleGrantedAuthority("ROLE_USER"));
+        this.roles.add(Role.ROLE_USER);
+    }
 
     @Override
     public String getName() {
@@ -282,8 +284,7 @@ public class ProfileResource implements OAuth2User{
         ArrayList<GroupEntry> expiring = new ArrayList<GroupEntry>();
 
         for (GroupEntry e : getAgreements().get(0).getAgreement().getGroupEntries()) {
-            if (e.getExpiration() != null && !e.getExpiration().isBefore(LocalDateTime.now())
-                    && !e.getExpiration().isAfter(LocalDateTime.now().plusDays(30))) {
+            if(e.getExpiration() != null && !e.getExpiration().isBefore(LocalDateTime.now()) && !e.getExpiration().isAfter(LocalDateTime.now().plusDays(30))) {
                 expiring.add(e);
             }
         }
