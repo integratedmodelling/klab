@@ -4,6 +4,11 @@ spring:
   cloud:
     consul:
       enabled: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8078/realms/im
         
 stats:
   server:
@@ -14,6 +19,10 @@ engine:
     port: 8999
   session:
     inactive: 60
+  env:
+    #appBaseUrl: http://localhost:8082/modeler
+    appBaseUrl: http://localhost:8283/modeler
+    keycloakUrl: http://localhost:8078
     
 server: 
   port: 8283

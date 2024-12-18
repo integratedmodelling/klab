@@ -556,6 +556,21 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 			<version>${spring-boot.version}</version>
 		</dependency>
+				<dependency> 
+			<groupId>org.springframework.security</groupId> 
+			<artifactId>spring-security-oauth2-resource-server</artifactId> 
+			<version>${spring-security.version}</version> 
+		</dependency> 
+		<dependency> 
+			<groupId>org.springframework.security</groupId> 
+			<artifactId>spring-security-oauth2-jose</artifactId> 
+			<version>${spring-security.version}</version> 
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-joda</artifactId>
+			<version>${jackson-version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
@@ -573,7 +588,6 @@
 			<artifactId>jopt-simple </artifactId>
 			<version>4.6</version>
 		</dependency>
-
 		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext -->
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
