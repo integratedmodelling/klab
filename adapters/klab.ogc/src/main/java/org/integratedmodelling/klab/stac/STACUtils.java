@@ -113,7 +113,7 @@ public class STACUtils {
      * @param collectionData
      * @return url of the catalog
      */
-    public static String getCatalogUrl(JSONObject collectionData) {
+    public static String getCatalogUrl(String collectionUrl, String collectionId, JSONObject collectionData) {
         // The URL of the catalog is the root
         if (!collectionData.has("links")) {
             throw new KlabResourceAccessException("STAC collection is missing links. It is not fully complaiant and cannot be accessed by the adapter.");
@@ -124,6 +124,10 @@ public class STACUtils {
         if (rootLink.isEmpty()) {
             throw new KlabResourceAccessException("STAC collection is missing a relationship to the root catalog");
         }
-        return rootLink.get().getString("href");
+        String href = rootLink.get().getString("href");
+        if (href.startsWith("..")) {
+            return collectionUrl.replace("/collection.json", "").replace(collectionId, "") + href.replace("../", "");
+        }
+        return href;
     }
 }
