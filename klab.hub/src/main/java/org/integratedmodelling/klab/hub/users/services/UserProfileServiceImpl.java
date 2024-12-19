@@ -168,45 +168,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     }
 
-    @Override
-    public ProfileResource updateUserEmail(String username, String email) {
-        User user = getUser(username);
-        user.setEmail(email);
-
-        /* update mongo repository */
-        User updatedUser;
-
-        try {
-            updatedUser = new UpdateUser(user, userRepository).execute();
-        } catch (DuplicateKeyException e) {
-            logger.error(e.getMessage());
-            throw new KlabException("Duplicated key, email is already in use.");
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            throw new KlabException("Error updating mongo user: " + e.getMessage(), e);
-        }
-
-        /* update ldap */
-//        try {
-//            ldapServiceImpl.updateUserEmailAddress(username, email);
-//        } catch (Exception e) {
-//            logger.error(e.getMessage(), e);
-//            throw new KlabException("Error updating ldap user: " + e.getMessage(), e);
-//        }
-
-        try {
-            tagNotificationService.createWarningUserTagNotification(updatedUser,
-                    TagNameEnum.downloadCertificateChangeEmail.toString(), false, "", "");
-
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            throw new KlabException(e.getMessage(), e);
-        }
-
-        ProfileResource updatedProfile = objectMapper.convertValue(updatedUser, ProfileResource.class);
-        return updatedProfile.getSafeProfile();
-    }
-
     private User updateUserFromProfileResource(ProfileResource profile) {
         User user;
         try {

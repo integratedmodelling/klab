@@ -51,7 +51,7 @@ public class TagNotificationService {
      * @return
      */
     public TagNotification createTagNotification(ITagElementEnum iTagElementEnum, String id,
-            HubNotificationMessage.Type tagNotifactionType, Boolean visible, String tagName, String title, String message) {
+            HubNotificationMessage.Type tagNotifactionType, Boolean visible, String tagName, String title, String message, String navigateTo) {
 
         /* Create Mongo Tag */
         MongoTag tag = new MongoTag();
@@ -71,6 +71,8 @@ public class TagNotificationService {
 
         tagNotification.setTitle(title);
         tagNotification.setMessage(message);
+        
+        tagNotification.setNavigateTo(navigateTo);
 
         try {
             tagNotificationRepository.save(tagNotification);
@@ -99,18 +101,19 @@ public class TagNotificationService {
     }
 
     public TagNotification createWarningUserTagNotification(User user, String tagName, Boolean visible, String title,
-            String message) {
+            String message, String navigateTo) {
         MongoTag tag = new MongoTag();
         tag.setTagElementId(user.getId().isEmpty() ? null : user.getId());
         tag.setITagElement(user);
         tag.setName(tagName);
-        tag.setVisible(visible);
+        tag.setVisible(visible);        
 
         tag = mongoTagRepository.save(tag);
         TagNotification tagNotification = new TagNotification();
 
         tagNotification.setTag(tag);
         tagNotification.setType(Type.WARNING);
+        tagNotification.setNavigateTo(navigateTo);
 
         try {
             tagNotificationRepository.save(tagNotification);

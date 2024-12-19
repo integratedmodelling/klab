@@ -10,6 +10,7 @@ public class TagRequest {
     private String title;
     private String message;
     private String visible;
+    private String navigateTo;
 
     public String getId() {
         return id;
@@ -59,5 +60,11 @@ public class TagRequest {
     public void setVisible(String visible) {
         this.visible = visible;
     }
-
+    public String getNavigateTo() {
+        return navigateTo;
+    }
+    public void setNavigateTo(String navigateTo) {
+        this.navigateTo = navigateTo;
+    }
+    
 }
