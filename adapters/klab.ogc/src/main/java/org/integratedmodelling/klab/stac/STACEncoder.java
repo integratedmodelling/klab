@@ -182,7 +182,8 @@ public class STACEncoder implements IResourceEncoder {
             IContextualizationScope scope) {
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
-        String catalogUrl = STACUtils.getCatalogUrl(collectionData);
+        String collectionId = collectionData.getString("id");
+        String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collectionData);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
