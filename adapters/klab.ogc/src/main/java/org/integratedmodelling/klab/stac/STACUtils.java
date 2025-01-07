@@ -1,14 +1,19 @@
 package org.integratedmodelling.klab.stac;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.DOIReader;
+import org.opengis.feature.simple.SimpleFeature;
+
+import com.fasterxml.jackson.core.JsonParseException;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -125,9 +130,21 @@ public class STACUtils {
             throw new KlabResourceAccessException("STAC collection is missing a relationship to the root catalog");
         }
         String href = rootLink.get().getString("href");
+        return getUrlOfItem(collectionUrl, collectionId, href);
+    }
+
+    public static String getUrlOfItem(String collectionUrl, String collectionId, String href) {
         if (href.startsWith("..")) {
             return collectionUrl.replace("/collection.json", "").replace(collectionId, "") + href.replace("../", "");
         }
+        if (href.startsWith(".")) {
+            return collectionUrl.replace("collection.json", "") + href.replace("./", "");
+        }
         return href;
+    }
+
+    public static SimpleFeature getItemAsFeature(String itemUrl) throws JsonParseException, IOException {
+        HttpResponse<JsonNode> response = Unirest.get(itemUrl).asJson();
+        return GeoJSONReader.parseFeature(response.getBody().toString());
     }
 }
