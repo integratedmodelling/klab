@@ -85,7 +85,9 @@ public class STACCollectionParser {
         // item_assets is a shortcut for obtaining information about the assets
         // https://github.com/stac-extensions/item-assets
         if (collection.has("item_assets")) {
-            return STACCollectionParser.readItemAssets(collection);
+            if (!collection.getJSONObject("item_assets").isEmpty()) {
+                return STACCollectionParser.readItemAssets(collection);
+            }
         }
 
         // TODO Move the query to another place. 
