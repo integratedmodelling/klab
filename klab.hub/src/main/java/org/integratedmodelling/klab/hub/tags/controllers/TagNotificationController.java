@@ -59,7 +59,7 @@ public class TagNotificationController {
             TagNotification tagNotification = tagNotificationService.createTagNotification(
                     ITagElementEnum.valueOf(tagRequest.getiTagElement()), tagRequest.getiTagElementId(),
                     HubNotificationMessage.Type.valueOf(tagRequest.getType()), Boolean.valueOf(tagRequest.getVisible()),
-                    tagRequest.getName(), tagRequest.getTitle(), tagRequest.getMessage());
+                    tagRequest.getName(), tagRequest.getTitle(), tagRequest.getMessage(), tagRequest.getNavigateTo());
 
             return ResponseEntity.status(HttpStatus.OK).body(tagNotification);
         } catch (Exception e) {
