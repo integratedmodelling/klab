@@ -32,10 +32,28 @@ public class TagNotification {
     @DBRef
     private MongoTag tag;
 
+    /**
+     * Type  of notification
+     */
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    /**
+     * Title of notification
+     */
     private String title;
+    
+    /**
+     * Message of notification
+     */
+    private String message;
+    
+    /**
+     * Indicates whether navigation is required and where to navigate to execute an action.
+     */
+    private String navigateTo;
+    
+    
     public String getTitle() {
         return title;
     }
@@ -44,7 +62,6 @@ public class TagNotification {
         this.title = title;
     }
 
-    private String message;
 
     public void setTag(MongoTag tag) {
         this.tag = tag;
@@ -77,5 +94,7 @@ public class TagNotification {
     public void setMessage(String message) {
         this.message = message;
     }
+    
+
 
 }
