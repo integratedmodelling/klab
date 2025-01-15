@@ -12,7 +12,6 @@ import org.eclipse.xtext.formatting2.AbstractFormatter2;
 import org.eclipse.xtext.formatting2.IFormattableDocument;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.xbase.lib.Extension;
-import org.eclipse.xtext.xbase.lib.XbaseGenerated;
 import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ConceptStatement;
@@ -61,7 +60,6 @@ public class KimFormatter extends AbstractFormatter2 {
     document.<ConceptDeclaration>format(conceptDeclaration.getContext());
   }
 
-  @XbaseGenerated
   public void format(final Object conceptDeclaration, final IFormattableDocument document) {
     if (conceptDeclaration instanceof XtextResource) {
       _format((XtextResource)conceptDeclaration, document);

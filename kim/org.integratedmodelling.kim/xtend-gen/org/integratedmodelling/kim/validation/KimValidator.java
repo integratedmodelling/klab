@@ -4,12 +4,12 @@
  */
 package org.integratedmodelling.kim.validation;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import org.eclipse.emf.common.util.EList;
@@ -443,20 +443,20 @@ public class KimValidator extends AbstractKimValidator {
       int _level = ref.getLevel();
       boolean _matched = false;
       int _intValue = Level.SEVERE.intValue();
-      if (Objects.equals(_level, _intValue)) {
+      if (Objects.equal(_level, _intValue)) {
         _matched=true;
         this.error(ref.getMessage(), KimPackage.Literals.MODEL_STATEMENT__MODEL, KimValidator.REASONING_PROBLEM);
       }
       if (!_matched) {
         int _intValue_1 = Level.WARNING.intValue();
-        if (Objects.equals(_level, _intValue_1)) {
+        if (Objects.equal(_level, _intValue_1)) {
           _matched=true;
           this.warning(ref.getMessage(), KimPackage.Literals.MODEL_STATEMENT__MODEL, KimValidator.REASONING_PROBLEM);
         }
       }
       if (!_matched) {
         int _intValue_2 = Level.INFO.intValue();
-        if (Objects.equals(_level, _intValue_2)) {
+        if (Objects.equal(_level, _intValue_2)) {
           _matched=true;
           this.info(ref.getMessage(), KimPackage.Literals.MODEL_STATEMENT__MODEL, KimValidator.REASONING_PROBLEM);
         }
@@ -533,14 +533,14 @@ public class KimValidator extends AbstractKimValidator {
             int _level = ref.getLevel();
             boolean _matched = false;
             int _intValue = Level.SEVERE.intValue();
-            if (Objects.equals(_level, _intValue)) {
+            if (Objects.equal(_level, _intValue)) {
               _matched=true;
               this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, 
                 KimValidator.REASONING_PROBLEM);
             }
             if (!_matched) {
               int _intValue_1 = Level.WARNING.intValue();
-              if (Objects.equals(_level, _intValue_1)) {
+              if (Objects.equal(_level, _intValue_1)) {
                 _matched=true;
                 this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, 
                   KimValidator.REASONING_PROBLEM);
@@ -548,7 +548,7 @@ public class KimValidator extends AbstractKimValidator {
             }
             if (!_matched) {
               int _intValue_2 = Level.INFO.intValue();
-              if (Objects.equals(_level, _intValue_2)) {
+              if (Objects.equal(_level, _intValue_2)) {
                 _matched=true;
                 this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__OBSERVABLES, obsIdx, 
                   KimValidator.REASONING_PROBLEM);
@@ -668,14 +668,14 @@ public class KimValidator extends AbstractKimValidator {
             int _level = ref.getLevel();
             boolean _matched = false;
             int _intValue = Level.SEVERE.intValue();
-            if (Objects.equals(_level, _intValue)) {
+            if (Objects.equal(_level, _intValue)) {
               _matched=true;
               this.error(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, 
                 KimValidator.REASONING_PROBLEM);
             }
             if (!_matched) {
               int _intValue_1 = Level.WARNING.intValue();
-              if (Objects.equals(_level, _intValue_1)) {
+              if (Objects.equal(_level, _intValue_1)) {
                 _matched=true;
                 this.warning(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, 
                   KimValidator.REASONING_PROBLEM);
@@ -683,7 +683,7 @@ public class KimValidator extends AbstractKimValidator {
             }
             if (!_matched) {
               int _intValue_2 = Level.INFO.intValue();
-              if (Objects.equals(_level, _intValue_2)) {
+              if (Objects.equal(_level, _intValue_2)) {
                 _matched=true;
                 this.info(ref.getMessage(), KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, 
                   KimValidator.REASONING_PROBLEM);
@@ -775,7 +775,7 @@ public class KimValidator extends AbstractKimValidator {
       for (final Classifier classifier : _classifiers) {
         {
           KimConcept decl = Kim.INSTANCE.declareConcept(classifier.getDeclaration());
-          boolean _equals = Objects.equals(type, Integer.valueOf(0));
+          boolean _equals = Objects.equal(type, Integer.valueOf(0));
           if (_equals) {
             type = decl.getType();
           } else {
@@ -853,10 +853,10 @@ public class KimValidator extends AbstractKimValidator {
               String _id = arg.getId();
               boolean _tripleNotEquals_4 = (_id != null);
               if (_tripleNotEquals_4) {
-                if (((!Objects.equals(arg.getId(), "?")) && (!Objects.equals(arg.getId(), "*")))) {
+                if (((!Objects.equal(arg.getId(), "?")) && (!Objects.equal(arg.getId(), "*")))) {
                   boolean found = false;
                   for (final KimObservable dependency : dependencies) {
-                    if (((dependency.getName() != null) && Objects.equals(dependency.getName(), arg))) {
+                    if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
                       found = true;
                     }
                   }
@@ -864,7 +864,7 @@ public class KimValidator extends AbstractKimValidator {
                   }
                 } else {
                   String _id_1 = arg.getId();
-                  boolean _equals = Objects.equals(_id_1, "?");
+                  boolean _equals = Objects.equal(_id_1, "?");
                   if (_equals) {
                     if (checkFound) {
                       this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
@@ -1118,18 +1118,18 @@ public class KimValidator extends AbstractKimValidator {
   public void notify(final KimNotification notification, final EObject object, final EStructuralFeature cls) {
     final Level _switchValue = notification.level;
     boolean _matched = false;
-    if (Objects.equals(_switchValue, Level.SEVERE)) {
+    if (Objects.equal(_switchValue, Level.SEVERE)) {
       _matched=true;
       this.error(notification.message, object, cls);
     }
     if (!_matched) {
-      if (Objects.equals(_switchValue, Level.WARNING)) {
+      if (Objects.equal(_switchValue, Level.WARNING)) {
         _matched=true;
         this.warning(notification.message, object, cls);
       }
     }
     if (!_matched) {
-      if (Objects.equals(_switchValue, Level.INFO)) {
+      if (Objects.equal(_switchValue, Level.INFO)) {
         _matched=true;
         this.info(notification.message, object, cls);
       }
@@ -1208,7 +1208,7 @@ public class KimValidator extends AbstractKimValidator {
         for (final KimNotification notification : _addAction) {
           {
             this.notify(notification, observation, KimPackage.Literals.OBSERVE_STATEMENT_BODY__ACTIONS, i);
-            boolean _equals = Objects.equals(notification.level, Level.SEVERE);
+            boolean _equals = Objects.equal(notification.level, Level.SEVERE);
             if (_equals) {
               ok = false;
             }
@@ -2366,7 +2366,7 @@ public class KimValidator extends AbstractKimValidator {
             EnumSet<IKimConcept.Type> corectype = Kim.INSTANCE.getType(((ConceptStatement) _eContainer).getConcept(), null);
             EnumSet<IKimConcept.Type> a = Kim.intersection(type, IKimConcept.DECLARABLE_TYPES);
             EnumSet<IKimConcept.Type> b = Kim.intersection(corectype, IKimConcept.DECLARABLE_TYPES);
-            if ((((a.size() != 1) || (b.size() != 1)) || (!Objects.equals(((IKimConcept.Type[])Conversions.unwrapArray(a, IKimConcept.Type.class))[0], ((Object[])Conversions.unwrapArray(b, Object.class))[0])))) {
+            if ((((a.size() != 1) || (b.size() != 1)) || (!Objects.equal(((IKimConcept.Type[])Conversions.unwrapArray(a, IKimConcept.Type.class))[0], ((Object[])Conversions.unwrapArray(b, Object.class))[0])))) {
               this.error("Core concept is not compatible with the stated type", concept, 
                 KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS);
               error = true;
@@ -2428,7 +2428,7 @@ public class KimValidator extends AbstractKimValidator {
                   if (_not_1) {
                     KimConcept declaration = Kim.INSTANCE.declareConcept(p);
                     if (((declaration != null) && (!declaration.getType().isEmpty()))) {
-                      if (((i == 0) || Objects.equals(concept.getConnectors().get((i - 1)), ","))) {
+                      if (((i == 0) || Objects.equal(concept.getConnectors().get((i - 1)), ","))) {
                         KimConceptStatement.ParentConceptImpl group = new KimConceptStatement.ParentConceptImpl();
                         group.getConcepts().add(declaration);
                         declaredParents.add(group);
@@ -2458,12 +2458,12 @@ public class KimValidator extends AbstractKimValidator {
                           _xifexpression_1 = _xifexpression_2;
                         }
                         BinarySemanticOperator connector = _xifexpression_1;
-                        if ((Objects.equals(connector, BinarySemanticOperator.FOLLOWS) && 
+                        if ((Objects.equal(connector, BinarySemanticOperator.FOLLOWS) && 
                           (!declaration.getType().contains(IKimConcept.Type.EVENT)))) {
                           this.error("The consequentiality (\'follows\') operator is only allowed between events", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
                           error = true;
                         }
-                        if (((group_1.getConnector() != BinarySemanticOperator.NONE) && (!Objects.equals(group_1.getConnector(), connector)))) {
+                        if (((group_1.getConnector() != BinarySemanticOperator.NONE) && (!Objects.equal(group_1.getConnector(), connector)))) {
                           this.error(
                             "Cannot mix union (\'or\'), intersection (\'and\') and consequentiality (\'follows\') operators", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__PARENTS, i);
                           error = true;
@@ -2592,7 +2592,7 @@ public class KimValidator extends AbstractKimValidator {
             {
               KimConcept iden = Kim.INSTANCE.declareConcept(identity);
               String _type = requirement.getType();
-              boolean _equals = Objects.equals(_type, "identity");
+              boolean _equals = Objects.equal(_type, "identity");
               if (_equals) {
                 boolean _contains = iden.getType().contains(IKimConcept.Type.IDENTITY);
                 boolean _not_1 = (!_contains);
@@ -3026,18 +3026,18 @@ public class KimValidator extends AbstractKimValidator {
   public void notify(final KimNotification notification, final EObject object, final EStructuralFeature cls, final int index) {
     final Level _switchValue = notification.level;
     boolean _matched = false;
-    if (Objects.equals(_switchValue, Level.SEVERE)) {
+    if (Objects.equal(_switchValue, Level.SEVERE)) {
       _matched=true;
       this.error(notification.message, object, cls, index);
     }
     if (!_matched) {
-      if (Objects.equals(_switchValue, Level.WARNING)) {
+      if (Objects.equal(_switchValue, Level.WARNING)) {
         _matched=true;
         this.warning(notification.message, object, cls, index);
       }
     }
     if (!_matched) {
-      if (Objects.equals(_switchValue, Level.INFO)) {
+      if (Objects.equal(_switchValue, Level.INFO)) {
         _matched=true;
         this.info(notification.message, object, cls, index);
       }
