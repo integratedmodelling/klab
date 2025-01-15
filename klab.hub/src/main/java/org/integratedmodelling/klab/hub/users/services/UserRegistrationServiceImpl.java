@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
@@ -56,6 +57,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setEmail(email);
+            newUser.addRoles(Role.ROLE_USER);
             newUser = new CreateUser(userRepository, newUser, AccountStatus.active).execute();
             publisher.publish(new NewUserAdded(new Object(), newUser));
             return newUser;
