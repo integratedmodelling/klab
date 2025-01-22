@@ -189,12 +189,6 @@ public class STACEncoder implements IResourceEncoder {
         return (rangeStart <= date.getTime() && rangeEnd <= date.getTime());
     }
 
-    private boolean isDateInsideRange(Time rangeTime, Date date) {
-        long rangeStart = rangeTime.getStart().getMilliseconds();
-        long rangeEnd = rangeTime.getEnd().getMilliseconds();
-        return (rangeStart <= date.getTime() && rangeEnd <= date.getTime());
-    }
-
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
