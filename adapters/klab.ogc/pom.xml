@@ -63,16 +63,22 @@
             </exclusions>
         </dependency>
         <!--- AWS dependencies-->
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-core</artifactId>
-            <version>${aws.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
-            <version>${aws.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>netty-nio-client</artifactId>
+			<version>${aws.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>software.amazon.awssdk</groupId>
+			<artifactId>protocol-core</artifactId>
+			<version>${aws.version}</version>
+		</dependency>
 
 		<!-- <dependency> <groupId>org.geotools.xsd</groupId> <artifactId>gt-xsd-core</artifactId> 
 			<version>${geotools.version}</version> </dependency>

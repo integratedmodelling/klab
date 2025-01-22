@@ -56,11 +56,13 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import kong.unirest.json.JSONObject;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3AsyncClient;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -160,24 +162,19 @@ public class STACEncoder implements IResourceEncoder {
                 "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private AmazonS3 buildS3Client(String bucketRegion) throws IOException {
+    private S3AsyncClient buildS3Client(String bucketRegion) throws IOException {
         ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
-        BasicAWSCredentials awsCreds = null;
+        AwsCredentials credentials = null;
         try {
-            awsCreds = new BasicAWSCredentials(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
+            credentials = AwsBasicCredentials.create(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
         } catch (Exception e) {
             throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
         }
-        AmazonS3 s3Client = null;
-        try {
-            s3Client = AmazonS3Client.builder()
-                    .withCredentials(new AWSStaticCredentialsProvider(awsCreds))
-                    .withRegion(bucketRegion)
-                    .build();
-        } catch (Exception e) {
-            throw new KlabIOException("Error building S3 client. " + e.getMessage());
-        }
-        return s3Client;
+        return S3AsyncClient.builder()
+                .httpClient(NettyNioAsyncHttpClient.builder().build())
+                .region(Region.of(bucketRegion))
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .build();
     }
 
     @Override
@@ -239,7 +236,8 @@ public class STACEncoder implements IResourceEncoder {
                 .findFirst().orElseThrow();
         Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
         
-        if (resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
+        if (resourceTime != null && 
+                resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
             time = validateTemporalDimension(time, resourceTime);
         }
         ITimeInstant start = time.getStart();
@@ -277,9 +275,9 @@ public class STACEncoder implements IResourceEncoder {
 
             if (resource.getParameters().contains("s3BucketRegion")) {
                 String bucketRegion = resource.getParameters().get("s3BucketRegion", String.class);
-                AmazonS3 s3Client = buildS3Client(bucketRegion);
+                S3AsyncClient s3Client = buildS3Client(bucketRegion);
                 // TODO waiting until the library version is updated
-                // collection.setS3Client(s3Client);
+                collection.setS3Client(s3Client);
             }
 
             // Allow transform ensures the process to finish, but I would not bet on the resulting
