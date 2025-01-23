@@ -56,13 +56,14 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
+import kong.unirest.apache.ApacheClient;
 import kong.unirest.json.JSONObject;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.nio.netty.NettyNioAsyncHttpClient;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.S3Client;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -162,7 +163,7 @@ public class STACEncoder implements IResourceEncoder {
                 "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private S3AsyncClient buildS3Client(String bucketRegion) throws IOException {
+    private S3Client buildS3Client(String bucketRegion) throws IOException {
         ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
         AwsCredentials credentials = null;
         try {
@@ -170,8 +171,8 @@ public class STACEncoder implements IResourceEncoder {
         } catch (Exception e) {
             throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
         }
-        return S3AsyncClient.builder()
-                .httpClient(NettyNioAsyncHttpClient.builder().build())
+        return S3Client.builder()
+                .httpClientBuilder(ApacheHttpClient.builder())
                 .region(Region.of(bucketRegion))
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
@@ -275,8 +276,7 @@ public class STACEncoder implements IResourceEncoder {
 
             if (resource.getParameters().contains("s3BucketRegion")) {
                 String bucketRegion = resource.getParameters().get("s3BucketRegion", String.class);
-                S3AsyncClient s3Client = buildS3Client(bucketRegion);
-                // TODO waiting until the library version is updated
+                S3Client s3Client = buildS3Client(bucketRegion);
                 collection.setS3Client(s3Client);
             }
 
