@@ -64,10 +64,10 @@
         </dependency>
         <!--- AWS dependencies-->
 		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>netty-nio-client</artifactId>
-			<version>${aws.version}</version>
-			<exclusions>
+			<artifactId>apache-client</artifactId> 
+			<groupId>software.amazon.awssdk</groupId> 
+			<version>${aws.version}</version> 
+ 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
