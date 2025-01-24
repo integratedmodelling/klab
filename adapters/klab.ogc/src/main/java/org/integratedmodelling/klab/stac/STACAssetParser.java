@@ -9,7 +9,9 @@ import kong.unirest.json.JSONObject;
 
 public class STACAssetParser {
     // https://github.com/radiantearth/stac-spec/blob/master/best-practices.md#common-media-types-in-stac
-    final private static Set<String> SUPPORTED_MEDIA_TYPE = Set.of("image/tiff;application=geotiff;profile=cloud-optimized","image/vnd.stac.geotiff;profile=cloud-optimized");
+    final private static Set<String> SUPPORTED_MEDIA_TYPE = Set.of("image/tiff;application=geotiff", "image/vnd.stac.geotiff",
+            "image/tiff;application=geotiff;profile=cloud-optimized", "image/vnd.stac.geotiff;profile=cloud-optimized",
+            "image/vnd.stac.geotiff;cloud-optimized=true", "application/geo+json");
 
     /** 
      * Check if the MIME value is supported.
