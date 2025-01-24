@@ -28,16 +28,28 @@
 			<organizationUrl>http://www.bc3research.org</organizationUrl>
 		</developer>
 		<developer>
+            <name>Iñigo Cobián</name>
+            <email>inigo.cobian@bc3research.org</email>
+            <organization>Basque Centre for Climate Change (BC3)</organization>
+            <organizationUrl>http://www.bc3research.org</organizationUrl>
+        </developer>
+        <developer>
+            <name>Kristina Sánchez</name>
+            <email>kristina.sanchez@bc3research.org</email>
+            <organization>Basque Centre for Climate Change (BC3)</organization>
+            <organizationUrl>http://www.bc3research.org</organizationUrl>
+        </developer>
+        <developer>
+            <name>Andrea Antonello</name>
+            <email>andrea.antonello@gmail.com</email>
+            <organization>HydroloGIS Environmental Engineering</organization>
+            <organizationUrl>https://www.hydrologis.com/</organizationUrl>
+        </developer>
+		<developer>
 			<name>Steven Wohl</name>
 			<email>steven.wohl@bc3research.org</email>
 			<organization>Basque Centre for Climate Change (BC3)</organization>
 			<organizationUrl>http://www.bc3research.org</organizationUrl>
-		</developer>
-		<developer>
-			<name>Andrea Antonello</name>
-			<email>andrea.antonello@gmail.com</email>
-			<organization>HydroloGIS Environmental Engineering</organization>
-			<organizationUrl>https://www.hydrologis.com/</organizationUrl>
 		</developer>
 		<developer>
 			<name>J.Luke Scott</name>

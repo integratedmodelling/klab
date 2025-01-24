@@ -5,7 +5,7 @@
    viewBox="0 0 142.875 74.083334"
    version="1.1"
    id="svg8"
-   inkscape:version="1.1 (1:1.1+202105261517+ce6663b3b7)"
+   inkscape:version="1.3.2 (1:1.3.2+202311252150+091e20ef0f)"
    sodipodi:docname="splash.svg"
    inkscape:export-filename="/home/klab/workspaces/klab-workspace/klab-eclipse-2021-03/klab/ide/org.integratedmodelling.klab.ide/splash.png"
    inkscape:export-xdpi="96"
@@ -30,16 +30,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.5925926"
-     inkscape:cx="116.7907"
-     inkscape:cy="201.24419"
+     inkscape:zoom="2.2522661"
+     inkscape:cx="227.10461"
+     inkscape:cy="159.39502"
      inkscape:document-units="px"
      inkscape:current-layer="layer2"
      inkscape:document-rotation="0"
      showgrid="false"
      units="px"
-     inkscape:window-width="1920"
-     inkscape:window-height="1024"
+     inkscape:window-width="2498"
+     inkscape:window-height="1193"
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
@@ -49,7 +49,14 @@
      inkscape:pagecheckerboard="true"
      showborder="false"
      inkscape:showpageshadow="false"
-     borderlayer="true" />
+     borderlayer="true"
+     inkscape:deskcolor="#d1d1d1">
+    <sodipodi:guide
+       position="134.31947,22.349716"
+       orientation="1,0"
+       id="guide1"
+       inkscape:locked="false" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -275,15 +282,15 @@
        xml:space="preserve"
        style="font-size:2.82222px;line-height:117.75;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:-0.079375px;word-spacing:0px;stroke-width:0.264583"
        x="8.6477737"
-       y="56.561954"
+       y="56.032787"
        id="text1026"><tspan
          sodipodi:role="line"
          id="tspan1024"
          x="8.6477737"
-         y="56.561954"
+         y="56.032787"
          style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:2.82222px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Semi-Bold';letter-spacing:-0.079375px;word-spacing:0px;fill:#575756;fill-opacity:1;stroke-width:0.264583"
          dx="0"
-         dy="0">© 2008-2021 The Integrated Modelling Partnership </tspan></text>
+         dy="0">© 2008-2025 The Integrated Modelling Partnership </tspan></text>
     <text
        xml:space="preserve"
        style="font-size:2.82222px;line-height:117.75;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:-0.079375px;word-spacing:0px;stroke-width:0.264583"
@@ -299,45 +306,56 @@
        xml:space="preserve"
        style="font-size:3.175px;line-height:117.75;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:-0.079375px;word-spacing:0px;stroke-width:0.264583"
        x="110.91935"
-       y="56.561954"
+       y="56.032787"
        id="text1026-3-7"><tspan
          sodipodi:role="line"
          id="tspan1024-6-5"
          x="110.91935"
-         y="56.561954"
+         y="56.032787"
          style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:3.175px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Semi-Bold';letter-spacing:-0.079375px;fill:#575756;fill-opacity:1;stroke-width:0.264583">Ferdinando Villa</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:3.175px;line-height:117.75;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:-0.079375px;word-spacing:0px;stroke-width:0.264583"
        x="114.1976"
-       y="59.57151"
+       y="59.068665"
        id="text1026-3-7-9"><tspan
          sodipodi:role="line"
          id="tspan1024-6-5-1"
          x="114.1976"
-         y="59.57151"
+         y="59.068665"
          style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:3.175px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Semi-Bold';letter-spacing:-0.079375px;fill:#575756;fill-opacity:1;stroke-width:0.264583">Enrico Girotto</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:3.175px;line-height:117.75;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:-0.079375px;word-spacing:0px;stroke-width:0.264583"
-       x="116.33917"
-       y="62.61689"
-       id="text1026-3-7-9-1"><tspan
+       x="110.44032"
+       y="65.140419"
+       id="text1026-3-7-9-7"><tspan
          sodipodi:role="line"
-         id="tspan1024-6-5-1-8"
-         x="116.33917"
-         y="62.61689"
-         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:3.175px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Semi-Bold';letter-spacing:-0.079375px;fill:#575756;fill-opacity:1;stroke-width:0.264583">Steven Wohl</tspan></text>
+         id="tspan1024-6-5-1-9"
+         x="110.44032"
+         y="65.140419"
+         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:3.175px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Semi-Bold';letter-spacing:-0.079375px;fill:#575756;fill-opacity:1;stroke-width:0.264583">Kristina Sánchez</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:3.175px;line-height:117.75;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:-0.079375px;word-spacing:0px;stroke-width:0.264583"
+       x="116.36739"
+       y="62.104542"
+       id="text1026-3-7-9-7-3"><tspan
+         sodipodi:role="line"
+         id="tspan1024-6-5-1-9-6"
+         x="116.36739"
+         y="62.104542"
+         style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:3.175px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Semi-Bold';letter-spacing:-0.079375px;fill:#575756;fill-opacity:1;stroke-width:0.264583">Iñigo Cobián</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:3.175px;line-height:117.75;font-family:'Open Sans';-inkscape-font-specification:'Open Sans';letter-spacing:-0.079375px;word-spacing:0px;stroke-width:0.264583"
        x="108.85436"
-       y="65.644356"
-       id="text1026-3-7-9-7"><tspan
+       y="68.1763"
+       id="text1026-3-7-9-7-7"><tspan
          sodipodi:role="line"
-         id="tspan1024-6-5-1-9"
+         id="tspan1024-6-5-1-9-5"
          x="108.85436"
-         y="65.644356"
+         y="68.1763"
          style="font-style:normal;font-variant:normal;font-weight:600;font-stretch:normal;font-size:3.175px;font-family:'Open Sans';-inkscape-font-specification:'Open Sans Semi-Bold';letter-spacing:-0.079375px;fill:#575756;fill-opacity:1;stroke-width:0.264583">Andrea Antonello</tspan></text>
   </g>
 </svg>
