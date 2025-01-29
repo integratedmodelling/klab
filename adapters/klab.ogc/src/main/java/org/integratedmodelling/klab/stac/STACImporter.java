@@ -24,8 +24,11 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.klab.utils.s3.S3RegionResolver;
+import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 
 import kong.unirest.json.JSONObject;
+import software.amazon.awssdk.regions.Region;
 
 public class STACImporter implements IResourceImporter {
 
@@ -82,6 +85,12 @@ public class STACImporter implements IResourceImporter {
             }
             parameters.put("asset", assetId);
             String resourceUrn = collectionId + "-" + assetId;
+            String href = assetData.getString("href");
+            if (S3URLUtils.isS3Endpoint(href)) {
+                String[] bucketAndObject = href.split("://")[1].split("/", 2);
+                Region s3Region = S3RegionResolver.resolveBucketRegion(bucketAndObject[0], bucketAndObject[1]);
+                parameters.put("awsRegion", s3Region.id());
+            }
 
             Builder builder = buildResource(parameters, project, monitor, resourceUrn);
             if (builder != null) {
