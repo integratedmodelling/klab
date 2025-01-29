@@ -13,7 +13,4 @@
  	optional text 'asset'
  		"The asset that is going to be retrieved from the items."
  
- 	optional text 's3BucketRegion'
- 		"The Region for S3 elements."
- 
  }
