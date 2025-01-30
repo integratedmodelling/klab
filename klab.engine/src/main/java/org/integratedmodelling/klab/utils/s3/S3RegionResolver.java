@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetBucketLocationRequest;
@@ -19,6 +20,7 @@ public class S3RegionResolver {
 
         // Step 1: Attempt to dynamically resolve the bucket's region
         try (S3Client s3 = S3Client.builder()
+                .httpClientBuilder(ApacheHttpClient.builder())
                 .region(defaultRegion) // Use the default region
                 .credentialsProvider(AnonymousCredentialsProvider.create()) // Anonymous credentials
                 .build()) {
