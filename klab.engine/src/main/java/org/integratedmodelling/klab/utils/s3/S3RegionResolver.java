@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.utils.s3;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
@@ -10,7 +12,6 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetBucketLocationRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketLocationResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 public class S3RegionResolver {
 
@@ -25,8 +26,6 @@ public class S3RegionResolver {
                 .credentialsProvider(AnonymousCredentialsProvider.create()) // Anonymous credentials
                 .build()) {
 
-            System.out.println("Attempting to resolve region dynamically for bucket: " + bucketName);
-
             GetBucketLocationRequest request = GetBucketLocationRequest.builder()
                     .bucket(bucketName)
                     .build();
@@ -36,19 +35,21 @@ public class S3RegionResolver {
 
             // Handle "null" or "global" regions
             if (location == null || location.equalsIgnoreCase("null")) {
-                System.out.println("Bucket region resolved dynamically to: us-east-1");
                 return Region.US_EAST_1;
             }
 
             Region resolvedRegion = Region.of(location);
-            System.out.println("Bucket region resolved dynamically to: " + resolvedRegion);
             return resolvedRegion;
 
         } catch (Exception e) {
-            System.err.println("Failed to resolve region dynamically for bucket: " + bucketName + ". Error: " + e.getMessage());
+            // try another one
         }
 
+        // Step 2: Iterate through all regions and test lightweight requests
+        return resolveRegionByTesting(bucketName, objectKey);
+    }
 
+    private static List<Region> getAwsRegions() {
         // List of regions to exclude (e.g., isolated regions or restricted access regions)
         List<Region> excludedRegions = List.of(
                 Region.US_ISO_EAST_1, // Restricted to isolated networks
@@ -58,22 +59,14 @@ public class S3RegionResolver {
         );
 
         // Get the list of all AWS regions, excluding problematic ones
-        List<Region> regions = Region.regions().stream()
+        return Region.regions().stream()
                 .filter(region -> !excludedRegions.contains(region))
                 .collect(Collectors.toList());
-
-        System.out.println("Falling back to region testing for bucket: " + bucketName);
-
-
-        // Step 2: Iterate through all regions and test lightweight requests
-        return resolveRegionByTesting(bucketName, objectKey);
     }
 
     private static Region resolveRegionByTesting(String bucketName, String objectKey) {
         // Get the list of all AWS regions
-        List<Region> regions = Region.regions();
-
-        System.out.println("Falling back to region testing for bucket: " + bucketName);
+        List<Region> regions = getAwsRegions();
 
         // Iterate through regions to perform a lightweight test
         for (Region region : regions) {
@@ -93,17 +86,12 @@ public class S3RegionResolver {
                 s3.headObject(request); // If no exception is thrown, the region is correct
                 System.out.println("Region confirmed by testing: " + region);
                 return region;
-
-            } catch (S3Exception e) {
-                // Continue testing other regions if the bucket is not found
-                if (e.statusCode() != 403 && e.statusCode() != 404) {
-                    System.err.println("Error testing region " + region + ": " + e.awsErrorDetails().errorMessage());
-                }
             } catch (Exception e) {
-                System.err.println("Exception testing region " + region + ": " + e.getMessage());
+                // Continue testing other regions if the bucket is not found
+                continue;
             }
         }
 
-        throw new RuntimeException("Unable to resolve region for bucket: " + bucketName);
+        throw new KlabResourceAccessException("Unable to resolve region for bucket: " + bucketName);
     }
 }
