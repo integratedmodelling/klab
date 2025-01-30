@@ -88,7 +88,7 @@ public class STACImporter implements IResourceImporter {
             String href = assetData.getString("href");
             if (S3URLUtils.isS3Endpoint(href)) {
                 String[] bucketAndObject = href.split("://")[1].split("/", 2);
-                Region s3Region = S3RegionResolver.resolveBucketRegion(bucketAndObject[0], bucketAndObject[1]);
+                Region s3Region = S3RegionResolver.resolveBucketRegion(bucketAndObject[0], bucketAndObject[1], monitor);
                 parameters.put("awsRegion", s3Region.id());
             }
 
