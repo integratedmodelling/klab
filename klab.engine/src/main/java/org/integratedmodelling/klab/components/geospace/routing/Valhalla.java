@@ -8,11 +8,14 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.locationtech.jts.geom.Geometry;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
 /**
@@ -163,4 +166,16 @@ public class Valhalla {
         }
     }
 
+    public static boolean isServerOnline(String server) {
+        HttpResponse<JsonNode> response;
+        try {
+            response = Unirest.get(server + "/status").asJson();
+        } catch (Exception e) {
+            throw new KlabRemoteException("Cannot access Valhalla server. Reason: " + e.getMessage());
+        }
+        if (response.getStatus() != 200) {
+            return false;
+        }
+        return true;
+    }
 }
