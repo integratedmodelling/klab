@@ -25,10 +25,6 @@ public class STACCollectionParser {
         return collection.getString("id");
     }
 
-    private static JSONObject readItemAssets(JSONObject collection) {
-        return collection.getJSONObject("item_assets");
-    }
-
     /**
      * Obtains the geometry from the collection data.
      * Currently, only available for dynamic collections.
@@ -80,14 +76,6 @@ public class STACCollectionParser {
                 throw new KlabResourceNotFoundException("Static STAC collection \"" + collectionUrl + "\" has no assets");
             }
             return collection.getJSONObject("assets");
-        }
-
-        // item_assets is a shortcut for obtaining information about the assets
-        // https://github.com/stac-extensions/item-assets
-        if (collection.has("item_assets")) {
-            if (!collection.getJSONObject("item_assets").isEmpty()) {
-                return STACCollectionParser.readItemAssets(collection);
-            }
         }
 
         // TODO Move the query to another place. 
