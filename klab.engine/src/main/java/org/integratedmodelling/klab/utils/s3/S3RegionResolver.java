@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.utils.s3;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 
 import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
@@ -12,17 +13,15 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetBucketLocationRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketLocationResponse;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 
 public class S3RegionResolver {
 
-    public static Region resolveBucketRegion(String bucketName, String objectKey) {
-        // Default region to start with for GetBucketLocation
-        Region defaultRegion = Region.US_EAST_1;
-
+    public static Region resolveBucketRegion(String bucketName, String objectKey, IMonitor monitor) {
         // Step 1: Attempt to dynamically resolve the bucket's region
         try (S3Client s3 = S3Client.builder()
                 .httpClientBuilder(ApacheHttpClient.builder())
-                .region(defaultRegion) // Use the default region
+                .region(Region.US_EAST_1) // Use the default region
                 .credentialsProvider(AnonymousCredentialsProvider.create()) // Anonymous credentials
                 .build()) {
 
@@ -39,14 +38,16 @@ public class S3RegionResolver {
             }
 
             Region resolvedRegion = Region.of(location);
+            monitor.debug("Bucket " + bucketName + " exists in the default region.");
             return resolvedRegion;
-
+        } catch (S3Exception e) {
+            ;// Nothing to do here. It is expected to fail if the bucket is not in the default region. Try on step 2.
         } catch (Exception e) {
-            // try another one
+            monitor.debug("Unexpected exception trying to get to the S3 default region: " + e.getMessage());
         }
 
         // Step 2: Iterate through all regions and test lightweight requests
-        return resolveRegionByTesting(bucketName, objectKey);
+        return resolveRegionByTesting(bucketName, objectKey, monitor);
     }
 
     private static List<Region> getAwsRegions() {
@@ -64,18 +65,17 @@ public class S3RegionResolver {
                 .collect(Collectors.toList());
     }
 
-    private static Region resolveRegionByTesting(String bucketName, String objectKey) {
+    private static Region resolveRegionByTesting(String bucketName, String objectKey, IMonitor monitor) {
         // Get the list of all AWS regions
         List<Region> regions = getAwsRegions();
 
         // Iterate through regions to perform a lightweight test
         for (Region region : regions) {
             try (S3Client s3 = S3Client.builder()
+                    .httpClientBuilder(ApacheHttpClient.builder())
                     .region(region)
                     .credentialsProvider(AnonymousCredentialsProvider.create())
                     .build()) {
-
-                System.out.println("Testing region: " + region);
 
                 // Perform a lightweight HEAD request to check if the object exists
                 HeadObjectRequest request = HeadObjectRequest.builder()
@@ -84,10 +84,13 @@ public class S3RegionResolver {
                         .build();
 
                 s3.headObject(request); // If no exception is thrown, the region is correct
-                System.out.println("Region confirmed by testing: " + region);
+                monitor.debug("Bucket " + bucketName + " exists in the region " + region.id() + ".");
                 return region;
-            } catch (Exception e) {
+            } catch (S3Exception e) {
                 // Continue testing other regions if the bucket is not found
+                continue;
+            } catch (Exception e) {
+                monitor.debug("Unexpected exception trying to get to the S3 region " + region.id() + ": " + e.getMessage());
                 continue;
             }
         }
