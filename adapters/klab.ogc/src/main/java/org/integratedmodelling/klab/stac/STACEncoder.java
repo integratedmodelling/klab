@@ -56,7 +56,6 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
-import kong.unirest.apache.ApacheClient;
 import kong.unirest.json.JSONObject;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -274,8 +273,8 @@ public class STACEncoder implements IResourceEncoder {
                 scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
             }
 
-            if (resource.getParameters().contains("s3BucketRegion")) {
-                String bucketRegion = resource.getParameters().get("s3BucketRegion", String.class);
+            if (resource.getParameters().contains("awsRegion")) {
+                String bucketRegion = resource.getParameters().get("awsRegion", String.class);
                 S3Client s3Client = buildS3Client(bucketRegion);
                 collection.setS3Client(s3Client);
             }
