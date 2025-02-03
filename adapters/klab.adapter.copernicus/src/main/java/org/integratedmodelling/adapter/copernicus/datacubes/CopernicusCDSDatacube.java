@@ -64,7 +64,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		this.dataset = dataset;
 		this.user = Configuration.INSTANCE.getProperties().getProperty(CDS_USER_NUMBER_PROPERTY);
 		this.apiKey = Configuration.INSTANCE.getProperties().getProperty(CDS_API_KEY_PROPERTY);
-		if (this.apiKey == null || this.user == null) {
+		if (this.apiKey == null) {
 			setOnline(false, "Copernicus CDS datacube: no CDS credentials provided in configuration");
 		} else {
 			setOnline(true, null);
@@ -128,7 +128,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		body.put("month", this.monts[(date.getMonth() - 1) / 3]);
 		body.put("day", this.days);
 		body.put("version", CDS_API_VERSION);
-		body.put("format", CDS_API_FORMAT);
+		body.put("download_format", CDS_API_FORMAT);
 
 		configureRequest(variable, body);
 
@@ -136,8 +136,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 		Logging.INSTANCE.info("requesting chunk " + chunk + " of " + variable + " to CDS API: " + jsonBody);
 		
-		HttpResponse<JsonNode> response = Unirest.post(getEndpointUrl("resources/datasets/" + this.dataset))
-				.basicAuth(user, apiKey).header("Accept", "application/json").body(jsonBody).asJson();
+		HttpResponse<JsonNode> response = Unirest.post(getEndpointUrl("/datasets/" + this.dataset))
+				.header("PRIVATE-TOKEN", apiKey).header("Accept", "application/json").body(jsonBody).asJson();
 
 		if (response.isSuccess()) {
 
@@ -221,7 +221,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 	}
 	
 	public String getEndpointUrl(String request) {
-		return "https://cds.climate.copernicus.eu/api/v2/" + request;
+		return "https://cds.climate.copernicus.eu/api/" + request;
 	}
 
 	@Override
