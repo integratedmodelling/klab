@@ -136,7 +136,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
 		Logging.INSTANCE.info("requesting chunk " + chunk + " of " + variable + " to CDS API: " + jsonBody);
 		
-		HttpResponse<JsonNode> response = Unirest.post(getEndpointUrl("/datasets/" + this.dataset))
+		HttpResponse<JsonNode> response = Unirest.post(getEndpointUrl("/resources/" + this.dataset))
 				.header("PRIVATE-TOKEN", apiKey).header("Accept", "application/json").body(jsonBody).asJson();
 
 		if (response.isSuccess()) {
