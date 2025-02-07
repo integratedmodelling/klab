@@ -17,8 +17,10 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends ResourceRepository<User, String>{		
 	
 	Optional<User> findById(String id);
-	
-	Optional<User> findByName(String username); // need exactly the username
+		
+    default Optional<User> findByName(String username) {
+        return findByNameIgnoreCase(username);
+    }; // need exactly the username
 	
 	Optional<User> findByNameIgnoreCase(String username);
 	

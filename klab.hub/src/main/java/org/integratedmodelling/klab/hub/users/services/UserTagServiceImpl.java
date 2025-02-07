@@ -22,7 +22,7 @@ public class UserTagServiceImpl implements UserTagService {
     TagNotificationRepository notificationRepository;
 
     private User findUserByName(String username) {
-        return userRepository.findByName(username).orElseThrow(() -> new BadRequestException("User is not present."));
+        return userRepository.findByNameIgnoreCase(username).orElseThrow(() -> new BadRequestException("User is not present."));
     }
 
     private boolean doesTagExistInTheDatabase(MongoTag tag) {
