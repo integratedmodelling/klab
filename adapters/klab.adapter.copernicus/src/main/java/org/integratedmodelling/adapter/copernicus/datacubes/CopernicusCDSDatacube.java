@@ -235,7 +235,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 	}
 	
 	public String getEndpointUrl(String request) {
-		return "https://cds.climate.copernicus.eu/api/retrieve/v1/" + request;
+		return "https://cds.climate.copernicus.eu/api/retrieve/v1" + request;
 	}
 
 	@Override
