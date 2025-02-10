@@ -139,11 +139,12 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		bodyWrapper.put("inputs", body);
 		String jsonBody = JsonUtils.printAsJson(bodyWrapper);
 
-		Logging.INSTANCE.info("requesting chunk " + chunk + " of " + variable + " to CDS API: " + jsonBody);
+		Logging.INSTANCE.info("requesting chunk " + chunk + " of " + variable + " to CDS API");
 		
 		// retrieve the job id
-		
-		HttpResponse<JsonNode> response = Unirest.post(getEndpointUrl("/processes/" + this.dataset + "/execute"))
+		String endpoint = getEndpointUrl("/processes/" + this.dataset + "/execute");
+		Logging.INSTANCE.info("Ask for job id: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
+		HttpResponse<JsonNode> response = Unirest.post(endpoint)
 				.header(CDS_API_KEY_HEADER, apiKey).header("Accept", "application/json").body(jsonBody).asJson();
 
 		if (response.isSuccess()) {
@@ -173,7 +174,9 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		            /*
                      * inquire about task
                      */
-                    response = Unirest.get(getEndpointUrl("jobs/" + requestId)).header("PRIVATE-TOKEN", apiKey).asJson();
+                    endpoint = getEndpointUrl("jobs/" + requestId);
+                    Logging.INSTANCE.info("Ask for job status: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
+                    response = Unirest.get(endpoint).header("PRIVATE-TOKEN", apiKey).asJson();
                     status = response.getBody().getObject().getString("status");
                     Logging.INSTANCE.info("Status of retrieval of CDS chunk " + variable + "/" + chunk + ": " + status);
                     if ("failed".equals(status)){
@@ -182,7 +185,9 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
                 } while (time < TIMEOUT_SECONDS && !"successful".equals(status) && !"failed".equals(status));                   
 		         
 		        // retrieve the job results
-		        response = Unirest.get(getEndpointUrl("jobs/" + requestId + "/results")).header("PRIVATE-TOKEN", apiKey).asJson();
+		        endpoint = getEndpointUrl("jobs/" + requestId + "/results");
+		        Logging.INSTANCE.info("Ask for job results: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
+		        response = Unirest.get(endpoint).header("PRIVATE-TOKEN", apiKey).asJson();
 		        if (response.isSuccess()) {
 		            // retrieve the url
 		            String href = null;
