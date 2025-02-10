@@ -143,7 +143,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		
 		// retrieve the job id
 		String endpoint = getEndpointUrl("/processes/" + this.dataset + "/execute");
-		Logging.INSTANCE.info("Ask for job id: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
+		Logging.INSTANCE.info("Ask for job id: " + endpoint + "\n" + jsonBody);
 		HttpResponse<JsonNode> response = Unirest.post(endpoint)
 				.header(CDS_API_KEY_HEADER, apiKey)
 				.header("Content-Type", "application/json")
@@ -177,8 +177,8 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		            /*
                      * inquire about task
                      */
-                    endpoint = getEndpointUrl("jobs/" + requestId);
-                    Logging.INSTANCE.info("Ask for job status: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
+                    endpoint = getEndpointUrl("/jobs/" + requestId);
+                    Logging.INSTANCE.info("Ask for job status: " + endpoint);
                     response = Unirest.get(endpoint)
                             .header("PRIVATE-TOKEN", apiKey)
                             .header("Content-Type", "application/json")
@@ -197,7 +197,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
                 } while (time < TIMEOUT_SECONDS && !"successful".equals(status) && !"failed".equals(status));                   
 		         
 		        // retrieve the job results
-		        endpoint = getEndpointUrl("jobs/" + requestId + "/results");
+		        endpoint = getEndpointUrl("/jobs/" + requestId + "/results");
 		        Logging.INSTANCE.info("Ask for job results: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
 		        response = Unirest.get(endpoint)
 		                .header("PRIVATE-TOKEN", apiKey)
