@@ -179,18 +179,30 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
                      */
                     endpoint = getEndpointUrl("jobs/" + requestId);
                     Logging.INSTANCE.info("Ask for job status: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
-                    response = Unirest.get(endpoint).header("PRIVATE-TOKEN", apiKey).asJson();
-                    status = response.getBody().getObject().getString("status");
-                    Logging.INSTANCE.info("Status of retrieval of CDS chunk " + variable + "/" + chunk + ": " + status);
-                    if ("failed".equals(status)){
-                       break;
+                    response = Unirest.get(endpoint)
+                            .header("PRIVATE-TOKEN", apiKey)
+                            .header("Content-Type", "application/json")
+                            .header("Accept", "application/json").asJson();
+                    if (response.isSuccess()) {
+                        status = response.getBody().getObject().getString("status");
+                        Logging.INSTANCE.info("Status of retrieval of CDS chunk " + variable + "/" + chunk + ": " + status);
+                        if ("failed".equals(status)){
+                           break;
+                        }
+                    } else {
+                        Logging.INSTANCE.warn("Ask for job status return an error " + response.getStatus() + ": " + response.getStatusText());
+                        return false;
                     }
+                    
                 } while (time < TIMEOUT_SECONDS && !"successful".equals(status) && !"failed".equals(status));                   
 		         
 		        // retrieve the job results
 		        endpoint = getEndpointUrl("jobs/" + requestId + "/results");
 		        Logging.INSTANCE.info("Ask for job results: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
-		        response = Unirest.get(endpoint).header("PRIVATE-TOKEN", apiKey).asJson();
+		        response = Unirest.get(endpoint)
+		                .header("PRIVATE-TOKEN", apiKey)
+		                .header("Content-Type", "application/json")
+                        .header("Accept", "application/json").asJson();
 		        if (response.isSuccess()) {
 		            // retrieve the url
 		            String href = null;
@@ -223,7 +235,14 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
                         return false;
                     }
 		        } else {
-		            Logging.INSTANCE.warn("The job has failed\n" + response.getBody().getObject().getString("status")+" - " + response.getBody().getObject().getString("traceback"));
+		            Logging.INSTANCE.warn("The job results return an error " + response.getStatus() + ": " + response.getStatusText());
+		            if (response.getBody().getObject().has("status")) {
+		                StringBuffer details = new StringBuffer().append("Details:\n").append(response.getBody().getObject().getString("status"));
+		                if (response.getBody().getObject().has("traceback")) {
+		                    details.append("\nTraceback: ").append(response.getBody().getObject().getString("traceback"));
+		                }
+		                Logging.INSTANCE.warn(details.toString());
+		            }
 		            return false;
 		        }
 		    } else {
@@ -231,7 +250,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		        return false;
 		    }
 		} else {
-            Logging.INSTANCE.error("API request to CDS service returned error " + response.getStatusText());
+            Logging.INSTANCE.error("API request to CDS service returned error " + response.getStatus() + ": " + response.getStatusText());
             return false;
         }
 		return ret;
