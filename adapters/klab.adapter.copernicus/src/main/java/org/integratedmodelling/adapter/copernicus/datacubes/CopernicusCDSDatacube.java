@@ -145,7 +145,10 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		String endpoint = getEndpointUrl("/processes/" + this.dataset + "/execute");
 		Logging.INSTANCE.info("Ask for job id: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
 		HttpResponse<JsonNode> response = Unirest.post(endpoint)
-				.header(CDS_API_KEY_HEADER, apiKey).header("Accept", "application/json").body(jsonBody).asJson();
+				.header(CDS_API_KEY_HEADER, apiKey)
+				.header("Content-Type", "application/json")
+				.header("Accept", "application/json")
+				.body(jsonBody).asJson();
 
 		if (response.isSuccess()) {
 		    
