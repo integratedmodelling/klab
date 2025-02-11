@@ -219,7 +219,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
                          * Download the zip and unzip in chunk directory
                          */
                         try {
-                            URL uurl = new URL(url);
+                            URL uurl = new URL(href);
                             File zipFile = File.createTempFile("agera", ".zip");
                             URLUtils.copyChanneled(uurl, zipFile);
                             ZipUtils.unzip(zipFile, destinationDirectory);
