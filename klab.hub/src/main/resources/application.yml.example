@@ -117,7 +117,11 @@ keycloak:
   bearer-only: true
 hub:
    env:
-      app-base-url: http://localhost:8284/hub
+      # SPA MODE
+      #app-base-url: http://localhost:8284/hub/ui
+      #base-url: /hub
+      # DEVELOP MODE
+      app-base-url: http://localhost:8080/hub
       base-url: http://localhost:8284/hub
       environment: development
       keycloak-url: http://localhost:8078
