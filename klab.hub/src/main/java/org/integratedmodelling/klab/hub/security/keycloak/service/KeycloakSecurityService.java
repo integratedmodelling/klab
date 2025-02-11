@@ -17,7 +17,7 @@ public class KeycloakSecurityService {
 
         String preferredUsername = principal.getKeycloakSecurityContext().getToken().getPreferredUsername();
         if (preferredUsername != null) {
-            return preferredUsername.equals(userName);
+            return preferredUsername.equals(userName.toLowerCase());
         }
 
         return false;

@@ -65,7 +65,7 @@ public static class Parameters extends TaskParameters {
 			} else {
 				throw new ClassCastException();
 			}
-			User user = userRepository.findByName(param.username).orElseThrow();
+			User user = userRepository.findByNameIgnoreCase(param.username).orElseThrow();
 			ArrayList<Task> ret = new ArrayList<Task>(2);
 			
 			Set<GroupEntry> optIn = new HashSet<>();

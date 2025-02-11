@@ -182,41 +182,6 @@ public class UserProfileController {
 
     }
 
-    // TODO keycloak
-//    @PutMapping(value = API.HUB.USER_BASE_ID, params = API.HUB.PARAMETERS.USER_SET_EMAIL)
-//    public ResponseEntity< ? > updateUserEmail(@PathVariable String id,
-//            @RequestParam(API.HUB.PARAMETERS.USER_SET_EMAIL) String setPassword,
-//            @RequestBody UpdateEmailRequest updateEmailRequest) {
-//
-//        /* Check user and password are correct */
-//        try {
-//            userAuthService.getAuthResponse(updateEmailRequest.getUsername(), updateEmailRequest.getPassword(),
-//                    updateEmailRequest.isRemote());
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Incorrect password.");
-//        }
-//
-//        /* Check token is correct */
-//        TokenVerifyEmailClickback token = (TokenVerifyEmailClickback) tokenService.getAndVerifyToken(id,
-//                updateEmailRequest.getToken(), TokenType.verifyEmail);
-//        if (token == null) {
-//            throw new ActivationTokenFailedException("User Verification token failed");
-//        }
-//
-//        /* Update user email */
-//        try {
-//            userService.updateUserEmail(id, updateEmailRequest.getEmail());
-//
-//            tokenService.deleteToken(token.getTokenString());
-//
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-//        }
-//
-//        JSONObject resp = new JSONObject();
-//        return new ResponseEntity<JSONObject>(resp, HttpStatus.CREATED);
-//    }
-
     @GetMapping(value = API.HUB.USER_BASE_ID, params = "remote-login")
     @PreAuthorize("@securityService.isUser(#id)")
     public ResponseEntity< ? > getFullUserProfile(@PathVariable String id) {
