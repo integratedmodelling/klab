@@ -41,6 +41,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     private String apiKey;
 
     public static final String CDS_API_KEY_PROPERTY = "klab.copernicus.cds.apikey";
+    public static final String CDS_API_URL = "klab.copernicus.cds.url";
     public static final String CDS_API_VERSION = "1_1";
     public static final String CDS_API_FORMAT = "zip";
     public static final String CDS_API_KEY_HEADER = "PRIVATE-TOKEN";
@@ -253,7 +254,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     }
 
     public String getEndpointUrl(String request) {
-        return "https://cds.climate.copernicus.eu/api/retrieve/v1" + request;
+        return CDS_API_URL + request;
     }
 
     @Override
