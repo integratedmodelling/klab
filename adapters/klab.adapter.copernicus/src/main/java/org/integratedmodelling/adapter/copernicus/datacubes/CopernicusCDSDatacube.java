@@ -74,8 +74,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
         } else {
             setOnline(true, null);
         }
-        
-        
+
     }
 
     protected Geoserver initializeGeoserver() {
