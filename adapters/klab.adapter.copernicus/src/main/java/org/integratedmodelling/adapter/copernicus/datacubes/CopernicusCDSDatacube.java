@@ -39,6 +39,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
     private String dataset;
     private String apiKey;
+    private String apiUrl;
 
     public static final String CDS_API_KEY_PROPERTY = "klab.copernicus.cds.apikey";
     public static final String CDS_API_URL = "klab.copernicus.cds.url";
@@ -66,12 +67,15 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
                 Configuration.INSTANCE.getDataPath("copernicus/" + dataset), noDataValue);
         this.dataset = dataset;
 
+        this.apiUrl = Configuration.INSTANCE.getProperties().getProperty(CDS_API_URL);
         this.apiKey = Configuration.INSTANCE.getProperties().getProperty(CDS_API_KEY_PROPERTY);
-        if (this.apiKey == null) {
-            setOnline(false, "Copernicus CDS datacube: no CDS credentials provided in configuration");
+        if (this.apiKey == null || this.apiUrl == null) {
+            setOnline(false, "Copernicus CDS datacube: no CDS url or api key provided in configuration");
         } else {
             setOnline(true, null);
         }
+        
+        
     }
 
     protected Geoserver initializeGeoserver() {
@@ -254,7 +258,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     }
 
     public String getEndpointUrl(String request) {
-        return CDS_API_URL + request;
+        return this.apiUrl + request;
     }
 
     @Override
