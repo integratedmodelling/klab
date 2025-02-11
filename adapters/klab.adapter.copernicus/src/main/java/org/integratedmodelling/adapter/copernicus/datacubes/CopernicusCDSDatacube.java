@@ -132,7 +132,6 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		body.put("month", this.monts[(date.getMonth() - 1) / 3]);
 		body.put("day", this.days);
 		body.put("version", CDS_API_VERSION);
-		//body.put("download_format", CDS_API_FORMAT);
 
 		configureRequest(variable, body);
 		
@@ -156,7 +155,6 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 		        // check the status of job
 		        int time = 0;
                 int tryafter = 5;
-                String url = null;
                 String requestId = response.getBody().getObject().has("jobID")
                         ? response.getBody().getObject().getString("jobID")
                         : null;
