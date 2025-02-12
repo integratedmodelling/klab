@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.components.network.services;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -12,7 +11,6 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -26,7 +24,6 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.Graph;
@@ -46,7 +43,6 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
     private IContextualizationScope scope;
     private Valhalla valhalla;
     private Graph<IObjectArtifact, MatrixEdge> graph;
-    private Map<Pair<IDirectObservation, IDirectObservation>, IShape> trajectories;
 
     public MatrixRelationshipInstantiator() {
     /* to instantiate as expression - do not remove (or use) */}
@@ -114,11 +110,6 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
             }
         }
 
-//        // all artifacts must be non-null and objects
-//        if (!validateThatAllElementsAreObjectArtifact(sources, targets)) {
-//            throw new IllegalArgumentException(
-//                    "klab.networks.routing: at least one source or target artifact does not exist or is not an object artifact");
-//        }
         List<double[]> sourcesCoordinates = sources.stream().map(s -> Valhalla.getCoordinates((IDirectObservation) s, geometryCollapser)).toList();
         List<double[]> targetsCoordinates = targets.stream().map(t -> Valhalla.getCoordinates((IDirectObservation) t, geometryCollapser)).toList();
 
@@ -132,6 +123,12 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
                 IObservation target = targets.get(connection.targetId);
 
                 Parameters<String> routeParameters = new Parameters<String>();
+                if (distanceThresholdInKilometers != null && connection.distance > distanceThresholdInKilometers) {
+                    continue;
+                }
+                if (timeThresholdInSeconds != null && connection.time > timeThresholdInSeconds) {
+                    continue;
+                }
                 routeParameters.put("distance", connection.distance);
                 routeParameters.put("time", connection.time);
                 
