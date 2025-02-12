@@ -156,7 +156,7 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 			<version>${spring-boot.version}</version>
-		</dependency>
+		</dependency>		
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
@@ -194,6 +194,18 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-oauth2-client</artifactId>
 			<version>${spring-security.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>net.minidev</groupId>
+					<artifactId>json-smart</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- Dependency for avoid error with net.minidev version-->
+		<dependency>
+    		<groupId>net.minidev</groupId>
+    		<artifactId>json-smart</artifactId>
+    		<version>2.4.7</version> <!-- or latest available version -->
 		</dependency>
 		<!-- ////////////////////////////////////////////////////////////////// -->
 
