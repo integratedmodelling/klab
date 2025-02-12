@@ -44,9 +44,6 @@ import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.locationtech.jts.geom.Geometry;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 import org.jgrapht.Graph;
 
 public class RoutingRelationshipInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
