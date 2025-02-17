@@ -196,7 +196,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
 
                 // retrieve the job results
                 endpoint = getEndpointUrl("/jobs/" + requestId + "/results");
-                Logging.INSTANCE.info("Ask for job results: " + endpoint + " with key " + apiKey + "\n" + jsonBody);
+                Logging.INSTANCE.info("Ask for job results: " + endpoint);
                 response = Unirest.get(endpoint).header("PRIVATE-TOKEN", apiKey).header("Content-Type", "application/json")
                         .header("Accept", "application/json").asJson();
                 if (response.isSuccess()) {
