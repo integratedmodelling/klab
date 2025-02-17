@@ -127,12 +127,15 @@ public static class Parameters extends TaskParameters {
 				if(!optIn.isEmpty()) {
 					Task optInTask = constructor.newInstance(user.getUsername(), optIn);
 					optInTask.setAutoAccepted(true);
-					optInTask.setRoleRequirement(user.getRoles().iterator().next());
+					optInTask.setRoleRequirement(Role.ROLE_USER);
 					ret.add(optInTask);
 				}
 				if(!requestGroups.isEmpty()) {
 					Task requestGroupsTask = constructor.newInstance(param.username, requestGroups);
 					requestGroupsTask.setRoleRequirement(Role.ROLE_ADMINISTRATOR);
+					if (user.getRoles().contains(Role.ROLE_ADMINISTRATOR)) {
+					    requestGroupsTask.setAutoAccepted(true);
+					}
 					ret.add(requestGroupsTask);
 				}
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
