@@ -47,7 +47,7 @@ public abstract class CopernicusCDSDatacube extends ChunkedDatacubeRepository {
     public static final String CDS_API_FORMAT = "zip";
     public static final String CDS_API_KEY_HEADER = "PRIVATE-TOKEN";
 
-    private int TIMEOUT_SECONDS = 30;
+    private int TIMEOUT_SECONDS = 60;
     private static Pattern pattern = Pattern.compile(".*(_[0-9]{8}_).*");
 
     /*
