@@ -129,7 +129,12 @@ export object matrix
 		"Method used to collapse line and polygon sources and targets to a single point or a set of points that allow route
 		finding."
 		values Centroid
-		default "Centroid"		
+		default "Centroid"
+		
+	optional number max_locations
+		"Valhalla servers set a maximum number of locations that can be analyzed with each query.
+		Set this value accordingly."
+		default 1000
 
 	optional text server
 		"Specify the endpoint for the Valhalla server."
