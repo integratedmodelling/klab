@@ -1,18 +1,12 @@
 package org.integratedmodelling.klab.components.geospace.routing;
 
 import java.util.List;
-import java.util.Map;
-
 import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.locationtech.jts.geom.Geometry;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;

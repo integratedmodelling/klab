@@ -2,6 +2,11 @@ package org.integratedmodelling.klab.components.network.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -11,6 +16,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -36,13 +42,14 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
 
     private Double timeThresholdInSeconds = null;
     private Double distanceThresholdInKilometers = null;
+    private Integer maxLocations = 1000;
 
     private TransportType transportType = TransportType.Auto;
     private GeometryCollapser geometryCollapser = GeometryCollapser.Centroid;
     private String server;
     private IContextualizationScope scope;
     private Valhalla valhalla;
-    private Graph<IObjectArtifact, MatrixEdge> graph;
+    private Graph<IObjectArtifact, DefaultEdge> graph;
 
     public MatrixRelationshipInstantiator() {
     /* to instantiate as expression - do not remove (or use) */}
@@ -53,6 +60,9 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
         this.targetArtifact = parameters.get("target", String.class);
         this.timeThresholdInSeconds = parameters.get("time_limit", Double.class);
         this.distanceThresholdInKilometers = parameters.get("distance_limit", Double.class);
+        if (parameters.contains("max_locations")) {
+            this.maxLocations = parameters.get("max_locations", Integer.class);
+        }
 
         if (parameters.containsKey("transport")) {
             this.transportType = TransportType.fromValue(Utils.removePrefix(parameters.get("transport", String.class)));
@@ -79,7 +89,6 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
 
     @Override
     public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException {
-        int i = 1;
         List<IObjectArtifact> ret = new ArrayList<>();
         
         // TODO Lo que viene aquí es algo que también se da en RoutingRelationshipInstantiator -> fusionar
@@ -110,39 +119,49 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
             }
         }
 
-        List<double[]> sourcesCoordinates = sources.stream().map(s -> Valhalla.getCoordinates((IDirectObservation) s, geometryCollapser)).toList();
-        List<double[]> targetsCoordinates = targets.stream().map(t -> Valhalla.getCoordinates((IDirectObservation) t, geometryCollapser)).toList();
+        graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+        AtomicLong nConnections = new AtomicLong(0);
+        int iterationSize = maxLocations/2;
+        IntStream.range(0, (sources.size() + iterationSize - 1) / iterationSize)
+        .mapToObj(i -> sources.subList(i * iterationSize, Math.min((i + 1) * iterationSize, sources.size())))
+        .forEach(sourcesChunk -> {
+            Map<double[], IObservation> sourceCoordinates = sourcesChunk.stream().collect(Collectors.toMap(s -> Valhalla.getCoordinates((IDirectObservation)s, geometryCollapser), s -> s));
 
-        String matrixRequest = Valhalla.buildValhallaMatrixInput(sourcesCoordinates, targetsCoordinates, transportType.getType());
-        ValhallaOutputDeserializer.Matrix response = valhalla.matrix(matrixRequest);
+            IntStream.range(0, (targets.size() + iterationSize - 1) / iterationSize)
+            .mapToObj(j -> targets.subList(j * iterationSize, Math.min((j + 1) * iterationSize, targets.size())))
+            .forEach(targetsChunk -> {
+                Map<double[], IObservation> targetCoordinates = targetsChunk.stream().collect(Collectors.toMap(t -> Valhalla.getCoordinates((IDirectObservation)t, geometryCollapser), t -> t));
+                String matrixRequest = Valhalla.buildValhallaMatrixInput(sourceCoordinates.keySet().stream().toList(), targetCoordinates.keySet().stream().toList(), transportType.getType());
+                ValhallaOutputDeserializer.Matrix response = valhalla.matrix(matrixRequest);
 
-        graph = new DefaultDirectedGraph<>(MatrixEdge.class);
-        for (List<PairwiseDistance> connections : response.sourcesToTargets) {
-            for (PairwiseDistance connection : connections) {
-                IObservation source = sources.get(connection.sourceId);
-                IObservation target = targets.get(connection.targetId);
+                for (List<PairwiseDistance> connections : response.sourcesToTargets) {
+                    for (PairwiseDistance connection : connections) {
+                        Parameters<String> routeParameters = new Parameters<String>();
+                        if (distanceThresholdInKilometers != null && connection.distance > distanceThresholdInKilometers) {
+                            continue;
+                        }
+                        if (timeThresholdInSeconds != null && connection.time > timeThresholdInSeconds) {
+                            continue;
+                        }
+                        routeParameters.put("distance", connection.distance);
+                        routeParameters.put("time", connection.time);
 
-                Parameters<String> routeParameters = new Parameters<String>();
-                if (distanceThresholdInKilometers != null && connection.distance > distanceThresholdInKilometers) {
-                    continue;
+                        IObservation source = sourcesChunk.get(connection.sourceId);
+                        IObservation target = sourcesChunk.get(connection.targetId);
+                        IShape sourceShape = source.getSpace().getShape();
+                        IShape targetShape = target.getSpace().getShape();
+                        graph.addVertex((IDirectObservation)source);
+                        graph.addVertex((IDirectObservation)target);
+                        graph.addEdge((IDirectObservation)source, (IDirectObservation)target,
+                                new MatrixEdge(sourceShape, targetShape, routeParameters));
+
+                        ret.add(scope.newRelationship(semantics, semantics.getName() + "_" + nConnections, scope.getScale(), (IDirectObservation)source, (IDirectObservation)target,
+                                new Metadata(routeParameters)));
+                        nConnections.incrementAndGet();
+                    }
                 }
-                if (timeThresholdInSeconds != null && connection.time > timeThresholdInSeconds) {
-                    continue;
-                }
-                routeParameters.put("distance", connection.distance);
-                routeParameters.put("time", connection.time);
-                
-                graph.addVertex((IDirectObservation)source);
-                graph.addVertex((IDirectObservation)target);
-                graph.addEdge((IDirectObservation)source, (IDirectObservation)target,
-                        new MatrixEdge(routeParameters));
-
-                ret.add(scope.newRelationship(semantics, semantics.getName() + "_" + i, scope.getScale(), (IDirectObservation)source, (IDirectObservation)target,
-                        new Metadata(routeParameters)));
-                i++;
-            }
-        }
-
+            });
+        });
         return ret;
     }
 
@@ -150,12 +169,16 @@ public class MatrixRelationshipInstantiator extends AbstractContextualizer imple
         private static final long serialVersionUID = 964984629774455337L;
 
         Parameters<String> routeParameters;
+        IShape sourceShape;
+        IShape targetShape;
 
         MatrixEdge() {
         }
 
-        MatrixEdge(Parameters<String> rp) {
+        MatrixEdge(IShape s, IShape t, Parameters<String> rp) {
             this.routeParameters = rp;
+            this.sourceShape = s;
+            this.targetShape = t;
         }
 
         public Parameters<String> getParameters() {
