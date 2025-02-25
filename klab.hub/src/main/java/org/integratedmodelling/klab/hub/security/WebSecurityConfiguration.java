@@ -64,6 +64,7 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
                 .permitAll().antMatchers(HttpMethod.POST, "/api/v2/users/log-in").permitAll()
                 .antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements()).permitAll()
                 .antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
+                .antMatchers(HttpMethod.POST, HubRequestMatchers.getNode()).permitAll()
                 .antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
