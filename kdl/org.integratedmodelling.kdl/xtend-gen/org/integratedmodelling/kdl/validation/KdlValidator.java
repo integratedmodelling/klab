@@ -3,7 +3,7 @@
  */
 package org.integratedmodelling.kdl.validation;
 
-import com.google.common.base.Objects;
+import java.util.Objects;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
@@ -27,7 +27,7 @@ public class KdlValidator extends AbstractKdlValidator {
 
   @Check
   public void checkActorDefinition(final ActorDefinition actor) {
-    if (((actor.getTargets().size() > 0) && (!Objects.equal(actor.getType(), "annotation")))) {
+    if (((actor.getTargets().size() > 0) && (!Objects.equals(actor.getType(), "annotation")))) {
       this.error("Only annotations can specify their targets", actor, KdlPackage.Literals.ACTOR_DEFINITION__TARGETS);
     }
     if (((actor.isParameter() && actor.isOptional()) && (actor.getDefault() == null))) {
@@ -72,7 +72,7 @@ public class KdlValidator extends AbstractKdlValidator {
         }
       }
     }
-    if ((actor.isFilter() && (!Objects.equal(actor.getType(), "extent")))) {
+    if ((actor.isFilter() && (!Objects.equals(actor.getType(), "extent")))) {
       boolean ok = false;
       if ((((actor.getBody() != null) && (actor.getBody().getDataflows() != null)) && (actor.getBody().getDataflows().size() > 0))) {
         EList<ActorDefinition> _dataflows = actor.getBody().getDataflows();

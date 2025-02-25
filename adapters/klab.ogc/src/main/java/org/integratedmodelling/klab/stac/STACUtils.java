@@ -6,7 +6,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.DOIReader;
@@ -49,30 +48,31 @@ public class STACUtils {
         return authors.toString().trim();
     }
 
-    public static String[] extractCatalogAndCollection(String collectionURI) {
-        return collectionURI.split("/collections/");
+    /**
+     * Validates of the artifact contains a link to an element of type ref
+     * @param data of a collection, catalog or item
+     * @param rel
+     * @return true if rel exists
+     */
+    public static boolean containsLinkTo(JSONObject data, String rel) {
+        return data.getJSONArray("links").toList().stream()
+                .anyMatch(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel));
     }
 
-    public static String getExtensionName(String identifier) {
-        return StringUtils.substringBetween(identifier, "https://stac-extensions.github.io/", "/v");
+    public static Optional<String> getLinkTo(JSONObject data, String rel) {
+        return data.getJSONArray("links").toList().stream()
+                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel))
+                .map(link -> ((JSONObject)link).getString("href")).findFirst();
     }
 
-    public static Version getExtensionVersion(String identifier) {
-        return Version.create(StringUtils.substringBetween(identifier, "/v", "/schema.json"));
-    }
-
-    public static JSONObject requestCollectionMetadata(String catalogUrl, String collectionId) {
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
+    public static JSONObject requestMetadata(String collectionUrl, String type) {
+        HttpResponse<JsonNode> response = Unirest.get(collectionUrl).asJson();
         if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the collection at " + catalogUrl + "/collections/" + collectionId);
+            throw new KlabResourceAccessException("Cannot access the " + type + " at " + collectionUrl);
         }
-        return response.getBody().getObject();
-    }
-
-    public static JSONObject requestItemMetadata(String catalogUrl, String collectionId, String item) {
-        HttpResponse<JsonNode> response = Unirest.get(catalogUrl + "/collections/" + collectionId).asJson();
-        if (!response.isSuccess() || response.getBody() == null) {
-            throw new KlabResourceAccessException("Cannot access the item at " + catalogUrl + "/collections/" + collectionId + "/items/" + item);
+        JSONObject data = response.getBody().getObject();
+        if (!data.getString("type").equalsIgnoreCase(type)) {
+            throw new KlabResourceAccessException("Data at " + collectionUrl + " is not a valid STAC " + type);
         }
         return response.getBody().getObject();
     }
@@ -108,4 +108,22 @@ public class STACUtils {
         return Type.TEXT;
     }
 
+    /**
+     * Reads the collection data and extracts the link pointing to the root element (the catalog).
+     * @param collectionData
+     * @return url of the catalog
+     */
+    public static String getCatalogUrl(JSONObject collectionData) {
+        // The URL of the catalog is the root
+        if (!collectionData.has("links")) {
+            throw new KlabResourceAccessException("STAC collection is missing links. It is not fully complaiant and cannot be accessed by the adapter.");
+        }
+        JSONArray links = collectionData.getJSONArray("links");
+        Optional<JSONObject> rootLink = links.toList().stream()
+                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase("root")).findFirst();
+        if (rootLink.isEmpty()) {
+            throw new KlabResourceAccessException("STAC collection is missing a relationship to the root catalog");
+        }
+        return rootLink.get().getString("href");
+    }
 }

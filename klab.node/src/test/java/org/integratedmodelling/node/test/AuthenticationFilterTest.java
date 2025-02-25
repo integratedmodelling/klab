@@ -58,7 +58,7 @@ public class AuthenticationFilterTest {
 
 	@Test
 	public void validTokenReturnsOk() throws Exception {
-		long validTime = System.currentTimeMillis();
+		long validTime = System.currentTimeMillis() + oneHour;
 		mvc.perform(get("/").header("Authorization", getToken("valid.request", validTime))).andExpect(status().isOk());
 	}
 

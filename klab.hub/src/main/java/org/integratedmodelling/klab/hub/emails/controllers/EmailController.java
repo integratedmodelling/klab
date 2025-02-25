@@ -137,7 +137,7 @@ public class EmailController {
         if (emailTemplate.getAuthorUsername() == null) {
             emailTemplate.setAuthorUsername(profileService.getCurrentUserProfile(false).getUsername());
         } else {
-            Optional<User> user = userRepository.findByName(emailTemplate.getAuthorUsername());
+            Optional<User> user = userRepository.findByNameIgnoreCase(emailTemplate.getAuthorUsername());
             if (!user.isPresent()) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
             }

@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.indexing.DistanceCalculator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
@@ -342,7 +343,10 @@ public class ConfigurableRelationshipInstantiator extends AbstractContextualizer
             IDirectObservation source = (IDirectObservation) graph.getEdgeSource(edge);
             IDirectObservation target = (IDirectObservation) graph.getEdgeTarget(edge);
             IScale scale = getScale(source, target, edge instanceof SpatialEdge ? ((SpatialEdge) edge).targetShape : null);
-            ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, null));
+            // TODO find a better way of setting the metadata value
+            Metadata metadata = new Metadata();
+            metadata.put("cost", 1.0);
+            ret.add(scope.newRelationship(observable, observable.getName() + "_" + i, scale, source, target, metadata));
             i++;
         }
         return ret;

@@ -5,6 +5,8 @@ server:
   error:
     include-message: always
 spring:
+  main:
+    allow-bean-definition-overriding: true
   cloud:
     bus:
       enabled: false
@@ -20,8 +22,6 @@ spring:
         enabled: false
   profiles:
     default: true
-  main:
-    allow-bean-definition-overriding: true
   security:
     oauth2:
       client:
@@ -110,3 +110,22 @@ license:
   pubRing:
     filename: "keyring/PubRing.pgp"
     digest: "cad134cc3dfcb0e96acb90af56532a96171f858c4c30335541932c0e00a66c9deab764805d9b9f08a49619af211b96305b512d4cf256e8a9c29877d06d207c72"
+keycloak:
+  realm: im
+  auth-server-url: http://localhost:8078
+  resource: k.Hub
+  bearer-only: true
+hub:
+   env:
+      # SPA MODE
+      #app-base-url: http://localhost:8284/hub/ui
+      #base-url: /hub
+      # DEVELOP MODE
+      app-base-url: http://localhost:8080/hub
+      base-url: http://localhost:8284/hub
+      environment: development
+      keycloak-url: http://localhost:8078
+      static-base-url: http://127.0.0.1:90
+cors:
+    hosts:
+        allow: http://localhost:8080, https://localhost:8080, http://localhost:8284, https://localhost:8284

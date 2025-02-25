@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabRemoteException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
@@ -82,37 +82,41 @@ import okhttp3.Response;
  */
 public class OSMSubjectInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
 
-	List<Object> matching = null;
-	List<Object> notmatching = null;
-	List<Object> equal = null;
-	List<Object> notequal = null;
+    List<Object> matching = null;
+    List<Object> notmatching = null;
+    List<Object> equal = null;
+    List<Object> notequal = null;
 
-	List<Object> filters = null;
+    // These conditions are the query filter mentioned at the OSM wiki. The String is expected to be empty or a valid Evaluator.
+    // https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#The_Query_Filter
+    String conditions = "";
 
-	String type = null;
+    List<Object> filters = null;
 
-	boolean isTemporal = false;
-	boolean fixGeometries = false;
+    String type = null;
 
-	String query = null;
+    boolean isTemporal = false;
+    boolean fixGeometries = false;
 
-	boolean canDispose = false;
-	boolean useCache = true;
+    String query = null;
 
-	IDirectObservation contextSubject = null;
+    boolean canDispose = false;
+    boolean useCache = true;
 
-	// forced types
-	Set<String> geometryTypes = new HashSet<>();
+    IDirectObservation contextSubject = null;
 
-	private int nsubjs = 0;
-	int maxObjects = 0;
+    // forced types
+    Set<String> geometryTypes = new HashSet<>();
 
-	private WayBuilder wayBuilder = new WayBuilder();
-	private RegionBuilder regionBuilder = new RegionBuilder();
+    private int nsubjs = 0;
+    int maxObjects = 0;
 
-	private int timeout = 600;
-	private boolean simplifyShapes = false;
-	double bufferDistance = Double.NaN;
+    private WayBuilder wayBuilder = new WayBuilder();
+    private RegionBuilder regionBuilder = new RegionBuilder();
+
+    private int timeout = 600;
+    private boolean simplifyShapes = false;
+    double bufferDistance = Double.NaN;
     SpatialBoundaries spatialBoundaries;
 
     public enum SpatialBoundaries {
@@ -126,81 +130,88 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
         }
     }
 
-	public OSMSubjectInstantiator() {
-	}
+    public OSMSubjectInstantiator() {
+    }
 
-	@SuppressWarnings("unchecked")
-	public OSMSubjectInstantiator(IParameters<String> parameters, IContextualizationScope context) {
+    @SuppressWarnings("unchecked")
+    public OSMSubjectInstantiator(IParameters<String> parameters, IContextualizationScope context) {
 
-		this.contextSubject = context.getContextObservation();
+        this.contextSubject = context.getContextObservation();
 
-		this.filters = parameters.get("filters", List.class);
-		this.equal = parameters.get("equal", List.class);
-		this.matching = parameters.get("matching", List.class);
-		this.notequal = parameters.get("not-equal", List.class);
-		this.notmatching = parameters.get("not-matching", List.class);
+        this.filters = parameters.get("filters", List.class);
+        this.equal = parameters.get("equal", List.class);
+        this.matching = parameters.get("matching", List.class);
+        this.notequal = parameters.get("not-equal", List.class);
+        this.notmatching = parameters.get("not-matching", List.class);
 
-		if (parameters.containsKey("feature-type")) {
-			this.type = parameters.get("feature-type", String.class);
-			if (!this.type.contains(",")) {
-				this.fixGeometries = this.type.equals("point") || this.type.equals("polygon")
-						|| this.type.equals("line") || this.type.equals("area");
-			}
-		}
-		if (parameters.containsKey("max-objects")) {
-			this.maxObjects = parameters.get("max-objects", Number.class).intValue();
-		}
-		if (parameters.containsKey("timeout")) {
-			this.timeout = parameters.get("timeout", Number.class).intValue();
-		}
-		if (parameters.containsKey("temporal")) {
-			this.isTemporal = parameters.get("temporal", Boolean.class);
-		}
-		if (parameters.containsKey("use-cache")) {
-			this.useCache = parameters.get("use-cache", Boolean.class);
-		}
-		if (parameters.containsKey("simplify-polygons")) {
-			this.simplifyShapes = parameters.get("simplify-polygons", Boolean.class);
-		}
-		if (parameters.containsKey("spatial-boundaries")) {
-		    this.spatialBoundaries = SpatialBoundaries.valueOf(parameters.get("spatial-boundaries", String.class));
-		}
-	}
+        if (parameters.containsKey("feature-type")) {
+            this.type = parameters.get("feature-type", String.class);
+            if (!this.type.contains(",")) {
+                this.fixGeometries = this.type.equals("point") || this.type.equals("polygon")
+                        || this.type.equals("line") || this.type.equals("area");
+            }
+        }
+        if (parameters.containsKey("conditions")) {
+            this.conditions = parameters.get("conditions", String.class);
+        }
+        if (parameters.containsKey("max-objects")) {
+            this.maxObjects = parameters.get("max-objects", Number.class).intValue();
+        }
+        if (parameters.containsKey("timeout")) {
+            this.timeout = parameters.get("timeout", Number.class).intValue();
+        }
+        if (parameters.containsKey("temporal")) {
+            this.isTemporal = parameters.get("temporal", Boolean.class);
+        }
+        if (parameters.containsKey("use-cache")) {
+            this.useCache = parameters.get("use-cache", Boolean.class);
+        }
+        if (parameters.containsKey("simplify-polygons")) {
+            this.simplifyShapes = parameters.get("simplify-polygons", Boolean.class);
+        }
+        if (parameters.containsKey("spatial-boundaries")) {
+            this.spatialBoundaries = SpatialBoundaries.valueOf(parameters.get("spatial-boundaries", String.class));
+        }
+    }
 
-	@Override
-	public Type getType() {
-		return Type.OBJECT;
-	}
+    @Override
+    public Type getType() {
+        return Type.OBJECT;
+    }
 
-	@Override
-	public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
-			throws KlabException {
+    @Override
+    public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context)
+            throws KlabException {
 
-		if (query == null) {
-			query = buildQuery();
-			Logging.INSTANCE.debug("Overpass query: " + query);
-		}
+        if (query == null) {
+            query = buildQuery();
+            Logging.INSTANCE.debug("Overpass query: " + query);
+        }
 
-		List<IObjectArtifact> ret = new ArrayList<>();
+        List<IObjectArtifact> ret = new ArrayList<>();
 
-		if (query /* still */ == null) {
-			return ret;
-		}
+        if (query /* still */ == null) {
+            return ret;
+        }
 
-		/*
-		 * TODO use cache if available, unless caching is disabled in parameters.
-		 */
-		if (useCache) {
+        /*
+         * TODO use cache if available, unless caching is disabled in parameters.
+         */
+        if (useCache) {
 
-		}
+        }
 
-		Throwable exception = null;
+        boolean hasSuccessfulQuery = false;
+        Throwable exception = null;
 
-		for (String url : Geocoder.OVERPASS_URLS) {
+        for (String url : Geocoder.OVERPASS_URLS) {
 
-			context.getMonitor().debug("Opening Overpass query " + url);
+            context.getMonitor().debug("Opening Overpass query " + url);
 
-            OkHttpClient client = new OkHttpClient().newBuilder().callTimeout(timeout, TimeUnit.SECONDS).build();
+            OkHttpClient client = new OkHttpClient().newBuilder()
+                    .callTimeout(timeout, TimeUnit.SECONDS)
+                    .readTimeout(timeout, TimeUnit.SECONDS)
+                    .build();
             MediaType mediaType = MediaType.parse("text/plain");
             RequestBody body = RequestBody.create(mediaType, query);
 
@@ -209,233 +220,244 @@ public class OSMSubjectInstantiator extends AbstractContextualizer implements II
             try {
                 response = client.newCall(request).execute();
             } catch (IOException ex) {
-                throw new KlabRemoteException(ex);
+                // If there is an exception for this instance, try the next Overpass endpoint
+                context.getMonitor().debug("Call to Overpass server at " + url + " was unsuccessful.");
+                continue;
             }
-			try (InputStream input = response.body().byteStream()) {
+            try (InputStream input = response.body().byteStream()) {
 
-				OsmIterator iterator = new OsmXmlIterator(input, true);
-				InMemoryMapDataSet data = MapDataSetLoader.read(iterator, true, true, true);
+                OsmIterator iterator = new OsmXmlIterator(input, true);
+                InMemoryMapDataSet data = MapDataSetLoader.read(iterator, true, true, true);
 
-				if ((type == null || type.contains("node") || type.contains("point")) && !data.getNodes().isEmpty()) {
-					for (OsmNode node : data.getNodes().valueCollection()) {
-						Geometry point = new GeometryBuilder().build(node);
-						if (fixGeometries && (this.type.equals("polygon") || this.type.equals("area"))) {
-							point = point.buffer(bufferDistance);
-						}
-						ISubject subject = makeSubject(semantics, point, node, context);
-						if (subject != null) {
-							ret.add(subject);
-						}
-					}
-				}
+                if ((type == null || type.contains("node") || type.contains("point")) && !data.getNodes().isEmpty()) {
+                    for (OsmNode node : data.getNodes().valueCollection()) {
+                        Geometry point = new GeometryBuilder().build(node);
+                        if (fixGeometries && (this.type.equals("polygon") || this.type.equals("area"))) {
+                            point = point.buffer(bufferDistance);
+                        }
+                        ISubject subject = makeSubject(semantics, point, node, context);
+                        if (subject != null) {
+                            ret.add(subject);
+                        }
+                    }
+            	}
 
-				// relations first, so later we can exclude ways that compose them
-				Set<OsmWay> waysInRelations = new HashSet<>();
-				EntityFinder wayFinder = EntityFinders.create(data, EntityNotFoundStrategy.IGNORE);
+                // relations first, so later we can exclude ways that compose them
+                Set<OsmWay> waysInRelations = new HashSet<>();
+                EntityFinder wayFinder = EntityFinders.create(data, EntityNotFoundStrategy.IGNORE);
 
-				if ((type == null || type.contains("relation") || type.contains("area") || type.contains("polygon"))
-						&& !data.getRelations().isEmpty()) {
-					for (OsmRelation rel : data.getRelations().valueCollection()) {
-						Geometry polygon = getPolygon(rel, data);
-						try {
-							wayFinder.findMemberWays(rel, waysInRelations);
-						} catch (EntityNotFoundException e) {
-							// won't happen
-						}
-						if (this.fixGeometries && this.type.equals("point")) {
-							polygon = polygon.getCentroid();
-						}
-						ISubject subject = makeSubject(semantics, polygon, rel, context);
-						if (subject != null) {
-							ret.add(subject);
-						}
-					}
-				}
+                if ((type == null || type.contains("relation") || type.contains("area") || type.contains("polygon"))
+                        && !data.getRelations().isEmpty()) {
+                    for (OsmRelation rel : data.getRelations().valueCollection()) {
+                        Geometry polygon = getPolygon(rel, data);
+                        try {
+                            wayFinder.findMemberWays(rel, waysInRelations);
+                        } catch (EntityNotFoundException e) {
+                            // won't happen
+                        }
+                        if (this.fixGeometries && this.type.equals("point")) {
+                            polygon = polygon.getCentroid();
+                        }
+                        ISubject subject = makeSubject(semantics, polygon, rel, context);
+                        if (subject != null) {
+                            ret.add(subject);
+                        }
+                    }
+                }
 
-				if ((type == null || type.contains("way") || type.contains("area") || type.contains("polygon")
-						|| type.contains("line")) && !data.getWays().isEmpty()) {
-					for (OsmWay way : data.getWays().valueCollection()) {
+                if ((type == null || type.contains("way") || type.contains("area") || type.contains("polygon")
+                        || type.contains("line")) && !data.getWays().isEmpty()) {
+                    for (OsmWay way : data.getWays().valueCollection()) {
 
-						// bele vist
-						if (waysInRelations.contains(way)) {
-							continue;
-						}
-						Geometry line = (fixGeometries && (this.type.equals("polygon") || this.type.equals("area")))
-								? getPolygon(way, data)
-								: new GeometryBuilder().build(way, data);
-						ISubject subject = makeSubject(semantics, line, way, context);
-						if (subject != null) {
-							ret.add(subject);
-						}
-					}
-				}
+                        // bele vist
+                        if (waysInRelations.contains(way)) {
+                            continue;
+                        }
+                        Geometry line = (fixGeometries && (this.type.equals("polygon") || this.type.equals("area")))
+                                ? getPolygon(way, data)
+                                : new GeometryBuilder().build(way, data);
+                        ISubject subject = makeSubject(semantics, line, way, context);
+                        if (subject != null) {
+                            ret.add(subject);
+                        }
+                    }
+                }
+                hasSuccessfulQuery = true;
+                break;
 
-				break;
-
-			} catch (Throwable e) {
-				context.getMonitor().debug("Overpass server at " + url + " failed to respond");
-				exception = e;
-			}
-		}
+            } catch (Throwable e) {
+                context.getMonitor().debug("Overpass server at " + url + " failed to respond");
+                exception = e;
+            }
+    	}
 		
-		if (exception != null) {
-			throw new KlabIOException(exception);
-		}
+        if (exception != null) {
+            throw new KlabIOException(exception);
+        }
 
-		/*
-		 * TODO cache query and results in session data if OK, unless caching is
-		 * disabled in parameters.
-		 */
-		context.getMonitor().info(this.nsubjs + " objects retrieved from OpenStreetMap");
+        if (!hasSuccessfulQuery) {
+            throw new KlabResourceAccessException("Couldn't make a successful Overpass request.");
+        }
+        /*
+         * TODO cache query and results in session data if OK, unless caching is
+         * disabled in parameters.
+         */
+        context.getMonitor().info(this.nsubjs + " objects retrieved from OpenStreetMap");
 
-		return ret;
-	}
+        return ret;
+    }
 
-	@Override
-	public Object eval(IContextualizationScope context, Object...parameters) throws KlabException {
-		return new OSMSubjectInstantiator(Parameters.create(parameters), context);
-	}
+    @Override
+    public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
+        return new OSMSubjectInstantiator(Parameters.create(parameters), context);
+    }
 
-	private String buildQuery() throws KlabValidationException {
+    private String buildQuery() throws KlabValidationException {
 
-		if (contextSubject.getScale().getSpace() == null) {
-			return null;
-		}
+        if (contextSubject.getScale().getSpace() == null) {
+            return null;
+        }
 
-		Collection<String> targets = getQueryTargets();
-		Shape shape = (Shape) contextSubject.getScale().getSpace().getShape();
+        Collection<String> targets = getQueryTargets();
+        Shape shape = (Shape) contextSubject.getScale().getSpace().getShape();
 
-		if (Double.isNaN(bufferDistance)) {
-			ReferencedEnvelope bbox = shape.getEnvelope().getJTSEnvelope();
-			double mdist = bbox.getWidth() + bbox.getHeight() / 2.0;
-			bufferDistance = mdist / 100.0;
-		} else {
-			// TODO must pass as parameters in meters or so, translate to projection
-		}
+        if (Double.isNaN(bufferDistance)) {
+            ReferencedEnvelope bbox = shape.getEnvelope().getJTSEnvelope();
+            double mdist = bbox.getWidth() + bbox.getHeight() / 2.0;
+            bufferDistance = mdist / 100.0;
+        } else {
+            // TODO must pass as parameters in meters or so, translate to projection
+        }
 
-		OSMQuery query = new OSMQuery(shape, targets.toArray(new String[targets.size()]));
+        OSMQuery query = new OSMQuery(shape, targets.toArray(new String[targets.size()]));
 
-		query.setTimeout(timeout);
+        query.setTimeout(timeout);
 
-		if (this.equal != null) {
-			query.filterEqual(this.equal.toArray());
-		}
-		if (this.notequal != null) {
-			query.filterNotEqual(this.notequal.toArray());
-		}
-		if (this.matching != null) {
-			query.filterMatch(this.matching.toArray());
-		}
-		if (this.notmatching != null) {
-			query.filterNotMatch(this.notmatching.toArray());
-		}
+        if (this.equal != null) {
+            query.filterEqual(this.equal.toArray());
+        }
+        if (this.notequal != null) {
+            query.filterNotEqual(this.notequal.toArray());
+        }
+        if (this.matching != null) {
+            query.filterMatch(this.matching.toArray());
+        }
+        if (this.notmatching != null) {
+            query.filterNotMatch(this.notmatching.toArray());
+        }
+        if (!this.conditions.isBlank()) {
+            query.setConditions(this.conditions);
+        }
         query.setSpatialBoundaries(spatialBoundaries);
 
-		return query.toString();
-	}
+        return query.toString();
+    }
 
-	private Collection<String> getQueryTargets() {
-		Set<String> ret = new HashSet<>();
-		String[] types = this.type.split(",");
-		for (String t : types) {
-			if (t.equals("area")) {
-				t = "polygon";
-			}
-			if (t.equals("point") || t.equals("polygon") || t.equals("line")) {
-				this.geometryTypes.add(t);
-			} else if (!(t.equals("node") || t.equals("way") || t.equals("relation"))) {
-				throw new KlabValidationException(t
-						+ ": wrong query type: OSM query can refer to node, way or relation, or use area, polygon, point or line");
-			}
-			ret.add(t);
-		}
-		return ret;
-	}
+    private Collection<String> getQueryTargets() {
+        Set<String> ret = new HashSet<>();
+        String[] types = this.type.split(",");
+        for (String t : types) {
+            if (t.equals("area")) {
+                t = "polygon";
+            }
+            if (t.equals("point") || t.equals("polygon") || t.equals("line")) {
+                this.geometryTypes.add(t);
+            } else if (!(t.equals("node") || t.equals("way") || t.equals("relation"))) {
+                throw new KlabValidationException(t
+                        + ": wrong query type: OSM query can refer to node, way or relation, or use area, polygon, point or line");
+            }
+            ret.add(t);
+        }
+        return ret;
+    }
 
-	private ISubject makeSubject(IObservable observable, Geometry geometry, OsmEntity node,
-			IContextualizationScope context) throws KlabException {
+    private ISubject makeSubject(IObservable observable, Geometry geometry, OsmEntity node, IContextualizationScope context)
+            throws KlabException {
 
-		this.nsubjs++;
+        this.nsubjs++;
 
-		if (this.simplifyShapes && geometry instanceof Polygon) {
-			/*
-			 * use 1% of the longest dimension as a default TODO add option to modify
-			 */
-			ReferencedEnvelope envelope = JTS.toEnvelope(geometry);
-			double dist = Math.max(envelope.getWidth(), envelope.getHeight()) / 100;
-			geometry = TopologyPreservingSimplifier.simplify(geometry, dist);
-		}
+        if (this.simplifyShapes && geometry instanceof Polygon) {
+            /*
+             * use 1% of the longest dimension as a default TODO add option to modify
+             */
+            ReferencedEnvelope envelope = JTS.toEnvelope(geometry);
+            double dist = Math.max(envelope.getWidth(), envelope.getHeight()) / 100;
+            geometry = TopologyPreservingSimplifier.simplify(geometry, dist);
+        }
 
-		Shape shape = Shape.create(geometry, Projection.getDefault());
-		if (context.getScale().getSpace() != null) {
-			shape = shape.transform(context.getScale().getSpace().getProjection());
-		}
+        Shape shape = Shape.create(geometry, Projection.getDefault());
+        if (context.getScale().getSpace() != null) {
+            shape = shape.transform(context.getScale().getSpace().getProjection());
+        }
 
-		/*
-		 * TODO other actions on the shape if requested. TODO maybe also check for
-		 * validity - we don't know where it's been.
-		 */
+        /*
+         * TODO other actions on the shape if requested. TODO maybe also check for
+         * validity - we don't know where it's been.
+         */
 
-		Map<String, String> tags = OsmModelUtil.getTagsAsMap(node);
-		String id = (tags.containsKey("name") ? tags.get("name")
-				: CamelCase.toLowerCase(Observables.INSTANCE.getDisplayName(observable), '-') + "_" + this.nsubjs);
+        Map<String, String> tags = OsmModelUtil.getTagsAsMap(node);
+        String id = (tags.containsKey("name")
+                ? tags.get("name")
+                : CamelCase.toLowerCase(Observables.INSTANCE.getDisplayName(observable), '-') + "_" + this.nsubjs);
 
-		/*
-		 * add the unused metadata from OSM so the resolver can use them
-		 */
-		IMetadata metadata = new Metadata();
-		for (String tag : tags.keySet()) {
-			// weird shit happens
-			String tgv = tags.get(tag).replaceAll("\\P{Print}", "");
-			metadata.put(tag, tgv);
-		}
+        /*
+         * add the unused metadata from OSM so the resolver can use them
+         */
+        IMetadata metadata = new Metadata();
+        for (String tag : tags.keySet()) {
+            // weird shit happens
+            String tgv = tags.get(tag).replaceAll("\\P{Print}", "");
+            metadata.put(tag, tgv);
+            metadata.put("osm:id", node.getId());
+            metadata.put("osm:element", node.getType());
+        }
 
-		return (ISubject) context.newObservation(observable, id, getScale(shape, contextSubject), metadata);
-	}
+        return (ISubject) context.newObservation(observable, id, getScale(shape, contextSubject), metadata);
+    }
 
-	private IScale getScale(ISpace extent, IDirectObservation context) throws KlabException {
+    private IScale getScale(ISpace extent, IDirectObservation context) throws KlabException {
 
-		List<IExtent> exts = new ArrayList<>();
-		for (IExtent e : context.getScale().getExtents()) {
-			if (e.getType() == Dimension.Type.SPACE) {
-				exts.add(extent);
-			} else {
-				exts.add(e);
-			}
-		}
-		return Scale.create(exts);
-	}
+        List<IExtent> exts = new ArrayList<>();
+        for (IExtent e : context.getScale().getExtents()) {
+            if (e.getType() == Dimension.Type.SPACE) {
+                exts.add(extent);
+            } else {
+                exts.add(e);
+            }
+        }
+        return Scale.create(exts);
+    }
 
-	private Collection<LineString> getLine(OsmWay way, InMemoryMapDataSet data) {
-		List<LineString> results = new ArrayList<>();
-		try {
-			WayBuilderResult lines = wayBuilder.build(way, data);
-			results.addAll(lines.getLineStrings());
-			if (lines.getLinearRing() != null) {
-				results.add(lines.getLinearRing());
-			}
-		} catch (EntityNotFoundException e) {
-			// ignore
-		}
-		return results;
-	}
+    private Collection<LineString> getLine(OsmWay way, InMemoryMapDataSet data) {
+        List<LineString> results = new ArrayList<>();
+        try {
+            WayBuilderResult lines = wayBuilder.build(way, data);
+            results.addAll(lines.getLineStrings());
+            if (lines.getLinearRing() != null) {
+                results.add(lines.getLinearRing());
+            }
+        } catch (EntityNotFoundException e) {
+            // ignore
+        }
+        return results;
+    }
 
-	private MultiPolygon getPolygon(OsmWay way, InMemoryMapDataSet data) {
-		try {
-			RegionBuilderResult region = regionBuilder.build(way, data);
-			return region.getMultiPolygon();
-		} catch (EntityNotFoundException e) {
-			return null;
-		}
-	}
+    private MultiPolygon getPolygon(OsmWay way, InMemoryMapDataSet data) {
+        try {
+            RegionBuilderResult region = regionBuilder.build(way, data);
+            return region.getMultiPolygon();
+        } catch (EntityNotFoundException e) {
+            return null;
+        }
+    }
 
-	private MultiPolygon getPolygon(OsmRelation relation, InMemoryMapDataSet data) {
-		try {
-			RegionBuilderResult region = regionBuilder.build(relation, data);
-			return region.getMultiPolygon();
-		} catch (EntityNotFoundException e) {
-			return null;
-		}
-	}
+    private MultiPolygon getPolygon(OsmRelation relation, InMemoryMapDataSet data) {
+        try {
+            RegionBuilderResult region = regionBuilder.build(relation, data);
+            return region.getMultiPolygon();
+        } catch (EntityNotFoundException e) {
+            return null;
+        }
+    }
 
 }

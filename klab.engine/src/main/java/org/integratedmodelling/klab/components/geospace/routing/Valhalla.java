@@ -3,13 +3,17 @@ package org.integratedmodelling.klab.components.geospace.routing;
 import java.util.List;
 import java.util.Map;
 
+import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
 import org.integratedmodelling.klab.exceptions.KlabException;
-
+import org.locationtech.jts.geom.Geometry;
 import edu.uci.ics.jung.graph.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.util.EdgeType;
+import kong.unirest.JsonNode;
+import kong.unirest.json.JSONObject;
 
 /**
  * Java peer to interact with the valhalla.test.Valhalla server via simple
@@ -50,8 +54,10 @@ public class Valhalla {
 		return deserializer.deserializeOptimizedRoutes();
 	}
 
-	public String isochrone(String input) throws ValhallaException {
-		return valhalla.valhallaSendRequest(input, ValhallaRuntimeEnvironment.ValhallaRequestType.ISOCHRONE);
+	public Geometry isochrone(String input) throws ValhallaException {
+		String response = valhalla.valhallaSendRequest(input, ValhallaRuntimeEnvironment.ValhallaRequestType.ISOCHRONE);
+		JSONObject json = new JsonNode(response).getObject();
+		return GeoJSONReader.parseGeometry(json.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").toString());
 	}
 
 	public static void main(String[] args) throws ValhallaException {
@@ -123,32 +129,38 @@ public class Valhalla {
 		System.out.println(waypoints);
 	}
 
-	public static String buildValhallaJsonInput(IDirectObservation source, IDirectObservation target,
-			String transportType, String geometryCollapser) {
-
-		double[] sourceCoordinates = null;
-		double[] targetCoordinates = null;
-
-		// Using a switch statement for generality when more methods will be supported.
-		switch (geometryCollapser) {
-		case "centroid":
-			sourceCoordinates = source.getSpace().getStandardizedCentroid();
-			targetCoordinates = target.getSpace().getStandardizedCentroid();
-			break;
-		default:
-			throw new KlabException(
-					"Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
-		}
-
-		double sourceLat = sourceCoordinates[1];
-		double sourceLon = sourceCoordinates[0];
-		double targetLat = targetCoordinates[1];
-		double targetLon = targetCoordinates[0];
+	public static String buildValhallaJsonInput(double[] source, double[] target,
+			String transportType) {
+		double sourceLat = source[1];
+		double sourceLon = source[0];
+		double targetLat = target[1];
+		double targetLon = target[0];
 
 		String input = "{\"locations\": [{\"lat\":" + sourceLat + ",\"lon\":" + sourceLon + "}, {\"lat\":" + targetLat
 				+ ",\"lon\":" + targetLon + "}], \"costing\":" + "\"" + transportType + "\"}";
 
 		return input;
 	}
+	
+    public static String buildValhallaIsochroneInput(double[] coordinates, String transportType, String isochroneType, double range, boolean isReverse) {
+        return new StringBuffer("{\"locations\":[").append("{\"lat\":").append(coordinates[1]).append(",").append("\"lon\":")
+                .append(coordinates[0]).append("}],\"costing\":\"").append(transportType).append("\",")
+                .append("\"contours\":[{\"").append(isochroneType).append("\":").append(range)
+                .append("}],\"polygons\":true,\"reverse\":").append(isReverse).append("}").toString();
+    }
+
+    /*
+     * Sets the coordinates according to the selected geometry collapser.
+     */
+    public static double[] getCoordinates(IDirectObservation observation, GeometryCollapser geometryCollapser) {
+        switch(geometryCollapser.getType()) {
+        case "centroid":
+            return observation.getSpace().getStandardizedCentroid();
+        default:
+            //TODO IM-433 In the future, we should allow for more complex ways of finding a geometry
+            throw new KlabException(
+                    "Invalid method for geometry collapse: " + geometryCollapser + ". Supported: \"centroid\".");
+        }
+    }
 
 }

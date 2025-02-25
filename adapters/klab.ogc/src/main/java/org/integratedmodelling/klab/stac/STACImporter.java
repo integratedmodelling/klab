@@ -22,11 +22,13 @@ import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.klab.utils.s3.S3RegionResolver;
+import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 
 import kong.unirest.json.JSONObject;
+import software.amazon.awssdk.regions.Region;
 
 public class STACImporter implements IResourceImporter {
 
@@ -46,8 +48,10 @@ public class STACImporter implements IResourceImporter {
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
             throws MalformedURLException {
-        String catalogUrl = parameters.get("catalogUrl", String.class);
-        String collectionId = parameters.get("collectionId", String.class);
+        String collectionUrl = parameters.get("collection", String.class);
+        JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
+        String collectionId = STACCollectionParser.readCollectionId(collectionData);
+        parameters.put("collectionId", collectionId);
 
         String regex = null;
         if (parameters.contains("regex")) {
@@ -55,7 +59,18 @@ public class STACImporter implements IResourceImporter {
             parameters.remove(Resources.REGEX_ENTRY);
         }
 
-        JSONObject assets = STACCollectionParser.readAssets(catalogUrl, collectionId);
+        boolean isBulkImport = parameters.contains("bulkImport");
+        parameters.remove("bulkImport");
+        if (!parameters.contains("asset") && !isBulkImport) {
+            Builder builder = buildResource(parameters, project, monitor, collectionId);
+            if (builder != null) {
+                ret.add(builder);
+            } else {
+                monitor.warn("STAC collection " + collectionId + " is invalid and cannot be imported");
+            }
+            return;
+        }
+        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
         for(String assetId : assetIds) {
             if (regex != null && !assetId.matches(regex)) {
@@ -70,39 +85,46 @@ public class STACImporter implements IResourceImporter {
             }
             parameters.put("asset", assetId);
             String resourceUrn = collectionId + "-" + assetId;
+            String href = assetData.getString("href");
+            if (S3URLUtils.isS3Endpoint(href)) {
+                String[] bucketAndObject = href.split("://")[1].split("/", 2);
+                Region s3Region = S3RegionResolver.resolveBucketRegion(bucketAndObject[0], bucketAndObject[1], monitor);
+                parameters.put("awsRegion", s3Region.id());
+            }
 
-            Builder builder = validator.validate(
-                    Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(catalogUrl + "/collections/" + collectionId),
-                    parameters, monitor);
-
+            Builder builder = buildResource(parameters, project, monitor, resourceUrn);
             if (builder != null) {
-                builder.withLocalName(resourceUrn).setResourceId(resourceUrn);
                 ret.add(builder);
-                monitor.info("STAC collection " + collectionId + " added");
             } else {
-                monitor.warn("STAC collection " + collectionId + " is invalid");
+                monitor.warn("STAC resource with asset " + resourceUrn + " is invalid and cannot be imported");
             }
         }
     }
 
+    private Builder buildResource(IParameters<String> parameters, IProject project, IMonitor monitor, String resourceUrn) throws MalformedURLException {
+        Builder builder = validator.validate(
+                Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(parameters.get("collection", String.class)),
+                parameters, monitor);
+
+        if (builder == null) {
+            return null;
+        }
+        builder.withLocalName(resourceUrn).setResourceId(resourceUrn);
+        monitor.info("STAC collection " + resourceUrn + " added");
+        return builder;
+    }
+
     @Override
-    public Collection<Builder> importResources(String importLocation, IProject project, IParameters<String> userData,
+    public Collection<Builder> importResources(String collectionUrl, IProject project, IParameters<String> userData,
             IMonitor monitor) {
         List<Builder> ret = new ArrayList<>();
-        String[] locationElements = STACUtils.extractCatalogAndCollection(importLocation);
-
-        if (locationElements.length != 2) {
-            monitor.error("It is not possible to bulk import form the URL " + importLocation + "."
-                    + "Check if the resource is a proper STAC collection.");
-            throw new KlabIllegalArgumentException("Unexpected STAC import location.");
-        }
         try {
-            monitor.info("Beginning STAC collection import from " + importLocation);
+            monitor.info("Beginning STAC collection import from " + collectionUrl);
 
             Parameters<String> parameters = new Parameters<>();
             parameters.putAll(userData);
-            parameters.put("catalogUrl", locationElements[0]);
-            parameters.put("collectionId", locationElements[1]);
+            parameters.put("collection", collectionUrl);
+            parameters.put("bulkImport", true);
 
             importCollection(ret, parameters, project, monitor);
         } catch (Exception e) {
@@ -110,7 +132,7 @@ public class STACImporter implements IResourceImporter {
             throw new KlabIOException(e);
         }
 
-        monitor.info("STAC: imported collection " + locationElements[1]);
+        monitor.info("STAC: imported collection " + collectionUrl);
         return ret;
     }
 

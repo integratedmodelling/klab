@@ -13,7 +13,7 @@ pipeline {
         VERSION_DATE = sh(
             script: "date '+%Y-%m-%dT%H:%M:%S'",
             returnStdout: true).trim()
-        MAVEN_OPTS="--illegal-access=permit"
+        MAVEN_OPTS="-Xmx1g"
         REGISTRY = "registry.integratedmodelling.org"
         STAT_CONTAINER = "stat-server-17"
         ENGINE_CONTAINER = "engine-server-17"
@@ -87,8 +87,13 @@ pipeline {
 
         stage('Maven install with jib') {
             steps {
+                script {
+                    jibBuild = 'jib:build -Djib.httpTimeout=180000'
+                    dockerBuild = sh(script: "git log -1 --pretty=%B | grep -qi '\\[docker build\\]'", returnStatus: true)
+                    env.JIB = (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'develop' || dockerBuild == 0) ? jibBuild : ''
+                }
                 withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sh './mvnw -U clean install -DskipTests jib:build -Djib.httpTimeout=180000'
+                    sh "./mvnw -U clean install -DskipTests ${env.JIB}"
                     sh './mvnw -pl :klab.ogc -pl :klab.node test -Dtest="*STAC*,Authentication*"'
                 }
             }
@@ -100,7 +105,7 @@ pipeline {
             }
             steps {
                 configFileProvider([configFile(fileId: '1f5f24a2-9839-4194-b2ad-0613279f9fba', variable: 'MAVEN_SETTINGS_XML')]) {
-                    sh './mvnw --settings $MAVEN_SETTINGS_XML deploy -pl :api -DskipTests'
+                    sh './mvnw --settings $MAVEN_SETTINGS_XML deploy -pl org.integratedmodelling:org.integratedmodelling.klab.api -DskipTests'
                 }
             }
         }

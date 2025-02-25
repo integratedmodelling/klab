@@ -3,18 +3,16 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.List;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.ldap.LdapServiceImpl;
-import org.integratedmodelling.klab.hub.ldap.commands.CreateLdapUser;
-import org.integratedmodelling.klab.hub.ldap.commands.UpdateLdapUser;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
-import org.integratedmodelling.klab.hub.users.commands.CreatePendingUser;
+import org.integratedmodelling.klab.hub.users.commands.CreateUser;
 import org.integratedmodelling.klab.hub.users.commands.CreateUserWithRolesAndStatus;
 import org.integratedmodelling.klab.hub.users.commands.SetUserPasswordHash;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
@@ -22,11 +20,9 @@ import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.exceptions.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserExistsException;
-import org.integratedmodelling.klab.hub.users.exceptions.UserNameOrEmailExistsException;
 import org.integratedmodelling.klab.hub.users.listeners.NewUserAdded;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -34,22 +30,22 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;    
-    private LdapServiceImpl ldapService;
-    private LdapUserDetailsManager ldapUserDetailsManager;
+//    private LdapServiceImpl ldapService;
+//    private LdapUserDetailsManager ldapUserDetailsManager;
     private HubEventPublisher<NewUserAdded> publisher;
     private AgreementService agreementService;
 
     @Autowired
-    public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder, LdapServiceImpl ldapServiceImpl,
-            LdapUserDetailsManager ldapUserDetailsManager, HubEventPublisher<NewUserAdded> publisher,
-            AgreementService agreementService) {
+    public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            /*LdapServiceImpl ldapServiceImpl, LdapUserDetailsManager ldapUserDetailsManager,*/
+            HubEventPublisher<NewUserAdded> publisher, AgreementService agreementService) {
         super();
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.ldapUserDetailsManager = ldapUserDetailsManager;
+//        this.ldapUserDetailsManager = ldapUserDetailsManager;
         this.publisher = publisher;
         this.agreementService = agreementService;
-        this.ldapService = ldapServiceImpl;
+//        this.ldapService = ldapServiceImpl;
     }
 
     @Override
@@ -61,7 +57,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
             User newUser = new User();
             newUser.setUsername(username);
             newUser.setEmail(email);
-            newUser = new CreatePendingUser(userRepository, newUser).execute();
+            newUser.addRoles(Role.ROLE_USER);
+            newUser = new CreateUser(userRepository, newUser, AccountStatus.active).execute();
             publisher.publish(new NewUserAdded(new Object(), newUser));
             return newUser;
         }
@@ -77,9 +74,10 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     @Override
     public User createAndAddAgreement(User user, AgreementType agreementType, AgreementLevel agreementLevel) {        
-        List<AgreementEntry> agreements = user.getAgreements().stream().filter((agreement) ->         
-            agreement.getAgreement().getAgreementType().equals(agreementType) && 
-                    agreement.getAgreement().getAgreementLevel().equals(agreementLevel)).toList();        
+        List<AgreementEntry> agreements = user.getAgreements().stream()
+                .filter((agreement) -> agreement.getAgreement().getAgreementType().equals(agreementType)
+                        && agreement.getAgreement().getAgreementLevel().equals(agreementLevel))
+                .toList();
         
         if (agreements.isEmpty()) {
             Agreement agreement = agreementService.createAgreement(agreementType, agreementLevel).stream().findFirst().get();
@@ -95,7 +93,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
         if (pendingUser.isPresent()) {
             return pendingUser.get();
         } else {
-            User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
+            User newUser = new CreateUserWithRolesAndStatus(user, userRepository/*, ldapUserDetailsManager*/).execute();
             return newUser;
         }
 
@@ -107,19 +105,18 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         if (usernameExists || emailExists) {
             
-            boolean ldapExists = false;
-            try {
-                ldapExists = ldapService.userExists(username, email);
-            } catch (BadRequestException bre) {
-                throw new UserNameOrEmailExistsException();
-            }
+//            boolean ldapExists = false;
+//            try {
+//                ldapExists = ldapService.userExists(username, email);
+//            } catch (BadRequestException bre) {
+//                throw new UserNameOrEmailExistsException();
+//            }
             
-
-            if (ldapExists && usernameExists && emailExists) {
+            if (/*dapExists && */usernameExists && emailExists) {
                 throw new UserExistsException(username);
             }
 
-            if (!ldapExists && usernameExists && emailExists) {
+            if (/*!ldapExists &&*/ usernameExists && emailExists) {
                 // we need to return a user who has not activated there account and will be asked to
                 // reactivate with an email.
                 Optional<User> pendingUser = userRepository.findByNameIgnoreCase(username)
@@ -163,15 +160,16 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
                     u -> u.getAccountStatus().equals(AccountStatus.verified) | u.getAccountStatus().equals(AccountStatus.active))
                     .orElseThrow(() -> new BadRequestException("User not active or verified"));
 
-            if (user.getAccountStatus().equals(AccountStatus.verified) | !ldapService.userExists(user.getUsername(), user.getEmail())) {
+            if (user.getAccountStatus().equals(AccountStatus.verified)
+            /*| !ldapService.userExists(user.getUsername(), user.getEmail())*/) {
                 user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
-                user = new CreateLdapUser(user, ldapUserDetailsManager).execute();
+//                user = new CreateLdapUser(user, ldapUserDetailsManager).execute();
                 user.setAccountStatus(AccountStatus.active);
                 user = new UpdateUser(user, userRepository).execute();
                 return user;
             } else {
                 user = new SetUserPasswordHash(user, password, passwordEncoder).execute();
-                user = new UpdateLdapUser(user, ldapUserDetailsManager).execute();
+//                user = new UpdateLdapUser(user, ldapUserDetailsManager).execute();
                 user = new UpdateUser(user, userRepository).execute();
                 return user;
             }

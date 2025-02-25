@@ -470,6 +470,10 @@ public interface API {
          * Base URL path for custom properties related to a single user.
          */
         public static final String USER_ID_CUSTOM_PROPERTIES = USER_BASE_ID + "/custom-properties";
+        /**
+         * URL path for get SPA pages
+         */
+        public static final String UI = "/ui/*";
 
         public static interface PARAMETERS {
             /**
@@ -1279,6 +1283,11 @@ public interface API {
             }
 
         }
+        
+        /**
+         * URL path for get SPA pages
+         */
+        public static final String UI = "/ui/*";
 
     }
 

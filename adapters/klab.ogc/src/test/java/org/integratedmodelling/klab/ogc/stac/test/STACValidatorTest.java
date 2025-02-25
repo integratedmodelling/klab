@@ -26,7 +26,7 @@ public class STACValidatorTest {
     public void validate_passCreateValidBuilder() {
         STACValidator validator = new STACValidator();
         IParameters<String> userData = new Parameters<>();
-        userData.put("catalogUrl", "https://planetarycomputer.microsoft.com/api/stac/v1");
+        userData.put("collection", "https://planetarycomputer.microsoft.com/api/stac/v1/collections/io-lulc-9-class");
         userData.put("collectionId", "io-lulc-9-class");
         userData.put("asset", "data");
 
@@ -68,7 +68,7 @@ public class STACValidatorTest {
         STACValidator validator = new STACValidator();
         IParameters<String> userData = new Parameters<>();
         // Add a resource with codelist: https://planetarycomputer.microsoft.com/api/stac/v1/collections/io-lulc-9-class
-        userData.put("catalogUrl", "https://planetarycomputer.microsoft.com/api/stac/v1");
+        userData.put("collection", "https://planetarycomputer.microsoft.com/api/stac/v1/collections/io-lulc-9-class");
         userData.put("collectionId", "io-lulc-9-class");
         userData.put("asset", "data");
         mockResourcesSingleton();
@@ -86,7 +86,7 @@ public class STACValidatorTest {
         STACValidator validator = new STACValidator();
         IParameters<String> userData = new Parameters<>();
         // Add a resource with no codelist: https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a
-        userData.put("catalogUrl", "https://earth-search.aws.element84.com/v1");
+        userData.put("collection", "https://earth-search.aws.element84.com/v1/collections/sentinel-2-l2a");
         userData.put("collectionId", "sentinel-2-l2a");
         userData.put("asset", "blue");
         mockResourcesSingleton();
@@ -103,9 +103,20 @@ public class STACValidatorTest {
     public void canHandle_passValidUserData() {
         STACValidator validator = new STACValidator();
         IParameters<String> userData = new Parameters<>();
-        userData.put("catalogUrl", "https://planetarycomputer.microsoft.com/api/stac/v1");
+        userData.put("collection", "https://planetarycomputer.microsoft.com/api/stac/v1/collections/io-lulc-9-class");
         userData.put("collectionId", "io-lulc-9-class");
         userData.put("asset", "data");
+
+        boolean ret = validator.canHandle(null, userData);
+
+        assertTrue(ret);
+    }
+
+    @Test
+    public void canHandle_passNoAsset() {
+        STACValidator validator = new STACValidator();
+        IParameters<String> userData = new Parameters<>();
+         userData.put("collection", "https://planetarycomputer.microsoft.com/api/stac/v1/collections/io-lulc-9-class");
 
         boolean ret = validator.canHandle(null, userData);
 
@@ -116,18 +127,6 @@ public class STACValidatorTest {
     public void canHandle_failEmptyUserData() {
         STACValidator validator = new STACValidator();
         IParameters<String> userData = new Parameters<>();
-
-        boolean ret = validator.canHandle(null, userData);
-
-        assertFalse(ret);
-    }
-
-    @Test
-    public void canHandle_failIncompleteUserData() {
-        STACValidator validator = new STACValidator();
-        IParameters<String> userData = new Parameters<>();
-        userData.put("catalogUrl", "https://planetarycomputer.microsoft.com/api/stac/v1");
-        // Missing "collectionId" and "asset"
 
         boolean ret = validator.canHandle(null, userData);
 

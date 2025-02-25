@@ -61,7 +61,7 @@ export object connect
 
 export object route 
 	"Connects subjects through routes computed along a specified spatial configuration. Relationships are only
-	 created if a route exists."
+	 created if a route exists. Output values are given in kilometers and seconds."
 {
 	optional import object source
 		"Semantics for the type of the subjects used as source for the relationships"
@@ -72,11 +72,11 @@ export object route
 		default ""
 		
 	optional number time_limit
-		"Time threshold to consider a route a valid option"
+		"Time threshold to consider a route a valid option in seconds"
 		default "No limit"
 		
 	optional number distance_limit
-		"Distance threshold to consider a route a valid option"
+		"Distance threshold to consider a route a valid option in kilometers"
 		default "No limit"
 	
 	optional enum transport
@@ -92,7 +92,7 @@ export object route
 
 	optional text server
 		"Specify the endpoint for the Valhalla server."
-	
+
 //	TODO configuration to use 
 
 	class org.integratedmodelling.klab.components.network.services.RoutingRelationshipInstantiator

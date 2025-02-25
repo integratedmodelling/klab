@@ -28,6 +28,10 @@ const export object query
 		 a list of terms, which are in OR."
 		default ()
 		
+	optional text conditions
+		"The conditions that will define the query how the query statements are going to be filtered."
+		 default ""
+
 	optional number timeout
 		"Timeout in seconds before the request is considered failed. Default is operating system
 		 dependent."
@@ -60,10 +64,10 @@ const export object query
          default false
 
     optional enum spatial-boundaries
-        "Sets the spatial boundaries of the query. The potential values are bbox and poly, the first
+        "Sets the spatial boundaries of the query. The potential values are bbox and poly, the former
          being the default value. For extremely complex polygons, poly might return a timeout."
            values bbox, poly
-           default bbox
+           default poly
 
 	class org.integratedmodelling.klab.components.geospace.processing.osm.OSMSubjectInstantiator
 }

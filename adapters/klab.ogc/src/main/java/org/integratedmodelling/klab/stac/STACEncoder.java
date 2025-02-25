@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.stac;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
 import java.util.List;
@@ -8,13 +9,16 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
+import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -35,37 +39,50 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
+import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
+import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
+import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+
+import kong.unirest.json.JSONObject;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.AwsCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
 
 public class STACEncoder implements IResourceEncoder {
 
     /**
-     * The raster encoder that does the actual work after we get our coverage from
-     * the service.
+     * The raster or vector encoder that does the actual work after we get our coverage from the service.
      */
-    RasterEncoder encoder = new RasterEncoder();
+    IResourceEncoder encoder;
 
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
-        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
-        String collectionId = resource.getParameters().get("collectionId", String.class);
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
-
-        if (service == null) {
-            monitor.error("Service " + resource.getParameters().get("catalogUrl", String.class)
-                    + " does not exist: likely the service URL is wrong or offline");
+        String collectionUrl = resource.getParameters().get("collection", String.class);
+        if (collectionUrl == null) {
+            monitor.error("Resource is lacking a proper schema. Try to reimport the STAC collection.");
             return false;
         }
 
-        HMStacCollection collection = service.getCollection();
-        if (collection == null) {
-            monitor.error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
+        STACService service = STACAdapter.getService(collectionUrl);
+        if (service == null) {
+            monitor.error("Connection with collection " + collectionUrl
+                    + " cannot be opened: likely the service URL is wrong or offline");
             return false;
         }
         return true;
@@ -97,6 +114,20 @@ public class STACEncoder implements IResourceEncoder {
             return Time.create(newStart.getMilliseconds(), resourceTime.getEnd().getMilliseconds());
         }
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
+    }
+
+    /**
+     * Validates that the temporal dimension of the context can be supported by the resource.
+     * Due to the nature of the STAC search query, time can be refitted if needed.
+     * @param contextTime
+     * @param resourceTime
+     * @return validated time for the request
+     */
+    private Time validateTemporalDimension(Time contextTime, Time resourceTime) {
+        if (!resourceTime.contains(contextTime)) {
+            return refitTime(contextTime, resourceTime);
+        }
+        return contextTime;
     }
 
     private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics, IMonitor monitor) {
@@ -131,55 +162,94 @@ public class STACEncoder implements IResourceEncoder {
                 "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
+    private S3Client buildS3Client(String bucketRegion) throws IOException {
+        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+        AwsCredentials credentials = null;
+        try {
+            credentials = AwsBasicCredentials.create(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
+        } catch (Exception e) {
+            throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
+        }
+        return S3Client.builder()
+                .httpClientBuilder(ApacheHttpClient.builder())
+                .region(Region.of(bucketRegion))
+                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                .build();
+    }
+
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
+        String collectionUrl = resource.getParameters().get("collection", String.class);
+        JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
+        String catalogUrl = STACUtils.getCatalogUrl(collectionData);
+        JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
+
+        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
+        // This is part of a WIP that will be removed in the future
+        boolean isIIASA = catalogUrl.contains("iiasa.blob");
+        if (!hasSearchOption && !isIIASA) {
+            // TODO implement how to read static collections
+            throw new KlabUnimplementedException("Cannot read a static collection.");
+        }
+
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
+                .findFirst().orElseThrow();
+        IEnvelope envelope = space.getEnvelope();
+        List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+        if (isIIASA) {
+            FeatureSource<SimpleFeatureType, SimpleFeature> source;
+            try {
+                source = STACIIASAExtension.getFeatures(collectionData, bbox);
+            } catch (IOException e) {
+               throw new KlabResourceAccessException("Cannot extract features from IIASA catalog - " + e.getMessage());
+            }
+            encoder = new VectorEncoder();
+            ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+            return;
+        }
+
+        LogProgressMonitor lpm = new LogProgressMonitor();
+        HMStacManager manager = new HMStacManager(catalogUrl, lpm);
+        HMStacCollection collection = null;
+        try {
+            manager.open();
+            collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+        } catch (Exception e1) {
+            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
+        }
+
+        if (collection == null) {
+            scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+        }
+
         IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                 ? ((Observation) scope.getTargetArtifact()).getObservable()
                 : null;
         HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
 
-        String catalogUrl = resource.getParameters().get("catalogUrl", String.class);
-        String collectionId = resource.getParameters().get("collectionId", String.class);
-
-        STACService service = STACAdapter.getService(catalogUrl, collectionId);
-        HMStacCollection collection = service.getCollection();
-        if (collection == null) {
-            scope.getMonitor().error("Collection " + resource.getParameters().get("catalogUrl", String.class) + " cannot be find.");
-        }
-
-        GridCoverage2D coverage = null;
-
-        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
-                .findFirst().orElseThrow();
-        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
-                .findFirst().orElseThrow();
-        ITimeInstant start = time.getStart();
-        ITimeInstant end = time.getEnd();
-
-        Scale resourceScale = Scale.create(resource.getGeometry());
-        Time resourceTime = (Time) resourceScale.getDimension(Type.TIME);
-
-        boolean contextTimeContainedInResource = resourceTime.contains(time);
-        if (!contextTimeContainedInResource) {
-            if (time.isGeneric()) {
-                Time refittedTime = refitTime(time, resourceTime);
-                start = refittedTime.getStart();
-                end = refittedTime.getEnd();
-            } else {
-                throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
-            }
-        }
-
-        IEnvelope envelope = space.getEnvelope();
         Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
+        collection.setGeometryFilter(poly);
 
+        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
+                .findFirst().orElseThrow();
+        Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
+        
+        if (resourceTime != null && 
+                resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
+            time = validateTemporalDimension(time, resourceTime);
+        }
+        ITimeInstant start = time.getStart();
+        ITimeInstant end = time.getEnd();
+        collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()));
+
+        GridCoverage2D coverage = null;
         try {
-            List<HMStacItem> items = collection.setGeometryFilter(poly)
-                    .setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()))
-                    .searchItems();
+            List<HMStacItem> items = collection.searchItems();
+
             if (items.isEmpty()) {
+                manager.close();
                 throw new KlabIllegalStateException("No STAC items found for this context.");
             }
             scope.getMonitor().debug("Found " + items.size() + " STAC items.");
@@ -188,7 +258,6 @@ public class STACEncoder implements IResourceEncoder {
                 sortByDate(items, scope.getMonitor());
             }
 
-            LogProgressMonitor lpm = new LogProgressMonitor();
             IGrid grid = space.getGrid();
 
             RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
@@ -204,17 +273,24 @@ public class STACEncoder implements IResourceEncoder {
                 scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
             }
 
+            if (resource.getParameters().contains("awsRegion")) {
+                String bucketRegion = resource.getParameters().get("awsRegion", String.class);
+                S3Client s3Client = buildS3Client(bucketRegion);
+                collection.setS3Client(s3Client);
+            }
+
             // Allow transform ensures the process to finish, but I would not bet on the resulting
             // data.
             final boolean allowTransform = true;
             String assetId = resource.getParameters().get("asset", String.class);
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
+            manager.close();
         } catch (Exception e) {
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
         }
-
-        encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+        encoder = new RasterEncoder();
+        ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
     }
 
     @Override

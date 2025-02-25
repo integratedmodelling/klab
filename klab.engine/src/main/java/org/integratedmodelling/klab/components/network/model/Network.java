@@ -119,6 +119,8 @@ public class Network extends Pattern implements INetwork {
 			double[] xy = v.getSpace().getShape().getCenter(true);
 			map.put("latitude", DefaultAttribute.createAttribute(xy[1]));
 			map.put("longitude", DefaultAttribute.createAttribute(xy[0]));
+			map.put("name", DefaultAttribute.createAttribute(v.getName()));
+			map.put("metadata", DefaultAttribute.createAttribute(v.getMetadata().toString()));
 			return map;
 		};
 
@@ -229,6 +231,7 @@ public class Network extends Pattern implements INetwork {
 		ret.add(new Triple<>("gexf", "GEXF 1.2 network (dynamic)", "gexf"));
 		ret.add(new Triple<>("graphml", "GraphML 1.0 graph (static)", "gml"));
 		ret.add(new Triple<>("json", "JSON (dynamic)", "json"));
+		ret.add(new Triple<>("csv", "CSV (static)", "csv"));
 		return ret;
 	}
 

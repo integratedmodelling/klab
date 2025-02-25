@@ -28,16 +28,28 @@
 			<organizationUrl>http://www.bc3research.org</organizationUrl>
 		</developer>
 		<developer>
+            <name>Iñigo Cobián</name>
+            <email>inigo.cobian@bc3research.org</email>
+            <organization>Basque Centre for Climate Change (BC3)</organization>
+            <organizationUrl>http://www.bc3research.org</organizationUrl>
+        </developer>
+        <developer>
+            <name>Kristina Sánchez</name>
+            <email>kristina.sanchez@bc3research.org</email>
+            <organization>Basque Centre for Climate Change (BC3)</organization>
+            <organizationUrl>http://www.bc3research.org</organizationUrl>
+        </developer>
+        <developer>
+            <name>Andrea Antonello</name>
+            <email>andrea.antonello@gmail.com</email>
+            <organization>HydroloGIS Environmental Engineering</organization>
+            <organizationUrl>https://www.hydrologis.com/</organizationUrl>
+        </developer>
+		<developer>
 			<name>Steven Wohl</name>
 			<email>steven.wohl@bc3research.org</email>
 			<organization>Basque Centre for Climate Change (BC3)</organization>
 			<organizationUrl>http://www.bc3research.org</organizationUrl>
-		</developer>
-		<developer>
-			<name>Andrea Antonello</name>
-			<email>andrea.antonello@gmail.com</email>
-			<organization>HydroloGIS Environmental Engineering</organization>
-			<organizationUrl>https://www.hydrologis.com/</organizationUrl>
 		</developer>
 		<developer>
 			<name>J.Luke Scott</name>
@@ -84,8 +96,6 @@
 		<module>klab.node</module>
 		<module>products</module>
 		<module>components</module>
-		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
-		<!-- <module>docs</module> -->
 		<module>authorities</module>
 		<module>klab.authentication</module>
 		<module>klab.activity</module>
@@ -101,16 +111,16 @@
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS
 			should be the same one that geotools and HM needs. -->
 		<geotools.version>28.0</geotools.version>
-		<hortonmachine.version>0.10.9-SNAPSHOT</hortonmachine.version>
-		<jts.version>1.18.1</jts.version>
+		<hortonmachine.version>0.10.9-S3-SDK-2.0-SNAPSHOT</hortonmachine.version>
+		<jts.version>1.20.0</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
-		<tycho-version>2.7.3</tycho-version>
-		<xtextVersion>2.33.0</xtextVersion>
-		<mweVersion>2.16.0</mweVersion>
+		<tycho-version>4.0.9</tycho-version>
+		<xtextVersion>2.36.0</xtextVersion>
+		<mweVersion>2.19.0</mweVersion>
 		<googleJibVersion>3.4.3</googleJibVersion>
-		<jib.jvmFlags>-XshowSettings:vm</jib.jvmFlags>
+		<jib.jvmFlags>-XshowSettings,-XX:+HeapDumpOnOutOfMemoryError,-XX:HeapDumpPath=/var/tmp/java_heapdump.hprof</jib.jvmFlags>
 
 		<!-- the five below go together. Never change one without checking the
 			others. Spring security latest is currently requiring 5.0.4, implying boot
@@ -129,11 +139,11 @@
 		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
-
 		<junit5.version>5.10.1</junit5.version>
 		<mockito.version>5.6.0</mockito.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<powermock.version>2.0.9</powermock.version>
+		<aws.version>2.29.14</aws.version>
 	</properties>
 
 	<build>
