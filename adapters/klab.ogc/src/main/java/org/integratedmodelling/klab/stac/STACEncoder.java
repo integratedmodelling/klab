@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.Instant;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,12 +12,13 @@ import java.util.stream.Collectors;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
+import org.hortonmachine.gears.utils.CrsUtilities;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.klab.Authentication;
@@ -47,7 +47,6 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
@@ -61,7 +60,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import kong.unirest.json.JSONObject;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -183,10 +182,10 @@ public class STACEncoder implements IResourceEncoder {
                 .build();
     }
 
-    private boolean isDateInsideRange(Time rangeTime, Date date) {
-        long rangeStart = rangeTime.getStart().getMilliseconds();
-        long rangeEnd = rangeTime.getEnd().getMilliseconds();
-        return (rangeStart <= date.getTime() && rangeEnd <= date.getTime());
+    private boolean isDateWithinRange(Time rangeTime, Date date) {
+        Date start = new Date(rangeTime.getStart().getMilliseconds());
+        Date end =  new Date(rangeTime.getEnd().getMilliseconds());
+        return date.after(start) && date.before(end);
     }
 
     @Override
@@ -223,6 +222,7 @@ public class STACEncoder implements IResourceEncoder {
             return;
         }
 
+        // These are the static STAC catalogs
         if (!hasSearchOption) {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
             Time time2 = time; //TODO make the time and query time different
@@ -234,19 +234,44 @@ public class STACEncoder implements IResourceEncoder {
             if (features.isEmpty()) {
                 throw new KlabResourceNotFoundException("There are no items in this context for the collection " + collectionId);
             }
-            List<HMStacAsset> assets = features.stream().map(f -> {
+            CoordinateReferenceSystem crs = features.get(0).getFeatureType().getCoordinateReferenceSystem();
+            if (crs == null) {
+                crs = CrsUtilities.getCrsFromSrid(4326); // We go to the standard
+            }
+
+            // TODO merge with similar code from below
+            IGrid grid = space.getGrid();
+
+            RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
+                    space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(),
+                    (int) grid.getYCells());
+
+            ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
+                    space.getProjection().getCoordinateReferenceSystem());
+            RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
+                    (int) grid.getYCells());
+            // end //TODO
+
+            List<HMStacItem> items = features.stream().map(f -> {
                 try {
-                    return HMStacItem.fromSimpleFeature(f).getAssetForBand(assetId);
+                    return HMStacItem.fromSimpleFeature(f);
                 } catch (Exception e) {
-                    throw new KlabIOException("Cannot get item from feature. Reason " + e.getMessage());
+                    scope.getMonitor().warn("Cannot parse feature " + f.getID() + ". Ignored.");
                 }
-            }).toList();
-            HMStacAsset asset = assets.stream().filter(as -> as.getId().equals(assetId)).findFirst().get();
-            HMRaster.fromGridCoverage(null);
-            encoder = new RasterEncoder();
+                return null;
+            }).filter(i -> i != null).toList();
+
             GridCoverage2D coverage = null;
-            // TODO get coverage from the raster
+
+            try {
+                HMRaster outRaster = HMStacCollection.readRasterBandOnRegionStatic(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
+                coverage = outRaster.buildCoverage();
+            } catch (Exception e) {
+                throw new KlabResourceAccessException("Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
+            }
+            encoder = new RasterEncoder();
             ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+            return;
         }
 
         LogProgressMonitor lpm = new LogProgressMonitor();
@@ -330,7 +355,7 @@ public class STACEncoder implements IResourceEncoder {
     private boolean isFeatureInTimeRange(Time time2, SimpleFeature f) {
         Date datetime = (Date) f.getAttribute("datetime");
         if (datetime != null) {
-            if (isDateInsideRange(time2, datetime)) {
+            if (isDateWithinRange(time2, datetime)) {
                 return true;
             }
         }
@@ -343,10 +368,10 @@ public class STACEncoder implements IResourceEncoder {
         if (itemEnd == null) {
             return itemStart.toInstant().getEpochSecond() <= time2.getStart().getMilliseconds();
         }
-        if (isDateInsideRange(time2, itemStart) || isDateInsideRange(time2, itemEnd)) {
-            return false;
+        if (isDateWithinRange(time2, itemStart) || isDateWithinRange(time2, itemEnd)) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     private List<SimpleFeature> getFeaturesFromStaticCollection(String collectionUrl, JSONObject collectionData, String collectionId) {
