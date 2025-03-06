@@ -60,8 +60,7 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
 //                .antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
 //                .antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated().and()
 //                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, "/api/v2/users/me?remote=true")
-                .permitAll().antMatchers(HttpMethod.POST, "/api/v2/users/log-in").permitAll()
+        http.cors().and().csrf().disable().authorizeRequests()
                 .antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements()).permitAll()
                 .antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
                 .antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated().and()
