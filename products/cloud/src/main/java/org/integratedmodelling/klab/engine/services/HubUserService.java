@@ -3,9 +3,10 @@ package org.integratedmodelling.klab.engine.services;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Authentication;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.api.HubLoginResponse;
 import org.integratedmodelling.klab.engine.api.RemoteUserLoginResponse;
+import org.integratedmodelling.klab.engine.rest.api.EngineProperties;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -28,18 +30,20 @@ import org.integratedmodelling.klab.rest.RemoteUserAuthenticationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
+import org.keycloak.authorization.client.AuthzClient;
+import org.keycloak.authorization.client.Configuration;
+import org.keycloak.representations.AccessTokenResponse;
+import org.keycloak.representations.idm.authorization.AuthorizationRequest;
+import org.keycloak.representations.idm.authorization.AuthorizationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -62,6 +66,9 @@ public class HubUserService implements RemoteUserService {
 
     @Autowired
     RestTemplate restTemplate;
+
+    @Autowired
+    private EngineProperties engineProperties;
 
     /*
      * Generates a response entity a url to the session generated after succesful
@@ -272,15 +279,31 @@ public class HubUserService implements RemoteUserService {
     }
 
     private ResponseEntity<HubLoginResponse> hubLogin(UserAuthenticationRequest login) {
+        
         HttpHeaders headers = new HttpHeaders();
-        String authorization = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
-                .getHeader("Authorization");
 
-        if (authorization != null) {
-            
-            headers.add("Authorization", ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
-                    .getHeader("Authorization"));
+        String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
+                .getHeader(API.HUB.LABELS.AUTHORIZATION);
+        
+        if (token == null) { 
+            /*
+             * Acces to k.API client to get the token with user and password
+             */
+            Map<String, Object> credentials = new HashMap<>();
+            credentials.put("secret", engineProperties.getEnv().getKeycloakApiClientSecret());
+
+            Configuration config = new Configuration(engineProperties.getEnv().getKeycloakUrl(),
+                    engineProperties.getEnv().getKeycloakRealm(), engineProperties.getEnv().getKeycloakApiClient(), credentials,
+                    null);
+
+            AuthzClient authzClient = AuthzClient.create(config);
+
+            AccessTokenResponse response = authzClient.obtainAccessToken(login.getUsername(), login.getPassword());
+
+            token = "Bearer " + response.getToken();
         }
+        
+        headers.add(API.HUB.LABELS.AUTHORIZATION, token);
 
         HttpEntity< ? > request = new HttpEntity<>(login, headers);
 
