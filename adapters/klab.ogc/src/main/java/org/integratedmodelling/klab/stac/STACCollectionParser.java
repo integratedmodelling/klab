@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
+import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema.Items;
+
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -61,8 +63,8 @@ public class STACCollectionParser {
      * @throws KlabResourceAccessException
      */
     public static JSONObject readAssetsFromCollection(String collectionUrl, JSONObject collection) throws KlabResourceAccessException {
-        String catalogUrl = STACUtils.getCatalogUrl(collection);
-        String collectonId = collection.getString("id");
+        String collectionId = collection.getString("id");
+        String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collection);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
         Optional<String> searchEndpoint = STACUtils.containsLinkTo(catalogData, "search") 
@@ -72,14 +74,27 @@ public class STACCollectionParser {
         // Static catalogs should have their assets on the Collection
         if (searchEndpoint.isEmpty()) {
             // Check the assets
-            if (!collection.has("assets")) {
-                throw new KlabResourceNotFoundException("Static STAC collection \"" + collectionUrl + "\" has no assets");
+            if (collection.has("assets")) {
+                return collection.getJSONObject("assets");
             }
-            return collection.getJSONObject("assets");
+            // Try to get the assets from a link that has type `item`
+            Optional<String> itemHref = STACUtils.getLinkTo(collection, "item");
+            if (itemHref.isEmpty()) {
+                throw new KlabResourceNotFoundException("Cannot find items at STAC collection \"" + collectionUrl + "\"");
+            }
+            String itemUrl = itemHref.get().startsWith(".")
+                    ? collectionUrl.replace("collection.json", "") + itemHref.get().replace("./", "")
+                    : itemHref.get();
+            // TODO get assets from the item
+            JSONObject itemData = STACUtils.requestMetadata(itemUrl, "feature");
+            if (itemData.has("assets")) {
+                return itemData.getJSONObject("assets");
+            }
+            throw new KlabResourceNotFoundException("Cannot find assets at STAC collection \"" + collectionUrl + "\"");
         }
 
         // TODO Move the query to another place. 
-        String parameters = "?collections=" + collectonId + "&limit=1";
+        String parameters = "?collections=" + collectionId + "&limit=1";
         HttpResponse<JsonNode> response = Unirest.get(searchEndpoint.get() + parameters).asJson();
 
         if (!response.isSuccess()) {

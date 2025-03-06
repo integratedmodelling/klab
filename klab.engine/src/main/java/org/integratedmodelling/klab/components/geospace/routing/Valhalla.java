@@ -1,18 +1,16 @@
 package org.integratedmodelling.klab.components.geospace.routing;
 
 import java.util.List;
-import java.util.Map;
-
 import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.routing.ValhallaConfiguration.GeometryCollapser;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.locationtech.jts.geom.Geometry;
-import edu.uci.ics.jung.graph.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.Graph;
-import edu.uci.ics.jung.graph.util.EdgeType;
+import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 /**
@@ -60,75 +58,6 @@ public class Valhalla {
 		return GeoJSONReader.parseGeometry(json.getJSONArray("features").getJSONObject(0).getJSONObject("geometry").toString());
 	}
 
-	public static void main(String[] args) throws ValhallaException {
-		Valhalla valhalla = new Valhalla("https://routing.integratedmodelling.org");
-
-		/*
-		 * Matrix API example.
-		 */
-
-		// Coordinates of sources and targets for the travel-time matrix. Note the
-		// costing parameter which essentially
-		// is the means of transport. For testing make sure that coordinates are within
-		// the loaded OSM environment.
-//		String input = "{\"sources\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.524014,\"lon\":1.5263911}],\"targets\":[{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.541735,\"lon\":1.4888}],\"costing\":\"pedestrian\"}";
-
-		String input = "{\"sources\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"targets\":[{\"lat\":40.539735,\"lon\":-103},{\"lat\":40.541735,\"lon\":-103}],\"costing\":\"auto\"}";
-
-		// Call to matrix method with input, the function returns the deserialized JSON
-		// string in a specific format.
-		ValhallaOutputDeserializer.Matrix matrix = valhalla.matrix(input);
-
-		// The adjacency list stores information on the distance/time between each
-		// source and target in a way that is
-		// very friendly for graph creation with JUNG, and probably also with JGraphT.
-		List<Map<String, Number>> list = matrix.getAdjacencyList();
-		System.out.println(list);
-
-		// Instantiate and populate the graph.
-		Graph<String, Double> g = new DirectedSparseGraph<>();
-		for (Map<String, Number> m : list) {
-			Integer source = (Integer) m.get("source");
-			Integer target = (Integer) m.get("target");
-			double time = (double) m.get("time");
-
-			// VertexIds are transformed to strings and prefixed with s or t to easily
-			// differentiate between sources and
-			// targets as the index starts at 0 for both. If needed to use integers ewe can
-			// always do
-			// target_index += max(source_index)
-			String sv = "s" + source.toString();
-			String tv = "t" + target.toString();
-
-			// In this case a time accessibility graph is created.
-			boolean added = g.addEdge(time, sv, tv, EdgeType.DIRECTED);
-
-			if (!added)
-				throw new ValhallaException("Could not add edge to graph");
-		}
-		System.out.println(g);
-
-		/*
-		 * Optimized Route API example.
-		 */
-
-		// This is a back and forth trip in Andorra.
-//		input = "{\"locations\":[{\"lat\":42.544014,\"lon\":1.5163911},{\"lat\":42.539735,\"lon\":1.4988},{\"lat\":42.544014,\"lon\":1.5163911}],\"costing\":\"auto\"}";
-
-		input = "{\"locations\":[{\"lat\":40.544014,\"lon\":-103},{\"lat\":40.524014,\"lon\":-103}],\"costing\":\"auto\"}";
-
-		// Call to optimized route method with input, the function returns the
-		// deserialized JSON string in a specific format.
-		ValhallaOutputDeserializer.OptimizedRoute route = valhalla.optimized_route(input);
-		IShape path = route.getPath();
-		Map<String, Object> stats = route.getSummaryStatistics();
-		List<Map<String, Number>> waypoints = route.getWaypoints();
-
-		System.out.println(path);
-		System.out.println(stats);
-		System.out.println(waypoints);
-	}
-
 	public static String buildValhallaJsonInput(double[] source, double[] target,
 			String transportType) {
 		double sourceLat = source[1];
@@ -149,6 +78,21 @@ public class Valhalla {
                 .append("}],\"polygons\":true,\"reverse\":").append(isReverse).append("}").toString();
     }
 
+    private static JSONArray coordinatesAsJson(List<double[]> coordinates) {
+        JSONArray ret = new JSONArray();
+        coordinates.forEach(c -> {
+            JSONObject coor = new JSONObject().put("lat", c[1]).put("lon", c[0]);
+            ret.put(coor);
+        });
+        return ret;
+    }
+
+    public static String buildValhallaMatrixInput(List<double[]> sources, List<double[]> targets, String transportType) {
+        JSONArray sourcesAsJson = coordinatesAsJson(sources);
+        JSONArray targetsAsJson = coordinatesAsJson(targets);
+
+        return new JSONObject().put("sources", sourcesAsJson).put("targets", targetsAsJson).put("costing", transportType).toString();
+    }
     /*
      * Sets the coordinates according to the selected geometry collapser.
      */
@@ -163,4 +107,16 @@ public class Valhalla {
         }
     }
 
+    public static boolean isServerOnline(String server) {
+        HttpResponse<JsonNode> response;
+        try {
+            response = Unirest.get(server + "/status").asJson();
+        } catch (Exception e) {
+            throw new KlabRemoteException("Cannot access Valhalla server. Reason: " + e.getMessage());
+        }
+        if (response.getStatus() != 200) {
+            return false;
+        }
+        return true;
+    }
 }

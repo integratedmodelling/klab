@@ -25,9 +25,6 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 import org.locationtech.jts.geom.Geometry;
-import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 
 public class IsochroneInstantiator extends AbstractContextualizer implements IExpression, IInstantiator {
     private String source = null;
@@ -42,24 +39,10 @@ public class IsochroneInstantiator extends AbstractContextualizer implements IEx
     public IsochroneInstantiator() {
     }
 
-    // TODO merge with the one in RoutingRelationshipInstantiator
-    private boolean isValhallaServerOnline(String server) {
-        HttpResponse<JsonNode> response;
-        try {
-            response = Unirest.get(server + "/status").asJson();
-        } catch (Exception e) {
-            throw new KlabRemoteException("Cannot access Valhalla server. Reason: " + e.getMessage());
-        }
-        if (response.getStatus() != 200) {
-            return false;
-        }
-        return true;
-    }
-
     public IsochroneInstantiator(Parameters<Object> parameters, IContextualizationScope scope) {
         this.server = parameters.get("server", String.class);
         this.source = parameters.get("source", String.class);
-        if (isValhallaServerOnline(server)) {
+        if (Valhalla.isServerOnline(server)) {
             this.valhalla = new Valhalla(server);
         } else {
             throw new KlabRemoteException("The server " + server + " is offline or not a valid Valhalla instance.");
