@@ -126,17 +126,9 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				}
 
 				/*
-				 * must have space.resolution and space.shape parameters
+				 * must have space.resolution and either space.shape or space.bbox parameters
 				 */
-				if (resource.getParameters().containsKey("space.shape")
-						&& resource.getParameters().containsKey("space.resolution")) {
-
-					/*
-					 * set GeoJSON shape and x,y resolution in parameters
-					 */
-					arguments.put(resource.getParameters().get("space.shape", String.class),
-							((Shape) scale.getSpace().getShape()).asGeoJSON());
-
+				if (resource.getParameters().containsKey("space.resolution")) {
 					List<Number> resolution = new ArrayList<>();
 					resolution.add(grid.getCellWidth());
 					resolution.add(grid.getCellHeight());
@@ -144,6 +136,23 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					arguments.put(resource.getParameters().get("space.resolution", String.class),
 							grid.getCellWidth()/* resolution */);
 
+                } else {
+                    throw new KlabIllegalStateException(
+                            "resource does not specify space.resolution parameter");
+                }
+
+				if (resource.getParameters().containsKey("space.shape") && !resource.getParameters().get("space.shape").equals("?")) {
+                    /*
+                     * set GeoJSON shape and x,y resolution in parameters
+                     */
+                    arguments.put(resource.getParameters().get("space.shape", String.class),
+                            ((Shape) scale.getSpace().getShape()).asGeoJSON());
+
+				} else if (resource.getParameters().containsKey("space.bbox") && !resource.getParameters().get("space.bbox").equals("?")) {
+                    arguments.put("space.bbox.west", (scale.getSpace().getEnvelope().getMinX()));
+                    arguments.put("space.bbox.east", (scale.getSpace().getEnvelope().getMaxX()));
+                    arguments.put("space.bbox.north", (scale.getSpace().getEnvelope().getMaxY()));
+                    arguments.put("space.bbox.south", (scale.getSpace().getEnvelope().getMinY()));
 				} else {
 					throw new KlabIllegalStateException(
 							"resource does not specify enough space parameters to contextualize");
@@ -194,6 +203,10 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 							"resource does not specify enough temporal parameters to contextualize");
 				}
 			}
+			
+//			if (resource.getParameters().contains("output_band_names")) {
+//			    
+//			}
 
 			List<Process> processes = new ArrayList<>();
 			File processDefinition = new File(resource.getLocalPath() + File.separator + "process.json");
