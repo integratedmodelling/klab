@@ -169,9 +169,13 @@ public class OpenEOResourceValidator implements IResourceValidator {
 			} else {
 				ret = ret.withParameter("space.resolution", "?");
 			}
-			if (!((ResourceBuilder) ret).getParameters().containsKey("space.shape")) {
-				ret = ret.withParameter("space.shape", "?");
-			}
+            if (!((ResourceBuilder) ret).getParameters().containsKey("space.bbox")) {
+                if (!((ResourceBuilder) ret).getParameters().containsKey("space.shape")) {
+                    ret = ret.withParameter("space.shape", "?");
+                } else {
+                    ret = ret.withParameter("space.bbox", "?");
+            	}
+            }
 			if (!((ResourceBuilder) ret).getParameters().containsKey("space.projection")) {
 				ret = ret.withParameter("space.projection", "?");
 			}
