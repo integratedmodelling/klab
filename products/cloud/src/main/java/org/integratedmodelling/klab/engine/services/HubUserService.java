@@ -285,10 +285,18 @@ public class HubUserService implements RemoteUserService {
         String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
                 .getHeader(API.HUB.LABELS.AUTHORIZATION);
         
+        System.out.println("token: "+ token);
+        
         if (token == null) { 
             /*
              * Acces to k.API client to get the token with user and password
              */
+            
+            System.out.println("secret: " + engineProperties.getEnv().getKeycloakApiClientSecret());
+            System.out.println(engineProperties.getEnv().getKeycloakUrl());
+            System.out.println("realm: " + engineProperties.getEnv().getKeycloakRealm());
+            System.out.println("client: " + engineProperties.getEnv().getKeycloakApiClient());
+            
             Map<String, Object> credentials = new HashMap<>();
             credentials.put("secret", engineProperties.getEnv().getKeycloakApiClientSecret());
 
@@ -301,6 +309,8 @@ public class HubUserService implements RemoteUserService {
             AccessTokenResponse response = authzClient.obtainAccessToken(login.getUsername(), login.getPassword());
 
             token = "Bearer " + response.getToken();
+            
+            System.out.println("token k.API: " + token);
         }
         
         headers.add(API.HUB.LABELS.AUTHORIZATION, token);
