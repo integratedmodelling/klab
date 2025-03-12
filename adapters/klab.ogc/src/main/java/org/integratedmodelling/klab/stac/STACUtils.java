@@ -135,10 +135,10 @@ public class STACUtils {
 
     public static String getUrlOfItem(String collectionUrl, String collectionId, String href) {
         if (href.startsWith("..")) {
-            return collectionUrl.replace("/collection.json", "").replace(collectionId, "") + href.replace("../", "");
+            return collectionUrl.substring(0, collectionUrl.lastIndexOf("/")).replace(collectionId, "")  + href.replace("../", "");
         }
         if (href.startsWith(".")) {
-            return collectionUrl.replace("collection.json", "") + href.replace("./", "");
+            return collectionUrl.substring(0, collectionUrl.lastIndexOf("/")) + href.replace("./", "");
         }
         return href;
     }
