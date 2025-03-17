@@ -121,7 +121,7 @@ public class Node implements INodeIdentity {
 
     @Override
     public IIdentity.Type getIdentityType() {
-        return identityType;
+        return this.identityType;
     }
     
 	@Override
