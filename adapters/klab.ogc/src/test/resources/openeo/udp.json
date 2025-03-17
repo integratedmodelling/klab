@@ -1,10 +1,12 @@
 {
   "process_graph": {
-    "textmerge1": {
-      "process_id": "text_merge",
+    "textconcat1": {
+      "process_id": "text_concat",
       "arguments": {
         "data": [
-          2000,
+          {
+            "from_parameter": "year"
+          },
           "01",
           "01"
         ],
@@ -20,8 +22,8 @@
         "y": 1
       }
     },
-    "textmerge2": {
-      "process_id": "text_merge",
+    "textconcat2": {
+      "process_id": "text_concat",
       "arguments": {
         "data": [
           {
@@ -37,36 +39,171 @@
       "process_id": "load_collection",
       "arguments": {
         "bands": [
-          "CLC_ACC"
+          "B02",
+          "B03",
+          "B04",
+          "B05",
+          "B06",
+          "B07",
+          "B08",
+          "B8A",
+          "B11",
+          "B12"
         ],
-        "id": "CORINE_LAND_COVER_ACCOUNTING_LAYERS",
+        "id": "SENTINEL2_L2A",
+        "properties": {
+          "eo:cloud_cover": {
+            "process_graph": {
+              "lte1": {
+                "process_id": "lte",
+                "arguments": {
+                  "x": {
+                    "from_parameter": "value"
+                  },
+                  "y": 95
+                },
+                "result": true
+              }
+            }
+          }
+        },
         "spatial_extent": null,
         "temporal_extent": [
           {
-            "from_node": "textmerge1"
+            "from_node": "textconcat1"
           },
           {
-            "from_node": "textmerge2"
+            "from_node": "textconcat2"
           }
         ]
       }
     },
-    "reducedimension1": {
-      "process_id": "reduce_dimension",
+    "resamplespatial1": {
+      "process_id": "resample_spatial",
       "arguments": {
+        "align": "upper-left",
         "data": {
           "from_node": "loadcollection1"
         },
-        "dimension": "t",
+        "method": "near",
+        "projection": {
+          "from_parameter": "target_epsg"
+        },
+        "resolution": 10.0
+      }
+    },
+    "loadcollection2": {
+      "process_id": "load_collection",
+      "arguments": {
+        "bands": [
+          "SCL"
+        ],
+        "id": "SENTINEL2_L2A",
+        "properties": {
+          "eo:cloud_cover": {
+            "process_graph": {
+              "lte2": {
+                "process_id": "lte",
+                "arguments": {
+                  "x": {
+                    "from_parameter": "value"
+                  },
+                  "y": 95
+                },
+                "result": true
+              }
+            }
+          }
+        },
+        "spatial_extent": null,
+        "temporal_extent": [
+          {
+            "from_node": "textconcat1"
+          },
+          {
+            "from_node": "textconcat2"
+          }
+        ]
+      }
+    },
+    "resamplespatial2": {
+      "process_id": "resample_spatial",
+      "arguments": {
+        "align": "upper-left",
+        "data": {
+          "from_node": "loadcollection2"
+        },
+        "method": "near",
+        "projection": {
+          "from_parameter": "target_epsg"
+        },
+        "resolution": 10.0
+      }
+    },
+    "toscldilationmask1": {
+      "process_id": "to_scl_dilation_mask",
+      "arguments": {
+        "data": {
+          "from_node": "resamplespatial2"
+        },
+        "erosion_kernel_size": 3,
+        "kernel1_size": 17,
+        "kernel2_size": 77,
+        "mask1_values": [
+          2,
+          4,
+          5,
+          6,
+          7
+        ],
+        "mask2_values": [
+          3,
+          8,
+          9,
+          10,
+          11
+        ],
+        "scl_band_name": "SCL"
+      }
+    },
+    "renamelabels1": {
+      "process_id": "rename_labels",
+      "arguments": {
+        "data": {
+          "from_node": "toscldilationmask1"
+        },
+        "dimension": "bands",
+        "target": [
+          "S2-L2A-SCL_DILATED_MASK"
+        ]
+      }
+    },
+    "mask1": {
+      "process_id": "mask",
+      "arguments": {
+        "data": {
+          "from_node": "resamplespatial1"
+        },
+        "mask": {
+          "from_node": "renamelabels1"
+        }
+      }
+    },
+    "aggregatetemporalperiod1": {
+      "process_id": "aggregate_temporal_period",
+      "arguments": {
+        "data": {
+          "from_node": "mask1"
+        },
+        "period": "dekad",
         "reducer": {
           "process_graph": {
-            "last1": {
-              "process_id": "last",
+            "median1": {
+              "process_id": "median",
               "arguments": {
                 "data": {
                   "from_parameter": "data"
-                },
-                "ignore_nodata": false
+                }
               },
               "result": true
             }
@@ -78,23 +215,20 @@
       "process_id": "apply",
       "arguments": {
         "data": {
-          "from_node": "reducedimension1"
+          "from_node": "aggregatetemporalperiod1"
         },
         "process": {
           "process_graph": {
-            "runudf1": {
-              "process_id": "run_udf",
+            "linearscalerange1": {
+              "process_id": "linear_scale_range",
               "arguments": {
-                "context": {
-                  "class_mapping": {
-                    "from_parameter": "remapping_dict"
-                  }
-                },
-                "data": {
+                "inputMax": 65534,
+                "inputMin": 0,
+                "outputMax": 65534,
+                "outputMin": 0,
+                "x": {
                   "from_parameter": "x"
-                },
-                "runtime": "Python",
-                "udf": "import numpy as np\nfrom openeo.udf import XarrayDataCube\nimport xarray\n\n\ndef apply_datacube(cube: XarrayDataCube, context: dict) -> XarrayDataCube:\n    \"\"\" remap cube values by given dictionary\n\n    :param cube: data cube\n    :param context: dictionary to provide external data - key class_mapping is used to provide external re-mapping dict\n    :return: data cube with remapped values (new cube)\n    \"\"\"\n    class_mapping = context[\"class_mapping\"]\n\n    array: xarray.DataArray = cube.get_array()\n    result = np.full_like(array.values, np.nan)\n\n    for k, v in class_mapping.items():\n        # Note: JSON-encoding of the class mapping converted the keys from int to strings, so we have to undo that\n        k = int(k)\n        result[array.values == k] = v\n\n    return XarrayDataCube(array=xarray.DataArray(result, dims=array.dims, coords=array.coords))\n"
+                }
               },
               "result": true
             }
@@ -102,64 +236,2143 @@
         }
       }
     },
-    "resamplespatial1": {
+    "apply2": {
+      "process_id": "apply",
+      "arguments": {
+        "data": {
+          "from_node": "apply1"
+        },
+        "process": {
+          "process_graph": {
+            "linearscalerange2": {
+              "process_id": "linear_scale_range",
+              "arguments": {
+                "inputMax": 10000,
+                "inputMin": 0,
+                "outputMax": 1.0,
+                "outputMin": 0,
+                "x": {
+                  "from_parameter": "x"
+                }
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "applydimension1": {
+      "process_id": "apply_dimension",
+      "arguments": {
+        "data": {
+          "from_node": "apply2"
+        },
+        "dimension": "bands",
+        "process": {
+          "process_graph": {
+            "arrayelement1": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 6
+              }
+            },
+            "arrayelement2": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 2
+              }
+            },
+            "subtract1": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "add2": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "divide1": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract1"
+                },
+                "y": {
+                  "from_node": "add2"
+                }
+              }
+            },
+            "subtract2": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": 1.0,
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "multiply1": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "subtract2"
+                }
+              }
+            },
+            "subtract3": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "multiply2": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": {
+                  "from_node": "multiply1"
+                },
+                "y": {
+                  "from_node": "subtract3"
+                }
+              }
+            },
+            "power1": {
+              "process_id": "power",
+              "arguments": {
+                "base": {
+                  "from_node": "multiply2"
+                },
+                "p": 0.3333333333333333
+              }
+            },
+            "arrayelement3": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 3
+              }
+            },
+            "divide2": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement3"
+                }
+              }
+            },
+            "subtract4": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "divide2"
+                },
+                "y": 1
+              }
+            },
+            "subtract5": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "add3": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "divide3": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract5"
+                },
+                "y": {
+                  "from_node": "add3"
+                }
+              }
+            },
+            "multiply3": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": {
+                  "from_node": "divide3"
+                },
+                "y": {
+                  "from_node": "arrayelement1"
+                }
+              }
+            },
+            "arrayelement4": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 8
+              }
+            },
+            "subtract6": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "add4": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "divide4": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract6"
+                },
+                "y": {
+                  "from_node": "add4"
+                }
+              }
+            },
+            "arrayelement5": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 1
+              }
+            },
+            "subtract7": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement1"
+                }
+              }
+            },
+            "add5": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement1"
+                }
+              }
+            },
+            "divide5": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract7"
+                },
+                "y": {
+                  "from_node": "add5"
+                }
+              }
+            },
+            "add6": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "arrayelement6": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 9
+              }
+            },
+            "add7": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "add6"
+                },
+                "y": {
+                  "from_node": "arrayelement6"
+                }
+              }
+            },
+            "divide6": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "add7"
+                },
+                "y": 3.0
+              }
+            },
+            "subtract8": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "divide6"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "add8": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "add9": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "add8"
+                },
+                "y": {
+                  "from_node": "arrayelement6"
+                }
+              }
+            },
+            "divide7": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "add9"
+                },
+                "y": 3.0
+              }
+            },
+            "add10": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "divide7"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "divide8": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract8"
+                },
+                "y": {
+                  "from_node": "add10"
+                }
+              }
+            },
+            "subtract9": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "add11": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "divide9": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract9"
+                },
+                "y": {
+                  "from_node": "add11"
+                }
+              }
+            },
+            "subtract10": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "add12": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement1"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "divide10": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract10"
+                },
+                "y": {
+                  "from_node": "add12"
+                }
+              }
+            },
+            "subtract11": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "add13": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement5"
+                },
+                "y": {
+                  "from_node": "arrayelement4"
+                }
+              }
+            },
+            "divide11": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract11"
+                },
+                "y": {
+                  "from_node": "add13"
+                }
+              }
+            },
+            "subtract12": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "divide10"
+                },
+                "y": {
+                  "from_node": "divide11"
+                }
+              }
+            },
+            "subtract13": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement3"
+                },
+                "y": {
+                  "from_node": "arrayelement6"
+                }
+              }
+            },
+            "add14": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement3"
+                },
+                "y": {
+                  "from_node": "arrayelement6"
+                }
+              }
+            },
+            "divide12": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract13"
+                },
+                "y": {
+                  "from_node": "add14"
+                }
+              }
+            },
+            "arrayelement7": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 5
+              }
+            },
+            "add15": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement7"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "divide13": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "add15"
+                },
+                "y": 2.0
+              }
+            },
+            "subtract14": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "divide13"
+                },
+                "y": {
+                  "from_node": "arrayelement3"
+                }
+              }
+            },
+            "arrayelement8": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 4
+              }
+            },
+            "subtract15": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement8"
+                },
+                "y": {
+                  "from_node": "arrayelement3"
+                }
+              }
+            },
+            "divide14": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract14"
+                },
+                "y": {
+                  "from_node": "subtract15"
+                }
+              }
+            },
+            "multiply4": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": 35.0,
+                "y": {
+                  "from_node": "divide14"
+                }
+              }
+            },
+            "add16": {
+              "process_id": "add",
+              "arguments": {
+                "x": 705.0,
+                "y": {
+                  "from_node": "multiply4"
+                }
+              }
+            },
+            "subtract16": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement7"
+                },
+                "y": {
+                  "from_node": "arrayelement2"
+                }
+              }
+            },
+            "divide15": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement3"
+                },
+                "y": {
+                  "from_node": "arrayelement8"
+                }
+              }
+            },
+            "divide16": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "subtract16"
+                },
+                "y": {
+                  "from_node": "divide15"
+                }
+              }
+            },
+            "arraymodify1": {
+              "process_id": "array_modify",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 10,
+                "values": [
+                  {
+                    "from_node": "divide1"
+                  },
+                  {
+                    "from_node": "power1"
+                  },
+                  {
+                    "from_node": "subtract4"
+                  },
+                  {
+                    "from_node": "multiply3"
+                  },
+                  {
+                    "from_node": "divide4"
+                  },
+                  {
+                    "from_node": "divide5"
+                  },
+                  {
+                    "from_node": "divide8"
+                  },
+                  {
+                    "from_node": "divide9"
+                  },
+                  {
+                    "from_node": "subtract12"
+                  },
+                  {
+                    "from_node": "divide12"
+                  },
+                  {
+                    "from_node": "add16"
+                  },
+                  {
+                    "from_node": "divide16"
+                  }
+                ]
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "renamelabels2": {
+      "process_id": "rename_labels",
+      "arguments": {
+        "data": {
+          "from_node": "applydimension1"
+        },
+        "dimension": "bands",
+        "target": [
+          "B02",
+          "B03",
+          "B04",
+          "B05",
+          "B06",
+          "B07",
+          "B08",
+          "B8A",
+          "B11",
+          "B12",
+          "NDVI",
+          "AVI",
+          "CIRE",
+          "NIRv",
+          "NDMI",
+          "NDWI",
+          "BLFEI",
+          "MNDWI",
+          "NDVIMNDWI",
+          "S2WI",
+          "S2REP",
+          "IRECI"
+        ]
+      }
+    },
+    "loadcollection3": {
+      "process_id": "load_collection",
+      "arguments": {
+        "bands": [
+          "VH",
+          "VV"
+        ],
+        "id": "SENTINEL1_GRD",
+        "properties": {
+          "sat:orbit_state": {
+            "process_graph": {
+              "eq1": {
+                "process_id": "eq",
+                "arguments": {
+                  "x": {
+                    "from_parameter": "value"
+                  },
+                  "y": "DESCENDING"
+                },
+                "result": true
+              }
+            }
+          }
+        },
+        "spatial_extent": null,
+        "temporal_extent": [
+          {
+            "from_node": "textconcat1"
+          },
+          {
+            "from_node": "textconcat2"
+          }
+        ]
+      }
+    },
+    "sarbackscatter1": {
+      "process_id": "sar_backscatter",
+      "arguments": {
+        "coefficient": "sigma0-ellipsoid",
+        "contributing_area": false,
+        "data": {
+          "from_node": "loadcollection3"
+        },
+        "elevation_model": "COPERNICUS_30",
+        "ellipsoid_incidence_angle": false,
+        "local_incidence_angle": false,
+        "mask": false,
+        "noise_removal": true,
+        "options": {
+          "implementation_version": "2",
+          "tile_size": 256,
+          "otb_memory": 1024,
+          "debug": false,
+          "elev_geoid": "/opt/openeo-vito-aux-data/egm96.tif"
+        }
+      }
+    },
+    "resamplespatial3": {
       "process_id": "resample_spatial",
       "arguments": {
         "align": "upper-left",
         "data": {
-          "from_node": "apply1"
+          "from_node": "sarbackscatter1"
         },
         "method": "near",
         "projection": {
-          "from_parameter": "output_epsg"
+          "from_parameter": "target_epsg"
         },
-        "resolution": {
-          "from_parameter": "resolution"
-        }
+        "resolution": 10.0
       }
     },
-    "if1": {
-      "process_id": "if",
-      "arguments": {
-        "accept": {
-          "from_node": "resamplespatial1"
-        },
-        "reject": {
-          "from_node": "apply1"
-        },
-        "value": {
-          "from_parameter": "output_warp"
-        }
-      }
-    },
-    "filterspatial1": {
-      "process_id": "filter_spatial",
+    "aggregatetemporalperiod2": {
+      "process_id": "aggregate_temporal_period",
       "arguments": {
         "data": {
-          "from_node": "if1"
+          "from_node": "resamplespatial3"
         },
-        "geometries": {
-          "from_parameter": "geometry"
+        "period": "dekad",
+        "reducer": {
+          "process_graph": {
+            "mean1": {
+              "process_id": "mean",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                }
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "applydimension2": {
+      "process_id": "apply_dimension",
+      "arguments": {
+        "data": {
+          "from_node": "aggregatetemporalperiod2"
+        },
+        "dimension": "bands",
+        "process": {
+          "process_graph": {
+            "arrayelement9": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 0
+              }
+            },
+            "log1": {
+              "process_id": "log",
+              "arguments": {
+                "base": 10,
+                "x": {
+                  "from_node": "arrayelement9"
+                }
+              }
+            },
+            "multiply5": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": 10.0,
+                "y": {
+                  "from_node": "log1"
+                }
+              }
+            },
+            "add17": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "multiply5"
+                },
+                "y": 83.0
+              }
+            },
+            "divide17": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "add17"
+                },
+                "y": 20.0
+              }
+            },
+            "power2": {
+              "process_id": "power",
+              "arguments": {
+                "base": 10,
+                "p": {
+                  "from_node": "divide17"
+                }
+              }
+            },
+            "arrayelement10": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 0
+              }
+            },
+            "isnodata1": {
+              "process_id": "is_nodata",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement10"
+                }
+              }
+            },
+            "if1": {
+              "process_id": "if",
+              "arguments": {
+                "accept": 1,
+                "reject": {
+                  "from_node": "power2"
+                },
+                "value": {
+                  "from_node": "isnodata1"
+                }
+              }
+            },
+            "arrayelement11": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 1
+              }
+            },
+            "log2": {
+              "process_id": "log",
+              "arguments": {
+                "base": 10,
+                "x": {
+                  "from_node": "arrayelement11"
+                }
+              }
+            },
+            "multiply6": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": 10.0,
+                "y": {
+                  "from_node": "log2"
+                }
+              }
+            },
+            "add18": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "multiply6"
+                },
+                "y": 83.0
+              }
+            },
+            "divide18": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "add18"
+                },
+                "y": 20.0
+              }
+            },
+            "power3": {
+              "process_id": "power",
+              "arguments": {
+                "base": 10,
+                "p": {
+                  "from_node": "divide18"
+                }
+              }
+            },
+            "arrayelement12": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 1
+              }
+            },
+            "isnodata2": {
+              "process_id": "is_nodata",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement12"
+                }
+              }
+            },
+            "if2": {
+              "process_id": "if",
+              "arguments": {
+                "accept": 1,
+                "reject": {
+                  "from_node": "power3"
+                },
+                "value": {
+                  "from_node": "isnodata2"
+                }
+              }
+            },
+            "arraycreate1": {
+              "process_id": "array_create",
+              "arguments": {
+                "data": [
+                  {
+                    "from_node": "if1"
+                  },
+                  {
+                    "from_node": "if2"
+                  }
+                ]
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "apply3": {
+      "process_id": "apply",
+      "arguments": {
+        "data": {
+          "from_node": "applydimension2"
+        },
+        "process": {
+          "process_graph": {
+            "linearscalerange3": {
+              "process_id": "linear_scale_range",
+              "arguments": {
+                "inputMax": 65534,
+                "inputMin": 1,
+                "outputMax": 65534,
+                "outputMin": 1,
+                "x": {
+                  "from_parameter": "x"
+                }
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "applydimension3": {
+      "process_id": "apply_dimension",
+      "arguments": {
+        "data": {
+          "from_node": "apply3"
+        },
+        "dimension": "bands",
+        "process": {
+          "process_graph": {
+            "arrayelement13": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 0
+              }
+            },
+            "log3": {
+              "process_id": "log",
+              "arguments": {
+                "base": 10,
+                "x": {
+                  "from_node": "arrayelement13"
+                }
+              }
+            },
+            "multiply7": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": 20.0,
+                "y": {
+                  "from_node": "log3"
+                }
+              }
+            },
+            "subtract17": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "multiply7"
+                },
+                "y": 83.0
+              }
+            },
+            "arrayelement14": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "index": 1
+              }
+            },
+            "log4": {
+              "process_id": "log",
+              "arguments": {
+                "base": 10,
+                "x": {
+                  "from_node": "arrayelement14"
+                }
+              }
+            },
+            "multiply8": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": 20.0,
+                "y": {
+                  "from_node": "log4"
+                }
+              }
+            },
+            "subtract18": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "multiply8"
+                },
+                "y": 83.0
+              }
+            },
+            "arraycreate2": {
+              "process_id": "array_create",
+              "arguments": {
+                "data": [
+                  {
+                    "from_node": "subtract17"
+                  },
+                  {
+                    "from_node": "subtract18"
+                  }
+                ]
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "applydimension4": {
+      "process_id": "apply_dimension",
+      "arguments": {
+        "context": {
+          "parallel": true,
+          "TileSize": 128
+        },
+        "data": {
+          "from_node": "applydimension3"
+        },
+        "dimension": "bands",
+        "process": {
+          "process_graph": {
+            "arrayelement15": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "label": "VV"
+              }
+            },
+            "arrayelement16": {
+              "process_id": "array_element",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "label": "VH"
+              }
+            },
+            "multiply9": {
+              "process_id": "multiply",
+              "arguments": {
+                "x": 4,
+                "y": {
+                  "from_node": "arrayelement16"
+                }
+              }
+            },
+            "add19": {
+              "process_id": "add",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement15"
+                },
+                "y": {
+                  "from_node": "arrayelement16"
+                }
+              }
+            },
+            "divide19": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "multiply9"
+                },
+                "y": {
+                  "from_node": "add19"
+                }
+              }
+            },
+            "subtract19": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement16"
+                },
+                "y": {
+                  "from_node": "arrayelement15"
+                }
+              }
+            },
+            "divide20": {
+              "process_id": "divide",
+              "arguments": {
+                "x": {
+                  "from_node": "arrayelement16"
+                },
+                "y": {
+                  "from_node": "arrayelement15"
+                }
+              }
+            },
+            "arraycreate3": {
+              "process_id": "array_create",
+              "arguments": {
+                "data": [
+                  {
+                    "from_node": "arrayelement15"
+                  },
+                  {
+                    "from_node": "arrayelement16"
+                  },
+                  {
+                    "from_node": "divide19"
+                  },
+                  {
+                    "from_node": "subtract19"
+                  },
+                  {
+                    "from_node": "divide20"
+                  }
+                ]
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "renamelabels3": {
+      "process_id": "rename_labels",
+      "arguments": {
+        "data": {
+          "from_node": "applydimension4"
+        },
+        "dimension": "bands",
+        "target": [
+          "VV",
+          "VH",
+          "RVI",
+          "VHVVD",
+          "VHVVR"
+        ]
+      }
+    },
+    "mergecubes1": {
+      "process_id": "merge_cubes",
+      "arguments": {
+        "cube1": {
+          "from_node": "renamelabels2"
+        },
+        "cube2": {
+          "from_node": "renamelabels3"
+        }
+      }
+    },
+    "applydimension5": {
+      "process_id": "apply_dimension",
+      "arguments": {
+        "context": {
+          "parallel": true,
+          "TileSize": 128
+        },
+        "data": {
+          "from_node": "mergecubes1"
+        },
+        "dimension": "t",
+        "process": {
+          "process_graph": {
+            "quantiles1": {
+              "process_id": "quantiles",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "probabilities": [
+                  0.02,
+                  0.25,
+                  0.5,
+                  0.75,
+                  0.98
+                ]
+              }
+            },
+            "mean2": {
+              "process_id": "mean",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                }
+              }
+            },
+            "sd1": {
+              "process_id": "sd",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                }
+              }
+            },
+            "sum1": {
+              "process_id": "sum",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                }
+              }
+            },
+            "quantiles2": {
+              "process_id": "quantiles",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "probabilities": [
+                  0.75
+                ]
+              }
+            },
+            "quantiles3": {
+              "process_id": "quantiles",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "probabilities": [
+                  0.25
+                ]
+              }
+            },
+            "subtract20": {
+              "process_id": "subtract",
+              "arguments": {
+                "x": {
+                  "from_node": "quantiles2"
+                },
+                "y": {
+                  "from_node": "quantiles3"
+                }
+              }
+            },
+            "arrayconcat1": {
+              "process_id": "array_concat",
+              "arguments": {
+                "array1": {
+                  "from_node": "quantiles1"
+                },
+                "array2": [
+                  {
+                    "from_node": "mean2"
+                  },
+                  {
+                    "from_node": "sd1"
+                  },
+                  {
+                    "from_node": "sum1"
+                  },
+                  {
+                    "from_node": "subtract20"
+                  }
+                ]
+              },
+              "result": true
+            }
+          }
+        },
+        "target_dimension": "bands"
+      }
+    },
+    "renamelabels4": {
+      "process_id": "rename_labels",
+      "arguments": {
+        "data": {
+          "from_node": "applydimension5"
+        },
+        "dimension": "bands",
+        "target": [
+          "B02_p2",
+          "B02_p25",
+          "B02_median",
+          "B02_p75",
+          "B02_p98",
+          "B02_mean",
+          "B02_sd",
+          "B02_sum",
+          "B02_iqr",
+          "B03_p2",
+          "B03_p25",
+          "B03_median",
+          "B03_p75",
+          "B03_p98",
+          "B03_mean",
+          "B03_sd",
+          "B03_sum",
+          "B03_iqr",
+          "B04_p2",
+          "B04_p25",
+          "B04_median",
+          "B04_p75",
+          "B04_p98",
+          "B04_mean",
+          "B04_sd",
+          "B04_sum",
+          "B04_iqr",
+          "B05_p2",
+          "B05_p25",
+          "B05_median",
+          "B05_p75",
+          "B05_p98",
+          "B05_mean",
+          "B05_sd",
+          "B05_sum",
+          "B05_iqr",
+          "B06_p2",
+          "B06_p25",
+          "B06_median",
+          "B06_p75",
+          "B06_p98",
+          "B06_mean",
+          "B06_sd",
+          "B06_sum",
+          "B06_iqr",
+          "B07_p2",
+          "B07_p25",
+          "B07_median",
+          "B07_p75",
+          "B07_p98",
+          "B07_mean",
+          "B07_sd",
+          "B07_sum",
+          "B07_iqr",
+          "B08_p2",
+          "B08_p25",
+          "B08_median",
+          "B08_p75",
+          "B08_p98",
+          "B08_mean",
+          "B08_sd",
+          "B08_sum",
+          "B08_iqr",
+          "B8A_p2",
+          "B8A_p25",
+          "B8A_median",
+          "B8A_p75",
+          "B8A_p98",
+          "B8A_mean",
+          "B8A_sd",
+          "B8A_sum",
+          "B8A_iqr",
+          "B11_p2",
+          "B11_p25",
+          "B11_median",
+          "B11_p75",
+          "B11_p98",
+          "B11_mean",
+          "B11_sd",
+          "B11_sum",
+          "B11_iqr",
+          "B12_p2",
+          "B12_p25",
+          "B12_median",
+          "B12_p75",
+          "B12_p98",
+          "B12_mean",
+          "B12_sd",
+          "B12_sum",
+          "B12_iqr",
+          "NDVI_p2",
+          "NDVI_p25",
+          "NDVI_median",
+          "NDVI_p75",
+          "NDVI_p98",
+          "NDVI_mean",
+          "NDVI_sd",
+          "NDVI_sum",
+          "NDVI_iqr",
+          "AVI_p2",
+          "AVI_p25",
+          "AVI_median",
+          "AVI_p75",
+          "AVI_p98",
+          "AVI_mean",
+          "AVI_sd",
+          "AVI_sum",
+          "AVI_iqr",
+          "CIRE_p2",
+          "CIRE_p25",
+          "CIRE_median",
+          "CIRE_p75",
+          "CIRE_p98",
+          "CIRE_mean",
+          "CIRE_sd",
+          "CIRE_sum",
+          "CIRE_iqr",
+          "NIRv_p2",
+          "NIRv_p25",
+          "NIRv_median",
+          "NIRv_p75",
+          "NIRv_p98",
+          "NIRv_mean",
+          "NIRv_sd",
+          "NIRv_sum",
+          "NIRv_iqr",
+          "NDMI_p2",
+          "NDMI_p25",
+          "NDMI_median",
+          "NDMI_p75",
+          "NDMI_p98",
+          "NDMI_mean",
+          "NDMI_sd",
+          "NDMI_sum",
+          "NDMI_iqr",
+          "NDWI_p2",
+          "NDWI_p25",
+          "NDWI_median",
+          "NDWI_p75",
+          "NDWI_p98",
+          "NDWI_mean",
+          "NDWI_sd",
+          "NDWI_sum",
+          "NDWI_iqr",
+          "BLFEI_p2",
+          "BLFEI_p25",
+          "BLFEI_median",
+          "BLFEI_p75",
+          "BLFEI_p98",
+          "BLFEI_mean",
+          "BLFEI_sd",
+          "BLFEI_sum",
+          "BLFEI_iqr",
+          "MNDWI_p2",
+          "MNDWI_p25",
+          "MNDWI_median",
+          "MNDWI_p75",
+          "MNDWI_p98",
+          "MNDWI_mean",
+          "MNDWI_sd",
+          "MNDWI_sum",
+          "MNDWI_iqr",
+          "NDVIMNDWI_p2",
+          "NDVIMNDWI_p25",
+          "NDVIMNDWI_median",
+          "NDVIMNDWI_p75",
+          "NDVIMNDWI_p98",
+          "NDVIMNDWI_mean",
+          "NDVIMNDWI_sd",
+          "NDVIMNDWI_sum",
+          "NDVIMNDWI_iqr",
+          "S2WI_p2",
+          "S2WI_p25",
+          "S2WI_median",
+          "S2WI_p75",
+          "S2WI_p98",
+          "S2WI_mean",
+          "S2WI_sd",
+          "S2WI_sum",
+          "S2WI_iqr",
+          "S2REP_p2",
+          "S2REP_p25",
+          "S2REP_median",
+          "S2REP_p75",
+          "S2REP_p98",
+          "S2REP_mean",
+          "S2REP_sd",
+          "S2REP_sum",
+          "S2REP_iqr",
+          "IRECI_p2",
+          "IRECI_p25",
+          "IRECI_median",
+          "IRECI_p75",
+          "IRECI_p98",
+          "IRECI_mean",
+          "IRECI_sd",
+          "IRECI_sum",
+          "IRECI_iqr",
+          "VV_p2",
+          "VV_p25",
+          "VV_median",
+          "VV_p75",
+          "VV_p98",
+          "VV_mean",
+          "VV_sd",
+          "VV_sum",
+          "VV_iqr",
+          "VH_p2",
+          "VH_p25",
+          "VH_median",
+          "VH_p75",
+          "VH_p98",
+          "VH_mean",
+          "VH_sd",
+          "VH_sum",
+          "VH_iqr",
+          "RVI_p2",
+          "RVI_p25",
+          "RVI_median",
+          "RVI_p75",
+          "RVI_p98",
+          "RVI_mean",
+          "RVI_sd",
+          "RVI_sum",
+          "RVI_iqr",
+          "VHVVD_p2",
+          "VHVVD_p25",
+          "VHVVD_median",
+          "VHVVD_p75",
+          "VHVVD_p98",
+          "VHVVD_mean",
+          "VHVVD_sd",
+          "VHVVD_sum",
+          "VHVVD_iqr",
+          "VHVVR_p2",
+          "VHVVR_p25",
+          "VHVVR_median",
+          "VHVVR_p75",
+          "VHVVR_p98",
+          "VHVVR_mean",
+          "VHVVR_sd",
+          "VHVVR_sum",
+          "VHVVR_iqr"
+        ]
+      }
+    },
+    "filterbands1": {
+      "process_id": "filter_bands",
+      "arguments": {
+        "bands": [
+          "B02_p2",
+          "B02_p25",
+          "B02_median",
+          "B02_p75",
+          "B02_p98",
+          "B02_mean",
+          "B02_sd",
+          "B02_sum",
+          "B02_iqr",
+          "B03_p2",
+          "B03_p25",
+          "B03_median",
+          "B03_p75",
+          "B03_p98",
+          "B03_mean",
+          "B03_sd",
+          "B03_sum",
+          "B03_iqr",
+          "B04_p2",
+          "B04_p25",
+          "B04_median",
+          "B04_p75",
+          "B04_p98",
+          "B04_mean",
+          "B04_sd",
+          "B04_sum",
+          "B04_iqr",
+          "B05_p2",
+          "B05_p25",
+          "B05_median",
+          "B05_p75",
+          "B05_p98",
+          "B05_mean",
+          "B05_sd",
+          "B05_sum",
+          "B05_iqr",
+          "B06_p2",
+          "B06_p25",
+          "B06_median",
+          "B06_p75",
+          "B06_p98",
+          "B06_mean",
+          "B06_sd",
+          "B06_sum",
+          "B06_iqr",
+          "B07_p2",
+          "B07_p25",
+          "B07_median",
+          "B07_p75",
+          "B07_p98",
+          "B07_mean",
+          "B07_sd",
+          "B07_sum",
+          "B07_iqr",
+          "B08_p2",
+          "B08_p25",
+          "B08_median",
+          "B08_p75",
+          "B08_p98",
+          "B08_mean",
+          "B08_sd",
+          "B08_sum",
+          "B08_iqr",
+          "B8A_p2",
+          "B8A_p25",
+          "B8A_median",
+          "B8A_p75",
+          "B8A_p98",
+          "B8A_mean",
+          "B8A_sd",
+          "B8A_sum",
+          "B8A_iqr",
+          "B11_p2",
+          "B11_p25",
+          "B11_median",
+          "B11_p75",
+          "B11_p98",
+          "B11_mean",
+          "B11_sd",
+          "B11_sum",
+          "B11_iqr",
+          "B12_p2",
+          "B12_p25",
+          "B12_median",
+          "B12_p75",
+          "B12_p98",
+          "B12_mean",
+          "B12_sd",
+          "B12_sum",
+          "B12_iqr",
+          "NDVI_p2",
+          "NDVI_p25",
+          "NDVI_median",
+          "NDVI_p75",
+          "NDVI_p98",
+          "NDVI_mean",
+          "NDVI_sd",
+          "NDVI_sum",
+          "NDVI_iqr",
+          "AVI_p2",
+          "AVI_p25",
+          "AVI_median",
+          "AVI_p75",
+          "AVI_p98",
+          "AVI_mean",
+          "AVI_sd",
+          "AVI_sum",
+          "AVI_iqr",
+          "CIRE_p2",
+          "CIRE_p25",
+          "CIRE_median",
+          "CIRE_p75",
+          "CIRE_p98",
+          "CIRE_mean",
+          "CIRE_sd",
+          "CIRE_sum",
+          "CIRE_iqr",
+          "NIRv_p2",
+          "NIRv_p25",
+          "NIRv_median",
+          "NIRv_p75",
+          "NIRv_p98",
+          "NIRv_mean",
+          "NIRv_sd",
+          "NIRv_sum",
+          "NIRv_iqr",
+          "NDMI_p2",
+          "NDMI_p25",
+          "NDMI_median",
+          "NDMI_p75",
+          "NDMI_p98",
+          "NDMI_mean",
+          "NDMI_sd",
+          "NDMI_sum",
+          "NDMI_iqr",
+          "NDWI_p2",
+          "NDWI_p25",
+          "NDWI_median",
+          "NDWI_p75",
+          "NDWI_p98",
+          "NDWI_mean",
+          "NDWI_sd",
+          "NDWI_sum",
+          "NDWI_iqr",
+          "BLFEI_p2",
+          "BLFEI_p25",
+          "BLFEI_median",
+          "BLFEI_p75",
+          "BLFEI_p98",
+          "BLFEI_mean",
+          "BLFEI_sd",
+          "BLFEI_sum",
+          "BLFEI_iqr",
+          "MNDWI_p2",
+          "MNDWI_p25",
+          "MNDWI_median",
+          "MNDWI_p75",
+          "MNDWI_p98",
+          "MNDWI_mean",
+          "MNDWI_sd",
+          "MNDWI_sum",
+          "MNDWI_iqr",
+          "NDVIMNDWI_p2",
+          "NDVIMNDWI_p25",
+          "NDVIMNDWI_median",
+          "NDVIMNDWI_p75",
+          "NDVIMNDWI_p98",
+          "NDVIMNDWI_mean",
+          "NDVIMNDWI_sd",
+          "NDVIMNDWI_sum",
+          "NDVIMNDWI_iqr",
+          "S2WI_p2",
+          "S2WI_p25",
+          "S2WI_median",
+          "S2WI_p75",
+          "S2WI_p98",
+          "S2WI_mean",
+          "S2WI_sd",
+          "S2WI_sum",
+          "S2WI_iqr",
+          "S2REP_p2",
+          "S2REP_p25",
+          "S2REP_median",
+          "S2REP_p75",
+          "S2REP_p98",
+          "S2REP_mean",
+          "IRECI_p2",
+          "IRECI_p25",
+          "IRECI_median",
+          "IRECI_p75",
+          "IRECI_p98",
+          "IRECI_mean",
+          "IRECI_sd",
+          "IRECI_sum",
+          "IRECI_iqr",
+          "VV_p2",
+          "VV_p25",
+          "VV_median",
+          "VV_p75",
+          "VV_p98",
+          "VV_mean",
+          "VV_sd",
+          "VV_iqr",
+          "VH_p2",
+          "VH_p25",
+          "VH_median",
+          "VH_p75",
+          "VH_p98",
+          "VH_mean",
+          "VH_sd",
+          "VH_iqr",
+          "RVI_p2",
+          "RVI_p25",
+          "RVI_median",
+          "RVI_p75",
+          "RVI_p98",
+          "RVI_mean",
+          "RVI_sd",
+          "RVI_sum",
+          "RVI_iqr",
+          "VHVVD_p2",
+          "VHVVD_p25",
+          "VHVVD_median",
+          "VHVVD_p75",
+          "VHVVD_p98",
+          "VHVVD_mean",
+          "VHVVD_sd",
+          "VHVVD_iqr",
+          "VHVVR_p2",
+          "VHVVR_p25",
+          "VHVVR_median",
+          "VHVVR_p75",
+          "VHVVR_p98",
+          "VHVVR_mean",
+          "VHVVR_sd",
+          "VHVVR_sum",
+          "VHVVR_iqr"
+        ],
+        "data": {
+          "from_node": "renamelabels4"
+        }
+      }
+    },
+    "loadcollection4": {
+      "process_id": "load_collection",
+      "arguments": {
+        "bands": [
+          "DEM"
+        ],
+        "id": "COPERNICUS_30",
+        "spatial_extent": null,
+        "temporal_extent": null
+      }
+    },
+    "reducedimension1": {
+      "process_id": "reduce_dimension",
+      "arguments": {
+        "data": {
+          "from_node": "loadcollection4"
+        },
+        "dimension": "t",
+        "reducer": {
+          "process_graph": {
+            "last1": {
+              "process_id": "last",
+              "arguments": {
+                "data": {
+                  "from_parameter": "data"
+                },
+                "ignore_nodata": true
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "resamplespatial4": {
+      "process_id": "resample_spatial",
+      "arguments": {
+        "align": "upper-left",
+        "data": {
+          "from_node": "reducedimension1"
+        },
+        "method": "bilinear",
+        "projection": {
+          "from_parameter": "target_epsg"
+        },
+        "resolution": 10.0
+      }
+    },
+    "mergecubes2": {
+      "process_id": "merge_cubes",
+      "arguments": {
+        "cube1": {
+          "from_node": "filterbands1"
+        },
+        "cube2": {
+          "from_node": "resamplespatial4"
+        }
+      }
+    },
+    "loadstac1": {
+      "process_id": "load_stac",
+      "arguments": {
+        "url": "https://stac.openeo.vito.be/collections/wenr_features"
+      }
+    },
+    "resamplespatial5": {
+      "process_id": "resample_spatial",
+      "arguments": {
+        "align": "upper-left",
+        "data": {
+          "from_node": "loadstac1"
+        },
+        "method": "near",
+        "projection": {
+          "from_parameter": "target_epsg"
+        },
+        "resolution": 10.0
+      }
+    },
+    "dropdimension1": {
+      "process_id": "drop_dimension",
+      "arguments": {
+        "data": {
+          "from_node": "resamplespatial5"
+        },
+        "name": "t"
+      }
+    },
+    "mergecubes3": {
+      "process_id": "merge_cubes",
+      "arguments": {
+        "cube1": {
+          "from_node": "mergecubes2"
+        },
+        "cube2": {
+          "from_node": "dropdimension1"
+        }
+      }
+    },
+    "filterbbox1": {
+      "process_id": "filter_bbox",
+      "arguments": {
+        "data": {
+          "from_node": "mergecubes3"
+        },
+        "extent": {
+          "from_parameter": "bbox"
+        }
+      }
+    },
+    "reducedimension2": {
+      "process_id": "reduce_dimension",
+      "arguments": {
+        "data": {
+          "from_node": "filterbbox1"
+        },
+        "dimension": "bands",
+        "reducer": {
+          "process_graph": {
+            "runudf1": {
+              "process_id": "run_udf",
+              "arguments": {
+                "context": {
+                  "eunis_level": {
+                    "from_parameter": "eunis_level"
+                  }
+                },
+                "data": {
+                  "from_parameter": "data"
+                },
+                "runtime": "Python",
+                "udf": "\nfrom typing import Dict, List, Tuple, Union\nimport xarray as xr\nimport subprocess\nimport numpy as np\nimport os\nfrom openeo.udf import inspect\nimport sys\n\nsys.path.append(\"onnx_deps\") \nimport onnxruntime as ort\n\n\nMODEL_URLS = ['https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level1_class-0_129predictors_v1.onnx', \n                  'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-C_71predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-D_68predictors_v1.onnx', \n                  'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-E_85predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-F_90predictors_v1.onnx', \n                  'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-G_164predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-H_65predictors_v1.onnx', \n                  'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-I_50predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-J_62predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level2_class-X_54predictors_v1.onnx', \n                  'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-C1_62predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-C3_62predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-E1_50predictors_v1.onnx', \n                  'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-E2_50predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-E3_50predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-E4_50predictors_v1.onnx', \n                  'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-E5_50predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-F2_60predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-F3_50predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-G1_74predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-G3_98predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-H2_50predictors_v1.onnx', 'https://s3.waw3-1.cloudferro.com/swift/v1/ecdc-waw3-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/models/Level3_class-H3_50predictors_v1.onnx']\n\nLOCAL_MODEL_DIR = \"am1729/models\"\n\n\nONNX_LEVELS_AND_CLASS_MAP = {\n    1: [\"30000\", \"40000\", \"50000\", \"60000\", \"70000\", \"80000\", \"90000\", \"100000\", \"110000\"],\n\n    2: [\"30100\", \"30200\", \"30300\",\"40100\",\"40200\",\"40400\",\"40500\",\n        \"50100\", \"50200\", \"50300\" ,\"50400\", \"50500\" ,\"50600\",\n        \"60200\", \"60300\", \"60400\", \"60900\", \"61100\", \"70100\", \"70200\", \"70300\",\n        \"70400\", \"80200\", \"80300\", \"80500\", \"90100\", \"90200\", \"100100\", \"100200\", \"100300\", \"100400\",\n\t\t\"100600\", \"110400\", \"110700\", \"110800\", \"110900\", \"112100\"]\n}\n\nclass EunisClassification():\n\n    def __init__(self, code:str=None, child:List=[]):\n        self.code = code\n        self.child = child\n    \n    \n    def create_heirarchy():\n        root = EunisClassification(code=\"U\")\n        level1 = ONNX_LEVELS_AND_CLASS_MAP.get(1, [])\n        level2 = ONNX_LEVELS_AND_CLASS_MAP.get(2, [])\n        level3 = ONNX_LEVELS_AND_CLASS_MAP.get(3, [])\n\n        level1Child = []\n        for classCode in level1:\n            e = EunisClassification(code = classCode)\n            print (\"Adding level 1 child to Root...\")\n            level1Child.append(e)\n\n            level2Child = []\n            for classCodeLev2 in level2:\n                if classCodeLev2[:2] == classCode[:2]:\n                    lev2 = EunisClassification(code = classCodeLev2)\n                    level2Child.append(lev2)\n\n                    level3Child = []\n                    for classCodeLev3 in level3:\n                        if classCodeLev2[:3] == classCodeLev3[:3]:\n                            lev3 = EunisClassification(classCodeLev3)\n                            level3Child.append(lev3)\n\n                    lev2.child = level3Child\n\n            e.child = level2Child\n        \n        root.child = level1Child\n        return root\n\n            \ndef get_level_model_map()->Dict[str, str]:\n    '''\n    Map of a EUNIS Class Rep and ONNX Model\n\n    Gets Level to ONNX Models Map. \n    We would call onnx.load and would save the model in memory\n    '''\n\n    eunis_class_model_map:Dict[str, str] = {}\n    \n    for modelUrl in MODEL_URLS:\n        local_path = modelUrl.split(\"/\")[-1]\n        cmd = [\"curl\",\n                \"-o\", \n                LOCAL_MODEL_DIR + \"/\" + local_path,\n                modelUrl\n                ]\n        subprocess.run(cmd, capture_output=True, text=True)\n        _, metadata = load_onnx_model(f'{LOCAL_MODEL_DIR}/{local_path}')\n\n        output_features = metadata.get(\"output_features\")\n        \n        ## Store the Output Feature like 300000, 30101... to the model that \n        ## Predicts it. The value is actually the path top the stored ONNX Model\n        for output_feature in output_features:\n            eunis_class_model_map[output_feature] = LOCAL_MODEL_DIR + \"/\" + local_path\n\n    return eunis_class_model_map\n\n\ndef preprocess_input(input_xr: xr.DataArray,\n                     ort_session: ort.InferenceSession) -> Tuple[np.ndarray, Tuple[int, int, int]]:\n    \"\"\"\n    Preprocesses input data for model inference using an ONNX runtime session. This\n    function takes an xarray DataArray, rearranges its dimensions, and reshapes its\n    values to match the input requirements of the ONNX model specified by the given\n    ONNX InferenceSession.\n\n    :param input_xr: Input data in the format of an xarray DataArray. The expected\n        dimensions are \"y\", \"x\", and \"bands\", and the order of the dimensions will\n        be transposed to match this requirement.\n    :param ort_session: ONNX runtime inference session that specifies the model for\n        inference. Used to determine the required input shape of the model.\n    :return: A tuple containing:\n        - A numpy array formatted to fit the input shape of the ONNX model.\n        - The original shape of the input data as a tuple with the transposed \"y\",\n          \"x\", and \"bands\" dimensions.\n    \"\"\"\n    input_xr = input_xr.transpose(\"y\", \"x\", \"bands\")\n    input_shape = input_xr.shape\n    input_np = input_xr.values.reshape(-1, ort_session.get_inputs()[0].shape[1])\n    return input_np, input_shape\n\n\ndef run_inference(input_np: np.ndarray, ort_session: ort.InferenceSession)-> List[str]:\n    \"\"\"\n    Executes inference using an ONNX Runtime session and input numpy array. This function\n    constructs the input data for the ONNX runtime, runs the session, and extracts the\n    output probabilities as list of dictionaries.\n\n    :param input_np: Numpy array containing the input tensor data for the inference.\n    :param ort_session: ONNX Runtime inference session object used to execute the model.\n    :return: A list of dictionaries where each dictionary maps string labels to their\n        corresponding probability values for each sample, as obtained from the model's output.\n    \"\"\"\n    ort_inputs = {ort_session.get_inputs()[0].name: input_np}\n    ort_outputs = ort_session.run(None, ort_inputs)\n    max_class_list = ort_outputs[0]\n    return max_class_list\n\n\ndef load_onnx_model(path:str):\n\n    # Initialize the ONNX Runtime session\n    inspect(message=f\"Initializing ONNX Runtime session for model at {path}...\")\n    ort_session = ort.InferenceSession(path, providers=[\"CPUExecutionProvider\"])\n\n    # Extract metadata\n    model_meta = ort_session.get_modelmeta()\n\n    input_features = model_meta.custom_metadata_map.get(\"input_features\", \"\").split(\",\")\n    input_features = [band.strip() for band in input_features]\n\n    output_features = model_meta.custom_metadata_map.get(\"output_features\", \"\").split(\",\")\n    output_features = [band.strip() for band in output_features]\n\n    metadata = {\n        \"input_features\": input_features,\n        \"output_features\": output_features,\n    }\n\n    inspect(message=f\"Successfully extracted features from model at {path}...\")\n    return ort_session, metadata\n\ndef apply_datacube(cube: xr.DataArray, context: Dict) -> xr.DataArray:\n    '''\n    Entrypoint for the UDF. \n    It takes in EUNIS Level for which the max possible class is needed to be found \n    based on the probability.\n    '''\n     \n    cube = cube.fillna(0)\n    cube = cube.astype('float32')\n\n    os.makedirs(LOCAL_MODEL_DIR, exist_ok=True)\n\n    eunis_level = context.get(\"eunis_level\")\n    if eunis_level not in [1, 2, 3]:\n        raise ValueError(\"Eunis Level must be one of 1,2 or 3\")\n    \n    eunis_class_model_map = get_level_model_map()\n    root = EunisClassification.create_heirarchy()\n\n    ## apply eunis habitat mapping sequentially\n    ## level 1:\n    onnx_model_path = eunis_class_model_map[root.child[0].code]\n    onnx_inference_session, metadata = load_onnx_model(onnx_model_path)\n    input_features = metadata.get(\"input_features\")\n    inspect(f\"Found the length of Input Features: {str(len(input_features))}\")\n    subsampled_cube = cube.sel(bands = input_features) ## run inference using the input bands\n\n    processed_input, input_shape = preprocess_input(subsampled_cube, onnx_inference_session)\n    level1_cube = run_inference(processed_input, onnx_inference_session)\n    level1_cube = np.array(level1_cube).T.reshape(input_shape[0], input_shape[1])\n\n    #if eunis_level == 1:\n    return xr.DataArray(\n        level1_cube,\n        dims = [\"y\", \"x\"],\n        coords={\n            'y': subsampled_cube.coords['y'],\n            'x': subsampled_cube.coords['x']\n        }\n    )"
+              },
+              "result": true
+            }
+          }
+        }
+      }
+    },
+    "saveresult1": {
+      "process_id": "save_result",
+      "arguments": {
+        "data": {
+          "from_node": "reducedimension2"
+        },
+        "format": "GTiff",
+        "options": {
+          "separate_asset_per_band": true,
+          "filename_prefix": "file_name"
         }
       },
       "result": true
     }
   },
-  "id": "udp_CORINE_arable_mask",
-  "summary": "arable/non-arable mask based on CORINE ACC remapped with custom dictionary. Returns a single band RasterCube.",
-  "description": "Creates a arable/non-arable mask for the CORINE Accounting Layers based on a given remapping dictionary.",
+  "id": "udp_inference_eunis_l1",
+  "summary": "Generates the alpha 1 inference result based on inputs.Returns a single band per probability.",
+  "description": "Inference for the habitat maps for the alpha1 release.",
+  "default_job_options": {
+    "driver-memory": "1000m",
+    "driver-memoryOverhead": "1000m",
+    "driver-cores": "1",
+    "executor-memory": "1500m",
+    "executor-memoryOverhead": "1500m",
+    "executor-cores": "1",
+    "max-executors": "20",
+    "soft-errors": "true",
+    "python-memory": "4000m",
+    "udf-dependency-archives": [
+      "https://s3.waw3-1.cloudferro.com/swift/v1/project_dependencies/onnx_dependencies_1.16.3.zip#onnx_deps"
+    ]
+  },
   "parameters": [
     {
-      "name": "geometry",
-      "description": "Geometry as GeoJSON feature(s).",
+      "name": "bbox",
+      "description": "Limits the data to process to the specified bounding box or polygons.\n\nFor raster data, the process loads the pixel into the data cube if the point\n\n    at the pixel center intersects with the bounding box or any of the polygons\n(as defined in the Simple Features standard by the OGC).\n\nFor vector data, \n    the process loads the geometry into the data cube if the geometry\nis fully within the bounding box or any of the polygons (as defined in the\nSimple \n    Features standard by the OGC). Empty geometries may only be in the\ndata cube if no spatial extent has been provided.\n\nEmpty geometries are ignored.\n\nSet this parameter to null to set no limit for the spatial extent.",
       "schema": {
+        "title": "Bounding Box",
         "type": "object",
-        "subtype": "geojson"
+        "subtype": "bounding-box",
+        "required": [
+          "west",
+          "south",
+          "east",
+          "north"
+        ],
+        "properties": {
+          "west": {
+            "description": "West (lower left corner, coordinate axis 1).",
+            "type": "number"
+          },
+          "south": {
+            "description": "South (lower left corner, coordinate axis 2).",
+            "type": "number"
+          },
+          "east": {
+            "description": "East (upper right corner, coordinate axis 1).",
+            "type": "number"
+          },
+          "north": {
+            "description": "North (upper right corner, coordinate axis 2).",
+            "type": "number"
+          },
+          "crs": {
+            "description": "Coordinate reference system of the extent, specified as as [EPSG code](http://www.epsg-registry.org/) or [WKT2 CRS string](http://docs.opengeospatial.org/is/18-010r7/18-010r7.html).",
+            "anyOf": [
+              {
+                "title": "EPSG Code",
+                "type": "integer",
+                "subtype": "epsg-code",
+                "minimum": 1000,
+                "examples": [
+                  3035
+                ]
+              },
+              {
+                "title": "WKT2",
+                "type": "string",
+                "subtype": "wkt2-definition"
+              }
+            ],
+            "default": 3035
+          }
+        }
       }
     },
     {
       "name": "year",
-      "description": "The year for which to generate an annual mean composite",
+      "description": "The year for which to generate the habitat map. (default: 2021)",
       "schema": {
         "type": "integer"
       },
@@ -167,47 +2380,28 @@
       "optional": true
     },
     {
-      "name": "remapping_dict",
-      "description": "dict with the remapping values.",
+      "name": "digitalId",
+      "description": "Digital ID of client",
       "schema": {
-        "type": "object"
-      },
-      "default": {
-        "141": 0,
-        "211": 1,
-        "212": 1,
-        "213": 1,
-        "221": 0,
-        "222": 0,
-        "223": 0,
-        "231": 0,
-        "241": 0,
-        "242": 0,
-        "243": 0,
-        "244": 0,
-        "311": 0,
-        "312": 0,
-        "313": 0,
-        "321": 0,
-        "322": 0,
-        "323": 0,
-        "324": 0,
-        "333": 0,
-        "334": 0
-      },
-      "optional": true
+        "type": "string"
+      }
     },
     {
-      "name": "output_warp",
-      "description": "Boolean switch if output should be warped to given projection and resolution, default=False.",
+      "name": "scenarioId",
+      "description": "Id of the scenario/session",
       "schema": {
-        "type": "boolean"
-      },
-      "default": false,
-      "optional": true
+        "type": "string"
+      }
     },
     {
-      "name": "output_epsg",
+      "name": "area_name",
+      "description": "Name of the AOI",
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "target_epsg",
       "description": "The desired output projection system, which is EPSG:3035 by default.",
       "schema": {
         "type": "integer"
@@ -216,12 +2410,21 @@
       "optional": true
     },
     {
-      "name": "resolution",
+      "name": "target_res",
       "description": "The desired resolution, specified in units of the projection system, which is meters by default.",
       "schema": {
         "type": "number"
       },
-      "default": 100,
+      "default": 10.0,
+      "optional": true
+    },
+    {
+      "name": "eunis_level",
+      "description": "EUNIS Level",
+      "schema": {
+        "type": "integer"
+      },
+      "default": 1,
       "optional": true
     }
   ]
