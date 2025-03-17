@@ -133,7 +133,27 @@ public abstract interface IIdentity {
          * The identity of the AI in k.LAB. Used in provenance recording.
          * 
          */
-        KLAB
+        KLAB,
+        
+        /**
+         * The services for v.1.0
+         */
+        REASONER,
+
+        /**
+         *
+         */
+        RESOURCES,
+
+        /**
+         *
+         */
+        RESOLVER,
+
+        /**
+         *
+         */
+        RUNTIME
     }
 
     /**

@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface INodeIdentity extends IServerIdentity {
+public interface IServiceIdentity extends IServerIdentity {
 	
     /** Constant <code>type</code> */
     Type type = Type.NODE;
@@ -92,12 +92,4 @@ public interface INodeIdentity extends IServerIdentity {
 	 * @return
 	 */
 	String getVersion();
-	
-	/**
-	 * The type, used by v.1.0.
-	 */
-	IIdentity.Type getType();
-	
-	void setType(IIdentity.Type type);
-	
 }
