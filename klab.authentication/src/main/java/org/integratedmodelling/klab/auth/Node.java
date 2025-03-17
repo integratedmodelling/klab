@@ -45,6 +45,7 @@ public class Node implements INodeIdentity {
 	private Map<String, IAuthority.Capabilities> authorities = new HashMap<>();
 	IParameters<String> globalState = Parameters.create();
 	private long uptime;
+	private IIdentity.Type identityType;
 
 	@Override
 	public IParameters<String> getState() {
@@ -59,6 +60,10 @@ public class Node implements INodeIdentity {
 	}
 
 	public Node(NodeReference node, String token) {
+	    this(node, token, IIdentity.Type.NODE);
+	}
+	
+	public Node(NodeReference node, String token, IIdentity.Type type) {
 		Partner partner = Authentication.INSTANCE.requirePartner(node.getPartner());
 		this.name = node.getId();
 		this.urls.addAll(node.getUrls());
@@ -67,6 +72,7 @@ public class Node implements INodeIdentity {
 		this.adapterIds.addAll(node.getAdapters());
 		this.catalogIds.addAll(node.getCatalogs());
 		this.namespaceIds.addAll(node.getNamespaces());
+		this.identityType = identityType;
 	}
 
 	/**
@@ -115,7 +121,7 @@ public class Node implements INodeIdentity {
 
     @Override
     public IIdentity.Type getIdentityType() {
-        return IIdentity.Type.NODE;
+        return identityType;
     }
     
 	@Override

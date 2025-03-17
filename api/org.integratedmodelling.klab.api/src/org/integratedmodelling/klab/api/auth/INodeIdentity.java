@@ -92,16 +92,4 @@ public interface INodeIdentity extends IServerIdentity {
 	 * @return
 	 */
 	String getVersion();
-	
-	/**
-	 * The type, used by v.1.0.
-	 */
-	IIdentity.Type getType();
-	
-	/**
-	 * Set the type used by v.1.0
-	 * @param type
-	 */
-	void setType(IIdentity.Type type);
-	
 }
