@@ -49,6 +49,11 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
+import kong.unirest.JsonNode;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
+import scala.annotation.meta.param;
+
 public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
 	static Set<String> knownParameters;
@@ -103,7 +108,8 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 		OpenEO service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
 		if (service != null && service.isOnline()) {
 
-			Parameters<String> arguments = Parameters.create();
+		    JSONObject params = new JSONObject();
+//			Parameters<String> arguments = Parameters.create();
 			IScale rscal = Scale.create(resource.getGeometry());
 			IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 
@@ -112,7 +118,14 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 			 */
 			for (String parameter : urnParameters.keySet()) {
 				if (!knownParameters.contains(parameter)) {
-					arguments.put(parameter, Utils.asPOD(urnParameters.get(parameter)));
+//					arguments.put(parameter, Utils.asPodOrList(urnParameters.get(parameter)));
+				    if (parameter.equals("output_band_names")) {
+				        params.put("output_band_names", urnParameters.get(parameter).split(","));
+				    } else if (parameter.equals("onnx_models")) {
+                        params.put("onnx_models", List.of(urnParameters.get(parameter).split(","))); // TODO fix si solo 1
+				    } else {
+				        params.put(parameter, Utils.asPOD(urnParameters.get(parameter)));
+				    }
 				}
 			}
 
@@ -133,8 +146,8 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					resolution.add(grid.getCellWidth());
 					resolution.add(grid.getCellHeight());
 
-					arguments.put(resource.getParameters().get("space.resolution", String.class),
-							grid.getCellWidth()/* resolution */);
+					params.put(resource.getParameters().get("space.resolution", String.class), 10);
+//							grid.getCellWidth()/* resolution */);
 
                 } else {
                     throw new KlabIllegalStateException(
@@ -145,14 +158,22 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                     /*
                      * set GeoJSON shape and x,y resolution in parameters
                      */
-                    arguments.put(resource.getParameters().get("space.shape", String.class),
+				    params.put(resource.getParameters().get("space.shape", String.class),
                             ((Shape) scale.getSpace().getShape()).asGeoJSON());
 
 				} else if (resource.getParameters().containsKey("space.bbox") && !resource.getParameters().get("space.bbox").equals("?")) {
-                    arguments.put("space.bbox.west", (scale.getSpace().getEnvelope().getMinX()));
-                    arguments.put("space.bbox.east", (scale.getSpace().getEnvelope().getMaxX()));
-                    arguments.put("space.bbox.north", (scale.getSpace().getEnvelope().getMaxY()));
-                    arguments.put("space.bbox.south", (scale.getSpace().getEnvelope().getMinY()));
+			        JSONObject bbox = new JSONObject();
+			        bbox.put("west", 4680000);
+			        bbox.put("east", 4700000);
+			        bbox.put("north", 3080000);
+			        bbox.put("south", 3060000);
+			        bbox.put("crs", "EPSG:3035");
+			        params.put("bbox", bbox);
+//			        arguments.put("bbox.west", 4680000);//(scale.getSpace().getEnvelope().getMinX()));
+//                    arguments.put("bbox.east", 4700000);//(scale.getSpace().getEnvelope().getMaxX()));
+//                    arguments.put("bbox.north", 3080000);//(scale.getSpace().getEnvelope().getMaxY()));
+//                    arguments.put("bbox.south", 3060000);//(scale.getSpace().getEnvelope().getMinY()));
+//                    arguments.put("bbox.crs", "EPSG:3035");
 				} else {
 					throw new KlabIllegalStateException(
 							"resource does not specify enough space parameters to contextualize");
@@ -163,7 +184,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				 * must have space.shape, set that and see what happens
 				 */
 				if (resource.getParameters().containsKey("space.shape")) {
-					arguments.put(resource.getParameters().get("space.shape", String.class),
+				    params.put(resource.getParameters().get("space.shape", String.class),
 							((Shape) scale.getSpace().getShape()).asGeoJSON());
 				} else {
 					throw new KlabIllegalStateException(
@@ -175,7 +196,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				Object projectionData = scale.getSpace().getProjection().getSimpleSRS().startsWith("EPSG:")
 						? Integer.parseInt(scale.getSpace().getProjection().getSimpleSRS().substring(5))
 						: ((Projection) scale.getSpace().getProjection()).getWKTDefinition();
-				arguments.put(resource.getParameters().get("space.projection", String.class), projectionData);
+				//params.put(resource.getParameters().get("space.projection", String.class), projectionData);
 			}
 
 			// resource is temporal: must specify extent
@@ -186,8 +207,8 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				if (resource.getParameters().containsKey("time.year")) {
 					if (scale.getTime().getResolution().getType() == Type.YEAR
 							&& scale.getTime().getResolution().getMultiplier() == 1) {
-						arguments.put(resource.getParameters().get("time.year", String.class),
-								scale.getTime().getStart().getYear());
+//					    params.put(resource.getParameters().get("time.year", String.class),
+//								scale.getTime().getStart().getYear());
 					} else {
 						throw new KlabUnsupportedFeatureException("non-yearly use of yearly OpenEO resource");
 					}
@@ -196,7 +217,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					List<String> range = new ArrayList<>();
 					range.add(scale.getTime().getStart().toRFC3339String());
 					range.add(scale.getTime().getEnd().toRFC3339String());
-					arguments.put(resource.getParameters().get("time.extent", String.class), range);
+					params.put(resource.getParameters().get("time.extent", String.class), range);
 
 				} else {
 					throw new KlabIllegalStateException(
@@ -228,7 +249,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
 				RasterEncoder encoder = new RasterEncoder();
 				try {
-					service.runJob(resource.getParameters().get("processId", String.class), arguments,
+					service.runJob(resource.getParameters().get("processId", String.class), params,
 							scope.getMonitor(), (input) -> {
 								File outfile = WcsEncoder.getAdjustedCoverage(input, geometry);
 								encoder.encodeFromCoverage(resource, urnParameters, encoder.readCoverage(outfile),
@@ -241,7 +262,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				}
 			} else {
 
-				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), arguments,
+				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), params,
 						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
 
 				try {

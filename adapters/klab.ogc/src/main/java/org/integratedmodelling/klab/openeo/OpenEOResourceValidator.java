@@ -168,10 +168,11 @@ public class OpenEOResourceValidator implements IResourceValidator {
 				spaceBuilder = spaceBuilder.regular();
 			} else {
 				ret = ret.withParameter("space.resolution", "?");
-			}
+			} //TODO cambiar esta forma y dar la opción de tener ambas
             if (!((ResourceBuilder) ret).getParameters().containsKey("space.bbox")) {
                 if (!((ResourceBuilder) ret).getParameters().containsKey("space.shape")) {
                     ret = ret.withParameter("space.shape", "?");
+                    ret = ret.withParameter("space.bbox", "?");
                 } else {
                     ret = ret.withParameter("space.bbox", "?");
             	}

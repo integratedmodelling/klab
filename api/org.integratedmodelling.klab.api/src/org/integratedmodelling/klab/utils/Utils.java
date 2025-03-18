@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -215,6 +214,14 @@ public class Utils {
 
 		return value;
 	}
+	
+    public static Object asPodOrList(String value) {
+//        if (value.startsWith("[") && value.endsWith("]")) {
+//            List<String> list = new ArrayList<>(Arrays.asList(value.substring(1, value.length() - 1).split(",")));
+//            return "[" + String.join(",", "\"" + list.stream().map(v -> asPOD(v).toString() + "\"").collect(Collectors.toList())) + "]";
+//        }
+        return asPOD(value);
+    }
 
 	public static boolean validateAs(Object pod, IArtifact.Type type) {
 		if (pod == null) {
