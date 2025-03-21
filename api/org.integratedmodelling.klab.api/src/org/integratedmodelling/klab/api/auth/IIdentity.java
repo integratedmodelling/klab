@@ -86,6 +86,12 @@ public abstract interface IIdentity {
          * Identified by a node token, owned by a partner.
          */
         NODE,
+        
+        /**
+         * Identified by a node token, owned by a partner.
+         * Used in v.1.0
+         */
+        LEGACY_NOVE,
 
         /**
          * Identified by a user token authenticated by a server.
