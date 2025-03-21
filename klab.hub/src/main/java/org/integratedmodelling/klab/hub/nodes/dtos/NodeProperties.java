@@ -29,6 +29,7 @@ public class NodeProperties implements IProperties {
 		this.properties.setProperty(KlabCertificate.KEY_EMAIL, node.getEmail());
 		this.properties.setProperty("klab.wordlview", "im");
 		this.properties.setProperty(KlabCertificate.KEY_URL, node.getUrl());
+		// mnage v.0.1
 		this.properties.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE, node.getType() != null ? node.getType().toString() : KlabCertificate.Type.LEGACY_NODE.toString());
 		this.properties.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, KlabCertificate.Level.INSTITUTIONAL.toString());
 	}
