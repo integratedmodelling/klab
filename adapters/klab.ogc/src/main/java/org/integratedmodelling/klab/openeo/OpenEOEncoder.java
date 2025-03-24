@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.openeo;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
@@ -46,13 +48,9 @@ import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
-import kong.unirest.JsonNode;
-import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import scala.annotation.meta.param;
 
 public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
@@ -109,7 +107,6 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 		if (service != null && service.isOnline()) {
 
 		    JSONObject params = new JSONObject();
-//			Parameters<String> arguments = Parameters.create();
 			IScale rscal = Scale.create(resource.getGeometry());
 			IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 
@@ -196,7 +193,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				Object projectionData = scale.getSpace().getProjection().getSimpleSRS().startsWith("EPSG:")
 						? Integer.parseInt(scale.getSpace().getProjection().getSimpleSRS().substring(5))
 						: ((Projection) scale.getSpace().getProjection()).getWKTDefinition();
-				//params.put(resource.getParameters().get("space.projection", String.class), projectionData);
+                params.put(resource.getParameters().get("space.projection", String.class), 3035);// projectionData);
 			}
 
 			// resource is temporal: must specify extent
@@ -207,7 +204,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				if (resource.getParameters().containsKey("time.year")) {
 					if (scale.getTime().getResolution().getType() == Type.YEAR
 							&& scale.getTime().getResolution().getMultiplier() == 1) {
-//					    params.put(resource.getParameters().get("time.year", String.class),
+					    params.put(resource.getParameters().get("time.year", String.class), 2021);
 //								scale.getTime().getStart().getYear());
 					} else {
 						throw new KlabUnsupportedFeatureException("non-yearly use of yearly OpenEO resource");
@@ -283,6 +280,11 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 								if (result.get("type").toString().contains("geotiff")) {
 									File outfile = WcsEncoder.getAdjustedCoverage(result.get("href").toString(),
 											geometry);
+                                    try {
+                                        FileUtils.copyInputStreamToFile(new URL(result.get("href").toString()).openStream(), outfile);
+                                    } catch (IOException e) {
+                                        throw new KlabIOException(e);
+                                    }
 									RasterEncoder encoder = new RasterEncoder();
 									encoder.encodeFromCoverage(resource, urnParameters, encoder.readCoverage(outfile),
 											geometry, builder, scope);
