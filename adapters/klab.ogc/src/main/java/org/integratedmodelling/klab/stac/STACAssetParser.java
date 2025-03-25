@@ -13,6 +13,8 @@ public class STACAssetParser {
             "image/tiff;application=geotiff;profile=cloud-optimized", "image/vnd.stac.geotiff;profile=cloud-optimized",
             "image/vnd.stac.geotiff;cloud-optimized=true", "application/geo+json");
 
+    final private static Set<String> SUPPORTED_MEDIA_EXTENSION = Set.of(".tif", ".tiff");
+
     /** 
      * Check if the MIME value is supported.
      * @param asset as JSON
@@ -20,7 +22,8 @@ public class STACAssetParser {
      */
     public static boolean isSupportedMediaType(JSONObject asset) {
         if (!asset.has("type")) {
-            return false;
+            String href = asset.getString("href");
+            return SUPPORTED_MEDIA_EXTENSION.stream().anyMatch(ex -> href.toLowerCase().endsWith(ex));
         }
         return SUPPORTED_MEDIA_TYPE.contains(asset.getString("type").replace(" ", "").toLowerCase());
     }

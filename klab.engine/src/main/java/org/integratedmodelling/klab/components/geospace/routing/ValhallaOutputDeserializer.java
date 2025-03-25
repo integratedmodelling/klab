@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.geospace.routing;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -60,15 +61,15 @@ public class ValhallaOutputDeserializer {
 
 		public String algorithm;
 		public String units;
-		public ArrayList<ArrayList<Coordinates>> sources;
-		public ArrayList<ArrayList<Coordinates>> targets;
-		public Collection<Collection<PairwiseDistance>> sourcesToTargets;
+		public List<List<Coordinates>> sources;
+		public List<List<Coordinates>> targets;
+		public Collection<List<PairwiseDistance>> sourcesToTargets;
 
 		@JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
 		public Matrix(@JsonProperty("algorithm") String algorithm, @JsonProperty("units") String units,
-				@JsonProperty("sources") ArrayList<ArrayList<Coordinates>> sources,
-				@JsonProperty("targets") ArrayList<ArrayList<Coordinates>> targets,
-				@JsonProperty("sources_to_targets") Collection<Collection<PairwiseDistance>> sourcesToTargets) {
+				@JsonProperty("sources") List<List<Coordinates>> sources,
+				@JsonProperty("targets") List<List<Coordinates>> targets,
+				@JsonProperty("sources_to_targets") Collection<List<PairwiseDistance>> sourcesToTargets) {
 			this.algorithm = algorithm;
 			this.units = units;
 			this.sources = sources;
@@ -87,17 +88,17 @@ public class ValhallaOutputDeserializer {
 		}
 
 		@JsonProperty("sources")
-		public ArrayList<ArrayList<Coordinates>> sources() {
+		public List<List<Coordinates>> sources() {
 			return sources;
 		}
 
 		@JsonProperty("targets")
-		public ArrayList<ArrayList<Coordinates>> targets() {
+		public List<List<Coordinates>> targets() {
 			return targets;
 		}
 
 		@JsonProperty("sources_to_targets")
-		public Collection<Collection<PairwiseDistance>> sourcesToTargets() {
+		public Collection<List<PairwiseDistance>> sourcesToTargets() {
 			return sourcesToTargets;
 		}
 
@@ -114,7 +115,7 @@ public class ValhallaOutputDeserializer {
 		}
 
 		public List<Map<String, Double>> getTargets() {
-			return this.sources.get(0).stream().map(Coordinates::exportAsMap).collect(Collectors.toList());
+			return this.targets.get(0).stream().map(Coordinates::exportAsMap).collect(Collectors.toList());
 		}
 
 		public List<Map<String, Number>> getAdjacencyList() {
@@ -147,6 +148,7 @@ public class ValhallaOutputDeserializer {
 			}
 		}
 
+        @JsonIgnoreProperties(ignoreUnknown = true)
 		public static class PairwiseDistance {
 			public double distance;
 			public double time;
