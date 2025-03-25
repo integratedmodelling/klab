@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
@@ -187,19 +188,20 @@ public enum NodeNetworkManager implements INetworkService {
 		for (NodeReference ref : nodes) {
 			Node node = new Node(ref,null);
 			node.getClient();
-            retrieveNodeCapabilities(node);
-			try {
-				if(node.ping()) {
-					Logging.INSTANCE.info("Node Online: " + node.getName());
-					setNodeOnline(node);
-				} else {
-					Logging.INSTANCE.info("Node Offline: " + node.getName());
-					setNodeOffline(node);
-				}
-			} catch (ResourceAccessException e) {
-				Logging.INSTANCE.info("Node Offline: " + node.getName());
-				setNodeOffline(node);
-			}
+			String identityType = node.getIdentityType() == null ? IIdentity.Type.NODE.toString() : node.getIdentityType().toString();
+            retrieveNodeCapabilities(node); 
+            try { 
+                if(node.ping()) { 
+                    Logging.INSTANCE.info(identityType + " Online: " + node.getName()); 
+                    setNodeOnline(node); 
+                } else { 
+                    Logging.INSTANCE.info(identityType + " Offline: " + node.getName()); 
+                    setNodeOffline(node); 
+                } 
+            } catch (ResourceAccessException e) { 
+                Logging.INSTANCE.info(identityType + " Offline: " + node.getName()); 
+                setNodeOffline(node); 
+            }
 		}
 	}
 
