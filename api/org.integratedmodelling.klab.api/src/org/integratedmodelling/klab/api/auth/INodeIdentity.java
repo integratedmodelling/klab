@@ -29,9 +29,6 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
  * @version $Id: $Id
  */
 public interface INodeIdentity extends IServerIdentity {
-	
-    /** Constant <code>type</code> */
-    Type type = Type.NODE;
 
     /** {@inheritDoc} */
     @Override
