@@ -66,7 +66,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
         OpenEO service = null;
         try {
             service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
-        } catch (KlabMissingCredentialsException e) {
+        } catch (Exception e) {
             return false;
         }
 
