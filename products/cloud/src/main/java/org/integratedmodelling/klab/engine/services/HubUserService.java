@@ -301,7 +301,7 @@ public class HubUserService implements RemoteUserService {
 
             AccessTokenResponse response = authzClient.obtainAccessToken(login.getUsername(), login.getPassword());
 
-            token = "Bearer " + response != null ? response.getToken() : null;
+            token = response != null ? "Bearer " + response.getToken() : null;
         }
         
         if (token == null) {
@@ -318,8 +318,8 @@ public class HubUserService implements RemoteUserService {
     private URI hubLogout(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
-        headers.add("Authorization",
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
+        headers.add(API.HUB.LABELS.AUTHORIZATION,
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader(API.HUB.LABELS.AUTHORIZATION));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         return restTemplate.postForLocation(getLogOutUrll(), request);
     }
@@ -327,8 +327,8 @@ public class HubUserService implements RemoteUserService {
     private ResponseEntity<HubUserProfile> hubToken(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
-        headers.add("Authorization",
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader("Authorization"));
+        headers.add(API.HUB.LABELS.AUTHORIZATION,
+                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader(API.HUB.LABELS.AUTHORIZATION));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         ResponseEntity<HubUserProfile> response = restTemplate.exchange(getProfileUrl(), HttpMethod.GET, request,
                 HubUserProfile.class, true);
