@@ -68,7 +68,6 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
 import groovy.lang.Script;
@@ -105,12 +104,19 @@ public class RasterEncoder implements IResourceEncoder {
         RenderedImage image = coverage.getRenderedImage();
         RandomIter iterator = RandomIterFactory.create(image, null);
         Dimension space = geometry.getDimension(Type.SPACE);
+        int nBands = coverage.getNumSampleDimensions();
+        boolean bandMixer = false;
+        if (urnParameters.containsKey("bandMixer")) {
+            bandMixer = Boolean.parseBoolean(urnParameters.get("bandMixer"));
+        }
+        String bandName = coverage.getSampleDimension(0).getDescription().toString();
         int band = 0;
-        if (urnParameters.containsKey("band")) {
+        if (nBands > 1 && urnParameters.containsKey("band")) {
             band = Integer.parseInt(urnParameters.get("band"));
         } else if (!resource.getAdapterType().equals("stac")) {
             resource.getParameters().get("band", 0);
         }
+        image.getPropertyNames();
         Set<Double> nodata = getNodata(resource, coverage, band);
         GroovyShell shell = null;
         Binding binding = null;
@@ -138,6 +144,28 @@ public class RasterEncoder implements IResourceEncoder {
         for (long ofs = 0; ofs < space.size(); ofs++) {
 
             long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
+            if (bandMixer || true) {
+                double value = 0;
+                double maxValue = Double.MIN_VALUE;
+                for (int i = 0; i < nBands; i++) {
+                    double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+                    if (currentValue > maxValue) {
+                        maxValue = currentValue;
+                        value = i;
+                    }
+                }
+                if (transformation != null && Observations.INSTANCE.isData(value)) {
+                    binding.setVariable("self", value);
+                    Object o = transformation.run();
+                    if (o instanceof Number) {
+                        value = ((Number) o).doubleValue();
+                    } else {
+                        value = Double.NaN;
+                    }
+                }
+                builder.add(value);
+                continue;
+            }
             double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
 
             // this is cheeky but will catch most of the nodata and
