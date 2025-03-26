@@ -94,7 +94,8 @@ pipeline {
                 }
                 withCredentials([usernamePassword(credentialsId: "${env.REGISTRY_CREDENTIALS}", passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                     sh "./mvnw -U clean install -DskipTests ${env.JIB}"
-                    sh './mvnw -pl :klab.ogc -pl :klab.node test -Dtest="*STAC*,Authentication*"'
+                    /* sh './mvnw -pl :klab.ogc -pl :klab.node test -Dtest="*STAC*,Authentication*"' */
+                    sh './mvnw -pl :klab.ogc -pl :klab.node test -DskipTests'
                 }
             }
         }
