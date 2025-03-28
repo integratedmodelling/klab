@@ -238,7 +238,7 @@ public class Client extends RestTemplate implements IClient {
      */
     public boolean ping(String url, String endpoint) {
         try {
-            ResponseEntity<Object> response = basicTemplate.exchange(url + "/actuator/health", HttpMethod.GET,
+            ResponseEntity<Object> response = basicTemplate.exchange(url + endpoint, HttpMethod.GET,
                     new HttpEntity<Object>(null, null), Object.class);
             return response.getStatusCodeValue() == 200;
         } catch (Throwable e) {
