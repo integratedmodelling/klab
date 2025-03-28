@@ -242,7 +242,7 @@ public class EngineAuthResponeFactory {
                 Logging.INSTANCE.info("Remote Engine Run on hub with User: " + engine.getUsername());
                 HubReference hub = new GenerateHubReference().execute();
                 EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
-                        NodeNetworkManager.INSTANCE.getNodeReferences());
+                        NodeNetworkManager.INSTANCE.getNodeReferences(), NodeNetworkManager.INSTANCE.getServiceReferences());
 
                 if (!messages.isEmpty()) {
                     resp.setMessages(messages);
@@ -321,7 +321,7 @@ public class EngineAuthResponeFactory {
         Logging.INSTANCE.info("Local Engine Run on hub with User: " + engine.getUsername());
         HubReference hub = new GenerateHubReference().execute();
         EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
-                NodeNetworkManager.INSTANCE.getNodeReferences());;
+                NodeNetworkManager.INSTANCE.getNodeReferences(), NodeNetworkManager.INSTANCE.getServiceReferences());
         if (!messages.isEmpty()) {
             resp.setMessages(messages);
         }
