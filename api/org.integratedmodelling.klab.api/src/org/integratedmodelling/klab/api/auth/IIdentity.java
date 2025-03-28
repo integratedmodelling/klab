@@ -13,7 +13,6 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
-import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
