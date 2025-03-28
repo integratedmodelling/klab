@@ -5,8 +5,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.integratedmodelling.klab.api.auth.IIdentity;
-
 /**
  * Node capabilities: similar to engine but with resource list and status
  * 
@@ -32,9 +30,8 @@ public class NodeCapabilities {
 	private long refreshFrequencyMillis;
 	private int loadFactor;
 	private boolean online;
-	private IIdentity.Type identityType;
-
-    public String getName() {
+	
+	public String getName() {
 		return name;
 	}
 
@@ -133,7 +130,7 @@ public class NodeCapabilities {
 
 	@Override
 	public String toString() {
-		return "Capabilities [name=" + name + ", type=" + identityType + ", version=" + version + ", build=" + build + ", owner=" + owner
+		return "Capabilities [name=" + name + ", version=" + version + ", build=" + build + ", owner=" + owner
 				+ ", authorities=" + authorities + ", staticComponents=" + staticComponents
 				+ ", dynamicComponents=" + dynamicComponents + ", refreshFrequencyMillis=" + refreshFrequencyMillis
 				+ ", loadFactor=" + loadFactor + "]";
@@ -186,13 +183,4 @@ public class NodeCapabilities {
 	public void setResourceUrns(Set<String> resourceUrns) {
 		this.resourceUrns = resourceUrns;
 	}
-	
-	   
-    public IIdentity.Type getIdentityType() {
-        return identityType == null ? IIdentity.Type.LEGACY_NOVE : identityType;
-    }
-
-    public void setIdentityType(IIdentity.Type identityType) {
-        this.identityType = identityType;
-    }
 }

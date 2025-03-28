@@ -86,12 +86,12 @@ public abstract interface IIdentity {
          * Identified by a node token, owned by a partner.
          */
         NODE,
-        
+
         /**
          * Identified by a node token, owned by a partner.
          * Used in v.1.0
          */
-        LEGACY_NOVE,
+        LEGACY_NODE,
 
         /**
          * Identified by a user token authenticated by a server.
@@ -140,7 +140,7 @@ public abstract interface IIdentity {
          * 
          */
         KLAB,
-        
+
         /**
          * The services for v.1.0
          */

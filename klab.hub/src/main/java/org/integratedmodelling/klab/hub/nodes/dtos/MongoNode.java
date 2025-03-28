@@ -21,7 +21,7 @@ public class MongoNode extends IdentityModel {
 
     private String url;
     
-    private IIdentity.Type type = IIdentity.Type.LEGACY_NOVE;
+    private IIdentity.Type type = IIdentity.Type.LEGACY_NODE;
 
     @Indexed(unique = false)
     private String email;

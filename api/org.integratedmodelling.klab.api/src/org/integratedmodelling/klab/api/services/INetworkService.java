@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
@@ -27,6 +28,27 @@ public interface INetworkService {
 	 * @throw IllegalStateException if called before authentication
 	 */
 	Collection<INodeIdentity> getNodes();
+	
+	/**
+     * Return all the v.0.1. services we can access after authentication. Should only return
+     * services that are online and transparently quarantine those that are not.
+     * Therefore the results may differ between calls.
+     * 
+     * @return the list of available and online services.
+     * @throw IllegalStateException if called before authentication
+     */
+	Collection<INodeIdentity> getServices();
+	
+	/**
+     * Return all the v.0.1. services we can access after authentication with a 
+     * certain type. Should only return
+     * services that are online and transparently quarantine those that are not.
+     * Therefore the results may differ between calls.
+     * 
+     * @return the list of available and online services.
+     * @throw IllegalStateException if called before authentication
+     */
+    Collection<INodeIdentity> getServices(IIdentity.Type type);
 
 	/**
 	 * Get all the nodes with the specified permission.
@@ -36,7 +58,7 @@ public interface INetworkService {
 	 * @return
 	 */
 	Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly);
-
+	
 	/**
 	 * Submit a GET request to all nodes in parallel and merge the results when all
 	 * have returned, failed or timed out.
@@ -70,6 +92,14 @@ public interface INetworkService {
 	 * @return the node or null
 	 */
 	INodeIdentity getNode(String name);
+	
+   /**
+     * Get the (online) v.1.0 service identified by name, or null if offline or unknown.
+     * 
+     * @param name
+     * @return the node or null
+     */
+    INodeIdentity getService(String name);
 
 	/**
 	 * Choose the best online node at the time of calling to provide data from the

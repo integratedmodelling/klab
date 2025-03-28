@@ -236,7 +236,7 @@ public class Client extends RestTemplate implements IClient {
      * @param url base engine/node URL
      * @return true if alive
      */
-    public boolean ping(String url) {
+    public boolean ping(String url, String endpoint) {
         try {
             ResponseEntity<Object> response = basicTemplate.exchange(url + "/actuator/health", HttpMethod.GET,
                     new HttpEntity<Object>(null, null), Object.class);
@@ -244,6 +244,14 @@ public class Client extends RestTemplate implements IClient {
         } catch (Throwable e) {
             return false;
         }
+    }
+    
+    public boolean ping(String url) {
+        return ping(url, "/actuator/health");
+    }
+    
+    public boolean pingService(String url) {
+        return ping(url, "/public/status");
     }
 
     private class JSONResponseErrorHandler implements ResponseErrorHandler {

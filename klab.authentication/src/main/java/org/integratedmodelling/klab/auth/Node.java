@@ -83,7 +83,7 @@ public class Node implements INodeIdentity {
 	public boolean ping() {
 		this.online = false;
 		for (String url : urls) {
-			if ((this.online = client.ping(url))) {
+			if ((this.online = is(Type.NODE) || is(Type.LEGACY_NODE) ? client.ping(url) : client.pingService(url))) {
 				break;
 			}
 		}
@@ -248,7 +248,6 @@ public class Node implements INodeIdentity {
                 .map(ra -> ra.getLabel()).collect(Collectors.toSet()));
 		// FIXME use a proper field
 		this.uptime = nodeCapabilities.getRefreshFrequencyMillis();
-		this.identityType = nodeCapabilities.getIdentityType();
 	}
 
 	@Override

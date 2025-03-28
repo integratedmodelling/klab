@@ -60,7 +60,6 @@ public class NodeReference {
 		if (capabilities.isAcceptQueries()) {
 			this.permissions.add(Permission.QUERY);
 		}
-		this.identityType = capabilities.getIdentityType();
 		// TODO authorities
 	}
 
