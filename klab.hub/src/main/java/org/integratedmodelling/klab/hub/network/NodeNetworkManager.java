@@ -214,7 +214,8 @@ public enum NodeNetworkManager implements INetworkService {
         RestTemplate restTemplate = new RestTemplate();
         ((Node)node).getUrls().forEach(url -> {
             try {
-                ResponseEntity<NodeCapabilities> responseEntity = restTemplate.getForEntity(url + API.CAPABILITIES, NodeCapabilities.class);
+                String capabilities = node.is(Type.NODE) || node.is(Type.LEGACY_NODE) ? API.CAPABILITIES : "/public" + API.CAPABILITIES;
+                ResponseEntity<NodeCapabilities> responseEntity = restTemplate.getForEntity(url + capabilities, NodeCapabilities.class);
                 ((Node)node).mergeCapabilities(responseEntity.getBody());
                 return;
             } catch (RestClientException e) {
