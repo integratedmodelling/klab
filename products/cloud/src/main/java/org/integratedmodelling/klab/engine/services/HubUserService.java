@@ -33,8 +33,6 @@ import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.Configuration;
 import org.keycloak.representations.AccessTokenResponse;
-import org.keycloak.representations.idm.authorization.AuthorizationRequest;
-import org.keycloak.representations.idm.authorization.AuthorizationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
