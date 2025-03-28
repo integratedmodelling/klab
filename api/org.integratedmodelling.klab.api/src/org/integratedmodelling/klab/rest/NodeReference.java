@@ -6,6 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 
 public class NodeReference {
@@ -27,6 +28,7 @@ public class NodeReference {
 	private Set<String> catalogs = new LinkedHashSet<>();
 	private List<String> incomingConnections = new ArrayList<>();
 	private List<String> outgoingConnections = new ArrayList<>();
+	private IIdentity.Type identityType;
 
 	public NodeReference() {
 
@@ -40,7 +42,7 @@ public class NodeReference {
 //		this.resources.addAll(node.getResources());
 		this.urls.addAll(node.getUrls());
 		this.online = node.isOnline();
-		
+		this.identityType = node.getIdentityType();
 	}
 
 	public NodeReference(NodeCapabilities capabilities) {
@@ -58,6 +60,7 @@ public class NodeReference {
 		if (capabilities.isAcceptQueries()) {
 			this.permissions.add(Permission.QUERY);
 		}
+		this.identityType = capabilities.getIdentityType();
 		// TODO authorities
 	}
 
@@ -138,6 +141,7 @@ public class NodeReference {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((identityType == null) ? 0 : identityType.hashCode());
 		result = prime * result + ((incomingConnections == null) ? 0 : incomingConnections.hashCode());
 		result = prime * result + loadFactor;
 		result = prime * result + (online ? 1231 : 1237);
@@ -163,6 +167,11 @@ public class NodeReference {
 				return false;
 		} else if (!id.equals(other.id))
 			return false;
+		if (identityType == null) {
+            if (other.identityType != null)
+                return false;
+        } else if (!identityType.equals(other.identityType))
+            return false;
 		if (incomingConnections == null) {
 			if (other.incomingConnections != null)
 				return false;
@@ -199,7 +208,7 @@ public class NodeReference {
 
 	@Override
 	public String toString() {
-		return "NodeReference [id=" + id + ", permissions=" + permissions + ", partner=" + partner + ", urls=" + urls
+		return "NodeReference [id=" + id + ", type=" + identityType + ", permissions=" + permissions + ", partner=" + partner + ", urls=" + urls
 				+ ", online=" + online + ", retryPeriodMinutes=" + retryPeriodMinutes + ", loadFactor=" + loadFactor
 				+ ", incomingConnections=" + incomingConnections + ", outgoingConnections=" + outgoingConnections + "]";
 	}
@@ -228,12 +237,12 @@ public class NodeReference {
 		this.catalogs = catalogs;
 	}
 
-//	public Set<String> getResources() {
-//		return resources;
-//	}
-//
-//	public void setResources(Set<String> resources) {
-//		this.resources = resources;
-//	}
+	public IIdentity.Type getIdentityType() {
+        return identityType;
+    }
+
+    public void setIdentityType(IIdentity.Type identityType) {
+        this.identityType = identityType;
+    }
 
 }

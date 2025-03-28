@@ -19,7 +19,7 @@ public class GetINodeIdentity {
 	}
 
 	public INodeIdentity execute() {
-		INodeIdentity ident = new Node(hub.getName() + "." + node.getName(), hub.getParentIdentity());
+		INodeIdentity ident = new Node(hub.getName() + "." + node.getName(), node.getType(), hub.getParentIdentity());
 		ident.getUrls().add(node.getUrl());
 		return ident;
 	}

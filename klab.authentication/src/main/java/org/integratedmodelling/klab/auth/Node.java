@@ -54,16 +54,14 @@ public class Node implements INodeIdentity {
 	
 	private Client client;
 
-	public Node(String name, IPartnerIdentity owner) {
+	public Node(String name, IIdentity.Type type, IPartnerIdentity owner) {
 		this.name = name;
+		this.identityType = type;
 		this.parent = owner;
 	}
 
-	public Node(NodeReference node, String token) {
-	    this(node, token, IIdentity.Type.NODE);
-	}
 	
-	public Node(NodeReference node, String token, IIdentity.Type type) {
+	public Node(NodeReference node, String token) {
 		Partner partner = Authentication.INSTANCE.requirePartner(node.getPartner());
 		this.name = node.getId();
 		this.urls.addAll(node.getUrls());
@@ -72,7 +70,7 @@ public class Node implements INodeIdentity {
 		this.adapterIds.addAll(node.getAdapters());
 		this.catalogIds.addAll(node.getCatalogs());
 		this.namespaceIds.addAll(node.getNamespaces());
-		this.identityType = identityType;
+		this.identityType = node.getIdentityType();
 	}
 
 	/**
@@ -250,6 +248,7 @@ public class Node implements INodeIdentity {
                 .map(ra -> ra.getLabel()).collect(Collectors.toSet()));
 		// FIXME use a proper field
 		this.uptime = nodeCapabilities.getRefreshFrequencyMillis();
+		this.identityType = nodeCapabilities.getIdentityType();
 	}
 
 	@Override

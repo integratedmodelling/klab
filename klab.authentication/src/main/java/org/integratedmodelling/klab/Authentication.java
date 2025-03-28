@@ -403,7 +403,13 @@ public enum Authentication implements IAuthenticationService {
             } else {
 
                 // offline node with no partner
-                Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), null);
+                IIdentity.Type type;
+                if (certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE) != null) {
+                    type = IIdentity.Type.valueOf(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
+                } else {
+                    type = IIdentity.Type.NODE;
+                }
+                Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), type, null);
                 ((Node) node).setOnline(false);
                 ret = new KlabUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), node);
 

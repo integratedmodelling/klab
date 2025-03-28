@@ -12,6 +12,7 @@ import java.util.Set;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.Hub;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -161,7 +162,7 @@ public class NodeAuthResponeFactory {
 	
 	private INodeIdentity authenticateLocal(String name) {
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
-		INodeIdentity node = new Node(hub.getName() + "." + name, hub.getParentIdentity());
+		INodeIdentity node = new Node(hub.getName() + "." + name, IIdentity.Type.NODE, hub.getParentIdentity());
 		try {
 			node.getUrls().add("http://"+IPUtils.getLocalIp()+":8287/node");
 		} catch (SocketException e) {

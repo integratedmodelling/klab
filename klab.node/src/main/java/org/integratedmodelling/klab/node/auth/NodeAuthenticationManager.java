@@ -16,6 +16,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.node.INodeStartupOptions;
@@ -166,7 +167,13 @@ public enum NodeAuthenticationManager {
 		 */
 		rootIdentity = new Partner(response.getUserData().getIdentity().getId());
 		Authentication.INSTANCE.registerIdentity(rootIdentity);
-		Node node = new Node(certificate.getProperty(ICertificate.KEY_NODENAME), rootIdentity);
+		IIdentity.Type type;
+        if (certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE) != null) {
+            type = IIdentity.Type.valueOf(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
+        } else {
+            type = IIdentity.Type.NODE;
+        }
+		Node node = new Node(certificate.getProperty(ICertificate.KEY_NODENAME), type, rootIdentity);
 		node.setOnline(true);
 		Authentication.INSTANCE.registerIdentity(node);
 

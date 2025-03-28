@@ -190,9 +190,9 @@ public class KlabCertificate implements ICertificate {
             this.type = Type.valueOf(properties.getProperty(KEY_CERTIFICATE_TYPE));
             this.level = Level.valueOf(properties.getProperty(KEY_CERTIFICATE_LEVEL, Level.USER.name()));
 
-            if (this.type != Type.ENGINE && this.type != Type.LEVER) {
+            if (this.type == Type.NODE || this.type == Type.HUB) {
                 if (properties.getProperty(KEY_URL) == null) {
-                    cause = "Node, hub or service certificate must define the public URL for the service (klab.url)";
+                    cause = "node or hub certificate must define the public URL for the service (klab.url)";
                     return false;
                 }
             }
