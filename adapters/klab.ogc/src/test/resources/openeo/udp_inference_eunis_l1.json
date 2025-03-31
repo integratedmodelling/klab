@@ -2255,14 +2255,14 @@
         }
       }
     },
-    "reducedimension2": {
-      "process_id": "reduce_dimension",
+    "applydimension6": {
+      "process_id": "apply_dimension",
       "arguments": {
         "data": {
           "from_node": "filterbbox1"
         },
         "dimension": "bands",
-        "reducer": {
+        "process": {
           "process_graph": {
             "runudf1": {
               "process_id": "run_udf",
@@ -2284,11 +2284,23 @@
         }
       }
     },
+    "renamelabels5": {
+      "process_id": "rename_labels",
+      "arguments": {
+        "data": {
+          "from_node": "applydimension6"
+        },
+        "dimension": "bands",
+        "target": [
+          "Alpha1_EUNIS-habitat-class-cube"
+        ]
+      }
+    },
     "saveresult1": {
       "process_id": "save_result",
       "arguments": {
         "data": {
-          "from_node": "reducedimension2"
+          "from_node": "renamelabels5"
         },
         "format": "GTiff",
         "options": {
