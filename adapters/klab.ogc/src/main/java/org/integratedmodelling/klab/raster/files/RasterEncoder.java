@@ -111,6 +111,7 @@ public class RasterEncoder implements IResourceEncoder {
         } else if (!resource.getAdapterType().equals("stac")) {
             resource.getParameters().get("band", 0);
         }
+        int nBands = coverage.getNumSampleDimensions();
         Set<Double> nodata = getNodata(resource, coverage, band);
         GroovyShell shell = null;
         Binding binding = null;
@@ -145,7 +146,7 @@ public class RasterEncoder implements IResourceEncoder {
         for (long ofs = 0; ofs < space.size(); ofs++) {
 
             long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-            double value = bandMixer == null ? getCellValue(iterator, xy, band) : getCellMixerValue(iterator, xy, bandMixer, band);
+            double value = bandMixer == null ? getCellValue(iterator, xy, band) : getCellMixerValue(iterator, xy, bandMixer, nBands);
 
             // this is cheeky but will catch most of the nodata and
             // none of the good data
