@@ -67,6 +67,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
         try {
             service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
         } catch (Exception e) {
+            // we love you @inigo
             return false;
         }
 
