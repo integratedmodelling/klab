@@ -199,6 +199,9 @@ public class RasterEncoder implements IResourceEncoder {
         if (mixingOperation.equals("avg_value")) {
             return getAvgCellValue(iterator, xy, nBands);
         }
+        if (mixingOperation.equals("sum_value")) {
+            return getSumCellValue(iterator, xy, nBands);
+        }
         return Double.NaN;
     }
 
@@ -278,6 +281,19 @@ public class RasterEncoder implements IResourceEncoder {
         }
         return sum / validBands;
     }
+
+    private double getSumCellValue(RandomIter iterator, long[] xy, int nBands) {
+        double sum = 0.0;
+        for (int i = 0; i < nBands; i++) {
+            double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+            if (Double.isNaN(currentValue)) {
+                continue;
+            }
+            sum += currentValue;
+        }
+        return sum;
+    }
+
 
     private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
         Set<Double> ret = new HashSet<>();
