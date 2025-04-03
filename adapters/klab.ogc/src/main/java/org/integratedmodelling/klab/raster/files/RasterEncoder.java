@@ -124,9 +124,6 @@ public class RasterEncoder implements IResourceEncoder {
             transformation = shell.parse(resource.getParameters().get("transform").toString());
         }
 
-        /*
-         * TODO support band mixer if set in resource
-         */
         String bandMixer = null;
         if (resource.getParameters().contains("bandmixer")) {
             bandMixer = resource.getParameters().get("bandmixer", String.class);
@@ -138,7 +135,7 @@ public class RasterEncoder implements IResourceEncoder {
         /*
          * if so configured, cache the transformed coverage for the space dimension signature
          * 
-         * TODO use different methods for non-doubles TODO support multi-band expressions
+         * TODO use different methods for non-doubles
          */
 
 //        builder = builder.startState(((IRuntimeScope) scope).getTargetName());
