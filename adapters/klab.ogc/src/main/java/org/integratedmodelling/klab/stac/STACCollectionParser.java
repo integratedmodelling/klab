@@ -11,8 +11,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
-import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema.Items;
-
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;

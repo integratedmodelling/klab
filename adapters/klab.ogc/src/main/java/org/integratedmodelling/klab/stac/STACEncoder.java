@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
