@@ -2284,16 +2284,40 @@
         }
       }
     },
-    "resamplespatial6": {
-      "process_id": "resample_spatial",
+    "saveresult1": {
+      "process_id": "save_result",
       "arguments": {
-        "align": "upper-left",
         "data": {
           "from_node": "reducedimension2"
         },
-        "method": "near",
-        "projection": 4326,
-        "resolution": 0.0
+        "format": "GTiff",
+        "options": {}
+      }
+    },
+    "textconcat3": {
+      "process_id": "text_concat",
+      "arguments": {
+        "data": [
+          {
+            "from_parameter": "digitalId"
+          },
+          {
+            "from_parameter": "scenarioId"
+          }
+        ],
+        "separator": "/"
+      }
+    },
+    "exportworkspace1": {
+      "process_id": "export_workspace",
+      "arguments": {
+        "data": {
+          "from_node": "saveresult1"
+        },
+        "merge": {
+          "from_node": "textconcat3"
+        },
+        "workspace": "esa-weed-workspace"
       },
       "result": true
     }
