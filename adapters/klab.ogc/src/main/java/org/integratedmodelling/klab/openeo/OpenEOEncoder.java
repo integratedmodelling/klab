@@ -278,6 +278,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 								 * depending on the geometry, this may be of different types
 								 */
 								if (result.get("type").toString().contains("geotiff")) {
+									System.out.println(result.get("type").toString());
 									File outfile = WcsEncoder.getAdjustedCoverage(result.get("href").toString(),
 											geometry);
                                     try {

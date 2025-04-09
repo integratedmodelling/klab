@@ -133,6 +133,8 @@ public class WcsEncoder implements IResourceEncoder {
 			Projection crs = Projection.create(rcrs);
 			int cols = (int) space.shape()[0];
 			int rows = (int) space.shape()[1];
+			System.out.println(rows);
+			System.out.println(cols);
 			double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
 
 			GridCoverage2D coverage = OmsRasterReader.readRaster(coverageFile.getAbsolutePath());
@@ -148,10 +150,17 @@ public class WcsEncoder implements IResourceEncoder {
 					eastNorth[0], westSouth[1], eastNorth[1]);
 
 			double recievedArea = recievedExtend.getArea();
+			System.out.println(recievedArea);
+			
 			double requestedArea = requestedExtend.getArea();
 			double diff = Math.abs(requestedArea - recievedArea);
+			// double diff = requestedArea - recievedArea;
+			System.out.println(requestedArea);
+			System.out.println("Diff b/w Requested and Received:");
+			System.out.println(requestedArea - recievedArea);
 			if (diff > 0.01) {
 				// need to pad
+				System.out.println("Padding Stuff...");
 				HMRaster raster = HMRaster.fromGridCoverage(coverage);
 				RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
 				HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)

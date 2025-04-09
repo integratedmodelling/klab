@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.lang.Thread;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -488,9 +489,20 @@ public class OpenEO {
 	 * "canceled", "error" or "finished").
 	 */
 	public Map<String, Object> getJobResults(Job job) {
+		
+		System.out.println("Waiting for 10 secs...");
+		try {
+			Thread.sleep(10000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		HttpResponse<JsonNode> response = Unirest.get(endpoint + "/jobs/" + job.jobId + "/results")
 				.header("Authorization", authorization.getAuthorization()).asJson();
+		
+		System.out.println("Response:");
+		System.out.println(response.getBody().getObject().toMap());
 
 		if (response.isSuccess()) {
 			for (String cost : response.getHeaders().get("OpenEO-Costs")) {
