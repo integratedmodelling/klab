@@ -273,8 +273,8 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					} else {
 
 						for (String key : results.keySet()) {
-							Map<?, ?> result = (Map<?, ?>) results.get(key);
-							if (result.containsKey("href") && result.containsKey("type")) {
+							Map<?, ?> result = (Map<?, ?>) results.get(key); 
+							if (result.containsKey("href") && result.containsKey("type")) { 
 								/*
 								 * depending on the geometry, this may be of different types
 								 */
