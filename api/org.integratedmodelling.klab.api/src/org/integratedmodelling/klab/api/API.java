@@ -583,6 +583,13 @@ public interface API {
             public static final String USER_TAGS = "username";
 
         }
+        
+        public static interface LABELS {
+            /**
+             * Label for authorization HEADER
+             */
+            public static final String AUTHORIZATION = "Authorization";
+        }
 
     }
 

@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.dataflow.FlowchartProvider;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.ogc.OpenEOAdapter;
 import org.integratedmodelling.klab.openeo.OpenEO.OpenEOFuture;
@@ -59,7 +60,13 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {
-		OpenEO service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
+        OpenEO service = null;
+        try {
+            service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
+        } catch (KlabMissingCredentialsException e) {
+            return false;
+        }
+
 		if (service != null && service.isOnline()) {
 			for (Object o : resource.getParameters().keySet()) {
 				if ("?".equals(o)) {

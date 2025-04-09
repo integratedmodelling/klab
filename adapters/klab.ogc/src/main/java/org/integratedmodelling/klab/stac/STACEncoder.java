@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +16,9 @@ import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
+import org.hortonmachine.gears.utils.CrsUtilities;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.klab.Authentication;
@@ -43,7 +46,8 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
@@ -52,10 +56,11 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
-
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import kong.unirest.json.JSONObject;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -177,26 +182,34 @@ public class STACEncoder implements IResourceEncoder {
                 .build();
     }
 
+    private boolean isDateWithinRange(Time rangeTime, Date date) {
+        Date start = new Date(rangeTime.getStart().getMilliseconds());
+        Date end =  new Date(rangeTime.getEnd().getMilliseconds());
+        return date.after(start) && date.before(end);
+    }
+
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
-        String catalogUrl = STACUtils.getCatalogUrl(collectionData);
+        String collectionId = collectionData.getString("id");
+        String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collectionData);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
+        String assetId = resource.getParameters().get("asset", String.class);
 
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
-        if (!hasSearchOption && !isIIASA) {
-            // TODO implement how to read static collections
-            throw new KlabUnimplementedException("Cannot read a static collection.");
-        }
 
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
                 .findFirst().orElseThrow();
         IEnvelope envelope = space.getEnvelope();
         List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
+                .findFirst().orElseThrow();
+        Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
+
         if (isIIASA) {
             FeatureSource<SimpleFeatureType, SimpleFeature> source;
             try {
@@ -206,6 +219,58 @@ public class STACEncoder implements IResourceEncoder {
             }
             encoder = new VectorEncoder();
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+            return;
+        }
+
+        // These are the static STAC catalogs
+        if (!hasSearchOption) {
+            List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
+            Time time2 = time; //TODO make the time and query time different
+            features = features.stream().filter(f -> {
+                Geometry fGeometry = (Geometry) f.getDefaultGeometry();
+                return fGeometry.intersects(space.getShape().getJTSGeometry());
+            }).toList();
+            features = features.stream().filter(f -> isFeatureInTimeRange(time2, f)).toList();
+            if (features.isEmpty()) {
+                throw new KlabResourceNotFoundException("There are no items in this context for the collection " + collectionId);
+            }
+            CoordinateReferenceSystem crs = features.get(0).getFeatureType().getCoordinateReferenceSystem();
+            if (crs == null) {
+                crs = CrsUtilities.getCrsFromSrid(4326); // We go to the standard
+            }
+
+            // TODO merge with similar code from below
+            IGrid grid = space.getGrid();
+
+            RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
+                    space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(),
+                    (int) grid.getYCells());
+
+            ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
+                    space.getProjection().getCoordinateReferenceSystem());
+            RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
+                    (int) grid.getYCells());
+            // end //TODO
+
+            List<HMStacItem> items = features.stream().map(f -> {
+                try {
+                    return HMStacItem.fromSimpleFeature(f);
+                } catch (Exception e) {
+                    scope.getMonitor().warn("Cannot parse feature " + f.getID() + ". Ignored.");
+                }
+                return null;
+            }).filter(i -> i != null).toList();
+
+            GridCoverage2D coverage = null;
+
+            try {
+                HMRaster outRaster = HMStacCollection.readRasterBandOnRegionStatic(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
+                coverage = outRaster.buildCoverage();
+            } catch (Exception e) {
+                throw new KlabResourceAccessException("Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
+            }
+            encoder = new RasterEncoder();
+            ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
             return;
         }
 
@@ -232,12 +297,7 @@ public class STACEncoder implements IResourceEncoder {
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
         collection.setGeometryFilter(poly);
 
-        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
-                .findFirst().orElseThrow();
-        Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
-        
-        if (resourceTime != null && 
-                resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
+        if (resourceTime != null && resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
             time = validateTemporalDimension(time, resourceTime);
         }
         ITimeInstant start = time.getStart();
@@ -282,7 +342,6 @@ public class STACEncoder implements IResourceEncoder {
             // Allow transform ensures the process to finish, but I would not bet on the resulting
             // data.
             final boolean allowTransform = true;
-            String assetId = resource.getParameters().get("asset", String.class);
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
             manager.close();
@@ -291,6 +350,40 @@ public class STACEncoder implements IResourceEncoder {
         }
         encoder = new RasterEncoder();
         ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+    }
+
+    private boolean isFeatureInTimeRange(Time time2, SimpleFeature f) {
+        Date datetime = (Date) f.getAttribute("datetime");
+        if (datetime != null) {
+            if (isDateWithinRange(time2, datetime)) {
+                return true;
+            }
+        }
+
+        Date itemStart = (Date) f.getAttribute("start_datetime");
+        if (itemStart == null) {
+            return false;
+        }
+        Date itemEnd = (Date) f.getAttribute("end_datetime");
+        if (itemEnd == null) {
+            return itemStart.toInstant().getEpochSecond() <= time2.getStart().getMilliseconds();
+        }
+        if (isDateWithinRange(time2, itemStart) || isDateWithinRange(time2, itemEnd)) {
+            return true;
+        }
+        return false;
+    }
+
+    private List<SimpleFeature> getFeaturesFromStaticCollection(String collectionUrl, JSONObject collectionData, String collectionId) {
+        List<JSONObject> links = collectionData.getJSONArray("links").toList().stream().filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase("item")).toList();
+        List<String> urlOfLinks = links.stream().map(link -> STACUtils.getUrlOfItem(collectionUrl, collectionId, link.getString("href"))).toList();
+        return urlOfLinks.stream().map(i -> {
+            try {
+                return STACUtils.getItemAsFeature(i);
+            } catch (Exception e) {
+                throw new KlabValidationException("Item at " + i + " cannot be parsed.");
+            }
+        }).toList();
     }
 
     @Override
