@@ -2293,7 +2293,7 @@
         },
         "method": "near",
         "projection": 4326,
-        "resolution": 0.0
+        "resolution": 10
       },
       "result": true
     }
