@@ -53,6 +53,13 @@ public class TagNotification {
      */
     private String navigateTo;
     
+    public String getNavigateTo() {
+        return this.navigateTo;
+    }
+    
+    public void setNavigateTo(String navigateTo) {
+        this.navigateTo = navigateTo;
+    }
     
     public String getTitle() {
         return title;
