@@ -16,6 +16,13 @@ spring:
       enabled: false
       config:
         enabled: false
+    vault:
+      uri: http://localhost:8200  # The URL of your Vault server
+      token: <vault-token>        # Authentication token for Vault
+      authentication: TOKEN      # Authentication method
+      kv:
+        enabled: true
+        backend: secret          # The name of the backend, typically 'secret'        
   data:
     ldap:
       repositories:
