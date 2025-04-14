@@ -239,23 +239,9 @@ public class Rasterizer<T> {
             for (int y = 0; y < this.raster.getHeight(); y++) {
                 xy[0] = x;
                 xy[1] = y;
-                if (!isPixelTransparent(x, y))
-                    setter.accept(decodeFloat(Float.intBitsToFloat(raster.getRGB(x, y))), xy);
+                setter.accept(decodeFloat(Float.intBitsToFloat(raster.getRGB(x, y))), xy);
             }
         }
-    }
-
-    /**
-     * Validates the alpha value of the pixel. If the alpha value is zero, the pixel is considered transparent.
-     * @param x coordinates
-     * @param y coordinates
-     * @return 
-     */
-    private boolean isPixelTransparent(int x, int y) {
-        int pixel = raster.getRGB(x, y);
-        int alpha = (pixel >> 24) & 0xff;
-
-        return alpha == 0;
     }
 
     // ------------------------------------------------------------------
