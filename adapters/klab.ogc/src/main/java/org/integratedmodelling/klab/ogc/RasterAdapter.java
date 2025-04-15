@@ -65,6 +65,11 @@ public class RasterAdapter implements IResourceAdapter {
 			"pdf");
 
 	/**
+	 * All the permitted band mixing operations.
+	 */
+	public static Set<String> bandMixingOperations = Sets.newHashSet("max_value", "min_value", "avg_value", "max_band", "min_band");
+
+	/**
 	 * Interpolation type for metadata
 	 */
 	public static final String INTERPOLATION_TYPE_FIELD = "interpolation";
