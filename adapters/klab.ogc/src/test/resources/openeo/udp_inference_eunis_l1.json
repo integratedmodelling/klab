@@ -2293,7 +2293,17 @@
         },
         "method": "near",
         "projection": 4326,
-        "resolution": 20
+        "resolution": 20.0
+      }
+    },
+    "saveresult1": {
+      "process_id": "save_result",
+      "arguments": {
+        "data": {
+          "from_node": "resamplespatial6"
+        },
+        "format": "GTiff",
+        "options": {}
       },
       "result": true
     }
