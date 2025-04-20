@@ -2284,11 +2284,23 @@
         }
       }
     },
+    "resamplespatial6": {
+      "process_id": "resample_spatial",
+      "arguments": {
+        "align": "upper-left",
+        "data": {
+          "from_node": "reducedimension2"
+        },
+        "method": "near",
+        "projection": 4326,
+        "resolution": 0.0
+      }
+    },
     "saveresult1": {
       "process_id": "save_result",
       "arguments": {
         "data": {
-          "from_node": "reducedimension2"
+          "from_node": "resamplespatial6"
         },
         "format": "GTiff",
         "options": {}
