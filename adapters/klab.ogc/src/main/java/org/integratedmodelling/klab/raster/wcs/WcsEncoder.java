@@ -18,8 +18,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.*;
+import org.geotools.coverage.GridSampleDimension;
 import org.hortonmachine.gears.io.rasterreader.OmsRasterReader;
 import org.hortonmachine.gears.io.rasterwriter.OmsRasterWriter;
 import org.hortonmachine.gears.libs.modules.HMRaster;
@@ -44,6 +47,14 @@ import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.geotools.process.raster.BandMergeProcess;
+import java.awt.image.RenderedImage;
+import javax.media.jai.RenderedOp;
+import javax.media.jai.operator.BandSelectDescriptor;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.coverage.processing.Operations;
+import org.geotools.referencing.CRS;
+import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -136,8 +147,30 @@ public class WcsEncoder implements IResourceEncoder {
 			System.out.println(rows);
 			System.out.println(cols);
 			double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
-
+			 
 			GridCoverage2D coverage = OmsRasterReader.readRaster(coverageFile.getAbsolutePath());
+			String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
+					
+			// If CRS of the Received Raster doesn't match with the expected one
+			// we reproject the coverage, so needless to say that some info would always be lost
+			// usually, in klab we work with EPSG:4326, but from OpenEO we usually get stuff in EPSG:3035
+			// atleast for WEED Project, they do so and if we pass target_epsg: 4326, it fails. 
+			if (!receivedCRS.equals(rcrs)) {
+				System.out.println("Received CRS: " + receivedCRS);
+				System.out.println("Expected CRS: " + rcrs);
+				System.out.println("Received CRS and Expected CRS doesn't match...");
+				System.out.println("Writring updated Coverage in the Target CRS");
+				CoordinateReferenceSystem targetCRS = CRS.decode(rcrs, true);
+				// Reproject the raster
+		        coverage = (GridCoverage2D) Operations.DEFAULT.resample(
+		                coverage, targetCRS
+		        );
+		        System.out.println("Sucessfully written updated coverage..");
+			}
+			
+			int numBands = coverage.getRenderedImage().getSampleModel().getNumBands();
+			System.out.println("Num Bands: "+ numBands);
+	        
 			Envelope envelope = coverage.getEnvelope();
 			DirectPosition lowerCorner = envelope.getLowerCorner();
 			double[] westSouth = lowerCorner.getCoordinate();
@@ -146,6 +179,14 @@ public class WcsEncoder implements IResourceEncoder {
 
 			org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(extent[0],
 					extent[1], extent[2], extent[3]);
+			
+			System.out.println("Requested Extent:");
+			System.out.println(extent[0]);
+			System.out.println(extent[1]);
+			System.out.println(extent[2]);
+			System.out.println(extent[3]);
+
+			
 			org.locationtech.jts.geom.Envelope recievedExtend = new org.locationtech.jts.geom.Envelope(westSouth[0],
 					eastNorth[0], westSouth[1], eastNorth[1]);
 
@@ -158,17 +199,53 @@ public class WcsEncoder implements IResourceEncoder {
 			System.out.println(requestedArea);
 			System.out.println("Diff b/w Requested and Received:");
 			System.out.println(requestedArea - recievedArea);
-			if (diff > 0.01) {
+			if (diff > 0) { // diff in degree angles^2 since we are working with EPSG:4326
 				// need to pad
 				System.out.println("Padding Stuff...");
+				
 				HMRaster raster = HMRaster.fromGridCoverage(coverage);
 				RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
-				HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
-						.setCrs(crs.getCoordinateReferenceSystem()).setNoValue(raster.getNovalue()).build();
-				paddedRaster.mapRaster(null, raster, null);
-				coverage = paddedRaster.buildCoverage();
+
+				BandMergeProcess process = new BandMergeProcess();
+				List<GridCoverage2D> coverageList = new ArrayList<>();
+				
+				// iterate over each bands, and pad them individually and 
+				// get the updated coverage
+				for (int b = 0; b < numBands; b++) {
+					
+					RenderedOp singleBandImage = BandSelectDescriptor.create(
+							coverage.getRenderedImage(),
+		                    new int[]{b},
+		                    null
+		            );
+					
+					GridSampleDimension bandSampleDimension = coverage.getSampleDimension(b);
+					GridCoverageFactory factory = new GridCoverageFactory();
+
+		            GridCoverage2D singleBandCoverage = factory.create(
+		                    "Band_" + (b + 1),
+		                    singleBandImage,
+		                    coverage.getEnvelope(),
+		                    new GridSampleDimension[]{bandSampleDimension},
+		                    null,
+		                    null
+		            );
+		            
+					HMRaster bandRaster = HMRaster.fromGridCoverage(singleBandCoverage);
+					HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
+							.setCrs(crs.getCoordinateReferenceSystem()).setNoValue(raster.getNovalue()).build();
+					
+					paddedRaster.mapRaster(null, bandRaster, null);
+					GridCoverage2D paddedBandCoverage = paddedRaster.buildCoverage();
+					coverageList.add(paddedBandCoverage);					
+					
+				}
+				coverage = process.execute(coverageList, null, null, null);
 				OmsRasterWriter.writeRaster(coverageFile.getAbsolutePath(), coverage);
 			}
+			
+			numBands = coverage.getRenderedImage().getSampleModel().getNumBands();
+			System.out.println("Num Bands after Everything.. : "+ numBands);
 
 			FileUtils.forceDeleteOnExit(coverageFile);
 			if (Configuration.INSTANCE.isEchoEnabled()) {
@@ -178,6 +255,7 @@ public class WcsEncoder implements IResourceEncoder {
 			return coverageFile;
 
 		} catch (Throwable e) {
+			e.printStackTrace();
 			throw new KlabIOException(e);
 		}
 	}

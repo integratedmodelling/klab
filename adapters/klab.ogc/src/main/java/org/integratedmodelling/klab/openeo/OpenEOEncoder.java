@@ -282,11 +282,11 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 									System.out.println(result.get("type").toString());
 									File outfile = WcsEncoder.getAdjustedCoverage(result.get("href").toString(),
 											geometry);
-                                    try {
-                                        FileUtils.copyInputStreamToFile(new URL(result.get("href").toString()).openStream(), outfile);
-                                    } catch (IOException e) {
-                                        throw new KlabIOException(e);
-                                    }
+                                    //try {
+                                    //    FileUtils.copyInputStreamToFile(new URL(result.get("href").toString()).openStream(), outfile);
+                                    //} catch (IOException e) {
+                                    //    throw new KlabIOException(e);
+                                    //}
 									RasterEncoder encoder = new RasterEncoder();
 									encoder.encodeFromCoverage(resource, urnParameters, encoder.readCoverage(outfile),
 											geometry, builder, scope);
