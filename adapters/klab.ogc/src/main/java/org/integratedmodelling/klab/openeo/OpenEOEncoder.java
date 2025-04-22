@@ -264,7 +264,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
 
 				try {
-					Map<String, Object> results = job.get();
+					Map<String, Object> results = job.get(); 
 
 					if (job.isCancelled()) {
 						scope.getMonitor().warn("job canceled");
