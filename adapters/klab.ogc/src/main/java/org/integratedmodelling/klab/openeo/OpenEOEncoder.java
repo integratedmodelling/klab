@@ -50,6 +50,10 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
@@ -150,6 +154,22 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                 } else {
                     throw new KlabIllegalStateException(
                             "resource does not specify space.resolution parameter");
+                }
+				
+                // TODO test modelID
+                if (urnParameters.containsKey("modelId")) {
+                    String searchURL = "https://catalogue.weed.apex.esa.int/search";
+                    JSONObject body = new JSONObject();
+                    body.put("collections", new JSONArray().put("model-STAC"));
+                    body.put("intersects", ((Shape) scale.getSpace().getShape()).asGeoJSON());
+
+                    int timeout = 50000;
+                    HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body).header("Content-Type", "application/json")
+                            .connectTimeout(timeout).asJson();
+                    if (!response.isSuccess()) {
+                        throw new KlabIllegalStateException("ERROR AT READING MODELID");
+                    }
+                    String modelID = response.getBody().getObject().getJSONArray("features").getJSONObject(0).getJSONObject("properties").getString("modelID");
                 }
 
 				if (resource.getParameters().containsKey("space.shape") && !resource.getParameters().get("space.shape").equals("?")) {
