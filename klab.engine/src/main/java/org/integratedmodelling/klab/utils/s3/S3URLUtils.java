@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.utils.s3;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 
 public class S3URLUtils {
-    final public static String AWS_ENDPOINT = "https://s3.amazonaws.com";
+    final public static String AWS_ENDPOINT = "s3.amazonaws.com";
 
     /**
      * Checks if the given url is a valid S3 endpoint

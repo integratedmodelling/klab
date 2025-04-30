@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -68,6 +69,10 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.regions.Region;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -107,6 +112,8 @@ public class STACEncoder implements IResourceEncoder {
     }
 
     private Time refitTime(Time contextTime, Time resourceTime) {
+    	System.out.println(contextTime);
+    	System.out.println(resourceTime);
         if (resourceTime.getCoveredExtent() < contextTime.getCoveredExtent()) {
             throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
         }
@@ -118,6 +125,7 @@ public class STACEncoder implements IResourceEncoder {
             ITimeInstant newStart = TimeInstant.create(resourceTime.getEnd().getMilliseconds() - contextTime.getLength());
             return Time.create(newStart.getMilliseconds(), resourceTime.getEnd().getMilliseconds());
         }
+        System.out.println("Here");
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
     }
 
@@ -169,12 +177,29 @@ public class STACEncoder implements IResourceEncoder {
 
     private S3Client buildS3Client(String bucketRegion) throws IOException {
         ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+        System.out.println(awsCredentials);
         AwsCredentials credentials = null;
         try {
             credentials = AwsBasicCredentials.create(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
         } catch (Exception e) {
             throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
         }
+        
+        String endpointURL = awsCredentials.getURL();
+        if (bucketRegion.isEmpty()) {
+        	bucketRegion = Region.US_EAST_1.toString(); 
+        }
+        
+        if (!endpointURL.isEmpty()) {
+        	return S3Client.builder()
+        			.endpointOverride(URI.create(endpointURL))
+                    .httpClientBuilder(ApacheHttpClient.builder())
+                    .region(Region.of(bucketRegion))
+                    .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                    .build();
+        }
+  
+        
         return S3Client.builder()
                 .httpClientBuilder(ApacheHttpClient.builder())
                 .region(Region.of(bucketRegion))
@@ -201,6 +226,8 @@ public class STACEncoder implements IResourceEncoder {
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
+        boolean isWEED = catalogUrl.contains("weed");  // The WENR and all the other stuff are here itself..
+        
 
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
                 .findFirst().orElseThrow();
@@ -221,7 +248,7 @@ public class STACEncoder implements IResourceEncoder {
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
-
+        
         // These are the static STAC catalogs
         if (!hasSearchOption) {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
@@ -288,6 +315,7 @@ public class STACEncoder implements IResourceEncoder {
             scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
         }
 
+
         IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                 ? ((Observation) scope.getTargetArtifact()).getObservable()
                 : null;
@@ -302,7 +330,45 @@ public class STACEncoder implements IResourceEncoder {
         }
         ITimeInstant start = time.getStart();
         ITimeInstant end = time.getEnd();
-        collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()));
+        
+        System.out.println(start);
+        System.out.println(end);
+        System.out.println(poly);
+        
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        
+        String startDateOnly = sdf.format(new Date(start.getMilliseconds()));
+        String endDateOnly = sdf.format(new Date(end.getMilliseconds()));
+        
+        Date startDateFormatted = new Date();
+        Date endDateFormatted = new Date();
+        
+        try {
+			startDateFormatted = sdf.parse(startDateOnly);
+			endDateFormatted = sdf.parse(endDateOnly);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        
+     /*
+      *  For WEED Hardcoding the values for now for the Search API
+      *  Discussions: 
+      *  	a. https://chat.integratedmodelling.org/group/dsFnTgb3ti5ynCYhR?msg=2hFhyrmPyvJWihp8w
+      *  	b. https://chat.integratedmodelling.org/group/PEOPLE_EA_WEED_internal?msg=XY53pvfw9RTYRi4Jy
+      */ 
+        if (isWEED) {
+        	try {
+				startDateFormatted = sdf.parse("2020-01-01");
+				endDateFormatted = sdf.parse("2020-12-31");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
+		collection.setTimestampFilter(startDateFormatted, endDateFormatted);
 
         GridCoverage2D coverage = null;
         try {
@@ -336,6 +402,18 @@ public class STACEncoder implements IResourceEncoder {
             if (resource.getParameters().contains("awsRegion")) {
                 String bucketRegion = resource.getParameters().get("awsRegion", String.class);
                 S3Client s3Client = buildS3Client(bucketRegion);
+                collection.setS3Client(s3Client);
+            }
+            
+            /*
+             * For WEED the region doesn't matter since, they have an Endpoint URL
+             * Hence, the check for aws_region doesn't matter
+             * We are setting a random value, in this case US_EAST if the region is blank
+             */
+            if (isWEED) { 
+            	System.out.println("Found the Catalog for WEED!");
+            	S3Client s3Client = null;
+    			s3Client = buildS3Client("");
                 collection.setS3Client(s3Client);
             }
 
