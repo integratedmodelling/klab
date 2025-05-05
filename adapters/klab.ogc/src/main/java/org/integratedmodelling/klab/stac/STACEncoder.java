@@ -111,8 +111,6 @@ public class STACEncoder implements IResourceEncoder {
     }
 
     private Time refitTime(Time contextTime, Time resourceTime) {
-    	System.out.println(contextTime);
-    	System.out.println(resourceTime);
         if (resourceTime.getCoveredExtent() < contextTime.getCoveredExtent()) {
             throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
         }
@@ -124,7 +122,6 @@ public class STACEncoder implements IResourceEncoder {
             ITimeInstant newStart = TimeInstant.create(resourceTime.getEnd().getMilliseconds() - contextTime.getLength());
             return Time.create(newStart.getMilliseconds(), resourceTime.getEnd().getMilliseconds());
         }
-        System.out.println("Here");
         throw new KlabContextualizationException("Current observation is outside the bounds of the STAC resource and cannot be reffitted.");
     }
 
@@ -330,11 +327,7 @@ public class STACEncoder implements IResourceEncoder {
         ITimeInstant start = time.getStart();
         ITimeInstant end = time.getEnd();
         
-        System.out.println(start);
-        System.out.println(end);
-        System.out.println(poly);
-        
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd"); // The search API accepts this format it seems
         
         String startDateOnly = sdf.format(new Date(start.getMilliseconds()));
         String endDateOnly = sdf.format(new Date(end.getMilliseconds()));

@@ -243,8 +243,6 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				}
 			}
 			
-			System.out.println(synchronous);
-			
 			if (synchronous) {
 
 				RasterEncoder encoder = new RasterEncoder();
