@@ -242,7 +242,9 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					throw new KlabIOException(e);
 				}
 			}
-
+			
+			System.out.println(synchronous);
+			
 			if (synchronous) {
 
 				RasterEncoder encoder = new RasterEncoder();

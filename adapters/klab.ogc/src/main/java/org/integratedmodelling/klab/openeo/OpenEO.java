@@ -537,8 +537,11 @@ public class OpenEO {
 		parameters.put("budget", budget <= 0 ? null : budget);
 
 		System.out.println(JsonUtils.printAsJson(request));
-
+		// Override the Connect and Socket timeout for the request since OpenEO has implemented some change
+		// In the backend apparently increasing the response time for the request
 		HttpResponse<String> response = Unirest.post(endpoint + "/jobs").contentType("application/json")
+				.connectTimeout(180000)
+				.socketTimeout(180000)
 				.header("Authorization", authorization.getAuthorization()).body(parameters).asString();
 
 		if (response.isSuccess() && response.getStatus() == 201) {
