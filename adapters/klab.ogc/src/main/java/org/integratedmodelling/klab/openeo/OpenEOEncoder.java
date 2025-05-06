@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.openeo;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
@@ -37,7 +35,6 @@ import org.integratedmodelling.klab.dataflow.FlowchartProvider;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.ogc.OpenEOAdapter;
 import org.integratedmodelling.klab.openeo.OpenEO.OpenEOFuture;
@@ -46,6 +43,7 @@ import org.integratedmodelling.klab.openeo.OpenEO.ProcessNode;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
@@ -159,19 +157,24 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				    params.put(resource.getParameters().get("space.shape", String.class),
                             ((Shape) scale.getSpace().getShape()).asGeoJSON());
 
-				} else if (resource.getParameters().containsKey("space.bbox") && !resource.getParameters().get("space.bbox").equals("?")) {
-			        JSONObject bbox = new JSONObject();
-			        bbox.put("west", 4680000);
-			        bbox.put("east", 4700000);
-			        bbox.put("north", 3080000);
-			        bbox.put("south", 3060000);
-			        bbox.put("crs", "EPSG:3035");
-			        params.put("bbox", bbox);
-//			        arguments.put("bbox.west", 4680000);//(scale.getSpace().getEnvelope().getMinX()));
-//                    arguments.put("bbox.east", 4700000);//(scale.getSpace().getEnvelope().getMaxX()));
-//                    arguments.put("bbox.north", 3080000);//(scale.getSpace().getEnvelope().getMaxY()));
-//                    arguments.put("bbox.south", 3060000);//(scale.getSpace().getEnvelope().getMinY()));
-//                    arguments.put("bbox.crs", "EPSG:3035");
+                } else if (resource.getParameters().containsKey("space.bbox") && !resource.getParameters().get("space.bbox").equals("?")) {
+                    File jsonFile = new File("./src/main/resources/weed/alpha01bboxes.json");
+                    JSONObject bbox = new JSONObject();
+                    try {
+                        JSONObject bboxes = new JSONObject(FileUtils.readFileToString(jsonFile));
+                        bbox = bboxes.getJSONObject(urnParameters.get("bbox"));
+                        if (bbox == null) {
+                            throw new Exception("I know, I know... this is not beautiful.");
+                        }
+                        params.put("bbox", bbox);
+                    } catch (Exception e) {
+                        bbox.put("west", 4680000);
+                        bbox.put("east", 4700000);
+                        bbox.put("north", 3080000);
+                        bbox.put("south", 3060000);
+                        bbox.put("crs", "EPSG:3035");
+                        params.put("bbox", bbox);
+                    }
 				} else {
 					throw new KlabIllegalStateException(
 							"resource does not specify enough space parameters to contextualize");
