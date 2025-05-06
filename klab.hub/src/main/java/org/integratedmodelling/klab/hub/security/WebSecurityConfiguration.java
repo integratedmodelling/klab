@@ -59,6 +59,7 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
                 .antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements()).permitAll()
                 .antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
                 .antMatchers(HttpMethod.POST, HubRequestMatchers.getNode()).permitAll()
+                .antMatchers(HttpMethod.POST, "/vault/*").permitAll()
                 .antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
