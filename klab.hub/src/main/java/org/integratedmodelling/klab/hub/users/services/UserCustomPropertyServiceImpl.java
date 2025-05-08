@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.integratedmodelling.klab.hub.customProperties.dto.CustomProperty;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
+import org.integratedmodelling.klab.hub.repository.CustomPropertyRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
@@ -17,10 +17,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserCustomPropertyServiceImpl implements UserCustomPropertyService {
     private UserRepository userRepository;
-    private RecordedCustomPropertyRepository customPropertyRepository;
+    private CustomPropertyRepository customPropertyRepository;
 
     @Autowired
-    public UserCustomPropertyServiceImpl(UserRepository userRepository, RecordedCustomPropertyRepository customPropertyRepository) {
+    public UserCustomPropertyServiceImpl(UserRepository userRepository, CustomPropertyRepository customPropertyRepository) {
         super();
         this.userRepository = userRepository;
         this.customPropertyRepository = customPropertyRepository;
@@ -65,4 +65,5 @@ public class UserCustomPropertyServiceImpl implements UserCustomPropertyService 
         users.stream().forEach(u -> u.removeCustomProperty(request.getKey()));
         userRepository.saveAll(users);
     }
+    
 }

@@ -48,9 +48,9 @@ public class AgreementServiceImpl implements AgreementService {
     }
 
     @Override
-    public List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel) {
+    public List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel, Set<MongoGroup> groupsToAdd) {
         AgreementTemplate agreementTemplate = agreementTemplateService.getAgreementTemplate(agreementType, agreementLevel);
-        return createAgreementByAgreementTemplate(agreementTemplate);
+        return createAgreementByAgreementTemplate(agreementTemplate, groupsToAdd);
         
     }
 
@@ -60,13 +60,12 @@ public class AgreementServiceImpl implements AgreementService {
      * @param agreementTemplate
      * @return
      */
-    private List<Agreement> createAgreementByAgreementTemplate(AgreementTemplate agreementTemplate) {
+    private List<Agreement> createAgreementByAgreementTemplate(AgreementTemplate agreementTemplate, Set<MongoGroup> groupsToAdd) {
         Date now = new Date();
         Agreement agreement = new Agreement();
         agreement.setAgreementLevel(agreementTemplate.getAgreementLevel());
         agreement.setAgreementType(agreementTemplate.getAgreementType());
-
-        agreement.addGroupEntries(getAgreementDefault(agreementTemplate));
+        agreement.addGroupEntries(getAgreementDefault(agreementTemplate, groupsToAdd));
         agreement.setValidDate(now);
         agreement.setTransactionDate(now);
         agreement.setExpirationDate(agreementTemplate.getDefaultDuration() == 0
@@ -81,12 +80,18 @@ public class AgreementServiceImpl implements AgreementService {
      * @param agreementTemplate
      * @return
      */
-    private Set<GroupEntry> getAgreementDefault(AgreementTemplate agreementTemplate) {
+    private Set<GroupEntry> getAgreementDefault(AgreementTemplate agreementTemplate, Set<MongoGroup> groupsToAdd) {
         /* Get agreement template's default groups */
         Set<GroupEntry> groups = agreementTemplate.getDefaultGroups();
 
         /* Merge with optIn groups */
         groupService.getGroupsDefault().forEach((group) -> extracted(groups, group, agreementTemplate));
+        
+        /* merge with groupsToAdd */
+        
+        if (groupsToAdd != null) {
+            groupsToAdd.forEach((group) -> extracted(groups, group, agreementTemplate));
+        }
 
         /* Set expiration date of groups */
         groups.forEach((group) -> setMinDateByGroupsDepengingOnGroupsAndAgreementTemplate(group, agreementTemplate));

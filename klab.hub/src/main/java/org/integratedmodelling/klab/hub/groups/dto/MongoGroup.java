@@ -43,7 +43,7 @@ public class MongoGroup extends GenericModel {
     private List<String> projectUrls = new ArrayList<>();
     @Reference
     private List<Observable> observables = new ArrayList<>();
-    private Set<CustomProperty> customProperties = new HashSet<>();
+    private List<CustomProperty> customProperties = new ArrayList<>();
     /* Name of groups that depending on */
     private List<String> dependsOn = new ArrayList<>();
 
@@ -168,11 +168,11 @@ public class MongoGroup extends GenericModel {
         this.defaultExpirationTime = defaultExpirationTime;
     }
 
-    public Set<CustomProperty> getCustomProperties() {
+    public List<CustomProperty> getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(Set<CustomProperty> customProperties) {
+    public void setCustomProperties(List<CustomProperty> customProperties) {
         this.customProperties = customProperties;
     }
 }

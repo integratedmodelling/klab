@@ -28,7 +28,17 @@ public class CustomProperty extends GenericModel {
     private boolean onlyAdmin;
     
     private CustomPropertyType type;
+    
 
+    public CustomProperty() {
+        super();
+    }
+
+    public CustomProperty(String key, String value) {
+        super();
+        this.key = key;
+        this.value = value;
+    }
     @CreatedBy
     private String createdBy;
 

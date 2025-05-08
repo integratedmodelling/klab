@@ -590,6 +590,14 @@ public interface API {
              */
             public static final String AUTHORIZATION = "Authorization";
         }
+        
+        public static interface CUSTOM_PROPERTY_KEYS {
+            /**
+             * Label for identity_provider custom property
+             */
+            public static final String IDENTITY_PROVIDER = "IDENTITY_PROVIDER";
+            public static final String SECRET = "SECRET";
+        }
 
     }
 

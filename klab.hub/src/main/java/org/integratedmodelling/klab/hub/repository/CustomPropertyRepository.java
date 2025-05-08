@@ -14,5 +14,4 @@ public interface CustomPropertyRepository extends ResourceRepository<CustomPrope
     List<CustomProperty> findByIsForGroupIsTrue();
     Optional<CustomProperty> findByName(String name);
     List<CustomProperty> findAllByNameIn(Collection<String> names);
-
 }

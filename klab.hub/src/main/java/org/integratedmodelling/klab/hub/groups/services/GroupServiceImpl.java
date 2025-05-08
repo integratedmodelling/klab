@@ -113,10 +113,8 @@ public class GroupServiceImpl implements GroupService {
 	
 	@Override
     public List<MongoGroup> getGroupsDefault() {
-	    return repository.findByComplimentaryIsTrue();        
+	    return repository.findByComplimentaryIsTrue();
     }
-    
-	
-	
+
 
 }

@@ -62,22 +62,23 @@ public class CustomPropertyServicesImpl implements CustomPropertyService {
                 ? customPropertyOptional.get()
                 : new CustomProperty(name);
 
-//        switch(customPropertiesType) {
-//
-//        case USER:
-//            customProperties.setForUser(true);
-//            customProperties.
-//            break;
-//        case GROUP:
-//            customProperties.setForGroup(true);
-//            break;
-//        case ALL:
-//            customProperties.setForUser(true);
-//            customProperties.setForGroup(true);
-//            break;
-//        default:
-//            throw new Exception("Custom properties type isn't correct");
-//        }
+        switch(customPropertiesType) {
+
+        case USER:
+            customProperties.setForUser(true);
+            customProperties.setForGroup(false);
+            break;
+        case GROUP:
+            customProperties.setForUser(false);
+            customProperties.setForGroup(true);
+            break;
+        case ALL:
+            customProperties.setForUser(true);
+            customProperties.setForGroup(true);
+            break;
+        default:
+            throw new Exception("Custom properties type isn't correct");
+        }
 
         return createNewCustomProperties(customProperties);
     }
