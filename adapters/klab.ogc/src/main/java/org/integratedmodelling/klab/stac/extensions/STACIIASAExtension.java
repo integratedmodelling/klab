@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.geotools.data.FeatureSource;
 import org.geotools.data.geojson.GeoJSONReader;
 import org.geotools.data.memory.MemoryDataStore;
@@ -29,7 +28,22 @@ public class STACIIASAExtension {
         while (featureIterator.hasNext()) {
             try {
                 JSONObject feature = (JSONObject) featureIterator.next();
-                featureList.add(GeoJSONReader.parseFeature(feature.toString()));
+                String labelName = null;
+                List<String> labels = getBestLabelValue(feature.getJSONObject("properties"));
+                Iterator<Object> classes = collectionData.getJSONArray("label:classes").iterator();
+                while(classes.hasNext()) {
+                    JSONObject clazz = (JSONObject) classes.next();
+                    for (String label : labels) {
+                        if (clazz.getString("value").equalsIgnoreCase(label)) {
+                            labelName = clazz.getString("name");
+                            break;
+                        }
+                    }
+                }
+                //String value = (String) collectionData.getJSONArray("label:classes").toList().stream().filter(l -> ((JSONObject)l).getString("value").equalsIgnoreCase(label)).findFirst().get();
+                feature.getJSONObject("properties").put("eunis", labelName);
+                SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
+                featureList.add(feat);
             } catch (Exception e) {
                 // Ignore unparseable features (they should not happen)
                 continue;
@@ -39,6 +53,30 @@ public class STACIIASAExtension {
         MemoryDataStore dataStore = new org.geotools.data.memory.MemoryDataStore(type);
         dataStore.addFeatures(featureList);
         return dataStore.getFeatureSource(type.getTypeName());
+    }
+
+    private static List<String> getBestLabelValue(JSONObject properties) {
+        List<String> labels = new ArrayList();
+        if (properties.has("eunis2012_L3")) {
+            labels.add(properties.getString("eunis2012_L3"));
+        }
+        if (properties.has("eunis2012_L2")) {
+            labels.add(properties.getString("eunis2012_L2"));
+        }
+        if (properties.has("eunis2012_L1")) {
+            labels.add(properties.getString("eunis2012_L1"));
+        }
+        if (properties.has("eunis2021_L3")) {
+            labels.add(properties.getString("eunis2021_L3"));
+        }
+        if (properties.has("eunis2021_L2")) {
+            labels.add(properties.getString("eunis2021_L2"));
+        }
+        if (properties.has("eunis2021_L1")) {
+            labels.add(properties.getString("eunis2021_L1"));
+        }
+
+        return labels;
     }
 
 }
