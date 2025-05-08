@@ -3,14 +3,14 @@ package org.integratedmodelling.klab.hub.users.services;
 import java.util.Collection;
 import java.util.Optional;
 
+import org.integratedmodelling.klab.hub.customProperties.dto.CustomProperty;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
 import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
-import org.integratedmodelling.klab.rest.CustomProperty;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public class UserCustomPropertyServiceImpl implements UserCustomPropertyService 
         this.customPropertyRepository = customPropertyRepository;
     }
 
-    public Collection<CustomProperty> getAllUserCustomProperties(String username) {
+    public Collection<CustomPropertyRest> getAllUserCustomProperties(String username) {
         User user = userRepository.findByNameIgnoreCase(username)
                 .orElseThrow(() -> new UserDoesNotExistException(username));
         return user.getCustomProperties();
@@ -43,13 +43,13 @@ public class UserCustomPropertyServiceImpl implements UserCustomPropertyService 
             throw new UserDoesNotExistException();
         }
 
-        CustomProperty property = new CustomProperty(key, request.getValue(), request.isOnlyAdmin());
+        CustomPropertyRest property = new CustomPropertyRest(key, request.getValue(), request.isOnlyAdmin());
         users.stream().forEach(u -> u.putCustomProperty(property));
         userRepository.saveAll(users);
 
-        Optional<RecordedCustomProperty> recordedCustomProperty = customPropertyRepository.findByName(key);
+        Optional<CustomProperty> recordedCustomProperty = customPropertyRepository.findByName(key);
         if (recordedCustomProperty.isEmpty()) {
-            recordedCustomProperty = Optional.of(new RecordedCustomProperty(key));
+            recordedCustomProperty = Optional.of(new CustomProperty(key));
         }
         recordedCustomProperty.get().setForUser(true);
 

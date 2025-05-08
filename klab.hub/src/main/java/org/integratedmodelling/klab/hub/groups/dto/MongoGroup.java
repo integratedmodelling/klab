@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
-import org.integratedmodelling.klab.rest.CustomProperty;
+import org.integratedmodelling.klab.hub.customProperties.dto.CustomProperty;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
