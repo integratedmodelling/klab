@@ -28,7 +28,7 @@ public class NodeReference {
 	private Set<String> catalogs = new LinkedHashSet<>();
 	private List<String> incomingConnections = new ArrayList<>();
 	private List<String> outgoingConnections = new ArrayList<>();
-	private IIdentity.Type identityType;
+	private IIdentity.Type identityType = IIdentity.Type.LEGACY_NODE;
 
 	public NodeReference() {
 
@@ -42,7 +42,7 @@ public class NodeReference {
 //		this.resources.addAll(node.getResources());
 		this.urls.addAll(node.getUrls());
 		this.online = node.isOnline();
-		this.identityType = node.getIdentityType();
+		setIdentityType(node.getIdentityType());
 	}
 
 	public NodeReference(NodeCapabilities capabilities) {
@@ -241,7 +241,11 @@ public class NodeReference {
     }
 
     public void setIdentityType(IIdentity.Type identityType) {
-        this.identityType = identityType;
+        if (identityType == null) {
+            this.identityType = IIdentity.Type.LEGACY_NODE;
+        } else {
+            this.identityType = identityType;
+        }
     }
 
 }
