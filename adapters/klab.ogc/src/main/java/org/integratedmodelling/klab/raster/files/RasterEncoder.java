@@ -131,7 +131,7 @@ public class RasterEncoder implements IResourceEncoder {
                 throw new KlabUnsupportedFeatureException("Unsupported band mixing operation " + bandMixer);
             }
         }
-        
+
         /*
          * if so configured, cache the transformed coverage for the space dimension signature
          * 
@@ -140,10 +140,12 @@ public class RasterEncoder implements IResourceEncoder {
 
 //        builder = builder.startState(((IRuntimeScope) scope).getTargetName());
 
-        for (long ofs = 0; ofs < space.size(); ofs++) {
+        for(long ofs = 0; ofs < space.size(); ofs++) {
 
             long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-            double value = bandMixer == null ? getCellValue(iterator, xy, band) : getCellMixerValue(iterator, xy, bandMixer, nBands);
+            double value = bandMixer == null
+                    ? getCellValue(iterator, xy, band)
+                    : getCellMixerValue(iterator, xy, bandMixer, nBands);
 
             // this is cheeky but will catch most of the nodata and
             // none of the good data
@@ -152,7 +154,7 @@ public class RasterEncoder implements IResourceEncoder {
                 value = Double.NaN;
             }
 
-            for (double nd : nodata) {
+            for(double nd : nodata) {
                 if (NumberUtils.equal(value, nd)) {
                     value = Double.NaN;
                     break;
@@ -205,7 +207,7 @@ public class RasterEncoder implements IResourceEncoder {
     private double getBandOfMaxValue(RandomIter iterator, long[] xy, int nBands) {
         double value = Double.NaN;
         double maxValue = Double.MIN_VALUE;
-        for (int i = 0; i < nBands; i++) {
+        for(int i = 0; i < nBands; i++) {
             double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
             if (currentValue == Double.NaN) {
                 continue;
@@ -221,7 +223,7 @@ public class RasterEncoder implements IResourceEncoder {
     private double getBandOfMinValue(RandomIter iterator, long[] xy, int nBands) {
         double value = Double.NaN;
         double minValue = Double.MAX_VALUE;
-        for (int i = 0; i < nBands; i++) {
+        for(int i = 0; i < nBands; i++) {
             double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
             if (currentValue == Double.NaN) {
                 continue;
@@ -236,7 +238,7 @@ public class RasterEncoder implements IResourceEncoder {
 
     private double getMaxCellValue(RandomIter iterator, long[] xy, int nBands) {
         double maxValue = Double.MIN_VALUE;
-        for (int i = 0; i < nBands; i++) {
+        for(int i = 0; i < nBands; i++) {
             double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
             if (currentValue == Double.NaN) {
                 continue;
@@ -250,7 +252,7 @@ public class RasterEncoder implements IResourceEncoder {
 
     private double getMinCellValue(RandomIter iterator, long[] xy, int nBands) {
         double minValue = Double.MAX_VALUE;
-        for (int i = 0; i < nBands; i++) {
+        for(int i = 0; i < nBands; i++) {
             double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
             if (currentValue == Double.NaN) {
                 continue;
@@ -265,7 +267,7 @@ public class RasterEncoder implements IResourceEncoder {
     private double getAvgCellValue(RandomIter iterator, long[] xy, int nBands) {
         int validBands = 0;
         double sum = 0.0;
-        for (int i = 0; i < nBands; i++) {
+        for(int i = 0; i < nBands; i++) {
             double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
             if (Double.isNaN(currentValue)) {
                 continue;
@@ -386,7 +388,7 @@ public class RasterEncoder implements IResourceEncoder {
         File mainFile = null;
         File rootPath = Resources.INSTANCE.getFilesystemLocation(resource);
 
-        for (String path : resource.getLocalPaths()) {
+        for(String path : resource.getLocalPaths()) {
             if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
                 mainFile = new File(rootPath + File.separator + path);
                 if (mainFile.exists() && mainFile.canRead()) {
@@ -442,10 +444,10 @@ public class RasterEncoder implements IResourceEncoder {
         return null;
     }
 
-	@Override
-	public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
+        // TODO Auto-generated method stub
+
+    }
 
 }
