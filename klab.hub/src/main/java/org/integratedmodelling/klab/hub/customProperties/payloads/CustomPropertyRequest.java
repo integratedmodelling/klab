@@ -1,17 +1,17 @@
-package org.integratedmodelling.klab.hub.recordedCustomProperty.payload;
+package org.integratedmodelling.klab.hub.customProperties.payloads;
 
-import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
+import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
 
-public class RecordedCustomPropertiyRequest {
+public class CustomPropertyRequest {
 
     private CustomPropertyType type;
     private String name;
 
-    public RecordedCustomPropertiyRequest() {
+    public CustomPropertyRequest() {
         super();
     }
 
-    public RecordedCustomPropertiyRequest(CustomPropertyType type, String name) {
+    public CustomPropertyRequest(CustomPropertyType type, String name) {
         super();
         this.type = type;
         this.name = name;

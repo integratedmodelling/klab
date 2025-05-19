@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.hub.users.services;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.auth.Role;
 import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
@@ -10,10 +13,15 @@ import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.HubErrorCodes;
+import org.integratedmodelling.klab.hub.exception.HubHttpException;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
+import org.integratedmodelling.klab.hub.groups.services.GroupCustomPropertyService;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.commands.CreateUser;
 import org.integratedmodelling.klab.hub.users.commands.CreateUserWithRolesAndStatus;
+import org.integratedmodelling.klab.hub.users.commands.DeleteUser;
 import org.integratedmodelling.klab.hub.users.commands.SetUserPasswordHash;
 import org.integratedmodelling.klab.hub.users.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.users.dto.User;
@@ -21,7 +29,10 @@ import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
 import org.integratedmodelling.klab.hub.users.exceptions.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserExistsException;
 import org.integratedmodelling.klab.hub.users.listeners.NewUserAdded;
+import org.integratedmodelling.klab.hub.users.listeners.UserDeleted;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,22 +41,20 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
     private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;    
-//    private LdapServiceImpl ldapService;
-//    private LdapUserDetailsManager ldapUserDetailsManager;
-    private HubEventPublisher<NewUserAdded> publisher;
+    private HubEventPublisher <ApplicationEvent> publisher;
     private AgreementService agreementService;
+    
+    private GroupCustomPropertyService groupCustomPropertyService;
 
     @Autowired
     public UserRegistrationServiceImpl(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            /*LdapServiceImpl ldapServiceImpl, LdapUserDetailsManager ldapUserDetailsManager,*/
-            HubEventPublisher<NewUserAdded> publisher, AgreementService agreementService) {
+            HubEventPublisher<ApplicationEvent> publisher, AgreementService agreementService, GroupCustomPropertyService groupCustomPropertyService) {
         super();
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-//        this.ldapUserDetailsManager = ldapUserDetailsManager;
         this.publisher = publisher;
         this.agreementService = agreementService;
-//        this.ldapService = ldapServiceImpl;
+        this.groupCustomPropertyService = groupCustomPropertyService;
     }
 
     @Override
@@ -73,14 +82,37 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
     }
 
     @Override
-    public User createAndAddAgreement(User user, AgreementType agreementType, AgreementLevel agreementLevel) {        
+    public User createAndAddAgreement(User user, AgreementType agreementType, AgreementLevel agreementLevel, String identity_provider) {        
+        
+        /* Check if agreement exist */
         List<AgreementEntry> agreements = user.getAgreements().stream()
                 .filter((agreement) -> agreement.getAgreement().getAgreementType().equals(agreementType)
                         && agreement.getAgreement().getAgreementLevel().equals(agreementLevel))
                 .toList();
         
         if (agreements.isEmpty()) {
-            Agreement agreement = agreementService.createAgreement(agreementType, agreementLevel).stream().findFirst().get();
+            
+            List<MongoGroup> mongoGroups = null;
+            Set<MongoGroup> mongoGroupsSet = null;
+            
+            if (identity_provider != null) {
+                /* Search for this value of identity_provider in groups with key IDENTITY_PROVIDER */
+                mongoGroups = groupCustomPropertyService.getGroupsWithCustomProperty(API.HUB.CUSTOM_PROPERTY_KEYS.IDENTITY_PROVIDER, identity_provider);
+                if (!mongoGroups.isEmpty()) {
+                    mongoGroupsSet = new HashSet<MongoGroup>(mongoGroups);
+                }
+                /* If any group match add this groups to the user agreement */
+            }
+            
+            Agreement agreement;
+            try {
+                agreement = agreementService.createAgreement(agreementType, agreementLevel, mongoGroupsSet).stream().findFirst().get();
+            } 
+            catch (Exception e) {
+                new DeleteUser(user, userRepository).execute();
+                publisher.publish(new UserDeleted(new Object(), user));
+                throw new HubHttpException(HubErrorCodes.AGREEMENTS.AGREEMENT_CREATION_FAILED, e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            }
             user = addAgreement(user, agreement);
         }   
         
@@ -105,18 +137,12 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
         if (usernameExists || emailExists) {
             
-//            boolean ldapExists = false;
-//            try {
-//                ldapExists = ldapService.userExists(username, email);
-//            } catch (BadRequestException bre) {
-//                throw new UserNameOrEmailExistsException();
-//            }
             
-            if (/*dapExists && */usernameExists && emailExists) {
+            if (usernameExists && emailExists) {
                 throw new UserExistsException(username);
             }
 
-            if (/*!ldapExists &&*/ usernameExists && emailExists) {
+            if (usernameExists && emailExists) {
                 // we need to return a user who has not activated there account and will be asked to
                 // reactivate with an email.
                 Optional<User> pendingUser = userRepository.findByNameIgnoreCase(username)

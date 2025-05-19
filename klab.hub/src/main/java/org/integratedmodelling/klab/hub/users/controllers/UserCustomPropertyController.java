@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
 import org.integratedmodelling.klab.hub.users.services.UserCustomPropertyService;
-import org.integratedmodelling.klab.rest.CustomProperty;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +36,7 @@ public class UserCustomPropertyController {
     public ResponseEntity< ? > getUserCustomProperties ( @PathVariable("id") String username) {
         JSONObject resp = new JSONObject();
         try {
-            Collection<CustomProperty> customProperties = userCustomPropertyService.getAllUserCustomProperties(username);
+            Collection<CustomPropertyRest> customProperties = userCustomPropertyService.getAllUserCustomProperties(username);
             resp.appendField("Custom Properties", customProperties);
         } catch (UserDoesNotExistException e) {
             resp.appendField("Message", e.getMessage());

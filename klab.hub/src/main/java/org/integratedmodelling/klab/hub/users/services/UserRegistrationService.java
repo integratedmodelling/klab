@@ -16,5 +16,5 @@ public interface UserRegistrationService {
 	public abstract User setPassword(String username, String password, String confirm);
 	public abstract User registerUser(User user);
 	public abstract User addAgreement(User user, Agreement agreement);
-    public abstract User createAndAddAgreement(User user, AgreementType agreementType, AgreementLevel agreementLevel);
+    public abstract User createAndAddAgreement(User user, AgreementType agreementType, AgreementLevel agreementLevel, String identity_provider);
 }

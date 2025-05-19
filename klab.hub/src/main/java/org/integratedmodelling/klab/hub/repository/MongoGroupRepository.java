@@ -22,5 +22,6 @@ public interface MongoGroupRepository extends ResourceRepository<MongoGroup, Str
     List<MongoGroup> findByComplimentaryIsTrue(); 
 
     List<MongoGroup> findByNameIn(List<String> names);
+    List<MongoGroup> findByCustomProperties_KeyAndCustomProperties_Value(String key, String value);
 	
 }

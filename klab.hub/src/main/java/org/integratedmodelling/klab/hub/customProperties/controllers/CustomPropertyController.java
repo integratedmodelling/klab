@@ -1,14 +1,14 @@
-package org.integratedmodelling.klab.hub.recordedCustomProperty.controllers;
+package org.integratedmodelling.klab.hub.customProperties.controllers;
 
 import java.util.List;
 
 import javax.annotation.security.RolesAllowed;
 
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.payload.RecordedCustomPropertiyRequest;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.services.RecordedCustomPropertyService;
+import org.integratedmodelling.klab.hub.customProperties.dto.CustomProperty;
+import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
+import org.integratedmodelling.klab.hub.customProperties.payloads.CustomPropertyRequest;
+import org.integratedmodelling.klab.hub.customProperties.services.CustomPropertyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,20 +19,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class RecordedCustomPropertyController {
+public class CustomPropertyController {
 
-    private RecordedCustomPropertyService customPropertyService;
+    private CustomPropertyService customPropertyService;
 
     @Autowired
-    public RecordedCustomPropertyController(RecordedCustomPropertyService customPropertiesServices) {
+    public CustomPropertyController(CustomPropertyService customPropertiesServices) {
         super();
         this.customPropertyService = customPropertiesServices;
     }
 
     @GetMapping(API.HUB.CUSTOM_PROPERTIES)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > getRecordedCustomProperties(@RequestParam(required = false) String type) {
-        List<RecordedCustomProperty> customProperties;
+    public ResponseEntity< ? > getCustomProperties(@RequestParam(required = false) String type) {
+        List<CustomProperty> customProperties;
         try {
             if (type == null) {
                 customProperties = customPropertyService.getAllCustomProperties();
@@ -47,7 +47,7 @@ public class RecordedCustomPropertyController {
 
     @PostMapping(API.HUB.CUSTOM_PROPERTIES)
     @RolesAllowed({"ROLE_ADMINISTRATOR", "ROLE_SYSTEM"})
-    public ResponseEntity< ? > createRecordedCustomProperty(@RequestBody RecordedCustomPropertiyRequest request) {
+    public ResponseEntity< ? > createCustomProperty(@RequestBody CustomPropertyRequest request) {
         try {
             customPropertyService.createNewCustomProperties(request.getCustomPropertiesType(), request.getName());
         } catch (Exception e) {

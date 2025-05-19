@@ -2,11 +2,15 @@ package org.integratedmodelling.klab.hub.agreements.services;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.enums.AgreementLevel;
 import org.integratedmodelling.klab.hub.enums.AgreementType;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
+import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
+import org.integratedmodelling.klab.hub.users.dto.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,8 +20,6 @@ import org.springframework.stereotype.Service;
 public abstract interface AgreementService {
     
     abstract Agreement getAgreement(String id);
-
-    List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel);
 
     Set<Agreement> updateAgreementValidDate(Set<Agreement> agreements, Date validDate);
 
@@ -38,6 +40,9 @@ public abstract interface AgreementService {
      * @return Page of entity Agreement
      */
     Page<Agreement> getPage(Query query, Pageable pageable);
+
+    abstract List<Agreement> createAgreement(AgreementType agreementType, AgreementLevel agreementLevel,
+            Set<MongoGroup> groupsToAdd);
 
 
 
