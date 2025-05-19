@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
-import org.integratedmodelling.klab.rest.CustomProperty;
+import org.integratedmodelling.klab.hub.customProperties.dto.CustomProperty;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -43,7 +43,7 @@ public class MongoGroup extends GenericModel {
     private List<String> projectUrls = new ArrayList<>();
     @Reference
     private List<Observable> observables = new ArrayList<>();
-    private Set<CustomProperty> customProperties = new HashSet<>();
+    private List<CustomProperty> customProperties = new ArrayList<>();
     /* Name of groups that depending on */
     private List<String> dependsOn = new ArrayList<>();
 
@@ -168,11 +168,11 @@ public class MongoGroup extends GenericModel {
         this.defaultExpirationTime = defaultExpirationTime;
     }
 
-    public Set<CustomProperty> getCustomProperties() {
+    public List<CustomProperty> getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(Set<CustomProperty> customProperties) {
+    public void setCustomProperties(List<CustomProperty> customProperties) {
         this.customProperties = customProperties;
     }
 }

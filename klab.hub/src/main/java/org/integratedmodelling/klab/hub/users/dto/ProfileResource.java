@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.integratedmodelling.klab.hub.users.dto.User.AccountStatus;
-import org.integratedmodelling.klab.rest.CustomProperty;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.integratedmodelling.klab.rest.Group;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -74,7 +74,7 @@ public class ProfileResource implements OAuth2User{
     
     private Map<String, Object> attributes;
     
-    public Set<CustomProperty> customProperties = new HashSet<>();
+    public Set<CustomPropertyRest> customProperties = new HashSet<>();
     
     /**
      * Use to store the jwt token in case of needs
@@ -187,11 +187,11 @@ public class ProfileResource implements OAuth2User{
 		this.lastConnection = lastConnection;
 	}
 	
-	public Set<CustomProperty> getCustomProperties() {
+	public Set<CustomPropertyRest> getCustomProperties() {
 		return customProperties;
 	}
 
-	public void setCustomProperties(Set<CustomProperty> customProperties) {
+	public void setCustomProperties(Set<CustomPropertyRest> customProperties) {
 		this.customProperties = customProperties;
 	}
 

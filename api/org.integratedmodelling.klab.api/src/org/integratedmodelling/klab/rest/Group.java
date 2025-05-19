@@ -20,7 +20,7 @@ public class Group {
 	private long maxUpload;
 	private List<String> projectUrls = new ArrayList<String>();
 	private List<ObservableReference> observables = new ArrayList<ObservableReference>();
-	private Set<CustomProperty> customProperties= new HashSet<CustomProperty>();
+	private Set<CustomPropertyRest> customProperties= new HashSet<CustomPropertyRest>();
 	private List<String> dependsOn = new ArrayList<String>();
 
 	public Group() {
@@ -139,11 +139,11 @@ public class Group {
 	 * Custom properties for the group
 	 * @return
 	 */
-    public Set<CustomProperty> getCustomProperties() {
+    public Set<CustomPropertyRest> getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(Set<CustomProperty> customProperties) {
+    public void setCustomProperties(Set<CustomPropertyRest> customProperties) {
         this.customProperties = customProperties;
     }
     

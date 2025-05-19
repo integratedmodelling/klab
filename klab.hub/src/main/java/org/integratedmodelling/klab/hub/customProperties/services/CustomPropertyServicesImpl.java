@@ -1,33 +1,33 @@
-package org.integratedmodelling.klab.hub.recordedCustomProperty.services;
+package org.integratedmodelling.klab.hub.customProperties.services;
 
 import java.util.List;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.recordedCustomProperty.commands.NewCustomProperty;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.dto.RecordedCustomProperty;
-import org.integratedmodelling.klab.hub.recordedCustomProperty.enums.CustomPropertyType;
-import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
+import org.integratedmodelling.klab.hub.customProperties.commands.NewCustomProperty;
+import org.integratedmodelling.klab.hub.customProperties.dto.CustomProperty;
+import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
+import org.integratedmodelling.klab.hub.repository.CustomPropertyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RecordedCustomPropertyServicesImpl implements RecordedCustomPropertyService {
+public class CustomPropertyServicesImpl implements CustomPropertyService {
 
-    RecordedCustomPropertyRepository customPropertyRepository;
+    CustomPropertyRepository customPropertyRepository;
 
     @Autowired
-    public RecordedCustomPropertyServicesImpl(RecordedCustomPropertyRepository customPropertyRepository) {
+    public CustomPropertyServicesImpl(CustomPropertyRepository customPropertyRepository) {
         super();
         this.customPropertyRepository = customPropertyRepository;
     }
 
     @Override
-    public List<RecordedCustomProperty> getAllCustomProperties() {
+    public List<CustomProperty> getAllCustomProperties() {
         return customPropertyRepository.findAll();
     }
 
     @Override
-    public List<RecordedCustomProperty> getCustomPropertiesByType(CustomPropertyType customPropertiesType) throws Exception {
+    public List<CustomProperty> getCustomPropertiesByType(CustomPropertyType customPropertiesType) throws Exception {
         switch(customPropertiesType) {
         case USER:
             return customPropertyRepository.findByIsForUserIsTrue();
@@ -42,8 +42,8 @@ public class RecordedCustomPropertyServicesImpl implements RecordedCustomPropert
     }
 
     @Override
-    public RecordedCustomProperty createNewCustomProperties(RecordedCustomProperty customProperties) throws Exception {
-        RecordedCustomProperty customPropertiesCreated = null;
+    public CustomProperty createNewCustomProperties(CustomProperty customProperties) throws Exception {
+        CustomProperty customPropertiesCreated = null;
         try {
             customPropertiesCreated = new NewCustomProperty(customProperties, customPropertyRepository).execute();
         } catch (Exception e) {
@@ -53,21 +53,23 @@ public class RecordedCustomPropertyServicesImpl implements RecordedCustomPropert
     }
 
     @Override
-    public RecordedCustomProperty createNewCustomProperties(CustomPropertyType customPropertiesType, String name)
+    public CustomProperty createNewCustomProperties(CustomPropertyType customPropertiesType, String name)
             throws Exception {
 
-        Optional<RecordedCustomProperty> customPropertyOptional = customPropertyRepository.findByName(name);
+        Optional<CustomProperty> customPropertyOptional = customPropertyRepository.findByName(name);
 
-        RecordedCustomProperty customProperties = customPropertyOptional.isPresent()
+        CustomProperty customProperties = customPropertyOptional.isPresent()
                 ? customPropertyOptional.get()
-                : new RecordedCustomProperty(name);
+                : new CustomProperty(name);
 
         switch(customPropertiesType) {
 
         case USER:
             customProperties.setForUser(true);
+            customProperties.setForGroup(false);
             break;
         case GROUP:
+            customProperties.setForUser(false);
             customProperties.setForGroup(true);
             break;
         case ALL:
