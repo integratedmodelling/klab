@@ -106,10 +106,13 @@ public class RasterEncoder implements IResourceEncoder {
         RandomIter iterator = RandomIterFactory.create(image, null);
         Dimension space = geometry.getDimension(Type.SPACE);
         int band = 0;
+        
+        System.out.println(urnParameters);
+        
         if (urnParameters.containsKey("band")) {
             band = Integer.parseInt(urnParameters.get("band"));
-        } else if (!resource.getAdapterType().equals("stac")) {
-            resource.getParameters().get("band", 0);
+        } else {
+            band = resource.getParameters().get("band", 0);
         }
         int nBands = coverage.getNumSampleDimensions();
         Set<Double> nodata = getNodata(resource, coverage, band);

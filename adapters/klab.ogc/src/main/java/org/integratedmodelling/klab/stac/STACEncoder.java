@@ -11,8 +11,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.processing.Operations;
 import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
@@ -54,10 +56,10 @@ import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -222,7 +224,13 @@ public class STACEncoder implements IResourceEncoder {
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
-        boolean isWEED = catalogUrl.contains("weed");  // The WENR and all the other stuff are here itself..
+        boolean isWENR = collectionUrl.contains("wenr") || collectionUrl.contains("wern");  // The WENR and all the other stuff are here itself..
+        
+        if (isWENR) {
+        	System.out.println("WENR Collection..");
+        }
+        
+        boolean isWEED = catalogUrl.contains("weed"); // WEED Stuff
         
 
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
@@ -250,7 +258,7 @@ public class STACEncoder implements IResourceEncoder {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
             Time time2 = time; //TODO make the time and query time different
             features = features.stream().filter(f -> {
-                Geometry fGeometry = (Geometry) f.getDefaultGeometry();
+            	org.locationtech.jts.geom.Geometry fGeometry = (org.locationtech.jts.geom.Geometry) f.getDefaultGeometry();
                 return fGeometry.intersects(space.getShape().getJTSGeometry());
             }).toList();
             features = features.stream().filter(f -> isFeatureInTimeRange(time2, f)).toList();
@@ -350,7 +358,21 @@ public class STACEncoder implements IResourceEncoder {
       *  	a. https://chat.integratedmodelling.org/group/dsFnTgb3ti5ynCYhR?msg=2hFhyrmPyvJWihp8w
       *  	b. https://chat.integratedmodelling.org/group/PEOPLE_EA_WEED_internal?msg=XY53pvfw9RTYRi4Jy
       */ 
-        if (isWEED) {
+        
+        if (isWEED) { // For WEED the stuff is there for 2024
+        	try {
+				startDateFormatted = sdf.parse("2024-01-01");
+				endDateFormatted = sdf.parse("2024-12-31");
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        }
+        
+        
+        // Reoveriding the Start and End date for the STAC Search Request
+        
+        if (isWENR) { // For WENR there is no data in any other temporal bounds 
         	try {
 				startDateFormatted = sdf.parse("2020-01-01");
 				endDateFormatted = sdf.parse("2020-12-31");
@@ -414,6 +436,17 @@ public class STACEncoder implements IResourceEncoder {
             final boolean allowTransform = true;
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
+            String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
+            String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+            System.out.println("Received CRS: " + receivedCRS);
+        	System.out.println("Target CRS: "+ rcrs);
+            if (!receivedCRS.equals(rcrs)) {
+            	System.out.println("CRS Mismatch");
+            	CoordinateReferenceSystem targetCRS = CRS.decode(rcrs, true);
+            	coverage = (GridCoverage2D) Operations.DEFAULT.resample(
+    	                coverage, targetCRS
+    	        );
+            }           
             manager.close();
         } catch (Exception e) {
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
