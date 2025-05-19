@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -147,5 +148,8 @@ public class CustomProperty extends GenericModel {
         CustomProperty other = (CustomProperty) obj;
         return isForGroup == other.isForGroup && isForUser == other.isForUser && Objects.equals(getName(), other.getName());
     }
-
+    
+    public CustomPropertyRest getCustomPropertyRest() {
+        return new CustomPropertyRest(this.getKey(), this.getValue(), this.isOnlyAdmin());
+    }
 }

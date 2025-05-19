@@ -226,8 +226,8 @@ public class ProfileResource implements OAuth2User{
 				group.setMaxUpload(mGroup.getMaxUpload());
 				group.setWorldview(mGroup.isWorldview());
 				group.setComplimentary(mGroup.isComplimentary());
-				group.setOptIn(group.isOptIn());
-				group.setCustomProperties(group.getCustomProperties());
+				group.setOptIn(mGroup.isOptIn());
+				group.setCustomProperties(mGroup.getCustomPropertiesRest());
 				
 				listOfGroups.add(group);
 			}
