@@ -28,7 +28,7 @@ public class EngineAuthenticationResponse {
     public void setNodes(List<NodeReference> nodes) {
         this.nodes = nodes;
     }
-    
+
     public List<NodeReference> getServices() {
         return nodes;
     }

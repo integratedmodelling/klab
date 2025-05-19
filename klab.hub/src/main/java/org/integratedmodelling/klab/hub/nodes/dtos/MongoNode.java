@@ -20,7 +20,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MongoNode extends IdentityModel {
 
     private String url;
-    
+
     private IIdentity.Type type = IIdentity.Type.LEGACY_NODE;
 
     @Indexed(unique = false)

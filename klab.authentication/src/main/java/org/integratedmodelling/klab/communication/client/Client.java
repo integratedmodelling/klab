@@ -245,11 +245,11 @@ public class Client extends RestTemplate implements IClient {
             return false;
         }
     }
-    
+
     public boolean ping(String url) {
         return ping(url, "/actuator/health");
     }
-    
+
     public boolean pingService(String url) {
         return ping(url, "/public/status");
     }
@@ -380,6 +380,7 @@ public class Client extends RestTemplate implements IClient {
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Object> T post(String url, Object data, Class< ? extends T> cls) {
 

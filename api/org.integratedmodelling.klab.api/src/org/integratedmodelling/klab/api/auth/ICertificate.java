@@ -128,7 +128,7 @@ public interface ICertificate {
     public static final String KEY_SIGNATURE = "klab.signature";
     public static final String KEY_PARTNER_HUB = "klab.partner.hub";
     public static final String KEY_PARTNER_NAME = "klab.partner.name";
-    public static final String KEY_PARTNER_EMAIL = "klab.partner.email";    
+    public static final String KEY_PARTNER_EMAIL = "klab.partner.email";
     public static final String KEY_CERTIFICATE = "klab.certificate";
     public static final String KEY_CERTIFICATE_TYPE = "klab.certificate.type";
     public static final String KEY_CERTIFICATE_LEVEL = "klab.certificate.level";

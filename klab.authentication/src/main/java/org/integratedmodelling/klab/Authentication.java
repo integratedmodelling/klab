@@ -436,10 +436,10 @@ public enum Authentication implements IAuthenticationService {
      * Attempts to re-authenticate the engine using a cached version of the certificate
      */
     public IUserIdentity reauthenticate() {
-      if (this.certificate == null) {
-        return null;
-      }
-      return authenticate(this.certificate);
+        if (this.certificate == null) {
+            return null;
+        }
+        return authenticate(this.certificate);
     }
 
     /**
@@ -460,8 +460,8 @@ public enum Authentication implements IAuthenticationService {
      * @return the credential or null if not present
      */
     private ExternalAuthenticationCredentials getCredentialsByUrl(String hostUrl) {
-        return externalCredentials.values().stream().filter(credential -> credential.getURL().equals(hostUrl))
-                .sorted().findFirst().orElse(null);
+        return externalCredentials.values().stream().filter(credential -> credential.getURL().equals(hostUrl)).sorted()
+                .findFirst().orElse(null);
     }
 
     /**
@@ -575,7 +575,8 @@ public enum Authentication implements IAuthenticationService {
             }
             ExternalAuthenticationCredentials credentials = externalCredentials.get(id);
             credentials.setURL(id);
-            // Former scheme of oidc: "url", "grant_type", "client_id", "client_secrets", "scope", "provider_id"
+            // Former scheme of oidc: "url", "grant_type", "client_id", "client_secrets", "scope",
+            // "provider_id"
             if (credentials.getScheme().equals("oidc")) {
                 credentials.getCredentials().remove(4); // Former scope
                 credentials.getCredentials().remove(0); // Former url
