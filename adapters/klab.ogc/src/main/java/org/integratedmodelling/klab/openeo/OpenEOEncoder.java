@@ -242,7 +242,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					processes.add(process);
 				} catch (KlabIOException | MalformedURLException e) {
 					// dio stracane
-					throw new KlabIOException(e);
+					throw new KlabIOException(e); 
 				}
 			}
 			
