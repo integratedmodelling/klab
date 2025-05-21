@@ -174,8 +174,8 @@ public class STACEncoder implements IResourceEncoder {
     }
 
     private S3Client buildS3Client(String bucketRegion) throws IOException {
-//        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
-        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials("weed");
+        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+//        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials("weed");
         System.out.println(awsCredentials);
         AwsCredentials credentials = null;
         try {
