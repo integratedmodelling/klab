@@ -411,9 +411,14 @@ public class STACEncoder implements IResourceEncoder {
                     space.getProjection().getCoordinateReferenceSystem());
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
-            Set<Integer> EPSGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
-            if (EPSGsAtItems.size() > 1) {
-                scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
+
+            if (!isWEED) {
+                Set<Integer> EPSGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
+                if (EPSGsAtItems.size() > 1) {
+                    scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
+                }
+            } else {
+                collection.setAssumedEpsg(3035);
             }
 
             if (resource.getParameters().contains("awsRegion")) {
@@ -437,6 +442,9 @@ public class STACEncoder implements IResourceEncoder {
             // Allow transform ensures the process to finish, but I would not bet on the resulting
             // data.
             final boolean allowTransform = true;
+            if (isWEED) {
+                assetId = items.get(0).getId();
+            }
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
             String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
