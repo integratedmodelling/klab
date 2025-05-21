@@ -135,6 +135,10 @@ public class RasterEncoder implements IResourceEncoder {
             }
         }
 
+        if (urnParameters.containsKey("bandmixer")) {
+//            bandMixer = "alpha2"; // TODO create the option
+            bandMixer = "max_band";
+        }
         /*
          * if so configured, cache the transformed coverage for the space dimension signature
          * 

@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -64,6 +66,12 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentials;
@@ -444,6 +452,20 @@ public class STACEncoder implements IResourceEncoder {
             final boolean allowTransform = true;
             if (isWEED) {
                 assetId = items.get(0).getId();
+                urnParameters =  new HashMap<String, String>();
+                urnParameters.put("bandmixer", "alpha2");
+                JsonNode assetNode = items.get(0).getAssetNode(assetId);
+                ArrayNode rasterBands = (ArrayNode) assetNode.get("raster:bands");
+                Map<Integer, String> bandNamesMap = new HashMap<>();
+                Iterator<JsonNode> it = rasterBands.iterator();
+                int i = 0;
+                while (it.hasNext()) {
+                    ObjectNode band = (ObjectNode) it.next();
+                    String name = band.get("name").asText();
+                    urnParameters.put(String.valueOf(i), name);
+                    i++;
+                }
+                
             }
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();

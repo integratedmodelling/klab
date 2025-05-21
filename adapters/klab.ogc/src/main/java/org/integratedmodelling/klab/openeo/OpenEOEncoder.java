@@ -283,9 +283,9 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
             if (true) { // TODO test for Alpha02
                 STACEncoder encoder = new STACEncoder();
                 IResource stacResource = new ResourceBuilder("Test").withGeometry(scale).withAdapterType("STAC")
-                        .withParameter("collection", "https://catalogue.weed.apex.esa.int/collections/ecosystem-characteristics-alpha2-1")
+                        .withParameter("collection", "https://catalogue.weed.apex.esa.int/collections/inference-alpha2-prepared-v101")
 //                        .withParameter("asset", "ALP")
-                        .withParameter("asset", "WEED_v002_features-cube_year2024_34δBH30.tif")
+                        .withParameter("asset", "alpha-2_proba-cube_year2024_32τNM42_EUNIS2021plus-EU-v1-2024-BOR_v101.tif")
                         .withParameter("updMagic", "")
                         .build();
                  encoder.getEncodedData(stacResource, Map.of(), geometry, builder, scope);
