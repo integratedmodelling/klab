@@ -259,7 +259,7 @@ public class STACEncoder implements IResourceEncoder {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
             Time time2 = time; //TODO make the time and query time different
             features = features.stream().filter(f -> {
-                Geometry fGeometry = (Geometry) f.getDefaultGeometry();
+                org.locationtech.jts.geom.Geometry fGeometry = (org.locationtech.jts.geom.Geometry) f.getDefaultGeometry();
                 return fGeometry.intersects(space.getShape().getJTSGeometry());
             }).toList();
             features = features.stream().filter(f -> isFeatureInTimeRange(time2, f)).toList();
