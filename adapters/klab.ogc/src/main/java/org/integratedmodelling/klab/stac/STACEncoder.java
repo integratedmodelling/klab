@@ -174,7 +174,8 @@ public class STACEncoder implements IResourceEncoder {
     }
 
     private S3Client buildS3Client(String bucketRegion) throws IOException {
-        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+//        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials("weed");
         System.out.println(awsCredentials);
         AwsCredentials credentials = null;
         try {
@@ -230,7 +231,7 @@ public class STACEncoder implements IResourceEncoder {
         	System.out.println("WENR Collection..");
         }
         
-        boolean isWEED = catalogUrl.contains("weed"); // WEED Stuff
+        boolean isWEED = catalogUrl.contains("weed.apex.esa.int");
         
 
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
@@ -252,13 +253,13 @@ public class STACEncoder implements IResourceEncoder {
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
-        
+
         // These are the static STAC catalogs
         if (!hasSearchOption) {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
             Time time2 = time; //TODO make the time and query time different
             features = features.stream().filter(f -> {
-            	org.locationtech.jts.geom.Geometry fGeometry = (org.locationtech.jts.geom.Geometry) f.getDefaultGeometry();
+                Geometry fGeometry = (Geometry) f.getDefaultGeometry();
                 return fGeometry.intersects(space.getShape().getJTSGeometry());
             }).toList();
             features = features.stream().filter(f -> isFeatureInTimeRange(time2, f)).toList();
@@ -310,7 +311,7 @@ public class STACEncoder implements IResourceEncoder {
         HMStacCollection collection = null;
         try {
             manager.open();
-            collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+            collection = manager.getCollectionById(collectionId);
         } catch (Exception e1) {
             throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
         }
@@ -382,7 +383,9 @@ public class STACEncoder implements IResourceEncoder {
 			}
         }
         
-		collection.setTimestampFilter(startDateFormatted, endDateFormatted);
+        if (!isWEED) {
+            collection.setTimestampFilter(startDateFormatted, endDateFormatted);
+        }
 
         GridCoverage2D coverage = null;
         try {
@@ -424,10 +427,10 @@ public class STACEncoder implements IResourceEncoder {
              * Hence, the check for aws_region doesn't matter
              * We are setting a random value, in this case US_EAST if the region is blank
              */
-            if (isWEED) { 
-            	System.out.println("Found the Catalog for WEED!");
-            	S3Client s3Client = null;
-    			s3Client = buildS3Client("");
+            if (isWEED) {
+                System.out.println("Found the Catalog for WEED!");
+                S3Client s3Client = null;
+                s3Client = buildS3Client("");
                 collection.setS3Client(s3Client);
             }
 
