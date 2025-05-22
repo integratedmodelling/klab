@@ -228,7 +228,7 @@ public class STACEncoder implements IResourceEncoder {
         boolean isWENR = collectionUrl.contains("wenr") || collectionUrl.contains("wern");  // The WENR and all the other stuff are here itself..
         
         if (isWENR) {
-        	System.out.println("WENR Collection..");
+        	System.out.println("WENR Collection...");
         }
         
         boolean isWEED = catalogUrl.contains("weed.apex.esa.int");
