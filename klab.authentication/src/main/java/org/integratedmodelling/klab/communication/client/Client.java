@@ -236,14 +236,22 @@ public class Client extends RestTemplate implements IClient {
      * @param url base engine/node URL
      * @return true if alive
      */
-    public boolean ping(String url) {
+    public boolean ping(String url, String endpoint) {
         try {
-            ResponseEntity<Object> response = basicTemplate.exchange(url + "/actuator/health", HttpMethod.GET,
+            ResponseEntity<Object> response = basicTemplate.exchange(url + endpoint, HttpMethod.GET,
                     new HttpEntity<Object>(null, null), Object.class);
             return response.getStatusCodeValue() == 200;
         } catch (Throwable e) {
             return false;
         }
+    }
+
+    public boolean ping(String url) {
+        return ping(url, "/actuator/health");
+    }
+
+    public boolean pingService(String url) {
+        return ping(url, "/public/status");
     }
 
     private class JSONResponseErrorHandler implements ResponseErrorHandler {
@@ -372,6 +380,7 @@ public class Client extends RestTemplate implements IClient {
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <T extends Object> T post(String url, Object data, Class< ? extends T> cls) {
 

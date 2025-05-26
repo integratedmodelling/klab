@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.hub.customProperties.dto.CustomProperty;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -170,6 +171,14 @@ public class MongoGroup extends GenericModel {
 
     public List<CustomProperty> getCustomProperties() {
         return customProperties;
+    }
+
+    public Set<CustomPropertyRest> getCustomPropertiesRest() {
+        Set<CustomPropertyRest> ret = new HashSet<CustomPropertyRest>();
+        for(CustomProperty cp : customProperties) {
+            ret.add(cp.getCustomPropertyRest());
+        }
+        return ret;
     }
 
     public void setCustomProperties(List<CustomProperty> customProperties) {

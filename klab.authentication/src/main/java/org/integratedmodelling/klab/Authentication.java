@@ -403,7 +403,13 @@ public enum Authentication implements IAuthenticationService {
             } else {
 
                 // offline node with no partner
-                Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), null);
+                IIdentity.Type type;
+                if (certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE) != null) {
+                    type = IIdentity.Type.valueOf(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
+                } else {
+                    type = IIdentity.Type.NODE;
+                }
+                Node node = new Node(certificate.getProperty(KlabCertificate.KEY_NODENAME), type, null);
                 ((Node) node).setOnline(false);
                 ret = new KlabUser(certificate.getProperty(KlabCertificate.KEY_USERNAME), node);
 
@@ -430,10 +436,10 @@ public enum Authentication implements IAuthenticationService {
      * Attempts to re-authenticate the engine using a cached version of the certificate
      */
     public IUserIdentity reauthenticate() {
-      if (this.certificate == null) {
-        return null;
-      }
-      return authenticate(this.certificate);
+        if (this.certificate == null) {
+            return null;
+        }
+        return authenticate(this.certificate);
     }
 
     /**
@@ -454,8 +460,8 @@ public enum Authentication implements IAuthenticationService {
      * @return the credential or null if not present
      */
     private ExternalAuthenticationCredentials getCredentialsByUrl(String hostUrl) {
-        return externalCredentials.values().stream().filter(credential -> credential.getURL().equals(hostUrl))
-                .sorted().findFirst().orElse(null);
+        return externalCredentials.values().stream().filter(credential -> credential.getURL().equals(hostUrl)).sorted()
+                .findFirst().orElse(null);
     }
 
     /**
@@ -569,7 +575,8 @@ public enum Authentication implements IAuthenticationService {
             }
             ExternalAuthenticationCredentials credentials = externalCredentials.get(id);
             credentials.setURL(id);
-            // Former scheme of oidc: "url", "grant_type", "client_id", "client_secrets", "scope", "provider_id"
+            // Former scheme of oidc: "url", "grant_type", "client_id", "client_secrets", "scope",
+            // "provider_id"
             if (credentials.getScheme().equals("oidc")) {
                 credentials.getCredentials().remove(4); // Former scope
                 credentials.getCredentials().remove(0); // Former url

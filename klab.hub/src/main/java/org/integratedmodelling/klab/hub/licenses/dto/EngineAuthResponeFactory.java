@@ -26,10 +26,7 @@ import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
 import org.integratedmodelling.klab.hub.nodes.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
-import org.integratedmodelling.klab.hub.tokens.dto.TokenAuthentication;
-import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.integratedmodelling.klab.hub.tokens.exceptions.AuthenticationFailedException;
-import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.exceptions.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -242,7 +239,7 @@ public class EngineAuthResponeFactory {
                 Logging.INSTANCE.info("Remote Engine Run on hub with User: " + engine.getUsername());
                 HubReference hub = new GenerateHubReference().execute();
                 EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
-                        NodeNetworkManager.INSTANCE.getNodeReferences());
+                        NodeNetworkManager.INSTANCE.getNodeReferences(), NodeNetworkManager.INSTANCE.getServiceReferences());
 
                 if (!messages.isEmpty()) {
                     resp.setMessages(messages);
@@ -321,7 +318,7 @@ public class EngineAuthResponeFactory {
         Logging.INSTANCE.info("Local Engine Run on hub with User: " + engine.getUsername());
         HubReference hub = new GenerateHubReference().execute();
         EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
-                NodeNetworkManager.INSTANCE.getNodeReferences());;
+                NodeNetworkManager.INSTANCE.getNodeReferences(), NodeNetworkManager.INSTANCE.getServiceReferences());
         if (!messages.isEmpty()) {
             resp.setMessages(messages);
         }
