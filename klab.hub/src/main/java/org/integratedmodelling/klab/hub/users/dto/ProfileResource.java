@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.users.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +76,7 @@ public class ProfileResource implements OAuth2User{
     private Map<String, Object> attributes;
     
     public Set<CustomPropertyRest> customProperties = new HashSet<>();
+    public Map<String, CustomPropertyRest> customPropertyMap = new HashMap<>();
     
     /**
      * Use to store the jwt token in case of needs
@@ -226,8 +228,8 @@ public class ProfileResource implements OAuth2User{
 				group.setMaxUpload(mGroup.getMaxUpload());
 				group.setWorldview(mGroup.isWorldview());
 				group.setComplimentary(mGroup.isComplimentary());
-				group.setOptIn(group.isOptIn());
-				group.setCustomProperties(group.getCustomProperties());
+				group.setOptIn(mGroup.isOptIn());
+				group.setCustomProperties(mGroup.getCustomPropertiesRest());
 				
 				listOfGroups.add(group);
 			}
