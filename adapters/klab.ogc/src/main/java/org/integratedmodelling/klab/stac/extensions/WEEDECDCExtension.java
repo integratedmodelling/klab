@@ -105,7 +105,7 @@ public class WEEDECDCExtension {
 //				postPayload.put("bandInd",  ((Number)band).intValue() + 1);
 //			}
 			
-			kong.unirest.HttpResponse<File> stacResponse = Unirest.post("http://127.0.0.1:8000/retrieve_band")
+			kong.unirest.HttpResponse<File> stacResponse = Unirest.post("https://stac-utils.integratedmodelling.org/retrieve_band")
                     .header("Content-Type", "application/json")
                     .body(postPayload)
                     .asObject(r -> {
