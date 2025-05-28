@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
+import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -43,11 +44,16 @@ import org.integratedmodelling.klab.openeo.OpenEO.ProcessNode;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.stac.STACEncoder;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
-
+import org.locationtech.jts.geom.Geometry;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
@@ -133,6 +139,34 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				if (grid == null) {
 					throw new KlabIllegalStateException("running a gridded OpenEO process in a non-grid context");
 				}
+
+                if (urnParameters.containsKey("modelId") || true) {
+                    String searchURL = "https://catalogue.weed.apex.esa.int/search";
+                    JSONObject body = new JSONObject();
+                    body.put("collections", new JSONArray().put("model-STAC"));
+                    Map<String, Object> contextShape = ((Shape) scale.getSpace().getShape()).asGeoJSON();
+                    body.put("intersects", contextShape);
+                    int timeout = 50000;
+                    HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body).header("Content-Type", "application/json")
+                            .connectTimeout(timeout).asJson();
+                    if (!response.isSuccess()) {
+                        throw new KlabIllegalStateException("ERROR AT READING MODELID");
+                    }
+                    
+                    List< ? > features = response.getBody().getObject().getJSONArray("features").toList();
+                    List< ? > potato = features.stream().filter(feature -> {
+//                        String coordinates = ((JSONObject) feature).getJSONObject("properties").getJSONObject("proj:geometry").toString();
+                        String coordinates = ((JSONObject) feature).getJSONObject("geometry").toString();
+                        Geometry coordGeom = GeoJSONReader.parseGeometry(coordinates);
+                        return coordGeom.intersects(GeoJSONReader.parseGeometry(new JSONObject(contextShape).toString()));
+                    }).toList();
+                        
+                    System.out.println(potato);
+//                        String modelID
+                            
+//                            getJSONObject(0).getJSONObject("properties").getString("modelID");
+                }
+
 
 				/*
 				 * must have space.resolution and either space.shape or space.bbox parameters
@@ -246,6 +280,18 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				}
 			}
 			
+            if (true) { // TODO test for Alpha02
+                STACEncoder encoder = new STACEncoder();
+                IResource stacResource = new ResourceBuilder("Test").withGeometry(scale).withAdapterType("STAC")
+                        .withParameter("collection", "https://catalogue.weed.apex.esa.int/collections/alpha2-test-results")
+                        .withParameter("asset", "ALP")
+                        .withParameter("updMagic", "")
+                        .build();
+                 encoder.getEncodedData(stacResource, Map.of(), geometry, builder, scope);
+                return;
+            }
+
+			
 			if (synchronous) {
 
 				RasterEncoder encoder = new RasterEncoder();
@@ -262,7 +308,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					throw t;
 				}
 			} else {
-
+                // TODO test for Alpha02
 				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), params,
 						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
 

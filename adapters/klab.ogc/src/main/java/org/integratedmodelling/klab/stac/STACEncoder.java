@@ -179,6 +179,7 @@ public class STACEncoder implements IResourceEncoder {
 
     private S3Client buildS3Client(String bucketRegion) throws IOException {
         ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+//        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials("weed");
         System.out.println(awsCredentials);
         AwsCredentials credentials = null;
         try {
@@ -233,7 +234,7 @@ public class STACEncoder implements IResourceEncoder {
         boolean isWENR = collectionUrl.contains("wenr") || collectionUrl.contains("wern");  // The WENR and all the other stuff are here itself..
         
         if (isWENR) {
-        	System.out.println("WENR Collection..");
+        	System.out.println("WENR Collection...");
         }
         
         boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha2-1"); // WEED Stuff
@@ -316,7 +317,7 @@ public class STACEncoder implements IResourceEncoder {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
             Time time2 = time; //TODO make the time and query time different
             features = features.stream().filter(f -> {
-            	org.locationtech.jts.geom.Geometry fGeometry = (org.locationtech.jts.geom.Geometry) f.getDefaultGeometry();
+                org.locationtech.jts.geom.Geometry fGeometry = (org.locationtech.jts.geom.Geometry) f.getDefaultGeometry();
                 return fGeometry.intersects(space.getShape().getJTSGeometry());
             }).toList();
             features = features.stream().filter(f -> isFeatureInTimeRange(time2, f)).toList();
@@ -368,7 +369,7 @@ public class STACEncoder implements IResourceEncoder {
         HMStacCollection collection = null;
         try {
             manager.open();
-            collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+            collection = manager.getCollectionById(collectionId);
         } catch (Exception e1) {
             throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
         }
