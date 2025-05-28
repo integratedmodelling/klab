@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.stac;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +15,13 @@ import org.geotools.coverage.processing.Operations;
 import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.hortonmachine.gears.io.rasterreader.OmsRasterReader;
+import org.hortonmachine.gears.io.rasterwriter.OmsRasterWriter;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.CrsUtilities;
@@ -58,6 +61,7 @@ import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
+import org.integratedmodelling.klab.stac.extensions.WEEDECDCExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Polygon;
@@ -204,7 +208,7 @@ public class STACEncoder implements IResourceEncoder {
                 .credentialsProvider(StaticCredentialsProvider.create(credentials))
                 .build();
     }
-
+    
     private boolean isDateWithinRange(Time rangeTime, Date date) {
         Date start = new Date(rangeTime.getStart().getMilliseconds());
         Date end =  new Date(rangeTime.getEnd().getMilliseconds());
@@ -214,13 +218,15 @@ public class STACEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
+    	System.out.println(resource.getParameters());
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = collectionData.getString("id");
         String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collectionData);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
         String assetId = resource.getParameters().get("asset", String.class);
-
+        String multiBandCOGBandStr = resource.getParameters().get("cogband", String.class);
+        
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
@@ -230,9 +236,7 @@ public class STACEncoder implements IResourceEncoder {
         	System.out.println("WENR Collection..");
         }
         
-        boolean isWEED = catalogUrl.contains("weed"); // WEED Stuff
-        
-
+        boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha2-1"); // WEED Stuff
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
                 .findFirst().orElseThrow();
         IEnvelope envelope = space.getEnvelope();
@@ -252,6 +256,60 @@ public class STACEncoder implements IResourceEncoder {
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
+        
+        if (isECDCWEED) {
+        	System.out.println("Getting Stuff from ECDC!");
+        	GridCoverage2D coverage = null;
+        	CoordinateReferenceSystem targetCRS = null;
+			try {
+				String rcrs = "EPSG:4326";
+	        	targetCRS = CRS.decode(rcrs, true);
+	        	coverage = WEEDECDCExtension.getECDCCoverage(bbox, geometry, multiBandCOGBandStr);
+	        	String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
+	            System.out.println("Received CRS: " + receivedCRS);
+	        	System.out.println("Target CRS: "+ rcrs);
+	    
+	            if (!receivedCRS.equals(rcrs)) {
+	            	System.out.println("CRS Mismatch in WEED ECDC STAC");
+	            	coverage = (GridCoverage2D) Operations.DEFAULT.resample(
+	    	                coverage, targetCRS);
+	            	}
+	            	System.out.println("Successfully Updated CRS");
+	            
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+            	
+			
+			HMRaster raster = HMRaster.fromGridCoverage(coverage);
+			org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(bbox.get(0),
+					bbox.get(1), bbox.get(2),bbox.get(3));
+			
+			System.out.println(bbox.get(0));
+			System.out.println(bbox.get(1));
+			System.out.println(bbox.get(2));
+			System.out.println(bbox.get(3));
+
+			int cols = (int) space.shape()[0];
+			int rows = (int) space.shape()[1];
+			
+			RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
+	        HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
+					.setCrs(targetCRS).setNoValue(raster.getNovalue()).build();
+	        GridCoverage2D paddedBandCoverage = null;
+	        try {
+				paddedRaster.mapRaster(null, raster, null);
+				paddedBandCoverage = paddedRaster.buildCoverage();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+        	encoder = new RasterEncoder();
+            ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, paddedBandCoverage, geometry, builder, scope);
+        	return;
+            }
+        	
         
         // These are the static STAC catalogs
         if (!hasSearchOption) {
@@ -328,7 +386,7 @@ public class STACEncoder implements IResourceEncoder {
         Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
         collection.setGeometryFilter(poly);
-
+        
         if (resourceTime != null && resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
             time = validateTemporalDimension(time, resourceTime);
         }
@@ -353,37 +411,27 @@ public class STACEncoder implements IResourceEncoder {
         
         
      /*
-      *  For WEED Hardcoding the values for now for the Search API
+      *  For WEED WENR Hardcoding the values for now for the Search API
       *  Discussions: 
       *  	a. https://chat.integratedmodelling.org/group/dsFnTgb3ti5ynCYhR?msg=2hFhyrmPyvJWihp8w
       *  	b. https://chat.integratedmodelling.org/group/PEOPLE_EA_WEED_internal?msg=XY53pvfw9RTYRi4Jy
       */ 
         
-        if (isWEED) { // For WEED the stuff is there for 2024
-        	try {
-				startDateFormatted = sdf.parse("2024-01-01");
-				endDateFormatted = sdf.parse("2024-12-31");
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-        }
-        
-        
-        // Reoveriding the Start and End date for the STAC Search Request
+
+    
         
         if (isWENR) { // For WENR there is no data in any other temporal bounds 
         	try {
 				startDateFormatted = sdf.parse("2020-01-01");
 				endDateFormatted = sdf.parse("2020-12-31");
+				
 			} catch (ParseException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
         }
         
-		collection.setTimestampFilter(startDateFormatted, endDateFormatted);
-
+        collection.setTimestampFilter(startDateFormatted, endDateFormatted);
         GridCoverage2D coverage = null;
         try {
             List<HMStacItem> items = collection.searchItems();
@@ -424,7 +472,7 @@ public class STACEncoder implements IResourceEncoder {
              * Hence, the check for aws_region doesn't matter
              * We are setting a random value, in this case US_EAST if the region is blank
              */
-            if (isWEED) { 
+            if (isECDCWEED || isWENR) { 
             	System.out.println("Found the Catalog for WEED!");
             	S3Client s3Client = null;
     			s3Client = buildS3Client("");

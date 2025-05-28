@@ -212,7 +212,7 @@ public class WcsEncoder implements IResourceEncoder {
 				// iterate over each bands, and pad them individually and 
 				// get the updated coverage
 				for (int b = 0; b < numBands; b++) {
-					
+					System.out.println("Doing for band " + b);
 					RenderedOp singleBandImage = BandSelectDescriptor.create(
 							coverage.getRenderedImage(),
 		                    new int[]{b},
@@ -237,7 +237,8 @@ public class WcsEncoder implements IResourceEncoder {
 					
 					paddedRaster.mapRaster(null, bandRaster, null);
 					GridCoverage2D paddedBandCoverage = paddedRaster.buildCoverage();
-					coverageList.add(paddedBandCoverage);					
+					coverageList.add(paddedBandCoverage);	
+					System.out.println("Done for band :" + b);
 					
 				}
 				coverage = process.execute(coverageList, null, null, null);

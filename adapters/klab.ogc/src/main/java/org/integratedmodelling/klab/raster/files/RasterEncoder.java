@@ -111,9 +111,10 @@ public class RasterEncoder implements IResourceEncoder {
         
         if (urnParameters.containsKey("band")) {
             band = Integer.parseInt(urnParameters.get("band"));
-        } else {
-            band = resource.getParameters().get("band", 0);
+        } else if (!resource.getAdapterType().equals("stac")) {
+            resource.getParameters().get("band", 0);
         }
+        
         int nBands = coverage.getNumSampleDimensions();
         Set<Double> nodata = getNodata(resource, coverage, band);
         GroovyShell shell = null;
@@ -153,7 +154,7 @@ public class RasterEncoder implements IResourceEncoder {
             // this is cheeky but will catch most of the nodata and
             // none of the good data
             // FIXME see if this is really necessary
-            if (value < -1.0E35 || value > 1.0E35) {
+            if (value < -999 || value > 1.0E35) {
                 value = Double.NaN;
             }
 

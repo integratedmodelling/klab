@@ -817,6 +817,9 @@ public enum Resources implements IResourceService {
 
         if (resource.hasErrors()) {
             // TODO report errors but leave the resource so we can validate any use of it
+        	for (Throwable e : errors) {
+        		System.out.print(e);
+        	}
             monitor.error("Resource " + urn + " has errors:");
         }
 

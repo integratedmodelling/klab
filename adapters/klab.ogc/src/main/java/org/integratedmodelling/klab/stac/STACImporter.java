@@ -61,7 +61,9 @@ public class STACImporter implements IResourceImporter {
 
         boolean isBulkImport = parameters.contains("bulkImport");
         parameters.remove("bulkImport");
+        
         if (!parameters.contains("asset") && !isBulkImport) {
+        	System.out.println("Couldn't find asset in Resource Params...");
             Builder builder = buildResource(parameters, project, monitor, collectionId);
             if (builder != null) {
                 ret.add(builder);
@@ -70,8 +72,13 @@ public class STACImporter implements IResourceImporter {
             }
             return;
         }
+        
         JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
+        
+        System.out.println(assets);
+        System.out.println(assetIds);
+        
         for(String assetId : assetIds) {
             if (regex != null && !assetId.matches(regex)) {
                 Logging.INSTANCE.info("Asset " + assetId + " doesn't match REGEX, skipped");

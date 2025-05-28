@@ -110,6 +110,7 @@ public class ResourceBuilder implements IResource.Builder {
 		if (this.requiredUrns != null) {
 			ret.dependencies.addAll(this.requiredUrns);
 		}
+		System.out.println(this.codelists.size());
 		for (CodelistReference cl : this.codelists) {
 		    File clfile = getLocalFile("code_" + cl.getId() + ".json");
 		    JsonUtils.save(cl, clfile);

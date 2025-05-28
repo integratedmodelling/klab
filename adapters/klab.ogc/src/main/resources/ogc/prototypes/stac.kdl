@@ -12,11 +12,12 @@
  		
  	optional text 'asset'
  		"The asset that is going to be retrieved from the items. Left it blank when the information is stored in the feature."
- 
- 	optional number 'band'
- 		"Relevant only for raster resources.
- 		 The band for a multi-band raster. Default is 0."
- 		default 0
+ 	
+ 	optional text 'cogband'
+ 		"The Band to be retrieved from a Multi Band COG. Expected name of the Band."
+ 		
+ 	optional text 'endpointurl'
+ 		"S3 Endpoint url."
  
  	optional enum 'bandmixer'
  		"Relevant only for raster resources.\n

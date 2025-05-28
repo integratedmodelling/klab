@@ -40,6 +40,7 @@ public class STACValidator implements IResourceValidator {
         if (!canHandle(null, userData)) {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
+        System.out.println("Starting to Validate STAC Resource...");
         String collectionUrl = userData.get("collection", String.class);
         String collectionId = userData.get("collectionId", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
@@ -48,16 +49,29 @@ public class STACValidator implements IResourceValidator {
             userData.put("collectionId", collectionId);
         }
         IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
-
-        Builder builder = new ResourceBuilder(urn)
-                .withParameters(userData)
-                .withGeometry(geometry)
-                .withType(Type.OBJECT);
+        
+        Builder builder = null;
+        
+     // Don't pass Asset for ECDC since ECDC is fucked up!
+    	if (collectionUrl.contains("ecosystem-characteristics-alpha2-1")) {
+    		System.out.println("Starting to Validate ECDC STAC resource...");
+    		builder = new ResourceBuilder(urn)
+                    .withParameters(userData)
+                    .withGeometry(geometry)
+                    .withType(Type.NUMBER); // Setting type to be Number instead of Object
+    	} else {
+    		builder = new ResourceBuilder(urn)
+                    .withParameters(userData)
+                    .withGeometry(geometry)
+                    .withType(Type.OBJECT);
+    	}
+        
 
         // The default URL of the resource is the collection endpoint. May be overwritten. 
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
-
+        
         if (userData.contains("asset")) {
+        	System.out.println("Found asset...");
             String assetId = userData.get("asset", String.class);
             JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
             JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
@@ -75,8 +89,12 @@ public class STACValidator implements IResourceValidator {
             if (type != null) {
                 builder.withType(type);
             }
+        } else {
+        	System.out.println("Didn't find asset..");
+        	CodelistReference codelistCollection = populateCodelist(collectionId);
+        	builder.addCodeList(codelistCollection);
         }
-
+        
         readMetadata(collectionData, builder);
         return builder;
     }
@@ -119,6 +137,19 @@ public class STACValidator implements IResourceValidator {
         });
         Type type = STACUtils.inferValueType(vals.entrySet().stream().findFirst().get().getKey());
         codelist.setType(type);
+        codelist.setDirectMapping(direct);
+        codelist.setInverseMapping(inverse);
+        return codelist;
+    }
+    
+    private CodelistReference populateCodelist(String collectionId) {
+        CodelistReference codelist = new CodelistReference();
+        codelist.setId(collectionId.toUpperCase());
+        codelist.setName(collectionId);
+        codelist.setAuthority(false);
+        codelist.setVersion("0.0.1");
+        MappingReference direct = new MappingReference();
+        MappingReference inverse = new MappingReference();
         codelist.setDirectMapping(direct);
         codelist.setInverseMapping(inverse);
         return codelist;
