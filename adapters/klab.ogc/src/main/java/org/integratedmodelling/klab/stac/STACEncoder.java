@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.stac;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
@@ -15,8 +14,6 @@ import org.geotools.coverage.processing.Operations;
 import org.geotools.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
-import org.hortonmachine.gears.io.rasterreader.OmsRasterReader;
-import org.hortonmachine.gears.io.rasterwriter.OmsRasterWriter;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
