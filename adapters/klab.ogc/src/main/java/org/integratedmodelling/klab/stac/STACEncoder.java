@@ -216,7 +216,7 @@ public class STACEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
-    	System.out.println(resource.getParameters());
+        System.out.println(resource.getParameters());
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = collectionData.getString("id");
@@ -229,11 +229,16 @@ public class STACEncoder implements IResourceEncoder {
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
         boolean isWENR = collectionUrl.contains("wenr") || collectionUrl.contains("wern");  // The WENR and all the other stuff are here itself..
+        boolean isAlphaResult = collectionData.getString("Description").contains("This is the STAC metadata for the openEO job");
         
+        if (isAlphaResult) {
+            System.out.println("Alpha2 Result Collection...");
+        }
+
         if (isWENR) {
         	System.out.println("WENR Collection...");
         }
-        
+
         boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha2-1"); // WEED Stuff
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
                 .findFirst().orElseThrow();
