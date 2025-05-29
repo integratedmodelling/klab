@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.hub.security.oauth2.AuthProvider;
 import org.integratedmodelling.klab.hub.tags.dto.ITagElement;
 import org.integratedmodelling.klab.hub.tags.dto.MongoTag;
 import org.integratedmodelling.klab.hub.tags.dto.TagEntry;
-import org.integratedmodelling.klab.rest.CustomProperty;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -86,7 +86,7 @@ public class User extends IdentityModel implements UserDetails, ITagElement {
 
     AccountStatus accountStatus = AccountStatus.pendingActivation;
 
-    Set<CustomProperty> customProperties = new HashSet<>();
+    Set<CustomPropertyRest> customProperties = new HashSet<>();
 
     public enum AccountStatus {
         active, locked, deleted, expired, pendingActivation, verified
@@ -419,23 +419,23 @@ public class User extends IdentityModel implements UserDetails, ITagElement {
         return tags.stream().filter(t -> !t.isSent()).collect(Collectors.toList());
     }
 
-    public Set<CustomProperty> getCustomProperties() {
+    public Set<CustomPropertyRest> getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(Set<CustomProperty> customProperties) {
+    public void setCustomProperties(Set<CustomPropertyRest> customProperties) {
         this.customProperties = customProperties;
     }
 
-    public void putCustomProperty(CustomProperty customProperty) {
+    public void putCustomProperty(CustomPropertyRest customProperty) {
         this.customProperties.add(customProperty);
     }
 
-    public void putCustomProperties(Collection<CustomProperty> customProperties) {
+    public void putCustomProperties(Collection<CustomPropertyRest> customProperties) {
         this.customProperties.addAll(customProperties);
     }
 
-    public Optional<CustomProperty> findCustomProperty(String key) {
+    public Optional<CustomPropertyRest> findCustomProperty(String key) {
         return customProperties.stream().filter(cp -> cp.getKey().equals(key)).findFirst();
     }
 

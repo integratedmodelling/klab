@@ -9,15 +9,15 @@ import java.util.Objects;
  *
  */
 
-public class CustomProperty {
+public class CustomPropertyRest {
     
     private String key;
     private String value;
     private boolean onlyAdmin;
     
-    public CustomProperty() {}
+    public CustomPropertyRest() {}
     
-    public CustomProperty(String key, String value, boolean onlyAdmin) {
+    public CustomPropertyRest(String key, String value, boolean onlyAdmin) {
         this.key = key;
         this.value = value;
         this.onlyAdmin = onlyAdmin;
@@ -53,7 +53,7 @@ public class CustomProperty {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        CustomProperty other = (CustomProperty) obj;
+        CustomPropertyRest other = (CustomPropertyRest) obj;
         return Objects.equals(key, other.key) && onlyAdmin == other.onlyAdmin && Objects.equals(value, other.value);
     }
     @Override
