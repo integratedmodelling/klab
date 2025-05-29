@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
-import org.integratedmodelling.klab.hub.users.JsonValidator;
+import org.integratedmodelling.klab.hub.users.JsonUtils;
 import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -126,23 +126,22 @@ public class CustomProperty extends GenericModel {
         CustomPropertyRest customPropertyRest =  new CustomPropertyRest();
         customPropertyRest.setKey(key);
         customPropertyRest.setOnlyAdmin(onlyAdmin);
+        
+        /* Set value as String */
         customPropertyRest.setValue(value);
         
-        if (JsonValidator.isValidJson(value)) {
-          customPropertyRest.setValueObject(getValueAsJsonNode());
+        /* If it's JSON or defined in CustomPropertyKey, convert it to its specific type. */
+        CustomPropertyKey propertyKey = CustomPropertyKey.fromKey(key);
+        if (propertyKey != null) {
+            try {
+                Object deserializedValue = mapper.readValue(value, propertyKey.getTypeReference());
+                customPropertyRest.setValueObject(deserializedValue);
+            } catch (Exception e) {
+                throw new RuntimeException("Error deserializing value for key: " + key, e);
+            }
+        } else if (JsonUtils.isValidJson(value)) {
+            customPropertyRest.setValueObject(getValueAsJsonNode());
         }
-        
-//        CustomPropertyKey propertyKey = CustomPropertyKey.fromKey(key);
-//        if (propertyKey != null) {
-//            try {
-//                Object deserializedValue = mapper.readValue(value, propertyKey.getTypeReference());
-//                customPropertyRest.setValueObject(deserializedValue);
-//            } catch (Exception e) {
-//                throw new RuntimeException("Error deserializing value for key: " + key, e);
-//            }
-//        } else if (JsonValidator.isValidJson(value)) {
-//            customPropertyRest.setValueObject(getValueAsJsonNode());
-//        }
         return customPropertyRest;
     }
 
