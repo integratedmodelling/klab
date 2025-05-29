@@ -140,7 +140,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					throw new KlabIllegalStateException("running a gridded OpenEO process in a non-grid context");
 				}
 
-                if (urnParameters.containsKey("modelId") || true) {
+                if (urnParameters.containsKey("modelId")) {
                     String searchURL = "https://catalogue.weed.apex.esa.int/search";
                     JSONObject body = new JSONObject();
                     body.put("collections", new JSONArray().put("model-STAC"));
@@ -154,19 +154,14 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                     }
                     
                     List< ? > features = response.getBody().getObject().getJSONArray("features").toList();
-                    List< ? > potato = features.stream().filter(feature -> {
-//                        String coordinates = ((JSONObject) feature).getJSONObject("properties").getJSONObject("proj:geometry").toString();
+                    List< ? > onnxModelId = features.stream().filter(feature -> {
                         String coordinates = ((JSONObject) feature).getJSONObject("geometry").toString();
                         Geometry coordGeom = GeoJSONReader.parseGeometry(coordinates);
                         return coordGeom.intersects(GeoJSONReader.parseGeometry(new JSONObject(contextShape).toString()));
                     }).toList();
-                        
-                    System.out.println(potato);
-//                        String modelID
-                            
-//                            getJSONObject(0).getJSONObject("properties").getString("modelID");
+                    String onnxModel = ((JSONObject)onnxModelId.get(0)).getJSONObject("properties").getString("modelID");
+                    params.put("onnx_models", onnxModel);
                 }
-
 
 				/*
 				 * must have space.resolution and either space.shape or space.bbox parameters
