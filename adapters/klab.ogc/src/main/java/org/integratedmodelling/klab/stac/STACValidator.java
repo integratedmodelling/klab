@@ -89,10 +89,6 @@ public class STACValidator implements IResourceValidator {
             if (type != null) {
                 builder.withType(type);
             }
-        } else {
-        	System.out.println("Didn't find asset..");
-        	CodelistReference codelistCollection = populateCodelist(collectionId);
-        	builder.addCodeList(codelistCollection);
         }
         
         readMetadata(collectionData, builder);
