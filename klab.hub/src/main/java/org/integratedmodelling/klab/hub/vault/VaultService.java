@@ -20,7 +20,10 @@ public class VaultService {
     }
 
     // Method to get the API key from Vault
-    public String getSecret(String path, String secret, String pathList) {
+    public String getSecret(String fullPath) {
+        
+        String secret = fullPath.substring(fullPath.lastIndexOf("/") + 1);
+        String path = fullPath.substring(0, fullPath.lastIndexOf("/"));
 
         // Reading the secret from Vault        
         VaultResponse response = vaultTemplate.read(path);
@@ -45,7 +48,7 @@ public class VaultService {
         
         JSONObject json = new JSONObject((Map) data);
         
-     // Check if the key 'secret' exists in the JSON object
+     // Check if the key 'exists in the JSON object
         if (json.has(secret)) {
             return json.get(secret).toString();  // Get the value if the key exists
         } else {
