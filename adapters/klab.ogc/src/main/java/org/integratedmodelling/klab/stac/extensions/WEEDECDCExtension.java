@@ -26,7 +26,6 @@ import java.net.URISyntaxException;
  */
 
 public class WEEDECDCExtension {
-
     public static GridCoverage2D getECDCCoverage(List<Double> bbox, IGeometry geometry, Object band) {
         System.out.println("Get Features call for WEED ECDC, Fetching Band" + band);
         String searchURL = "https://catalogue.weed.apex.esa.int/search";
@@ -50,43 +49,38 @@ public class WEEDECDCExtension {
         body.put("filter-lang", "cql2-json");
         body.put("bbox", bboxArr);
 
-        int timeout = 50000;
-        kong.unirest.HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body)
-                .header("Content-Type", "application/json").connectTimeout(timeout).asJson();
+        String assetURL = queryAssetHref(searchURL, body);
+        return buildCoverage(band, assetURL);
+    }
 
-        if (!response.isSuccess()) {
-            throw new KlabIllegalStateException("ERROR AT READING MODELID");
+    public static GridCoverage2D getAlphaResultCoverage(String searchUrl, List<Double> bbox, IGeometry geometry, Object band) {
+        System.out.println("Get Features call for WEED ECDC, Fetching Band" + band);
+        JSONObject body = new JSONObject();
+        JSONArray bboxArr = new JSONArray();
+
+        List<Double> qbbox = new ArrayList<>();
+        qbbox.add(bbox.get(0));
+        qbbox.add(bbox.get(2));
+        qbbox.add(bbox.get(1));
+        qbbox.add(bbox.get(3));
+
+        for (Double coord : qbbox) {
+            System.out.println(coord);
+            bboxArr.put(coord);
         }
 
-        JSONArray features = response.getBody().getObject().getJSONArray("features");
-        System.out.println("Found Items: " + features.length());
-        JSONObject feature = features.getJSONObject(0); // assuming only one object in this case; if
-                                                        // more then we are ignoring :()
+        System.out.println("Getting band " + band + " from ECDC STAC");
+        body.put("limit", 20);
+        body.put("collections", new JSONArray().put("ecosystem-characteristics-alpha2-1"));
+        body.put("filter-lang", "cql2-json");
+        body.put("bbox", bboxArr);
 
-        for (String key : feature.keySet()) {
-            System.out.println("Key: " + key);
-        }
+        String assetURL = queryAssetHref(searchUrl, body);
+        return buildCoverage(band, assetURL);
+    }
 
-        String assetHref = "";
 
-        JSONObject asset = feature.getJSONObject("assets");
-        for (String key : asset.keySet()) {
-            try {
-                assetHref = asset.getJSONObject(key).getString("href");
-                break;
-            } catch (Exception e) {
-
-            }
-        }
-
-        System.out.println("Found Asset Href: " + assetHref + " getting stuff from S3..");
-
-        String[] bucketAndObject = assetHref.split("://")[1].split("/", 2);
-
-        System.out.println(bucketAndObject[0]);
-        System.out.println(bucketAndObject[1]);
-
-        String assetURL = getECDCAssetURL(bucketAndObject[0], bucketAndObject[1]);
+    private static GridCoverage2D buildCoverage(Object band, String assetURL) {
         GridCoverage2D gcov = null;
         try {
 
@@ -128,6 +122,48 @@ public class WEEDECDCExtension {
             e.printStackTrace();
         }
         return gcov;
+    }
+
+    private static String queryAssetHref(String searchURL, JSONObject body) {
+        int timeout = 50000;
+        kong.unirest.HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body)
+                .header("Content-Type", "application/json").connectTimeout(timeout).asJson();
+
+        if (!response.isSuccess()) {
+            throw new KlabIllegalStateException("ERROR AT READING MODELID");
+        }
+
+        JSONArray features = response.getBody().getObject().getJSONArray("features");
+        System.out.println("Found Items: " + features.length());
+        JSONObject feature = features.getJSONObject(0); // assuming only one object in this case; if
+                                                        // more then we are ignoring :()
+
+        for (String key : feature.keySet()) {
+            System.out.println("Key: " + key);
+        }
+
+        String assetHref = "";
+
+        JSONObject asset = feature.getJSONObject("assets");
+        for (String key : asset.keySet()) {
+            try {
+                assetHref = asset.getJSONObject(key).getString("href");
+                break;
+            } catch (Exception e) {
+
+            }
+        }
+
+        System.out.println("Found Asset Href: " + assetHref + " getting stuff from S3..");
+
+        String[] bucketAndObject = assetHref.split("://")[1].split("/", 2);
+
+        System.out.println(bucketAndObject[0]);
+        System.out.println(bucketAndObject[1]);
+
+        // TODO generalize it for other collections
+        String assetURL = getECDCAssetURL(bucketAndObject[0], bucketAndObject[1]);
+        return assetURL;
     }
 
     /*
