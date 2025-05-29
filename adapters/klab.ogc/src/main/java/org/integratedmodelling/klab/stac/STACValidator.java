@@ -137,19 +137,6 @@ public class STACValidator implements IResourceValidator {
         codelist.setInverseMapping(inverse);
         return codelist;
     }
-    
-    private CodelistReference populateCodelist(String collectionId) {
-        CodelistReference codelist = new CodelistReference();
-        codelist.setId(collectionId.toUpperCase());
-        codelist.setName(collectionId);
-        codelist.setAuthority(false);
-        codelist.setVersion("0.0.1");
-        MappingReference direct = new MappingReference();
-        MappingReference inverse = new MappingReference();
-        codelist.setDirectMapping(direct);
-        codelist.setInverseMapping(inverse);
-        return codelist;
-    }
 
     private void readMetadata(final JSONObject json, Builder builder) {
         // We could check the doi only if the Scientific Notation extension is provided, but we can try anyway

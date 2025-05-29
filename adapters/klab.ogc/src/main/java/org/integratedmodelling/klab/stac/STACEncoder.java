@@ -177,10 +177,9 @@ public class STACEncoder implements IResourceEncoder {
                 "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private S3Client buildS3Client(String bucketRegion) throws IOException {
-        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+    private S3Client buildS3Client(String endpointURL, String bucketRegion) throws IOException {
+        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(endpointURL);
 //        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials("weed");
-        System.out.println(awsCredentials);
         AwsCredentials credentials = null;
         try {
             credentials = AwsBasicCredentials.create(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
@@ -188,18 +187,24 @@ public class STACEncoder implements IResourceEncoder {
             throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
         }
         
-        String endpointURL = awsCredentials.getURL();
-        if (bucketRegion.isEmpty()) {
+        if (bucketRegion instanceof String) {
+        	if (bucketRegion.isEmpty()) {
+            	bucketRegion = Region.US_EAST_1.toString(); 
+            }
+        } else {
         	bucketRegion = Region.US_EAST_1.toString(); 
         }
         
-        if (!endpointURL.isEmpty()) {
-        	return S3Client.builder()
-        			.endpointOverride(URI.create(endpointURL))
-                    .httpClientBuilder(ApacheHttpClient.builder())
-                    .region(Region.of(bucketRegion))
-                    .credentialsProvider(StaticCredentialsProvider.create(credentials))
-                    .build();
+        if (endpointURL instanceof String) {
+        	
+            if (!endpointURL.isEmpty()) {
+                return S3Client.builder()
+                        .endpointOverride(URI.create(endpointURL))
+                        .httpClientBuilder(ApacheHttpClient.builder())
+                        .region(Region.of(bucketRegion))
+                        .credentialsProvider(StaticCredentialsProvider.create(credentials))
+                        .build();
+            }
         }
   
         
@@ -227,15 +232,12 @@ public class STACEncoder implements IResourceEncoder {
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
         String assetId = resource.getParameters().get("asset", String.class);
         String multiBandCOGBandStr = resource.getParameters().get("cogband", String.class);
+        String s3EndpointURL = resource.getParameters().get("endpointurl", String.class);
         
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
         boolean isWENR = collectionUrl.contains("wenr") || collectionUrl.contains("wern");  // The WENR and all the other stuff are here itself..
-        
-        if (isWENR) {
-        	System.out.println("WENR Collection...");
-        }
         
         boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha2-1"); // WEED Stuff
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
@@ -461,24 +463,20 @@ public class STACEncoder implements IResourceEncoder {
             if (EPSGsAtItems.size() > 1) {
                 scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
             }
-
-            if (resource.getParameters().contains("awsRegion")) {
-                String bucketRegion = resource.getParameters().get("awsRegion", String.class);
-                S3Client s3Client = buildS3Client(bucketRegion);
-                collection.setS3Client(s3Client);
-            }
             
             /*
              * For WEED the region doesn't matter since, they have an Endpoint URL
              * Hence, the check for aws_region doesn't matter
              * We are setting a random value, in this case US_EAST if the region is blank
              */
-            if (isECDCWEED || isWENR) { 
-            	System.out.println("Found the Catalog for WEED!");
-            	S3Client s3Client = null;
-    			s3Client = buildS3Client("");
+
+            if (resource.getParameters().contains("awsRegion") || resource.getParameters().contains("endpointurl")) {
+            	System.out.println("Setting up S3 Client, found AWS Region or an Endpoint URL");
+                String bucketRegion = resource.getParameters().get("awsRegion", String.class);
+                S3Client s3Client = buildS3Client(s3EndpointURL,bucketRegion);
                 collection.setS3Client(s3Client);
             }
+            
 
             // Allow transform ensures the process to finish, but I would not bet on the resulting
             // data.
@@ -486,7 +484,7 @@ public class STACEncoder implements IResourceEncoder {
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
             coverage = outRaster.buildCoverage();
             String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
-            String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+            String rcrs = "EPSG:4326";
             System.out.println("Received CRS: " + receivedCRS);
         	System.out.println("Target CRS: "+ rcrs);
             if (!receivedCRS.equals(rcrs)) {
