@@ -166,7 +166,8 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				/*
 				 * must have space.resolution and either space.shape or space.bbox parameters
 				 */
-				if (resource.getParameters().containsKey("space.resolution")) {
+				if (resource.getParameters().containsKey("space.resolution")
+				        && !resource.getParameters().get("space.resolution").equals("?")) {
 					List<Number> resolution = new ArrayList<>();
 					resolution.add(grid.getCellWidth());
 					resolution.add(grid.getCellHeight());
@@ -174,9 +175,6 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					params.put(resource.getParameters().get("space.resolution", String.class), 10);
 //							grid.getCellWidth()/* resolution */);
 
-                } else {
-                    throw new KlabIllegalStateException(
-                            "resource does not specify space.resolution parameter");
                 }
 
 				if (resource.getParameters().containsKey("space.shape") && !resource.getParameters().get("space.shape").equals("?")) {
@@ -187,11 +185,20 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                             ((Shape) scale.getSpace().getShape()).asGeoJSON());
 
                 } else if (resource.getParameters().containsKey("space.bbox") && !resource.getParameters().get("space.bbox").equals("?")) {
-                    File jsonFile = new File("./src/main/resources/weed/alpha01bboxes.json");
+                    File jsonFile = null;
+                    if (resource.getUrn().contains("alpha1")) { // TODO I don't like this
+                        jsonFile =  new File("./src/main/resources/weed/alpha01bboxes.json");
+                    } else if (resource.getUrn().contains("alpha2")) {
+                        jsonFile = new File("./src/main/resources/weed/alpha02bboxes.json");
+                    }
                     JSONObject bbox = new JSONObject();
                     try {
                         JSONObject bboxes = new JSONObject(FileUtils.readFileToString(jsonFile));
-                        bbox = bboxes.getJSONObject(urnParameters.get("bbox"));
+                        if (resource.getUrn().contains("alpha1")) { // TODO I don't like this
+                            bbox = bboxes.getJSONObject(urnParameters.get("bbox"));
+                        } else if (resource.getUrn().contains("alpha2")) {
+                            bbox = bboxes.getJSONObject(urnParameters.get("area_name"));
+                        }
                         if (bbox == null) {
                             throw new Exception("I know, I know... this is not beautiful.");
                         }
@@ -222,7 +229,8 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				}
 			}
 
-			if (scale.getSpace() != null && resource.getParameters().contains("space.projection")) {
+			if (scale.getSpace() != null && resource.getParameters().contains("space.projection")
+			        && !resource.getParameters().get("space.projection").equals("?")) {
 				Object projectionData = scale.getSpace().getProjection().getSimpleSRS().startsWith("EPSG:")
 						? Integer.parseInt(scale.getSpace().getProjection().getSimpleSRS().substring(5))
 						: ((Projection) scale.getSpace().getProjection()).getWKTDefinition();
@@ -237,8 +245,11 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				if (resource.getParameters().containsKey("time.year")) {
 					if (scale.getTime().getResolution().getType() == Type.YEAR
 							&& scale.getTime().getResolution().getMultiplier() == 1) {
-					    params.put(resource.getParameters().get("time.year", String.class), 2021);
-//								scale.getTime().getStart().getYear());
+                        if (resource.getUrn().contains("alpha1")) { // TODO I don't like this
+                            params.put(resource.getParameters().get("time.year", String.class), 2021);
+                        } else if (resource.getUrn().contains("alpha2")) {
+                            params.put(resource.getParameters().get("time.year", String.class), 2024);
+                        }
 					} else {
 						throw new KlabUnsupportedFeatureException("non-yearly use of yearly OpenEO resource");
 					}
@@ -275,6 +286,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				}
 			}
 			
+			/*
             if (true) { // TODO test for Alpha02
                 STACEncoder encoder = new STACEncoder();
                 IResource stacResource = new ResourceBuilder("Test").withGeometry(scale).withAdapterType("STAC")
@@ -285,6 +297,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                  encoder.getEncodedData(stacResource, Map.of(), geometry, builder, scope);
                 return;
             }
+            */
 
 			
 			if (synchronous) {
