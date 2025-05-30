@@ -111,7 +111,7 @@ public class STACEncoder implements IResourceEncoder {
     public ICodelist categorize(IResource resource, String attribute, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
-    }
+    } 
 
     private Time refitTime(Time contextTime, Time resourceTime) {
         if (resourceTime.getCoveredExtent() < contextTime.getCoveredExtent()) {
