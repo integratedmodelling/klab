@@ -140,7 +140,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					throw new KlabIllegalStateException("running a gridded OpenEO process in a non-grid context");
 				}
 
-                if (urnParameters.containsKey("modelId")) {
+                if (urnParameters.containsValue("modelId")) {
                     String searchURL = "https://catalogue.weed.apex.esa.int/search";
                     JSONObject body = new JSONObject();
                     body.put("collections", new JSONArray().put("model-STAC"));
@@ -160,7 +160,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                         return coordGeom.intersects(GeoJSONReader.parseGeometry(new JSONObject(contextShape).toString()));
                     }).toList();
                     String onnxModel = ((JSONObject)onnxModelId.get(0)).getJSONObject("properties").getString("modelID");
-                    params.put("onnx_models", onnxModel);
+                    params.put("onnx_model_id", onnxModel);
                 }
 
 				/*
