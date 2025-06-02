@@ -160,6 +160,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                         return coordGeom.intersects(GeoJSONReader.parseGeometry(new JSONObject(contextShape).toString()));
                     }).toList();
                     String onnxModel = ((JSONObject)onnxModelId.get(0)).getJSONObject("properties").getString("modelID");
+                    params.remove("modelId");
                     params.put("onnx_model_id", onnxModel);
                 }
 
