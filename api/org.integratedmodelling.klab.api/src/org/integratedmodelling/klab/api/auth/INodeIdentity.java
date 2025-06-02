@@ -89,4 +89,6 @@ public interface INodeIdentity extends IServerIdentity {
      * @return
      */
     String getVersion();
+    
+    IIdentity.Type getType();
 }
