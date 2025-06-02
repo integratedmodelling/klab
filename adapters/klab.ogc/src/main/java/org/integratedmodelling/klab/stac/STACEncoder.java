@@ -261,7 +261,7 @@ public class STACEncoder implements IResourceEncoder {
             } catch (IOException e) {
                throw new KlabResourceAccessException("Cannot extract features from IIASA catalog - " + e.getMessage());
             }
-            encoder = new VectorEncoder();
+            encoder = new VectorEncoder(); 
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
