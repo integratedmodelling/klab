@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+
+import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -20,6 +22,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.ICodelist;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution.Type;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -28,7 +31,6 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
@@ -44,7 +46,7 @@ import org.integratedmodelling.klab.openeo.OpenEO.ProcessNode;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.stac.STACEncoder;
+import org.integratedmodelling.klab.stac.extensions.WEEDECDCExtension;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -323,6 +325,23 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
 				try {
 					Map<String, Object> results = job.get(); 
+
+                    if (resource.getUrn().contains("alpha2")) {
+                        // TODO do stuff
+                        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst()
+                                .orElseThrow();
+                        IEnvelope envelope = space.getEnvelope();
+                        List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(),
+                                envelope.getMaxY());
+                        GridCoverage2D coverage = WEEDECDCExtension
+                                .getAlphaResultCoverage("https://catalogue.weed.apex.esa.int/search",
+                                        params.getString("digitalId") + "-" + params.getString("scenarioId"),
+                                        bbox, geometry, "Level2_class-Q_habitat-Q5-50500");
+                        RasterEncoder encoder = new RasterEncoder();
+                        encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+
+                        return;
+                    }
 
 					if (job.isCancelled()) {
 						scope.getMonitor().warn("job canceled");

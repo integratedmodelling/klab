@@ -53,7 +53,7 @@ public class WEEDECDCExtension {
         return buildCoverage(band, assetURL);
     }
 
-    public static GridCoverage2D getAlphaResultCoverage(String searchUrl, List<Double> bbox, IGeometry geometry, Object band) {
+    public static GridCoverage2D getAlphaResultCoverage(String searchUrl, String collectionId, List<Double> bbox, IGeometry geometry, Object band) {
         System.out.println("Get Features call for WEED ECDC, Fetching Band" + band);
         JSONObject body = new JSONObject();
         JSONArray bboxArr = new JSONArray();
@@ -71,14 +71,13 @@ public class WEEDECDCExtension {
 
         System.out.println("Getting band " + band + " from ECDC STAC");
         body.put("limit", 20);
-        body.put("collections", new JSONArray().put("ecosystem-characteristics-alpha2-1"));
+        body.put("collections", new JSONArray().put(collectionId));
         body.put("filter-lang", "cql2-json");
         body.put("bbox", bboxArr);
 
         String assetURL = queryAssetHref(searchUrl, body);
         return buildCoverage(band, assetURL);
     }
-
 
     private static GridCoverage2D buildCoverage(Object band, String assetURL) {
         GridCoverage2D gcov = null;
@@ -175,7 +174,7 @@ public class WEEDECDCExtension {
         URI uri = null;
         try {
             uri = new URI("https", "s3.waw4-1.cloudferro.com", "/swift/v1/" + s3Bucket + "/" + s3Path, null);
-            return "/vsicurl/" + uri.toASCIIString();
+            return uri.toASCIIString();
         } catch (URISyntaxException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
