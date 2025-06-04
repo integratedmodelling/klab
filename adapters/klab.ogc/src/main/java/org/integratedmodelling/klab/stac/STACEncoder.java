@@ -236,12 +236,13 @@ public class STACEncoder implements IResourceEncoder {
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
         boolean isWENR = collectionUrl.contains("wenr") || collectionUrl.contains("wern");  // The WENR and all the other stuff are here itself..
-        //boolean isAlphaResult = collectionData.getString("Description").contains("This is the STAC metadata for the openEO job");
-        
-//        if (isAlphaResult) {
-//            System.out.println("Alpha2 Result Collection...");
-//        }
+        /*
+        boolean isAlphaResult = collectionData.getString("Description").contains("This is the STAC metadata for the openEO job");
 
+        if (isAlphaResult) {
+            System.out.println("Alpha2 Result Collection...");
+        }
+         */
         if (isWENR) {
         	System.out.println("WENR Collection...");
         }
@@ -264,7 +265,7 @@ public class STACEncoder implements IResourceEncoder {
             } catch (IOException e) {
                throw new KlabResourceAccessException("Cannot extract features from IIASA catalog - " + e.getMessage());
             }
-            encoder = new VectorEncoder();
+            encoder = new VectorEncoder(); 
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
