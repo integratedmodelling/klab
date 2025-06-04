@@ -230,6 +230,7 @@ public class STACEncoder implements IResourceEncoder {
         String assetId = resource.getParameters().get("asset", String.class);
         String multiBandCOGBandStr = resource.getParameters().get("cogband", String.class);
         String s3EndpointURL = resource.getParameters().get("endpointurl", String.class);
+        String bandMixerMethod = resource.getParameters().get("bandmixer", String.class);
         
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
@@ -245,7 +246,9 @@ public class STACEncoder implements IResourceEncoder {
         	System.out.println("WENR Collection...");
         }
 
-        boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha2-1"); // WEED Stuff
+        boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha2-1"); // ECDC
+        boolean isPreprocessedResults = collectionUrl.contains("inference-alpha2-prepared-v101"); // Preprocessed habitat prob datacubes
+        
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
                 .findFirst().orElseThrow();
         IEnvelope envelope = space.getEnvelope();
@@ -318,6 +321,69 @@ public class STACEncoder implements IResourceEncoder {
             ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, paddedBandCoverage, geometry, builder, scope);
         	return;
             }
+        
+        
+        if (isPreprocessedResults) {
+        	System.out.println("Getting Stuff from Preprocessed Habitat Cubes");
+        	int typologyLevel = 1;
+        	if (bandMixerMethod.endsWith("2")) {
+        		typologyLevel = 2;
+        	} else if (bandMixerMethod.endsWith("3")) {
+        		typologyLevel = 3;
+        	}
+        
+        	System.out.println("WEED Heirarchical Bandmixer to be applied until Found typology level: " + typologyLevel);
+        	
+        	GridCoverage2D coverage = null;
+        	CoordinateReferenceSystem targetCRS = null;
+			try {
+				String rcrs = "EPSG:4326";
+	        	targetCRS = CRS.decode(rcrs, true);
+	        	coverage = WEEDECDCExtension.getWEEDResultCoverage(bbox, geometry, typologyLevel);
+	        	String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
+	            System.out.println("Received CRS: " + receivedCRS);
+	        	System.out.println("Target CRS: "+ rcrs);
+	    
+	            if (!receivedCRS.equals(rcrs)) {
+	            	System.out.println("CRS Mismatch in WEED ECDC STAC");
+	            	coverage = (GridCoverage2D) Operations.DEFAULT.resample(
+	    	                coverage, targetCRS);
+	            	}
+	            	System.out.println("Successfully Updated CRS");
+	            
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+			HMRaster raster = HMRaster.fromGridCoverage(coverage);
+			org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(bbox.get(0),
+					bbox.get(1), bbox.get(2),bbox.get(3));
+			
+			System.out.println(bbox.get(0));
+			System.out.println(bbox.get(1));
+			System.out.println(bbox.get(2));
+			System.out.println(bbox.get(3));
+
+			int cols = (int) space.shape()[0];
+			int rows = (int) space.shape()[1];
+			
+			RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
+	        HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
+					.setCrs(targetCRS).setNoValue(raster.getNovalue()).build();
+	        GridCoverage2D paddedBandCoverage = null;
+	        try {
+				paddedRaster.mapRaster(null, raster, null);
+				paddedBandCoverage = paddedRaster.buildCoverage();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+        	encoder = new RasterEncoder();
+            ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, paddedBandCoverage, geometry, builder, scope);
+        	return;
+        	
+        }
         	
         
         // These are the static STAC catalogs

@@ -59,6 +59,12 @@ public class STACValidator implements IResourceValidator {
                     .withParameters(userData)
                     .withGeometry(geometry)
                     .withType(Type.NUMBER); // Setting type to be Number instead of Object
+    		
+    	} else if (collectionUrl.contains("inference-alpha2-prepared-v101")){
+    		builder = new ResourceBuilder(urn)
+                    .withParameters(userData)
+                    .withGeometry(geometry)
+                    .withType(Type.NUMBER); // Setting type to be Number instead of Object
     	} else {
     		builder = new ResourceBuilder(urn)
                     .withParameters(userData)

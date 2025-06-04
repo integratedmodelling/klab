@@ -131,7 +131,9 @@ public class RasterEncoder implements IResourceEncoder {
         String bandMixer = null;
         if (resource.getParameters().contains("bandmixer")) {
             bandMixer = resource.getParameters().get("bandmixer", String.class);
-            if (!RasterAdapter.bandMixingOperations.contains(bandMixer)) {
+            if (resource.getAdapterType().equals("stac") && bandMixer.contains("WEED")){
+            	bandMixer = null;
+            } else if (!RasterAdapter.bandMixingOperations.contains(bandMixer)) {
                 throw new KlabUnsupportedFeatureException("Unsupported band mixing operation " + bandMixer);
             }
         }

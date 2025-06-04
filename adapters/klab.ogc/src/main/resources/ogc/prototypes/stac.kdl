@@ -19,11 +19,10 @@
  	optional text 'endpointurl'
  		"S3 Endpoint url."
  
- 	optional enum 'bandmixer'
+ 	optional text 'bandmixer'
  		"Relevant only for raster resources.\n
  		 The operation that will merge the raster bands into a single observation.\n
  		 Restricted to the following values: max_band, min_band, max_value, min_value, avg_value and sum_value"
-		values max_band, min_band, max_value, min_value, avg_value, sum_value
 		default ""
  		
  }
