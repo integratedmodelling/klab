@@ -110,6 +110,7 @@ public class NodeAuthResponeFactory {
 
             NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity,
                     Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class).getName(), groups,
+                    NodeNetworkManager.INSTANCE.getServiceReferences(),
                     NetworkKeyManager.INSTANCE.getEncodedPublicKey());
             NodeNetworkManager.INSTANCE.notifyAuthorizedNode(nodeIdentity, true);
             return response;
@@ -139,6 +140,7 @@ public class NodeAuthResponeFactory {
                 node.getId());
 
         NodeAuthenticationResponse response = new NodeAuthenticationResponse(authenticatedIdentity, hub.getName(), groups,
+                NodeNetworkManager.INSTANCE.getServiceReferences(),
                 NetworkKeyManager.INSTANCE.getEncodedPublicKey());
 
         NodeNetworkManager.INSTANCE.notifyAuthorizedNode(node, true);
