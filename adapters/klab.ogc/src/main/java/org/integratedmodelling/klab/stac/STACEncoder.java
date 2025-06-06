@@ -160,7 +160,7 @@ public class STACEncoder implements IResourceEncoder {
             monitor.debug("Using substitute as merge mode");
             return HMRaster.MergeMode.SUBSTITUTE;
         default:
-            monitor.debug("Defaulting to average as merge mode");
+            monitor.debug("Defaulting to average as merge mode"); 
             return HMRaster.MergeMode.AVG;
         }
     }
