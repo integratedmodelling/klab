@@ -130,6 +130,122 @@ public class WcsEncoder implements IResourceEncoder {
 			throw new KlabIOException(e);
 		}
 	}
+	
+	
+	public static GridCoverage2D getAdjustedCoverage(GridCoverage2D inCoverage, IGeometry geometry) {
+		try {
+			Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
+			String rcrs = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+			Projection crs = Projection.create(rcrs);
+			int cols = (int) space.shape()[0];
+			int rows = (int) space.shape()[1];
+			System.out.println(rows);
+			System.out.println(cols);
+			double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
+			String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(inCoverage.getCoordinateReferenceSystem(), true));
+					
+			// If CRS of the Received Raster doesn't match with the expected one
+			// we reproject the coverage, so needless to say that some info would always be lost
+			// usually, in klab we work with EPSG:4326, but from OpenEO we usually get stuff in EPSG:3035
+			// atleast for WEED Project, they do so and if we pass target_epsg: 4326, it fails. 
+			if (!receivedCRS.equals(rcrs)) {
+				System.out.println("Received CRS: " + receivedCRS);
+				System.out.println("Expected CRS: " + rcrs);
+				System.out.println("Received CRS and Expected CRS doesn't match...");
+				System.out.println("Writring updated Coverage in the Target CRS");
+				CoordinateReferenceSystem targetCRS = CRS.decode(rcrs, true);
+				// Reproject the raster
+		        inCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
+		                inCoverage, targetCRS
+		        );
+		        System.out.println("Sucessfully written updated coverage..");
+			}
+			
+			int numBands = inCoverage.getRenderedImage().getSampleModel().getNumBands();
+			System.out.println("Num Bands: "+ numBands);
+	        
+			Envelope envelope = inCoverage.getEnvelope();
+			DirectPosition lowerCorner = envelope.getLowerCorner();
+			double[] westSouth = lowerCorner.getCoordinate();
+			DirectPosition upperCorner = envelope.getUpperCorner();
+			double[] eastNorth = upperCorner.getCoordinate();
+
+			org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(extent[0],
+					extent[1], extent[2], extent[3]);
+			
+			System.out.println("Requested Extent:");
+			System.out.println(extent[0]);
+			System.out.println(extent[1]);
+			System.out.println(extent[2]);
+			System.out.println(extent[3]);
+
+			
+			org.locationtech.jts.geom.Envelope recievedExtend = new org.locationtech.jts.geom.Envelope(westSouth[0],
+					eastNorth[0], westSouth[1], eastNorth[1]);
+
+			double recievedArea = recievedExtend.getArea();
+			System.out.println(recievedArea);
+			
+			double requestedArea = requestedExtend.getArea();
+			double diff = Math.abs(requestedArea - recievedArea);
+			// double diff = requestedArea - recievedArea;
+			System.out.println(requestedArea);
+			System.out.println("Diff b/w Requested and Received:");
+			System.out.println(requestedArea - recievedArea);
+			if (diff > 0) { // diff in degree angles^2 since we are working with EPSG:4326
+				// need to pad
+				System.out.println("Padding Stuff...");
+				
+				HMRaster raster = HMRaster.fromGridCoverage(inCoverage);
+				RegionMap region = RegionMap.fromEnvelopeAndGrid(requestedExtend, cols, rows);
+
+				BandMergeProcess process = new BandMergeProcess();
+				List<GridCoverage2D> coverageList = new ArrayList<>();
+				
+				// iterate over each bands, and pad them individually and 
+				// get the updated coverage
+				for (int b = 0; b < numBands; b++) {
+					System.out.println("Doing for band " + b);
+					RenderedOp singleBandImage = BandSelectDescriptor.create(
+							inCoverage.getRenderedImage(),
+		                    new int[]{b},
+		                    null
+		            );
+					
+					GridSampleDimension bandSampleDimension = inCoverage.getSampleDimension(b);
+					GridCoverageFactory factory = new GridCoverageFactory();
+
+		            GridCoverage2D singleBandCoverage = factory.create(
+		                    "Band_" + (b + 1),
+		                    singleBandImage,
+		                    inCoverage.getEnvelope(),
+		                    new GridSampleDimension[]{bandSampleDimension},
+		                    null,
+		                    null
+		            );
+		            
+					HMRaster bandRaster = HMRaster.fromGridCoverage(singleBandCoverage);
+					HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
+							.setCrs(crs.getCoordinateReferenceSystem()).setNoValue(raster.getNovalue()).build();
+					
+					paddedRaster.mapRaster(null, bandRaster, null);
+					GridCoverage2D paddedBandCoverage = paddedRaster.buildCoverage();
+					coverageList.add(paddedBandCoverage);	
+					System.out.println("Done for band :" + b);
+					
+				}
+				inCoverage = process.execute(coverageList, null, null, null);
+			}
+			
+			numBands = inCoverage.getRenderedImage().getSampleModel().getNumBands();
+			System.out.println("Num Bands after Everything.. : "+ numBands);
+			return inCoverage;
+
+		} catch (Throwable e) {
+			e.printStackTrace();
+			throw new KlabIOException(e);
+		}
+	}
 
 	
 	public static File getAdjustedCoverage(InputStream input, IGeometry geometry) {

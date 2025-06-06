@@ -189,17 +189,17 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
                 } else if (resource.getParameters().containsKey("space.bbox") && !resource.getParameters().get("space.bbox").equals("?")) {
                     File jsonFile = null;
-                    if (resource.getUrn().contains("alpha1")) { // TODO I don't like this
+                    if (resource.getParameters().get("namespace", String.class).contains("alpha1")) { // TODO I don't like this
                         jsonFile =  new File("./src/main/resources/weed/alpha01bboxes.json");
-                    } else if (resource.getUrn().contains("alpha2")) {
+                    } else if (resource.getParameters().get("namespace", String.class).contains("alpha2")) {
                         jsonFile = new File("./src/main/resources/weed/alpha02bboxes.json");
                     }
                     JSONObject bbox = new JSONObject();
                     try {
                         JSONObject bboxes = new JSONObject(FileUtils.readFileToString(jsonFile));
-                        if (resource.getUrn().contains("alpha1")) { // TODO I don't like this
+                        if (resource.getParameters().get("namespace", String.class).contains("alpha1")) { // TODO I don't like this
                             bbox = bboxes.getJSONObject(urnParameters.get("bbox"));
-                        } else if (resource.getUrn().contains("alpha2")) {
+                        } else if (resource.getParameters().get("namespace", String.class).contains("alpha2")) {
                             bbox = bboxes.getJSONObject(urnParameters.get("area_name"));
                         }
                         if (bbox == null) {
@@ -326,17 +326,35 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				try {
 					Map<String, Object> results = job.get(); 
 
-                    if (resource.getUrn().contains("alpha2")) {
+                    if (resource.getParameters().get("namespace", String.class).contains("alpha2")) { // alpha 2 UDP from VITO
                         // TODO do stuff
                         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst()
                                 .orElseThrow();
                         IEnvelope envelope = space.getEnvelope();
                         List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(),
                                 envelope.getMaxY());
+                        
+                        int typologyLevel = 1;
+                        if (resource.getParameters().get("bandmixer") != null) {
+                        	if (resource.getParameters().get("bandmixer", String.class).startsWith("WEED")) {
+                            	
+                            	if (resource.getParameters().get("bandmixer", String.class).endsWith("2")) {
+                                	typologyLevel = 2;
+                                } 
+                            	
+                            	if (resource.getParameters().get("bandmixer", String.class).endsWith("3")) {
+                                	typologyLevel = 3;
+                                } 
+                            }
+                        }
+                        System.out.println("Found typology level: " + typologyLevel);
+                 
+                        
                         GridCoverage2D coverage = WEEDECDCExtension
-                                .getAlphaResultCoverage("https://catalogue.weed.apex.esa.int/search",
-                                        params.getString("digitalId") + "-" + params.getString("scenarioId"),
-                                        bbox, geometry, "Level2_class-Q_habitat-Q5-50500");
+                                .getWEEDBandMixerCoverage(bbox,  params.getString("digitalId") + "-" + params.getString("scenarioId"), 
+                                        geometry, typologyLevel);
+                        System.out.println("Getting Adjusted Coverage from ECS Encoder..");
+                        coverage = WcsEncoder.getAdjustedCoverage(coverage, geometry);
                         RasterEncoder encoder = new RasterEncoder();
                         encoder.encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
 

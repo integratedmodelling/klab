@@ -61,7 +61,8 @@ public class WEEDECDCExtension {
     /*
      * Gets the results from Preprocessed Datacubes from habitat probabilities, and applies a bandmixer
      */
-    public static GridCoverage2D getWEEDResultCoverage(List<Double> bbox, IGeometry geometry, int typologyLevel) {
+    public static GridCoverage2D getWEEDBandMixerCoverage(List<Double> bbox, String collectionId, IGeometry geometry, int typologyLevel) {
+    	System.out.println("Calling WEED Bandmixer");
         String searchURL = "https://catalogue.weed.apex.esa.int/search";
         JSONObject body = new JSONObject();
         JSONArray bboxArr = new JSONArray();
@@ -78,12 +79,12 @@ public class WEEDECDCExtension {
         }
 
         body.put("limit", 20);
-        body.put("collections", new JSONArray().put("inference-alpha2-prepared-v101"));
+        body.put("collections", new JSONArray().put(collectionId));
         body.put("filter-lang", "cql2-json");
         body.put("bbox", bboxArr);
 
         String itemURL = queryItemURL(searchURL, body);
-        return buildBandMixerCoverage(itemURL, typologyLevel);
+        return buildBandMixerCoverage(collectionId, itemURL, typologyLevel);
     }
 
     public static GridCoverage2D getAlphaResultCoverage(String searchUrl, String collectionId, List<Double> bbox, IGeometry geometry, Object band) {
@@ -112,7 +113,7 @@ public class WEEDECDCExtension {
         return buildCoverage(band, assetURL);
     }
     
-    public static GridCoverage2D buildBandMixerCoverage(String itemURL, int typologyLevel) {
+    public static GridCoverage2D buildBandMixerCoverage(String collectionID, String itemURL, int typologyLevel) {
     	GridCoverage2D gcov = null;
     	try {
 
@@ -120,7 +121,7 @@ public class WEEDECDCExtension {
             System.out.println("Starting to make a call to STAC utils API..");
 
             JSONObject postPayload = new JSONObject();
-            postPayload.put("itemURL", updateNonASCIIURL(itemURL)); // The Public URL pointing to the Item
+            postPayload.put("itemURL", updateNonASCIIURL(collectionID, itemURL)); // The Public URL pointing to the Item
             postPayload.put("typologyLevel", typologyLevel); // The typology level i.e. 1, 2 or 3
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
@@ -194,17 +195,18 @@ public class WEEDECDCExtension {
                 .header("Content-Type", "application/json").connectTimeout(timeout).asJson();
 
         if (!response.isSuccess()) {
-            throw new KlabIllegalStateException("ERROR AT READING MODELID");
+            throw new KlabIllegalStateException("STAC Query Failed with Status: " + response.getStatus());
         }
 
         JSONArray features = response.getBody().getObject().getJSONArray("features");
         System.out.println("Found Items: " + features.length());
+        
+        if (features.length() == 0) {
+        	throw new KlabIllegalStateException("Found 0 items in STAC, sad :(");
+        }
+        
         JSONObject feature = features.getJSONObject(0); // assuming only one object in this case; if
                                                         // more then we are ignoring :()
-
-        for (String key : feature.keySet()) {
-            System.out.println("Key: " + key);
-        }
         
         try {
         	JSONArray links = feature.getJSONArray("links");
@@ -282,11 +284,11 @@ public class WEEDECDCExtension {
         return uri.toASCIIString();
     }
     
-   private static String updateNonASCIIURL(String originalURL) {
+   private static String updateNonASCIIURL(String collectionID, String originalURL) {
 	   	String[] path = originalURL.split("/");
 	   	String lastPathParam = path[path.length-1];
 	   	String encodedFileName=URLEncoder.encode(lastPathParam, StandardCharsets.UTF_8);
-	   	String baseUrl = "https://catalogue.weed.apex.esa.int/collections/inference-alpha2-prepared-v101/items/";
+	   	String baseUrl = "https://catalogue.weed.apex.esa.int/collections/" + collectionID + "/items/";
 	   	String fullEncodedUrl = baseUrl + encodedFileName;
 	
 		return fullEncodedUrl;

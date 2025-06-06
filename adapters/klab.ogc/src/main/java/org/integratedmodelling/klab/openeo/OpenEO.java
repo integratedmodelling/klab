@@ -500,9 +500,6 @@ public class OpenEO {
 
 		HttpResponse<JsonNode> response = Unirest.get(endpoint + "/jobs/" + job.jobId + "/results")
 				.header("Authorization", authorization.getAuthorization()).asJson();
-		
-		System.out.println("Response:");
-		System.out.println(response.getBody().getObject().toMap());
 
 		if (response.isSuccess()) {
 			for (String cost : response.getHeaders().get("OpenEO-Costs")) {

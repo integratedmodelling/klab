@@ -340,7 +340,7 @@ public class STACEncoder implements IResourceEncoder {
 			try {
 				String rcrs = "EPSG:4326";
 	        	targetCRS = CRS.decode(rcrs, true);
-	        	coverage = WEEDECDCExtension.getWEEDResultCoverage(bbox, geometry, typologyLevel);
+	        	coverage = WEEDECDCExtension.getWEEDBandMixerCoverage(bbox, collectionId, geometry, typologyLevel);
 	        	String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
 	            System.out.println("Received CRS: " + receivedCRS);
 	        	System.out.println("Target CRS: "+ rcrs);
