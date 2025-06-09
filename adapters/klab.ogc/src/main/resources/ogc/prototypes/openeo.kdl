@@ -19,12 +19,9 @@
 	optional text 'namespace'
 		"Public URL of a process definition that will be added to the namespace during contextualization"
 	
-	optional text 'bandmixer'
-		"The operation that will be be applied to join the bands of the raster"	
-
-	optional number 'band'
- 		"The band for a multi-band raster. Default is 0."
- 		default 0
+	optional text 'band'
+ 		"The band for a multi-band raster. Default is empty."
+ 		default ""
 
  	optional enum 'bandmixer'
  		"Relevant only for raster resources.\n

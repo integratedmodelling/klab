@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadLocalRandom;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.geojson.GeoJSONReader;
@@ -164,6 +165,9 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                     String onnxModel = ((JSONObject)onnxModelId.get(0)).getJSONObject("properties").getString("modelID");
                     params.remove("modelId");
                     params.put("onnx_model_id", onnxModel);
+                    
+                    params.put("digitalId", String.valueOf(generateRandomInt()));
+                    params.put("scenarioId", "klab");
                 }
 
 				/*
@@ -248,9 +252,9 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 				if (resource.getParameters().containsKey("time.year")) {
 					if (scale.getTime().getResolution().getType() == Type.YEAR
 							&& scale.getTime().getResolution().getMultiplier() == 1) {
-                        if (resource.getUrn().contains("alpha1")) { // TODO I don't like this
+                        if (resource.getParameters().get("namespace", String.class).contains("alpha1")) { // TODO I don't like this
                             params.put(resource.getParameters().get("time.year", String.class), 2021);
-                        } else if (resource.getUrn().contains("alpha2")) {
+                        } else if (resource.getParameters().get("namespace", String.class).contains("alpha2")) {
                             params.put(resource.getParameters().get("time.year", String.class), 2024);
                         }
 					} else {
@@ -334,18 +338,17 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
                         List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(),
                                 envelope.getMaxY());
                         
-                        int typologyLevel = 1;
-                        if (resource.getParameters().get("bandmixer") != null) {
-                        	if (resource.getParameters().get("bandmixer", String.class).startsWith("WEED")) {
-                            	
-                            	if (resource.getParameters().get("bandmixer", String.class).endsWith("2")) {
-                                	typologyLevel = 2;
-                                } 
-                            	
-                            	if (resource.getParameters().get("bandmixer", String.class).endsWith("3")) {
-                                	typologyLevel = 3;
-                                } 
-                            }
+                        int typologyLevel = 1; 
+                        if (params.get("typology_level") != null) {
+        	
+                        	if (params.get("typology_level").equals("2")) {
+                            	typologyLevel = 2;
+                            } 
+                        	
+                        	if (params.get("typology_level").equals("3")) {
+                            	typologyLevel = 3;
+                            } 
+                            
                         }
                         System.out.println("Found typology level: " + typologyLevel);
                  
@@ -550,5 +553,13 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 		}
 		return false;
 	}
+	
+
+    private static int generateRandomInt() {
+        int number = ThreadLocalRandom.current().nextInt(10000, 100000); // 5 digit random number
+        return number;
+    }
+	
+
 
 }
