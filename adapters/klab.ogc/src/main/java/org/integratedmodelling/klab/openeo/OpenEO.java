@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.exceptions.KlabMissingCredentialsException;
 import org.integratedmodelling.klab.exceptions.KlabRemoteException;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.Notification;
+import org.integratedmodelling.klab.stac.extensions.StacWeedAlpha3Extension;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -64,6 +65,10 @@ public class OpenEO {
 	private String endpoint;
 	String plan; // TODO expose, link to /me endpoint
 	int budget; // TODO expose, update
+	
+	// Alpha3 fix
+	String digitalId = null;
+	String scenarioId = null;
 
 	class Job {
 		String jobId;
@@ -410,6 +415,13 @@ public class OpenEO {
 		this.executor.scheduleAtFixedRate(() -> {
 			Set<Job> finished = new HashSet<>();
 			for (Job job : jobs) {
+			    if (this.digitalId != null && this.scenarioId != null) {
+			        boolean allFinished = StacWeedAlpha3Extension.haveAllJobsFinished(digitalId, scenarioId);
+			        if (allFinished) {
+			            finished.add(job);
+			        }
+			        continue;
+			    }
 				if (checkFinish(job)) {
 					finished.add(job);
 				}
@@ -526,6 +538,12 @@ public class OpenEO {
 	 * @return
 	 */
 	public String createRemoteJob(String processId, JSONObject parameters, Process... processes) {
+	    // TODO get from the parameters or the namespace if it is Alpha3
+	    boolean isAlpha3 = true;
+	    if (isAlpha3) {
+	        this.digitalId = parameters.getString("digitalId");
+	        this.scenarioId = parameters.getString("scenarioId");
+	    }
 
 		Map<String, Object> request = new LinkedHashMap<>();
 
@@ -875,9 +893,19 @@ public class OpenEO {
 		AtomicBoolean done = new AtomicBoolean(false);
 		AtomicBoolean canceled = new AtomicBoolean(false);
 		String error;
+		
+		String digitalId;
+		String scenarioId;
 
 		public OpenEOFuture(String processId, JSONObject parameters, IMonitor monitor, Process... namespace) {
 			this.processId = processId;
+			
+			// TODO get from the parameters or the namespace if it is Alpha3
+			boolean isAlpha3 = true;
+			if (isAlpha3) {
+                this.digitalId = parameters.getString("digitalId");
+                this.scenarioId = parameters.getString("scenarioId");
+			}
 			String jobId = createRemoteJob(processId, parameters, namespace);
 			if (jobId == null) {
 				done.set(true);

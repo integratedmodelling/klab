@@ -323,7 +323,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 					throw t;
 				}
 			} else {
-                // TODO test for Alpha02
+                // TODO test for Alpha2 & Alpha3
 				OpenEOFuture job = service.submit(resource.getParameters().get("processId", String.class), params,
 						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
 
