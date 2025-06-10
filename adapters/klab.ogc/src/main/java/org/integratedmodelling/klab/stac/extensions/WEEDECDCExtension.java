@@ -126,6 +126,8 @@ public class WEEDECDCExtension {
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
                     .post("https://stac-utils.integratedmodelling.org/retrieve_dominant_habitat").header("Content-Type", "application/json")
+                    .connectTimeout(600000)
+    				.socketTimeout(600000)
                     .body(postPayload).asObject(r -> {
                         try (InputStream in = r.getContent(); OutputStream out = new FileOutputStream(coverageFile)) {
                             byte[] buffer = new byte[8192];
