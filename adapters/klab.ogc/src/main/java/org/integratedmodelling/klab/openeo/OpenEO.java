@@ -70,7 +70,7 @@ public class OpenEO {
 	String digitalId = null;
 	String scenarioId = null;
 
-	class Job {
+	public class Job {
 		String jobId;
 		Consumer<Map<String, Object>> resultConsumer;
 		BiConsumer<String, String> errorConsumer;
@@ -416,7 +416,7 @@ public class OpenEO {
 			Set<Job> finished = new HashSet<>();
 			for (Job job : jobs) {
 			    if (this.digitalId != null && this.scenarioId != null) {
-			        boolean allFinished = StacWeedAlpha3Extension.haveAllJobsFinished(digitalId, scenarioId);
+			        boolean allFinished = StacWeedAlpha3Extension.haveAllJobsFinished(digitalId, scenarioId, job.monitor);
 			        if (allFinished) {
 			            finished.add(job);
 			        }
