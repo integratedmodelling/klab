@@ -125,7 +125,7 @@ public class WEEDECDCExtension {
             postPayload.put("typologyLevel", typologyLevel); // The typology level i.e. 1, 2 or 3
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
-                    .post("http://127.0.0.1:8000/retrieve_dominant_habitat").header("Content-Type", "application/json")
+                    .post("https://stac-utils.integratedmodelling.org/retrieve_dominant_habitat").header("Content-Type", "application/json")
                     .connectTimeout(600000)
     				.socketTimeout(600000)
                     .body(postPayload).asObject(r -> {
@@ -169,7 +169,7 @@ public class WEEDECDCExtension {
             postPayload.put("bandId", band); // The BandID in String
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
-                    .post("http://127.0.0.1:8000/retrieve_band").header("Content-Type", "application/json")
+                    .post("https://stac-utils.integratedmodelling.org/retrieve_band").header("Content-Type", "application/json")
                     .body(postPayload).asObject(r -> {
                         try (InputStream in = r.getContent(); OutputStream out = new FileOutputStream(coverageFile)) {
                             byte[] buffer = new byte[8192];
