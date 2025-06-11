@@ -13,7 +13,6 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
-import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -88,6 +87,12 @@ public abstract interface IIdentity {
         NODE,
 
         /**
+         * Identified by a node token, owned by a partner.
+         * Used in v.1.0
+         */
+        LEGACY_NODE,
+
+        /**
          * Identified by a user token authenticated by a server.
          */
         IM_USER,
@@ -133,7 +138,27 @@ public abstract interface IIdentity {
          * The identity of the AI in k.LAB. Used in provenance recording.
          * 
          */
-        KLAB
+        KLAB,
+
+        /**
+         * The services for v.1.0
+         */
+        REASONER,
+
+        /**
+         *
+         */
+        RESOURCES,
+
+        /**
+         *
+         */
+        RESOLVER,
+
+        /**
+         *
+         */
+        RUNTIME
     }
 
     /**

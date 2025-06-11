@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface INodeIdentity extends IServerIdentity {
+public interface IServiceIdentity extends IServerIdentity {
 
     /** {@inheritDoc} */
     @Override

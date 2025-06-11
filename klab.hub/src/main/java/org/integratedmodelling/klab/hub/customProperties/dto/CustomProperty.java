@@ -76,7 +76,7 @@ public class CustomProperty extends GenericModel {
     public void setForGroup(boolean isForGroup) {
         this.isForGroup = isForGroup;
     }
-    
+
     public String getKey() {
         return key;
     }
@@ -210,4 +210,7 @@ public class CustomProperty extends GenericModel {
         return isForGroup == other.isForGroup && isForUser == other.isForUser && Objects.equals(getName(), other.getName());
     }
 
+    public CustomPropertyRest getCustomPropertyRest() {
+        return new CustomPropertyRest(this.getKey(), this.getValue(), this.isOnlyAdmin());
+    }
 }

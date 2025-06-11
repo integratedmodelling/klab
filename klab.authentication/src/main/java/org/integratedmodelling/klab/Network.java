@@ -16,6 +16,8 @@ import java.util.concurrent.Future;
 import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity.Type;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -52,26 +54,46 @@ public enum Network implements INetworkService {
         Services.INSTANCE.registerService(this, INetworkService.class);
     }
 
+    private List<INodeIdentity> filter(Collection<INodeIdentity> nodes, boolean onlyNodes) {
+        List<INodeIdentity> ret = new ArrayList<>();
+        for(INodeIdentity node : nodes) {
+            if (onlyNodes && isNode(node)) {
+                ret.add(node);
+            } else if (!onlyNodes && !isNode(node)) {
+                ret.add(node);
+            }
+        }
+        return ret;
+    }
+
+    private boolean isNode(INodeIdentity node) {
+        return (node.getIdentityType().equals(IIdentity.Type.NODE) || node.getIdentityType().equals(IIdentity.Type.LEGACY_NODE));
+    }
+
     @Override
     public Collection<INodeIdentity> getNodes() {
-        return new HashSet<>(onlineNodes.values());
+        return new HashSet<>(filter(onlineNodes.values(), true));
     }
 
     @Override
     public INodeIdentity getNode(String name) {
-        return onlineNodes.get(name);
+        INodeIdentity node = onlineNodes.get(name);
+        if (isNode(node)) {
+            return node;
+        }
+        return null;
     }
 
     @Override
     public Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly) {
         List<INodeIdentity> ret = new ArrayList<>();
-        for (String s : onlineNodes.keySet()) {
+        for(String s : onlineNodes.keySet()) {
             if (onlineNodes.get(s).getPermissions().contains(permission)) {
                 ret.add(onlineNodes.get(s));
             }
         }
         if (!onlineOnly) {
-            for (String s : offlineNodes.keySet()) {
+            for(String s : offlineNodes.keySet()) {
                 if (offlineNodes.get(s).getPermissions().contains(permission)) {
                     ret.add(offlineNodes.get(s));
                 }
@@ -89,12 +111,12 @@ public enum Network implements INetworkService {
 
         this.hub = authorization.getHub();
 
-        for (NodeReference node : authorization.getNodes()) {
+        for(NodeReference node : authorization.getNodes()) {
             Node identity = new Node(node, authorization.getUserData().getToken());
             try {
                 mergeCapabilities(identity, identity.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
                 onlineNodes.put(identity.getName(), identity);
-                if (Services.INSTANCE.getService(IResourceService.class) != null) {
+                if (isNode(identity) && Services.INSTANCE.getService(IResourceService.class) != null) {
                     Services.INSTANCE.getService(IResourceService.class).getPublicResourceCatalog().updateNode(identity);
                 }
             } catch (Exception e) {
@@ -118,21 +140,23 @@ public enum Network implements INetworkService {
     }
 
     private void mergeCapabilities(Node node, NodeCapabilities capabilities) {
-        if (capabilities.isAcceptSubmission()) {
-            node.getPermissions().add(Permission.PUBLISH);
+        if (isNode(node)) {
+            if (capabilities.isAcceptSubmission()) {
+                node.getPermissions().add(Permission.PUBLISH);
+            }
+            if (capabilities.isAcceptQueries()) {
+                node.getPermissions().add(Permission.QUERY);
+            }
+            for(ResourceAdapterReference adapter : capabilities.getResourceAdapters()) {
+                node.getAdapters().add(adapter.getName());
+            }
+            for(AuthorityReference authority : capabilities.getAuthorities()) {
+                node.getAuthorities().put(authority.getName(), authority);
+            }
+            node.getCatalogIds().addAll(capabilities.getResourceCatalogs());
+            node.getNamespaceIds().addAll(capabilities.getResourceNamespaces());
+            node.getResources().addAll(capabilities.getResourceUrns());
         }
-        if (capabilities.isAcceptQueries()) {
-            node.getPermissions().add(Permission.QUERY);
-        }
-        for (ResourceAdapterReference adapter : capabilities.getResourceAdapters()) {
-            node.getAdapters().add(adapter.getName());
-        }
-        for (AuthorityReference authority : capabilities.getAuthorities()) {
-            node.getAuthorities().put(authority.getName(), authority);
-        }
-        node.getCatalogIds().addAll(capabilities.getResourceCatalogs());
-        node.getNamespaceIds().addAll(capabilities.getResourceNamespaces());
-        node.getResources().addAll(capabilities.getResourceUrns());
         node.setVersion(capabilities.getBuild());
         // FIXME use proper field
         node.setUptime(capabilities.getRefreshFrequencyMillis());
@@ -140,12 +164,14 @@ public enum Network implements INetworkService {
     }
 
     @Override
-    public <T, K> T broadcastGet(String endpoint, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
+    public <T, K> T broadcastGet(String endpoint, Class< ? extends K> individualResponseType, Function<Collection<K>, T> merger,
             IMonitor monitor, Object... urlVariables) {
 
         Collection<Callable<K>> tasks = new ArrayList<>();
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-        for (INodeIdentity node : onlineNodes.values()) {
+        List<INodeIdentity> online = filter(onlineNodes.values(), true);
+        List<INodeIdentity> offline = filter(offlineNodes.values(), true);
+        for(INodeIdentity node : online) {
             tasks.add(new Callable<K>(){
                 @Override
                 public K call() throws Exception {
@@ -154,16 +180,15 @@ public enum Network implements INetworkService {
             });
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool((onlineNodes.size() + offlineNodes.size()) > MAX_THREADS
-                ? MAX_THREADS
-                : (onlineNodes.size() + offlineNodes.size()));
+        ExecutorService executor = Executors.newFixedThreadPool(
+                (online.size() + offline.size()) > MAX_THREADS ? MAX_THREADS : (online.size() + offline.size()));
 
         int failures = 0;
         List<K> retvals = new ArrayList<>();
         List<Future<K>> results;
         try {
             results = executor.invokeAll(tasks);
-            for (Future<K> result : results) {
+            for(Future<K> result : results) {
                 try {
                     retvals.add(result.get());
                 } catch (Exception e) {
@@ -176,7 +201,7 @@ public enum Network implements INetworkService {
 
         if (failures > 0) {
             String message = "broadcasting to network resulted in " + failures + " failed calls out of " + onlineNodes.size();
-            if (failures >= onlineNodes.size()) {
+            if (failures >= online.size()) {
                 monitor.error(message);
             } else {
                 monitor.warn(message);
@@ -189,12 +214,14 @@ public enum Network implements INetworkService {
     }
 
     @Override
-    public <T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType,
+    public <T, K, V> T broadcastPost(String endpoint, V request, Class< ? extends K> individualResponseType,
             Function<Collection<K>, T> merger, IMonitor monitor) {
 
         Collection<Callable<K>> tasks = new ArrayList<>();
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-        for (INodeIdentity node : onlineNodes.values()) {
+        List<INodeIdentity> online = filter(onlineNodes.values(), true);
+        List<INodeIdentity> offline = filter(offlineNodes.values(), true);
+        for(INodeIdentity node : online) {
             tasks.add(new Callable<K>(){
                 @Override
                 public K call() throws Exception {
@@ -203,16 +230,15 @@ public enum Network implements INetworkService {
             });
         }
 
-        ExecutorService executor = Executors.newFixedThreadPool((onlineNodes.size() + offlineNodes.size()) > MAX_THREADS
-                ? MAX_THREADS
-                : (onlineNodes.size() + offlineNodes.size()));
+        ExecutorService executor = Executors.newFixedThreadPool(
+                (online.size() + offline.size()) > MAX_THREADS ? MAX_THREADS : (online.size() + offline.size()));
 
         int failures = 0;
         List<K> retvals = new ArrayList<>();
         List<Future<K>> results;
         try {
             results = executor.invokeAll(tasks);
-            for (Future<K> result : results) {
+            for(Future<K> result : results) {
                 try {
                     retvals.add(result.get());
                 } catch (Exception e) {
@@ -225,7 +251,7 @@ public enum Network implements INetworkService {
 
         if (failures > 0) {
             String message = "broadcasting to network resulted in " + failures + " failed calls out of " + onlineNodes.size();
-            if (failures >= onlineNodes.size()) {
+            if (failures >= online.size()) {
                 monitor.error(message);
             } else {
                 monitor.warn(message);
@@ -248,30 +274,30 @@ public enum Network implements INetworkService {
 
         List<INodeIdentity> moveOnline = new ArrayList<>();
         List<INodeIdentity> moveOffline = new ArrayList<>();
-        for (INodeIdentity node : onlineNodes.values()) {
+        for(INodeIdentity node : onlineNodes.values()) {
             try {
                 ((Node) node).mergeCapabilities(node.getClient().get(API.CAPABILITIES, NodeCapabilities.class));
             } catch (KlabAuthorizationException e) {
-              reauthenticate();
+                reauthenticate();
             } catch (Exception e) {
                 moveOffline.add(node);
-                if (Services.INSTANCE.getService(IResourceService.class) != null) {
+                if (isNode(node) && Services.INSTANCE.getService(IResourceService.class) != null) {
                     Services.INSTANCE.getService(IResourceService.class).getPublicResourceCatalog().removeNode(node);
                 }
-                Logging.INSTANCE.info("node " + node.getName() + " went offline");
+                Logging.INSTANCE.info(node.getIdentityType().toString() + " " + node.getName() + " went offline");
             }
         }
-        for (INodeIdentity node : offlineNodes.values()) {
+        for(INodeIdentity node : offlineNodes.values()) {
             try {
                 NodeCapabilities capabilities = node.getClient().get(API.CAPABILITIES, NodeCapabilities.class);
                 ((Node) node).mergeCapabilities(capabilities);
                 moveOnline.add(node);
-                if (Services.INSTANCE.getService(IResourceService.class) != null) {
+                if (isNode(node) && Services.INSTANCE.getService(IResourceService.class) != null) {
                     Services.INSTANCE.getService(IResourceService.class).getPublicResourceCatalog().updateNode(node);
                 }
-                Logging.INSTANCE.info("node " + node.getName() + " went online");
+                Logging.INSTANCE.info(node.getIdentityType().toString() + " " + node.getName() + " went online");
             } catch (KlabAuthorizationException e) {
-              reauthenticate();
+                reauthenticate();
             } catch (Exception e) {
                 Long l = nodeWarnings.get(node.getName());
                 if (l == null || (System.currentTimeMillis() - l) > (1000 * 60 * 10)) {
@@ -281,31 +307,31 @@ public enum Network implements INetworkService {
             }
         }
 
-        for (INodeIdentity node : moveOnline) {
+        for(INodeIdentity node : moveOnline) {
             offlineNodes.remove(node.getName());
             onlineNodes.put(node.getName(), node);
             ((Node) node).setOnline(true);
         }
-        for (INodeIdentity node : moveOffline) {
+        for(INodeIdentity node : moveOffline) {
             onlineNodes.remove(node.getName());
             offlineNodes.put(node.getName(), node);
             ((Node) node).setOnline(false);
         }
     }
 
-	private void reauthenticate() {
-		if (authenticationAttempts > MAX_AUTHENTICATION_ATTEMPTS) {
-			return;
-		}
+    private void reauthenticate() {
+        if (authenticationAttempts > MAX_AUTHENTICATION_ATTEMPTS) {
+            return;
+        }
 
-		Logging.INSTANCE.warn("Attempting re-authentication");
-		authenticationAttempts++;
+        Logging.INSTANCE.warn("Attempting re-authentication");
+        authenticationAttempts++;
 
-		if (Authentication.INSTANCE.reauthenticate() != null) {
-			checkNetwork();
-		}
+        if (Authentication.INSTANCE.reauthenticate() != null) {
+            checkNetwork();
+        }
 
-	}
+    }
 
     @Override
     public INodeIdentity getNodeForResource(Urn urn) {
@@ -323,9 +349,9 @@ public enum Network implements INetworkService {
 
     private Collection<INodeIdentity> getOnlineNodes(Collection<String> nodes) {
         List<INodeIdentity> ret = new ArrayList<>();
-        for (String node : nodes) {
+        for(String node : nodes) {
             INodeIdentity n = onlineNodes.get(node);
-            if (n != null) {
+            if (n != null && isNode(n)) {
                 ret.add(n);
             }
         }
@@ -350,7 +376,7 @@ public enum Network implements INetworkService {
 
     public Collection<INodeIdentity> getNodesWithAdapter(String adapter) {
         List<INodeIdentity> ret = new ArrayList<>();
-        for (INodeIdentity node : onlineNodes.values()) {
+        for(INodeIdentity node : onlineNodes.values()) {
             if (node.getAdapters().contains(adapter)) {
                 ret.add(node);
             }
@@ -360,11 +386,37 @@ public enum Network implements INetworkService {
 
     public Collection<INodeIdentity> getNodesWithAuthority(String authority) {
         List<INodeIdentity> ret = new ArrayList<>();
-        for (INodeIdentity node : onlineNodes.values()) {
+        for(INodeIdentity node : onlineNodes.values()) {
             if (node.getAuthorities().containsKey(authority)) {
                 ret.add(node);
             }
         }
         return ret;
+    }
+
+    @Override
+    public Collection<INodeIdentity> getServices() {
+
+        return new HashSet<>(filter(onlineNodes.values(), false));
+    }
+
+    @Override
+    public Collection<INodeIdentity> getServices(Type type) {
+        List<INodeIdentity> ret = new ArrayList<>();
+        for(INodeIdentity service : filter(onlineNodes.values(), false)) {
+            if (service.getIdentityType().equals(type)) {
+                ret.add(service);
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public INodeIdentity getService(String name) {
+        INodeIdentity service = onlineNodes.get(name);
+        if (!isNode(service)) {
+            return service;
+        }
+        return null;
     }
 }
