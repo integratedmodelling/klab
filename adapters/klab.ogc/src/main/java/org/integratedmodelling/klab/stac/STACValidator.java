@@ -53,18 +53,14 @@ public class STACValidator implements IResourceValidator {
         Builder builder = null;
         
      // Don't pass Asset for ECDC since ECDC is fucked up!
-    	if (collectionUrl.contains("ecosystem-characteristics-alpha2-1")) {
-    		System.out.println("Starting to Validate ECDC STAC resource...");
+     // Some collections in WEED are weird and hence this arrangement 
+    	if (collectionUrl.contains("weed")) {
+    		System.out.println("Starting to Validate WEED STAC resource...");
     		builder = new ResourceBuilder(urn)
                     .withParameters(userData)
                     .withGeometry(geometry)
                     .withType(Type.NUMBER); // Setting type to be Number instead of Object
     		
-    	} else if (collectionUrl.contains("inference-alpha2-prepared-v101")){
-    		builder = new ResourceBuilder(urn)
-                    .withParameters(userData)
-                    .withGeometry(geometry)
-                    .withType(Type.NUMBER); // Setting type to be Number instead of Object
     	} else {
     		builder = new ResourceBuilder(urn)
                     .withParameters(userData)

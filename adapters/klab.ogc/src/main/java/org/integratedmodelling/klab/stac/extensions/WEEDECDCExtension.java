@@ -31,7 +31,7 @@ public class WEEDECDCExtension {
 	/*
 	 * Gets the Coverage from ECDC STAC (Ecosystem Characteristics Datacube)
 	 */
-    public static GridCoverage2D getECDCCoverage(List<Double> bbox, IGeometry geometry, Object band) {
+    public static GridCoverage2D getECDCCoverage(List<Double> bbox, IGeometry geometry, Object band, String collectionID) {
         System.out.println("Get Features call for WEED ECDC, Fetching Band" + band);
         String searchURL = "https://catalogue.weed.apex.esa.int/search";
         JSONObject body = new JSONObject();
@@ -50,12 +50,12 @@ public class WEEDECDCExtension {
 
         System.out.println("Getting band " + band + " from ECDC STAC");
         body.put("limit", 20);
-        body.put("collections", new JSONArray().put("ecosystem-characteristics-alpha2-1"));
+        body.put("collections", new JSONArray().put(collectionID));
         body.put("filter-lang", "cql2-json");
         body.put("bbox", bboxArr);
 
-        String assetURL = queryAssetHref(searchURL, body);
-        return buildCoverage(band, assetURL);
+        List<String> assetURLs = queryAssetHref(searchURL, body);
+        return buildCoverage(band, assetURLs);
     }
     
     /*
@@ -87,31 +87,31 @@ public class WEEDECDCExtension {
         return buildBandMixerCoverage(collectionId, itemURL, typologyLevel);
     }
 
-    public static GridCoverage2D getAlphaResultCoverage(String searchUrl, String collectionId, List<Double> bbox, IGeometry geometry, Object band) {
-        System.out.println("Get Features call for WEED ECDC, Fetching Band" + band);
-        JSONObject body = new JSONObject();
-        JSONArray bboxArr = new JSONArray();
-
-        List<Double> qbbox = new ArrayList<>();
-        qbbox.add(bbox.get(0));
-        qbbox.add(bbox.get(2));
-        qbbox.add(bbox.get(1));
-        qbbox.add(bbox.get(3));
-
-        for (Double coord : qbbox) {
-            System.out.println(coord);
-            bboxArr.put(coord);
-        }
-
-        System.out.println("Getting band " + band + " from ECDC STAC");
-        body.put("limit", 20);
-        body.put("collections", new JSONArray().put(collectionId));
-        body.put("filter-lang", "cql2-json");
-        body.put("bbox", bboxArr);
-
-        String assetURL = queryAssetHref(searchUrl, body);
-        return buildCoverage(band, assetURL);
-    }
+//    public static GridCoverage2D getAlphaResultCoverage(String searchUrl, String collectionId, List<Double> bbox, IGeometry geometry, Object band) {
+//        System.out.println("Get Features call for WEED ECDC, Fetching Band" + band);
+//        JSONObject body = new JSONObject();
+//        JSONArray bboxArr = new JSONArray();
+//
+//        List<Double> qbbox = new ArrayList<>();
+//        qbbox.add(bbox.get(0));
+//        qbbox.add(bbox.get(2));
+//        qbbox.add(bbox.get(1));
+//        qbbox.add(bbox.get(3));
+//
+//        for (Double coord : qbbox) {
+//            System.out.println(coord);
+//            bboxArr.put(coord);
+//        }
+//
+//        System.out.println("Getting band " + band + " from ECDC STAC");
+//        body.put("limit", 20);
+//        body.put("collections", new JSONArray().put(collectionId));
+//        body.put("filter-lang", "cql2-json");
+//        body.put("bbox", bboxArr);
+//
+//        List<String> assetURLs = queryAssetHref(searchUrl, body);
+//        return buildCoverage(band, assetURL);
+//    }
     
     public static GridCoverage2D buildBandMixerCoverage(String collectionID, String itemURL, int typologyLevel) {
     	GridCoverage2D gcov = null;
@@ -125,7 +125,7 @@ public class WEEDECDCExtension {
             postPayload.put("typologyLevel", typologyLevel); // The typology level i.e. 1, 2 or 3
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
-                    .post("https://stac-utils.integratedmodelling.org/retrieve_dominant_habitat").header("Content-Type", "application/json")
+                    .post("http://127.0.0.1:8000/retrieve_dominant_habitat").header("Content-Type", "application/json")
                     .connectTimeout(600000)
     				.socketTimeout(600000)
                     .body(postPayload).asObject(r -> {
@@ -153,7 +153,7 @@ public class WEEDECDCExtension {
     	return gcov;
     }
     
-    private static GridCoverage2D buildCoverage(Object band, String assetURL) {
+    private static GridCoverage2D buildCoverage(Object band, List<String> assetURLs) {
         GridCoverage2D gcov = null;
         try {
 
@@ -161,11 +161,15 @@ public class WEEDECDCExtension {
             System.out.println("Starting to make a call to STAC utils API..");
 
             JSONObject postPayload = new JSONObject();
-            postPayload.put("url", assetURL); // The Public URL pointing to the COG
+            JSONArray assetURLreq = new JSONArray();
+            for (String assetURL:assetURLs) {
+            	assetURLreq.put(assetURL);
+            }
+            postPayload.put("url", assetURLreq); // List of hrefs Public URL pointing to the COG
             postPayload.put("bandId", band); // The BandID in String
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
-                    .post("https://stac-utils.integratedmodelling.org/retrieve_band").header("Content-Type", "application/json")
+                    .post("http://127.0.0.1:8000/retrieve_band").header("Content-Type", "application/json")
                     .body(postPayload).asObject(r -> {
                         try (InputStream in = r.getContent(); OutputStream out = new FileOutputStream(coverageFile)) {
                             byte[] buffer = new byte[8192];
@@ -227,7 +231,9 @@ public class WEEDECDCExtension {
         
     }
 
-    private static String queryAssetHref(String searchURL, JSONObject body) {
+    private static List<String> queryAssetHref(String searchURL, JSONObject body) {
+    	List<String> assetHrefs = new ArrayList<>();
+    	
         int timeout = 50000;
         kong.unirest.HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body)
                 .header("Content-Type", "application/json").connectTimeout(timeout).asJson();
@@ -238,53 +244,40 @@ public class WEEDECDCExtension {
 
         JSONArray features = response.getBody().getObject().getJSONArray("features");
         System.out.println("Found Items: " + features.length());
-        JSONObject feature = features.getJSONObject(0); // assuming only one object in this case; if
-                                                        // more then we are ignoring :()
+        
+        for (int i=0; i < features.length(); i++) {
+        	JSONObject feature = features.getJSONObject(i);
+        	String assetHref = "";
 
-        for (String key : feature.keySet()) {
-            System.out.println("Key: " + key);
-        }
+            JSONObject asset = feature.getJSONObject("assets");
+            for (String key : asset.keySet()) {
+                try {
+                    assetHref = asset.getJSONObject(key).getString("href");
+                    assetHrefs.add(assetHref);
+                } catch (Exception e) {
 
-        String assetHref = "";
-
-        JSONObject asset = feature.getJSONObject("assets");
-        for (String key : asset.keySet()) {
-            try {
-                assetHref = asset.getJSONObject(key).getString("href");
-                break;
-            } catch (Exception e) {
-
+                }
             }
         }
-
-        System.out.println("Found Asset Href: " + assetHref + " getting stuff from S3..");
-
-        String[] bucketAndObject = assetHref.split("://")[1].split("/", 2);
-
-        System.out.println(bucketAndObject[0]);
-        System.out.println(bucketAndObject[1]);
-
-        // TODO generalize it for other collections
-        String assetURL = getECDCAssetURL(bucketAndObject[0], bucketAndObject[1]);
-        return assetURL;
+        return assetHrefs;
     }
 
-    /*
-     * Hardcoding stuff for now for ECDC STAC in WAW4..
-     * TODO: Update the S3 creds system in .klab/creds like OpenEO
-     * Here, the Endpoint URL would be: s3.waw4-1.cloudferro.com
-     */
-    private static String getECDCAssetURL(String s3Bucket, String s3Path) {
-        URI uri = null;
-        try {
-            uri = new URI("https", "s3.waw4-1.cloudferro.com", "/swift/v1/" + s3Bucket + "/" + s3Path, null);
-            return uri.toASCIIString();
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } // URI handles percent-encoding
-        return uri.toASCIIString();
-    }
+//    /*
+//     * Hardcoding stuff for now for ECDC STAC in WAW4..
+//     * TODO: Update the S3 creds system in .klab/creds like OpenEO
+//     * Here, the Endpoint URL would be: s3.waw4-1.cloudferro.com
+//     */
+//    private static String getECDCAssetURL(String s3Bucket, String s3Path) {
+//        URI uri = null;
+//        try {
+//            uri = new URI("https", "s3.waw4-1.cloudferro.com", "/swift/v1/" + s3Bucket + "/" + s3Path, null);
+//            return uri.toASCIIString();
+//        } catch (URISyntaxException e) {
+//            // TODO Auto-generated catch block
+//            e.printStackTrace();
+//        } // URI handles percent-encoding
+//        return uri.toASCIIString();
+//    }
     
    private static String updateNonASCIIURL(String collectionID, String originalURL) {
 	   	String[] path = originalURL.split("/");

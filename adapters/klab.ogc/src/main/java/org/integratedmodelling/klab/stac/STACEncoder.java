@@ -270,6 +270,13 @@ public class STACEncoder implements IResourceEncoder {
             return;
         }
         
+        if (multiBandCOGBandStr instanceof String) {
+        	if (!multiBandCOGBandStr.isEmpty()) {
+        		System.out.println("Found COG Band set, triggering same ECDC flow");
+        		isECDCWEED = true;
+        	}
+        }
+        
         if (isECDCWEED) {
         	System.out.println("Getting Stuff from ECDC!");
         	GridCoverage2D coverage = null;
@@ -277,7 +284,7 @@ public class STACEncoder implements IResourceEncoder {
 			try {
 				String rcrs = "EPSG:4326";
 	        	targetCRS = CRS.decode(rcrs, true);
-	        	coverage = WEEDECDCExtension.getECDCCoverage(bbox, geometry, multiBandCOGBandStr);
+	        	coverage = WEEDECDCExtension.getECDCCoverage(bbox, geometry, multiBandCOGBandStr, collectionId);
 	        	String receivedCRS = "EPSG:"+String.valueOf(CRS.lookupEpsgCode(coverage.getCoordinateReferenceSystem(), true));
 	            System.out.println("Received CRS: " + receivedCRS);
 	        	System.out.println("Target CRS: "+ rcrs);
