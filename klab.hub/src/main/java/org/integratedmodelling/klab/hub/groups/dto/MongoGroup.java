@@ -185,11 +185,4 @@ public class MongoGroup extends GenericModel {
         this.customProperties = customProperties;
     }
     
-    public Set<CustomPropertyRest> getCustomPropertiesRest() {
-        Set<CustomPropertyRest> ret = new HashSet<CustomPropertyRest>();
-        for(CustomProperty cp : customProperties) {
-            ret.add(cp.getCustomPropertyRest());
-        }
-        return ret;
-    }
 }

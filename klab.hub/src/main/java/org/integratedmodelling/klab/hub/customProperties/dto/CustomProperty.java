@@ -209,8 +209,4 @@ public class CustomProperty extends GenericModel {
         CustomProperty other = (CustomProperty) obj;
         return isForGroup == other.isForGroup && isForUser == other.isForUser && Objects.equals(getName(), other.getName());
     }
-
-    public CustomPropertyRest getCustomPropertyRest() {
-        return new CustomPropertyRest(this.getKey(), this.getValue(), this.isOnlyAdmin());
-    }
 }
