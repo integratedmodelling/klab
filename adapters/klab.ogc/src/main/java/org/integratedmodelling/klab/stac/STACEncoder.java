@@ -247,7 +247,7 @@ public class STACEncoder implements IResourceEncoder {
         	System.out.println("WENR Collection...");
         }
 
-        boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha2-1"); // ECDC
+        boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha"); // ECDC
         boolean isPreprocessedResults = collectionUrl.contains("inference-alpha2-prepared-v101"); // Preprocessed habitat prob datacubes
         
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
