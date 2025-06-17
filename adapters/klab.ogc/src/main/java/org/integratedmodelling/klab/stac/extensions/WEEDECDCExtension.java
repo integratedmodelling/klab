@@ -83,7 +83,7 @@ public class WEEDECDCExtension {
         body.put("filter-lang", "cql2-json");
         body.put("bbox", bboxArr);
 
-        String itemURL = queryItemURL(searchURL, body);
+        List<String> itemURL = queryItemURL(searchURL, body);
         return buildBandMixerCoverage(collectionId, itemURL, typologyLevel);
     }
 
@@ -113,15 +113,20 @@ public class WEEDECDCExtension {
 //        return buildCoverage(band, assetURL);
 //    }
     
-    public static GridCoverage2D buildBandMixerCoverage(String collectionID, String itemURL, int typologyLevel) {
+    public static GridCoverage2D buildBandMixerCoverage(String collectionID, List<String> itemURLs, int typologyLevel) {
     	GridCoverage2D gcov = null;
     	try {
 
             File coverageFile = File.createTempFile("geo", ".tiff");
             System.out.println("Starting to make a call to STAC utils API..");
+            JSONArray itemURLReq = new JSONArray();
+            
+            for(String url: itemURLs) {
+            	itemURLReq.put(updateNonASCIIURL(collectionID, url));
+            }
 
             JSONObject postPayload = new JSONObject();
-            postPayload.put("itemURL", updateNonASCIIURL(collectionID, itemURL)); // The Public URL pointing to the Item
+            postPayload.put("itemURL", itemURLReq); // The Public URL pointing to the Item
             postPayload.put("typologyLevel", typologyLevel); // The typology level i.e. 1, 2 or 3
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
@@ -195,7 +200,7 @@ public class WEEDECDCExtension {
         return gcov;
     }
     
-    private static String queryItemURL(String searchURL, JSONObject body) {
+    private static List<String> queryItemURL(String searchURL, JSONObject body) {
     	int timeout = 50000;
         kong.unirest.HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body)
                 .header("Content-Type", "application/json").connectTimeout(timeout).asJson();
@@ -210,24 +215,25 @@ public class WEEDECDCExtension {
         if (features.length() == 0) {
         	throw new KlabIllegalStateException("Found 0 items in STAC, sad :(");
         }
-        
-        JSONObject feature = features.getJSONObject(0); // assuming only one object in this case; if
-                                                        // more then we are ignoring :()
+        List<String> itemURLs = new ArrayList<>();
         
         try {
-        	JSONArray links = feature.getJSONArray("links");
-            for (int i = 0; i < links.length(); i++) {
-                JSONObject j = links.getJSONObject(i);
-                String rel = j.getString("rel");
-                if (rel.equals("self")){
-                	return j.getString("href");
-                }
+            for(int i=0; i<features.length(); i++) {
+            	JSONObject feature = features.getJSONObject(i);
+            	JSONArray links = feature.getJSONArray("links");
+            	for (int j=0; j < links.length(); j++) {
+            		JSONObject linkObj = links.getJSONObject(j);
+                    String rel = linkObj.getString("rel");
+                    if (rel.equals("self")){
+                    	itemURLs.add(linkObj.getString("href"));
+                    	break;
+                    }
+            	}
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
         	e.printStackTrace();
-        }
-        
-        return null;
+        }        
+        return itemURLs;
         
     }
 

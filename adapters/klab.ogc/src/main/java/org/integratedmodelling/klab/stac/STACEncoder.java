@@ -248,7 +248,8 @@ public class STACEncoder implements IResourceEncoder {
         }
 
         boolean isECDCWEED = collectionUrl.contains("ecosystem-characteristics-alpha"); // ECDC
-        boolean isPreprocessedResults = collectionUrl.contains("inference-alpha2-prepared-v101"); // Preprocessed habitat prob datacubes
+        boolean isPreprocessedResults = collectionUrl.contains("inference-alpha2-prepared-v101") || 
+        		collectionUrl.contains("inference-alpha3-prepared-v100"); // Preprocessed habitat prob datacubes
         
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
                 .findFirst().orElseThrow();
