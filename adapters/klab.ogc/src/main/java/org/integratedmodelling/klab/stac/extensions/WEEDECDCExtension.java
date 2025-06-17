@@ -49,7 +49,7 @@ public class WEEDECDCExtension {
         }
 
         System.out.println("Getting band " + band + " from ECDC STAC");
-        body.put("limit", 20);
+        body.put("limit", 100);
         body.put("collections", new JSONArray().put(collectionID));
         body.put("filter-lang", "cql2-json");
         body.put("bbox", bboxArr);
@@ -78,7 +78,7 @@ public class WEEDECDCExtension {
             bboxArr.put(coord);
         }
 
-        body.put("limit", 20);
+        body.put("limit", 100);
         body.put("collections", new JSONArray().put(collectionId));
         body.put("filter-lang", "cql2-json");
         body.put("bbox", bboxArr);
