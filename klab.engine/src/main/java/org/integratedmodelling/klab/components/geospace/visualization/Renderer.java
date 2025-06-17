@@ -483,6 +483,9 @@ public enum Renderer {
         }
 
         ColorMap colorMap = styleBuilder.createColorMap(labels, values, colors, colormapType);
+        if (colors.length > 255) {
+            colorMap.setExtendedColors(true);
+        }
         RasterSymbolizer ret = styleBuilder.createRasterSymbolizer(colorMap, opacity);
 
         if (contrastEnhancement != null || gamma != 1.0) {
