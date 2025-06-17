@@ -55,7 +55,7 @@ public class WEEDECDCExtension {
         body.put("bbox", bboxArr);
 
         List<String> assetURLs = queryAssetHref(searchURL, body);
-        return buildCoverage(band, assetURLs);
+        return buildSingleBandCoverage(band, assetURLs);
     }
     
     /*
@@ -107,7 +107,7 @@ public class WEEDECDCExtension {
 //        body.put("limit", 20);
 //        body.put("collections", new JSONArray().put(collectionId));
 //        body.put("filter-lang", "cql2-json");
-//        body.put("bbox", bboxArr);
+//        body.put("bbox", bboxArr); 
 //
 //        List<String> assetURLs = queryAssetHref(searchUrl, body);
 //        return buildCoverage(band, assetURL);
@@ -158,7 +158,7 @@ public class WEEDECDCExtension {
     	return gcov;
     }
     
-    private static GridCoverage2D buildCoverage(Object band, List<String> assetURLs) {
+    private static GridCoverage2D buildSingleBandCoverage(Object band, List<String> assetURLs) {
         GridCoverage2D gcov = null;
         try {
 
@@ -175,6 +175,8 @@ public class WEEDECDCExtension {
 
             kong.unirest.HttpResponse<File> stacResponse = Unirest
                     .post("https://stac-utils.integratedmodelling.org/retrieve_band").header("Content-Type", "application/json")
+                    .connectTimeout(600000)
+    				.socketTimeout(600000)
                     .body(postPayload).asObject(r -> {
                         try (InputStream in = r.getContent(); OutputStream out = new FileOutputStream(coverageFile)) {
                             byte[] buffer = new byte[8192];
