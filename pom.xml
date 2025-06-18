@@ -276,9 +276,9 @@
 			<snapshots>
 				<enabled>true</enabled>
 			</snapshots>
-			<id>central-portal-snapshots</id>
+			<id>sonatype-nexus-snapshots</id>
 			<name>Maven Central snapshots</name>
-			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
 </project>
