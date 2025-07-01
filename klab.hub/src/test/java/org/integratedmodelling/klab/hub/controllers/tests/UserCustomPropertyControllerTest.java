@@ -6,11 +6,11 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Optional;
 
-import org.integratedmodelling.klab.hub.repository.RecordedCustomPropertyRepository;
+import org.integratedmodelling.klab.hub.repository.CustomPropertyRepository;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.integratedmodelling.klab.hub.users.dto.User;
 import org.integratedmodelling.klab.hub.users.requests.UserCustomPropertyRequest;
-import org.integratedmodelling.klab.rest.CustomProperty;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,7 +41,7 @@ public class UserCustomPropertyControllerTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private RecordedCustomPropertyRepository customPropertiesRepository;
+    private CustomPropertyRepository customPropertiesRepository;
 
     @LocalServerPort
     int randomServerPort;
@@ -109,7 +109,7 @@ public class UserCustomPropertyControllerTest {
     @Test
     public void getAllCustomPropertiesOfUserWithProperties() {
         Optional<User> user = userRepository.findByName(usernames.get(1));
-        CustomProperty property = new CustomProperty(propertyKeys.get(0), propertyValues.get(0), false);
+        CustomPropertyRest property = new CustomPropertyRest(propertyKeys.get(0), propertyValues.get(0), false);
         user.get().putCustomProperty(property);
         userRepository.save(user.get());
         url = "http://localhost:" + randomServerPort + "/hub/api/v2/users/" + usernames.get(1) + "/custom-properties";

@@ -62,6 +62,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
@@ -78,7 +79,6 @@ import groovy.lang.Script;
  * the correspondent IKlabData.
  */
 public class RasterEncoder implements IResourceEncoder {
-
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
             IKlabData.Builder builder, IContextualizationScope scope) {
@@ -111,6 +111,7 @@ public class RasterEncoder implements IResourceEncoder {
         } else if (!resource.getAdapterType().equals("stac")) {
             resource.getParameters().get("band", 0);
         }
+        int nBands = coverage.getNumSampleDimensions();
         Set<Double> nodata = getNodata(resource, coverage, band);
         GroovyShell shell = null;
         Binding binding = null;
@@ -123,14 +124,18 @@ public class RasterEncoder implements IResourceEncoder {
             transformation = shell.parse(resource.getParameters().get("transform").toString());
         }
 
-        /*
-         * TODO support band mixer if set in resource
-         */
-
+        String bandMixer = null;
+        if (resource.getParameters().contains("bandmixer")) {
+            bandMixer = resource.getParameters().get("bandmixer", String.class);
+            if (!RasterAdapter.bandMixingOperations.contains(bandMixer)) {
+                throw new KlabUnsupportedFeatureException("Unsupported band mixing operation " + bandMixer);
+            }
+        }
+        
         /*
          * if so configured, cache the transformed coverage for the space dimension signature
          * 
-         * TODO use different methods for non-doubles TODO support multi-band expressions
+         * TODO use different methods for non-doubles
          */
 
 //        builder = builder.startState(((IRuntimeScope) scope).getTargetName());
@@ -138,7 +143,7 @@ public class RasterEncoder implements IResourceEncoder {
         for (long ofs = 0; ofs < space.size(); ofs++) {
 
             long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-            double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
+            double value = bandMixer == null ? getCellValue(iterator, xy, band) : getCellMixerValue(iterator, xy, bandMixer, nBands);
 
             // this is cheeky but will catch most of the nodata and
             // none of the good data
@@ -173,6 +178,122 @@ public class RasterEncoder implements IResourceEncoder {
         }
 //        builder = builder.finishState();
     }
+
+    private double getCellValue(RandomIter iterator, long[] xy, int band) {
+        return iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
+    }
+
+    private double getCellMixerValue(RandomIter iterator, long[] xy, String mixingOperation, int nBands) {
+        if (mixingOperation.equals("max_band")) {
+            return getBandOfMaxValue(iterator, xy, nBands);
+        }
+        if (mixingOperation.equals("min_band")) {
+            return getBandOfMinValue(iterator, xy, nBands);
+        }
+        if (mixingOperation.equals("max_value")) {
+            return getMaxCellValue(iterator, xy, nBands);
+        }
+        if (mixingOperation.equals("min_value")) {
+            return getMinCellValue(iterator, xy, nBands);
+        }
+        if (mixingOperation.equals("avg_value")) {
+            return getAvgCellValue(iterator, xy, nBands);
+        }
+        if (mixingOperation.equals("sum_value")) {
+            return getSumCellValue(iterator, xy, nBands);
+        }
+        return Double.NaN;
+    }
+
+    private double getBandOfMaxValue(RandomIter iterator, long[] xy, int nBands) {
+        double value = Double.NaN;
+        double maxValue = Double.MIN_VALUE;
+        for (int i = 0; i < nBands; i++) {
+            double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+            if (currentValue == Double.NaN) {
+                continue;
+            }
+            if (currentValue > maxValue) {
+                maxValue = currentValue;
+                value = i;
+            }
+        }
+        return value;
+    }
+
+    private double getBandOfMinValue(RandomIter iterator, long[] xy, int nBands) {
+        double value = Double.NaN;
+        double minValue = Double.MAX_VALUE;
+        for (int i = 0; i < nBands; i++) {
+            double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+            if (currentValue == Double.NaN) {
+                continue;
+            }
+            if (currentValue < minValue) {
+                minValue = currentValue;
+                value = i;
+            }
+        }
+        return value;
+    }
+
+    private double getMaxCellValue(RandomIter iterator, long[] xy, int nBands) {
+        double maxValue = Double.MIN_VALUE;
+        for (int i = 0; i < nBands; i++) {
+            double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+            if (currentValue == Double.NaN) {
+                continue;
+            }
+            if (currentValue > maxValue) {
+                maxValue = currentValue;
+            }
+        }
+        return maxValue == Double.MIN_VALUE ? Double.NaN : maxValue;
+    }
+
+    private double getMinCellValue(RandomIter iterator, long[] xy, int nBands) {
+        double minValue = Double.MAX_VALUE;
+        for (int i = 0; i < nBands; i++) {
+            double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+            if (currentValue == Double.NaN) {
+                continue;
+            }
+            if (currentValue < minValue) {
+                minValue = currentValue;
+            }
+        }
+        return minValue == Double.MAX_VALUE ? Double.NaN : minValue;
+    }
+
+    private double getAvgCellValue(RandomIter iterator, long[] xy, int nBands) {
+        int validBands = 0;
+        double sum = 0.0;
+        for (int i = 0; i < nBands; i++) {
+            double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+            if (Double.isNaN(currentValue)) {
+                continue;
+            }
+            sum += currentValue;
+            validBands++;
+        }
+        if (validBands == 0) {
+            return Double.NaN;
+        }
+        return sum / validBands;
+    }
+
+    private double getSumCellValue(RandomIter iterator, long[] xy, int nBands) {
+        double sum = 0.0;
+        for (int i = 0; i < nBands; i++) {
+            double currentValue = iterator.getSampleDouble((int) xy[0], (int) xy[1], i);
+            if (Double.isNaN(currentValue)) {
+                continue;
+            }
+            sum += currentValue;
+        }
+        return sum;
+    }
+
 
     private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
         Set<Double> ret = new HashSet<>();

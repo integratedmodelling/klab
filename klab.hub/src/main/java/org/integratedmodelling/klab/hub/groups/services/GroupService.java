@@ -20,4 +20,5 @@ public interface GroupService extends GenericHubService<MongoGroup>{
 //  public abstract MongoGroup getGroupByName(String groupName);
 
     List<MongoGroup> getGroupsDefault();
+
 }

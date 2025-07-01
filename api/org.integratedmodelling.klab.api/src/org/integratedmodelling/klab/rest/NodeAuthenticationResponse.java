@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -17,6 +19,7 @@ public class NodeAuthenticationResponse {
 	private String authenticatingHub;
 	private String publicKey;
 	private Set<Group> groups = new HashSet<>();
+	private List<NodeReference> services = new ArrayList<>();
 
 	public AuthenticatedIdentity getUserData() {
 		return userData;
@@ -49,15 +52,24 @@ public class NodeAuthenticationResponse {
 	public void setGroups(Set<Group> groups) {
 		this.groups = groups;
 	}
+	
+	public List<NodeReference> getServices() {
+        return services;
+    }
+
+    public void setServices(List<NodeReference> services) {
+        this.services = services;
+    }
 
 	public NodeAuthenticationResponse() {
 	}
 
-	public NodeAuthenticationResponse(AuthenticatedIdentity userData, String authenticatingNodeId, Collection<Group> groups, String publicKey) {
+	public NodeAuthenticationResponse(AuthenticatedIdentity userData, String authenticatingNodeId, Collection<Group> groups, Collection<NodeReference> services, String publicKey) {
 		super();
 		this.userData = userData;
 		this.authenticatingHub = authenticatingNodeId;
 		this.publicKey = publicKey;
+		this.services.addAll(services);
 		this.groups.addAll(groups);
 	}
 	

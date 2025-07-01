@@ -33,8 +33,6 @@ import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.keycloak.authorization.client.AuthzClient;
 import org.keycloak.authorization.client.Configuration;
 import org.keycloak.representations.AccessTokenResponse;
-import org.keycloak.representations.idm.authorization.AuthorizationRequest;
-import org.keycloak.representations.idm.authorization.AuthorizationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -279,17 +277,17 @@ public class HubUserService implements RemoteUserService {
     }
 
     private ResponseEntity<HubLoginResponse> hubLogin(UserAuthenticationRequest login) {
-        
+
         HttpHeaders headers = new HttpHeaders();
 
         String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
                 .getHeader(API.HUB.LABELS.AUTHORIZATION);
-        
-        if (token == null) { 
+
+        if (token == null) {
             /*
              * Acces to k.API client to get the token with user and password
              */
-            
+
             Map<String, Object> credentials = new HashMap<>();
             credentials.put("secret", engineProperties.getEnv().getKeycloakApiClientSecret());
 
@@ -303,11 +301,11 @@ public class HubUserService implements RemoteUserService {
 
             token = response != null ? "Bearer " + response.getToken() : null;
         }
-        
+
         if (token == null) {
             throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "User and password not exits.");
         }
-        
+
         headers.add(API.HUB.LABELS.AUTHORIZATION, token);
 
         HttpEntity< ? > request = new HttpEntity<>(login, headers);
@@ -318,8 +316,8 @@ public class HubUserService implements RemoteUserService {
     private URI hubLogout(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
-        headers.add(API.HUB.LABELS.AUTHORIZATION,
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader(API.HUB.LABELS.AUTHORIZATION));
+        headers.add(API.HUB.LABELS.AUTHORIZATION, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest().getHeader(API.HUB.LABELS.AUTHORIZATION));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         return restTemplate.postForLocation(getLogOutUrll(), request);
     }
@@ -327,8 +325,8 @@ public class HubUserService implements RemoteUserService {
     private ResponseEntity<HubUserProfile> hubToken(String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authentication", token);
-        headers.add(API.HUB.LABELS.AUTHORIZATION,
-                ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getHeader(API.HUB.LABELS.AUTHORIZATION));
+        headers.add(API.HUB.LABELS.AUTHORIZATION, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
+                .getRequest().getHeader(API.HUB.LABELS.AUTHORIZATION));
         HttpEntity< ? > request = new HttpEntity<>(headers);
         ResponseEntity<HubUserProfile> response = restTemplate.exchange(getProfileUrl(), HttpMethod.GET, request,
                 HubUserProfile.class, true);

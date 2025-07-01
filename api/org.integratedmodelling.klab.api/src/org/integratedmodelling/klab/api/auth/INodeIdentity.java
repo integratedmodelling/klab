@@ -29,9 +29,6 @@ import org.integratedmodelling.klab.rest.NodeReference.Permission;
  * @version $Id: $Id
  */
 public interface INodeIdentity extends IServerIdentity {
-	
-    /** Constant <code>type</code> */
-    Type type = Type.NODE;
 
     /** {@inheritDoc} */
     @Override
@@ -50,7 +47,7 @@ public interface INodeIdentity extends IServerIdentity {
      * @return
      */
     Set<String> getAdapters();
-    
+
     /**
      * All resource IDs handled by the node visible by the asking engine
      * 
@@ -63,33 +60,35 @@ public interface INodeIdentity extends IServerIdentity {
      * 
      * @return
      */
-	Set<String> getNamespaceIds();
-    
+    Set<String> getNamespaceIds();
+
     /**
      * All the catalog IDs in node resources, including its default catalog.
      * 
      * @return
      */
-	Set<String> getCatalogIds();
-	
-	/**
-	 * Authorities and their capabilities.
-	 * 
-	 * @return
-	 */
-	Map<String, IAuthority.Capabilities> getAuthorities();	
-	
-	/**
-	 * Get the node uptime in milliseconds
-	 * 
-	 * @return
-	 */
-	long getUptime();
+    Set<String> getCatalogIds();
 
-	/**
-	 * k.LAB version and build
-	 * 
-	 * @return
-	 */
-	String getVersion();
+    /**
+     * Authorities and their capabilities.
+     * 
+     * @return
+     */
+    Map<String, IAuthority.Capabilities> getAuthorities();
+
+    /**
+     * Get the node uptime in milliseconds
+     * 
+     * @return
+     */
+    long getUptime();
+
+    /**
+     * k.LAB version and build
+     * 
+     * @return
+     */
+    String getVersion();
+    
+    IIdentity.Type getType();
 }

@@ -106,9 +106,14 @@ public class RasterValidator implements IResourceValidator {
 
                 monitor.info("Running band tests...");
                 int numBands = coverage.getNumSampleDimensions();
+                if (numBands > 1) {
+                    ret.withParameter("bandmixer", "");
+                }
+
+                // TODO manage it as warning for TIFF imports. Adapters as WCS, OpenEO or STAC might need to consider this an error.
                 if (numBands > 1 && !userData.contains("band") && !userData.contains("bandmixer")) {
-                    ret.addError("raster coverage " + coverage.getName()
-                            + " has multiple bands but no band selector or band mixer expression are specified");
+                    monitor.warn("raster coverage " + coverage.getName()
+                            + " has multiple bands but no band selector or band mixer expression are specified yet");
                 } else if (userData.contains("band")) {
                     if (numBands < userData.get("band", Integer.class)) {
                         ret.addError("raster coverage " + coverage.getName() + " has " + numBands + "  bands but band "

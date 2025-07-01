@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.network;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -16,6 +17,8 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
@@ -31,128 +34,188 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 public enum NodeNetworkManager implements INetworkService {
-	
-	INSTANCE;
-	
-	private HubReference hub;
-	
-	Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
-	Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
-	
-	public static final int NODE_CHECK_INTERVAL_SECONDS = 10;
-	private Timer timer = new Timer("Node check");
-	
-	private NodeNetworkManager() {
-		Services.INSTANCE.registerService(this, INetworkService.class);
-		
-		this.hub = new GenerateHubReference().execute();
-		
-		// schedule the network check service
-		timer.scheduleAtFixedRate(new TimerTask() {
-			@Override
-			public void run() {
-				checkNodes();
-			}
-		}, NODE_CHECK_INTERVAL_SECONDS * 1000, NODE_CHECK_INTERVAL_SECONDS * 1000);
-	}
+
+    INSTANCE;
+
+    private HubReference hub;
+
+    Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
+    Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
+
+    public static final int NODE_CHECK_INTERVAL_SECONDS = 10;
+    private Timer timer = new Timer("Node check");
+
+    private NodeNetworkManager() {
+        Services.INSTANCE.registerService(this, INetworkService.class);
+
+        this.hub = new GenerateHubReference().execute();
+
+        // schedule the network check service
+        timer.scheduleAtFixedRate(new TimerTask(){
+            @Override
+            public void run() {
+                checkNodes();
+            }
+        }, NODE_CHECK_INTERVAL_SECONDS * 1000, NODE_CHECK_INTERVAL_SECONDS * 1000);
+    }
+
+    private List<INodeIdentity> filter(Collection<INodeIdentity> nodes, boolean onlyNodes) {
+        List<INodeIdentity> ret = new ArrayList<>();
+        for(INodeIdentity node : nodes) {
+            if (onlyNodes && isNode(node)) {
+                ret.add(node);
+            } else if (!onlyNodes && !isNode(node)) {
+                ret.add(node);
+            }
+        }
+        return ret;
+    }
+
+    private boolean isNode(INodeIdentity node) {
+        return (node.getIdentityType().equals(IIdentity.Type.NODE) || node.getIdentityType().equals(IIdentity.Type.LEGACY_NODE));
+    }
 
     @Override
     public Collection<INodeIdentity> getNodes() {
+        return Stream.concat(onlineNodes.values().stream().filter(node -> isNode(node)),
+                offlineNodes.values().stream().filter(node -> isNode(node))).collect(Collectors.toUnmodifiableList());
+    }
+
+    public Collection<INodeIdentity> getNodesAndServices() {
         return Stream.concat(onlineNodes.values().stream(), offlineNodes.values().stream())
                 .collect(Collectors.toUnmodifiableList());
     }
 
-	@Override
-	public Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public Collection<INodeIdentity> getNodes(Permission permission, boolean onlineOnly) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <T, K> T broadcastGet(String endpoint, Class<? extends K> individualResponseType,
-			Function<Collection<K>, T> merger, IMonitor monitor, Object... urlVariables) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T, K> T broadcastGet(String endpoint, Class< ? extends K> individualResponseType, Function<Collection<K>, T> merger,
+            IMonitor monitor, Object... urlVariables) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public <T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType,
-			Function<Collection<K>, T> merger, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    @Override
+    public <T, K, V> T broadcastPost(String endpoint, V request, Class< ? extends K> individualResponseType,
+            Function<Collection<K>, T> merger, IMonitor monitor) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@Override
-	public synchronized INodeIdentity getNode(String name) {
-		
-		synchronized (onlineNodes) {
-			if(onlineNodes.containsKey(name)) {
-				return onlineNodes.get(name);
-			}
-		}
-		
-		synchronized (onlineNodes) {
-			if(offlineNodes.containsKey(name)) {
-				return offlineNodes.get(name);
-			}
-		}
-		
-		return null;
-	}
+    @Override
+    public synchronized INodeIdentity getNode(String name) {
+        INodeIdentity node;
+        synchronized (onlineNodes) {
+            if (onlineNodes.containsKey(name)) {
+                node = onlineNodes.get(name);
+                return (isNode(node)) ? node : null;
+            }
+        }
 
-	
-	@Override
-	public INodeIdentity getNodeForResource(Urn urn) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        synchronized (offlineNodes) {
+            if (offlineNodes.containsKey(name)) {
+                node = offlineNodes.get(name);
+                return (isNode(node)) ? node : null;
+            }
+        }
 
-	
-	@Override
-	public List<INodeIdentity> getNodesForAuthority(String authority) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+        return null;
+    }
 
-	public Collection<NodeReference> getNodeReferences() {
-		Collection<NodeReference> refs = new HashSet<>();
-		
-		synchronized (onlineNodes) {
-			for (INodeIdentity node : onlineNodes.values()) {
-				refs.add(createNodeReference(node, true));
-			}
-		}
-		
-		synchronized (offlineNodes) {
-			for (INodeIdentity node : offlineNodes.values()) {
-				refs.add(createNodeReference(node, false));
-			}
-		}
-		
-		return refs;
-	}
-	
-	
-	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
-		NodeReference ret = new NodeReference(node);
-		ret.setOnline(isOnline);
-		ret.setPartner(this.hub.getPartner());
-		return ret;
-	}
-	
+    @Override
+    public INodeIdentity getNodeForResource(Urn urn) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<INodeIdentity> getNodesForAuthority(String authority) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    public Collection<NodeReference> getNodeReferences() {
+        Collection<NodeReference> refs = new HashSet<>();
+
+        synchronized (onlineNodes) {
+            for(INodeIdentity node : filter(onlineNodes.values(), true)) {
+                refs.add(createNodeReference(node, true));
+            }
+        }
+
+        synchronized (offlineNodes) {
+            for(INodeIdentity node : filter(offlineNodes.values(), true)) {
+                refs.add(createNodeReference(node, false));
+            }
+        }
+
+        return refs;
+    }
+
+    public Collection<NodeReference> getServiceReferences() {
+        Collection<NodeReference> refs = new HashSet<>();
+
+        synchronized (onlineNodes) {
+            for(INodeIdentity node : filter(onlineNodes.values(), false)) {
+                refs.add(createNodeReference(node, true));
+            }
+        }
+
+        synchronized (offlineNodes) {
+            for(INodeIdentity node : filter(offlineNodes.values(), false)) {
+                refs.add(createNodeReference(node, false));
+            }
+        }
+
+        return refs;
+    }
+
+    private Collection<NodeReference> getAllReferences() {
+        Collection<NodeReference> refs = new HashSet<>();
+
+        synchronized (onlineNodes) {
+            for(INodeIdentity node : onlineNodes.values()) {
+                refs.add(createNodeReference(node, true));
+            }
+        }
+
+        synchronized (offlineNodes) {
+            for(INodeIdentity node : offlineNodes.values()) {
+                refs.add(createNodeReference(node, false));
+            }
+        }
+
+        return refs;
+    }
+
+    private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
+        NodeReference ret = new NodeReference(node);
+        ret.setOnline(isOnline);
+        ret.setPartner(this.hub.getPartner());
+        return ret;
+    }
+
     private void retrieveNodeCapabilities(INodeIdentity node) {
         if (!(node instanceof Node)) {
             return;
         }
-        if (!((Node)node).getAdapters().isEmpty()) {
+        if (!((Node) node).getAdapters().isEmpty()) {
             return;
         }
 
         RestTemplate restTemplate = new RestTemplate();
-        ((Node)node).getUrls().forEach(url -> {
+        ((Node) node).getUrls().forEach(url -> {
             try {
-                ResponseEntity<NodeCapabilities> responseEntity = restTemplate.getForEntity(url + API.CAPABILITIES, NodeCapabilities.class);
-                ((Node)node).mergeCapabilities(responseEntity.getBody());
+                String capabilities = node.is(Type.NODE) || node.is(Type.LEGACY_NODE)
+                        ? API.CAPABILITIES
+                        : "/public" + API.CAPABILITIES;
+                ResponseEntity<NodeCapabilities> responseEntity = restTemplate.getForEntity(url + capabilities,
+                        NodeCapabilities.class);
+                ((Node) node).mergeCapabilities(responseEntity.getBody());
                 return;
             } catch (RestClientException e) {
                 // no need to manage the exception, just try the next URL
@@ -161,8 +224,7 @@ public enum NodeNetworkManager implements INetworkService {
     }
 
     public void notifyAuthorizedNode(INodeIdentity node, boolean online) {
-        node.getClient();
-        if (getNodes().contains(node)) {
+        if (getNodesAndServices().contains(node)) {
             if (online) {
                 setNodeOnline(node);
             } else {
@@ -180,28 +242,31 @@ public enum NodeNetworkManager implements INetworkService {
             }
         }
     }
-	
-	private void checkNodes() {
-		Logging.INSTANCE.info("Checking nodes");
-		Collection<NodeReference> nodes = getNodeReferences();
-		for (NodeReference ref : nodes) {
-			Node node = new Node(ref,null);
-			node.getClient();
+
+    private void checkNodes() {
+        Logging.INSTANCE.info("Checking nodes");
+        Collection<NodeReference> nodes = getAllReferences();
+        for(NodeReference ref : nodes) {
+            Node node = new Node(ref, null);
+            node.getClient();
+            String identityType = node.getIdentityType() == null
+                    ? IIdentity.Type.NODE.toString()
+                    : node.getIdentityType().toString();
             retrieveNodeCapabilities(node);
-			try {
-				if(node.ping()) {
-					Logging.INSTANCE.info("Node Online: " + node.getName());
-					setNodeOnline(node);
-				} else {
-					Logging.INSTANCE.info("Node Offline: " + node.getName());
-					setNodeOffline(node);
-				}
-			} catch (ResourceAccessException e) {
-				Logging.INSTANCE.info("Node Offline: " + node.getName());
-				setNodeOffline(node);
-			}
-		}
-	}
+            try {
+                if (node.ping()) {
+                    Logging.INSTANCE.info(identityType + " Online: " + node.getName());
+                    setNodeOnline(node);
+                } else {
+                    Logging.INSTANCE.info(identityType + " Offline: " + node.getName());
+                    setNodeOffline(node);
+                }
+            } catch (ResourceAccessException e) {
+                Logging.INSTANCE.info(identityType + " Offline: " + node.getName());
+                setNodeOffline(node);
+            }
+        }
+    }
 
     private void setNodeOffline(INodeIdentity iNode) {
         synchronized (onlineNodes) {
@@ -219,5 +284,23 @@ public enum NodeNetworkManager implements INetworkService {
         synchronized (onlineNodes) {
             onlineNodes.put(node.getName(), node);
         }
+    }
+
+    @Override
+    public Collection<INodeIdentity> getServices() {
+        return Stream.concat(onlineNodes.values().stream().filter(node -> !isNode(node)),
+                offlineNodes.values().stream().filter(node -> !isNode(node))).collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public Collection<INodeIdentity> getServices(Type type) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public INodeIdentity getService(String name) {
+        // TODO Auto-generated method stub
+        return null;
     }
 }
