@@ -27,10 +27,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 
 @JsonAutoDetect
-public class ProfileResource implements OAuth2User{
+public class ProfileResource implements OAuth2User {
 
-	public String id;
-	
+    public String id;
+
     @Size(max = Constraints.USERNAME_LENGTH)
     @Pattern(regexp = Constraints.USERNAME_PATTERN)
     public String name;
@@ -38,7 +38,7 @@ public class ProfileResource implements OAuth2User{
     @Email
     public String email;
 
-	public String serverUrl;
+    public String serverUrl;
 
     public String firstName;
 
@@ -46,16 +46,16 @@ public class ProfileResource implements OAuth2User{
 
     public String initials;
 
-	public String address;
+    public String address;
 
-	public String jobTitle;
+    public String jobTitle;
 
     public String phone;
 
     public String affiliation;
 
     public List<Role> roles = new ArrayList<>(); // LDAP security roles or OAuth
-    
+
     public List<AgreementEntry> agreements = new ArrayList<>();
 
     public boolean sendUpdates;
@@ -66,21 +66,21 @@ public class ProfileResource implements OAuth2User{
 
     public LocalDateTime lastLogin;
 
-	public LocalDateTime lastConnection;
+    public LocalDateTime lastConnection;
 
     public AccountStatus accountStatus;
-    
-    private Collection<? extends GrantedAuthority> authorities;
-    
+
+    private Collection< ? extends GrantedAuthority> authorities;
+
     private Map<String, Object> attributes;
-    
+
     public Set<CustomPropertyRest> customProperties = new HashSet<>();
-    
+
     /**
      * Use to store the jwt token in case of needs
      */
     private String jwtToken;
-    
+
     @Override
     public int hashCode() {
         return new HashCodeBuilder().append(name).append(email).append(serverUrl).append(firstName).append(lastName)
@@ -108,14 +108,14 @@ public class ProfileResource implements OAuth2User{
                 .append(sendUpdates, other.sendUpdates).append(comments, other.comments)
                 .append(accountStatus, other.accountStatus).isEquals();
     }
-    
-    public String getUsername() {
-		return name;
-	}
 
-	public void setUsername(String username) {
-		this.name = username;
-	}	
+    public String getUsername() {
+        return name;
+    }
+
+    public void setUsername(String username) {
+        this.name = username;
+    }
 
     public List<AgreementEntry> getAgreements() {
         return agreements;
@@ -126,8 +126,8 @@ public class ProfileResource implements OAuth2User{
     }
 
     public List<Role> getRoles() {
-		return roles;
-	}
+        return roles;
+    }
 
     public String getJwtToken() {
         return jwtToken;
@@ -138,7 +138,7 @@ public class ProfileResource implements OAuth2User{
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    public Collection< ? extends GrantedAuthority> getAuthorities() {
         return authorities;
     }
 
@@ -159,129 +159,128 @@ public class ProfileResource implements OAuth2User{
         return String.valueOf(id);
     }
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
-	
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public LocalDateTime getLastLogin() {
-		return lastLogin;
-	}
+        return lastLogin;
+    }
 
-	public void setLastLogin(LocalDateTime lastLogin) {
-		this.lastLogin = lastLogin;
-	}
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
 
-	public LocalDateTime getLastConnection() {
-		return lastConnection;
-	}
+    public LocalDateTime getLastConnection() {
+        return lastConnection;
+    }
 
-	public void setLastConnection(LocalDateTime lastConnection) {
-		this.lastConnection = lastConnection;
-	}
-	
-	public Set<CustomPropertyRest> getCustomProperties() {
-		return customProperties;
-	}
+    public void setLastConnection(LocalDateTime lastConnection) {
+        this.lastConnection = lastConnection;
+    }
 
-	public void setCustomProperties(Set<CustomPropertyRest> customProperties) {
-		this.customProperties = customProperties;
-	}
+    public Set<CustomPropertyRest> getCustomProperties() {
+        return customProperties;
+    }
 
-	public List<String> getGroupsIds() {
-	    List<String> groupsIds = new ArrayList<>();
-	    //TODO Agreement list	    
-	    for (GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
-            if(grp != null && grp.isValid()) {
+    public void setCustomProperties(Set<CustomPropertyRest> customProperties) {
+        this.customProperties = customProperties;
+    }
+
+    public List<String> getGroupsIds() {
+        List<String> groupsIds = new ArrayList<>();
+        // TODO Agreement list
+        for(GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
+            if (grp != null && grp.isValid()) {
                 groupsIds.add(grp.getGroup().getName());
             }
         }
-	    return groupsIds;
-	}
-	
-	public List<Group> getGroupsList() {
-		List<Group> listOfGroups = new ArrayList<>();
-		//TODO Agreement list 
+        return groupsIds;
+    }
 
-		for (GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
-			if(grp != null && grp.isValid()) {
+    public List<Group> getGroupsList() {
+        List<Group> listOfGroups = new ArrayList<>();
+        // TODO Agreement list
 
-				Group group = new Group();
-				MongoGroup mGroup = grp.getGroup();
-				group.setId(mGroup.getName());
-				group.setName(mGroup.getName());
-				group.setDescription(mGroup.getDescription());
-				group.setIconUrl(mGroup.getIconUrl());
-				group.setMaxUpload(mGroup.getMaxUpload());
-				group.setObservables(mGroup.getObservableReferences());
-				group.setProjectUrls(mGroup.getProjectUrls());
-				group.setSshKey(mGroup.getSshKey());
-				group.setMaxUpload(mGroup.getMaxUpload());
-				group.setWorldview(mGroup.isWorldview());
-				group.setComplimentary(mGroup.isComplimentary());
-				group.setOptIn(group.isOptIn());
-				group.setCustomProperties(group.getCustomProperties());
-				
-				listOfGroups.add(group);
-			}
-		}
-		return listOfGroups;
-	}
-	
-	public ProfileResource getSafeProfile() {
-	   
-	    ProfileResource cleanedProfile = new ProfileResource();
-		cleanedProfile.accountStatus = accountStatus;
-		cleanedProfile.address = address;
-		cleanedProfile.affiliation = affiliation;
-		cleanedProfile.attributes = attributes;
-		cleanedProfile.authorities = authorities;
-		cleanedProfile.comments = comments;
-		cleanedProfile.email = email;
-		cleanedProfile.firstName = firstName;
-		cleanedProfile.agreements = agreements;
-		cleanedProfile.id = id;
-		cleanedProfile.initials = initials;
-		cleanedProfile.jobTitle = jobTitle;
-		cleanedProfile.lastName = lastName;
-		cleanedProfile.lastConnection = lastConnection;
-		cleanedProfile.lastLogin = lastLogin;
-		cleanedProfile.phone = phone;
-		cleanedProfile.registrationDate = registrationDate;
-		cleanedProfile.roles = roles;
-		cleanedProfile.sendUpdates = sendUpdates;
-		cleanedProfile.serverUrl = serverUrl;
-		cleanedProfile.jwtToken = jwtToken;
-		cleanedProfile.name = name;
-		//TODO check
-		cleanedProfile.agreements = agreements;
-		cleanedProfile.customProperties = customProperties;
-		return cleanedProfile;
-	}
+        for(GroupEntry grp : this.getAgreements().get(0).getAgreement().getGroupEntries()) {
+            if (grp != null && grp.isValid()) {
 
+                Group group = new Group();
+                MongoGroup mGroup = grp.getGroup();
+                group.setId(mGroup.getName());
+                group.setName(mGroup.getName());
+                group.setDescription(mGroup.getDescription());
+                group.setIconUrl(mGroup.getIconUrl());
+                group.setMaxUpload(mGroup.getMaxUpload());
+                group.setObservables(mGroup.getObservableReferences());
+                group.setProjectUrls(mGroup.getProjectUrls());
+                group.setSshKey(mGroup.getSshKey());
+                group.setMaxUpload(mGroup.getMaxUpload());
+                group.setWorldview(mGroup.isWorldview());
+                group.setComplimentary(mGroup.isComplimentary());
+                group.setOptIn(mGroup.isOptIn());
+                group.setCustomProperties(mGroup.getCustomPropertiesRest());
+
+                listOfGroups.add(group);
+            }
+        }
+        return listOfGroups;
+    }
+
+    public ProfileResource getSafeProfile() {
+
+        ProfileResource cleanedProfile = new ProfileResource();
+        cleanedProfile.accountStatus = accountStatus;
+        cleanedProfile.address = address;
+        cleanedProfile.affiliation = affiliation;
+        cleanedProfile.attributes = attributes;
+        cleanedProfile.authorities = authorities;
+        cleanedProfile.comments = comments;
+        cleanedProfile.email = email;
+        cleanedProfile.firstName = firstName;
+        cleanedProfile.agreements = agreements;
+        cleanedProfile.id = id;
+        cleanedProfile.initials = initials;
+        cleanedProfile.jobTitle = jobTitle;
+        cleanedProfile.lastName = lastName;
+        cleanedProfile.lastConnection = lastConnection;
+        cleanedProfile.lastLogin = lastLogin;
+        cleanedProfile.phone = phone;
+        cleanedProfile.registrationDate = registrationDate;
+        cleanedProfile.roles = roles;
+        cleanedProfile.sendUpdates = sendUpdates;
+        cleanedProfile.serverUrl = serverUrl;
+        cleanedProfile.jwtToken = jwtToken;
+        cleanedProfile.name = name;
+        // TODO check
+        cleanedProfile.agreements = agreements;
+        cleanedProfile.customProperties = customProperties;
+        return cleanedProfile;
+    }
 
     public ArrayList<GroupEntry> expiredGroupEntries() {
         ArrayList<GroupEntry> expired = new ArrayList<GroupEntry>();
 
-        for (GroupEntry e : getAgreements().get(0).getAgreement().getGroupEntries()) {
-            if(e.getExpiration() != null && e.getExpiration().isBefore(LocalDateTime.now())) {
+        for(GroupEntry e : getAgreements().get(0).getAgreement().getGroupEntries()) {
+            if (e.getExpiration() != null && e.getExpiration().isBefore(LocalDateTime.now())) {
                 expired.add(e);
             }
         }
         return expired;
     }
-    
+
     public ArrayList<GroupEntry> expiringGroupEntries() {
         ArrayList<GroupEntry> expiring = new ArrayList<GroupEntry>();
 
-        for (GroupEntry e : getAgreements().get(0).getAgreement().getGroupEntries()) {
+        for(GroupEntry e : getAgreements().get(0).getAgreement().getGroupEntries()) {
             if (e.getExpiration() != null && !e.getExpiration().isBefore(LocalDateTime.now())
                     && !e.getExpiration().isAfter(LocalDateTime.now().plusDays(30))) {
                 expiring.add(e);
@@ -289,5 +288,5 @@ public class ProfileResource implements OAuth2User{
         }
         return expiring;
     }
-	
+
 }

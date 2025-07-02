@@ -66,8 +66,34 @@ public interface ICertificate {
         /**
          * This certificate authorizes a node. The only allowed level is {@link Level#INSTITUTIONAL}
          * or {@link Level#TEST}.
+         * TODO substituted by LEGACY_NODE
          */
         NODE,
+        /**
+         * This certificate authorizes a node. The only allowed level is {@link Level#INSTITUTIONAL}
+         * or {@link Level#TEST}.
+         */
+        LEGACY_NODE,
+        /**
+         * This certificate authorizes a Reasoner service. The only allowed level is {@link Level#INSTITUTIONAL}
+         * or {@link Level#TEST}.
+         */
+        REASONER,
+        /**
+         * This certificate authorizes a Resolver service. The only allowed level is {@link Level#INSTITUTIONAL}
+         * or {@link Level#TEST}.
+         */
+        RESOLVER,
+        /**
+         * This certificate authorizes a Resources service. The only allowed level is {@link Level#INSTITUTIONAL}
+         * or {@link Level#TEST}.
+         */
+        RESOURCES,
+        /**
+         * This certificate authorizes a Runtime service. The only allowed level is {@link Level#INSTITUTIONAL}
+         * or {@link Level#TEST}.
+         */
+        RUNTIME,
         /**
          * This certificate authorizes a hub. The only allowed level is {@link Level#INSTITUTIONAL}
          * or {@link Level#TEST}.
@@ -83,6 +109,7 @@ public interface ICertificate {
 
     public static final String DEFAULT_ENGINE_CERTIFICATE_FILENAME = "klab.cert";
     public static final String DEFAULT_NODE_CERTIFICATE_FILENAME = "node.cert";
+    public static final String DEFAULT_SERICE_CERTIFICATE_FILENAME = "service.cert";
     public static final String DEFAULT_SEMANTIC_SERVER_CERTIFICATE_FILENAME = "semantic.cert";
     public static final String DEFAULT_HUB_CERTIFICATE_FILENAME = "hub.cert";
     public static final String DEFAULT_LEVER_CERTIFICATE_FILENAME = "lever.cert";
@@ -94,13 +121,14 @@ public interface ICertificate {
     public static final String KEY_USERNAME = "klab.username";
     public static final String KEY_AGREEMENT = "klab.agreement";
     public static final String KEY_NODENAME = "klab.nodename";
+    public static final String KEY_SERVICENAME = "klab.servicename";
     public static final String KEY_LEVERNAME = "klab.levername";
     public static final String KEY_HUBNAME = "klab.hubname";
     public static final String KEY_URL = "klab.url";
     public static final String KEY_SIGNATURE = "klab.signature";
     public static final String KEY_PARTNER_HUB = "klab.partner.hub";
     public static final String KEY_PARTNER_NAME = "klab.partner.name";
-    public static final String KEY_PARTNER_EMAIL = "klab.partner.email";    
+    public static final String KEY_PARTNER_EMAIL = "klab.partner.email";
     public static final String KEY_CERTIFICATE = "klab.certificate";
     public static final String KEY_CERTIFICATE_TYPE = "klab.certificate.type";
     public static final String KEY_CERTIFICATE_LEVEL = "klab.certificate.level";

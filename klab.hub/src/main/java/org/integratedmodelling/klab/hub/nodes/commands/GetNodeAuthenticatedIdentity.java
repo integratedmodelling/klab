@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.hub.licenses.dto.JwtToken;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
@@ -27,8 +28,9 @@ public class GetNodeAuthenticatedIdentity {
 		IdentityReference nodeReference = new IdentityReference(nodeIdentity.getName(),
 				nodeIdentity.getParentIdentity().getEmailAddress(), now.toString());
 	
+		String token = new JwtToken().createServiceJwtToken(nodeIdentity, groups);
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(nodeReference,
-				groups, expires.toString(), nodeIdentity.getId());
+				groups, expires.toString(), token != null ? token : nodeIdentity.getId());
 		
 		return authenticatedIdentity;
 	}

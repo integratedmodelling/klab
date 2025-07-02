@@ -1,9 +1,13 @@
 package org.integratedmodelling.klab.hub.nodes.dtos;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.hub.api.IdentityModel;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -19,6 +23,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class MongoNode extends IdentityModel {
 
     private String url;
+
+    private IIdentity.Type type = IIdentity.Type.LEGACY_NODE;
 
     @Indexed(unique = false)
     private String email;
@@ -63,6 +69,12 @@ public class MongoNode extends IdentityModel {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+    public IIdentity.Type getType() {
+        return type;
+    }
+    public void setType(IIdentity.Type type) {
+        this.type = type;
     }
 
 }
