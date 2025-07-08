@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import kong.unirest.HttpResponse;
@@ -130,6 +131,7 @@ public class OpenEO {
 
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Schema {
 
 		private String type = "number";
@@ -153,6 +155,7 @@ public class OpenEO {
 
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Parameter {
 
 		private String name;
@@ -302,6 +305,7 @@ public class OpenEO {
 	 * A user defined OpenEO process. Can be used as a "namespace" when running a
 	 * job.
 	 */
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Process {
 
 		private String id;
