@@ -25,6 +25,8 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import kong.unirest.json.JSONObject;
+
 public class OpenEOTests {
 
 	static String sShape = "EPSG:4326 POLYGON ((-2.6430600187259428 40.75436284251779, -7.8229143312147436 40.75436284251779, -7.8229143312147436 43.322224962103604, -2.6430600187259428 43.322224962103604, -2.6430600187259428 40.75436284251779))";
@@ -55,9 +57,10 @@ public class OpenEOTests {
 
 	@Test
 	public void smallProcessTest() {
-		assertEquals(
-				openEO.runJob("add", Parameters.create("x", 5, "y", 3), Klab.INSTANCE.getRootMonitor(), Number.class),
-				8);
+		JSONObject parameters = new JSONObject();
+		parameters.put("x", 5);
+		parameters.put("y", 3);
+		assertEquals(openEO.runJob("add", parameters, Klab.INSTANCE.getRootMonitor(), Number.class), 8);
 	}
 
 //	@Test
@@ -87,8 +90,12 @@ public class OpenEOTests {
 		 */
 		File outfile = new File(System.getProperty("user.home") + File.separator + "openeo_test.tif");
 		FileUtils.deleteQuietly(outfile);
+		
+		JSONObject parameters = new JSONObject();
+		parameters.put("year", 2020);
+		parameters.put("geometry", testGeometryGeoJSON);
 
-		openEO.runJob("udp_annual_avg_fcover", Parameters.create("year", 2020, "geometry", testGeometryGeoJSON),
+		openEO.runJob("udp_annual_avg_fcover", parameters,
 				Klab.INSTANCE.getRootMonitor(), (input) -> {
 					try {
 						FileUtils.copyInputStreamToFile(input, outfile);
@@ -108,8 +115,11 @@ public class OpenEOTests {
 		 * Run a large data calculation synchronously, pass the output as a stream to a
 		 * file serializer
 		 */
+		JSONObject parameters = new JSONObject();
+		parameters.put("year", 2020);
+		parameters.put("geometry", testGeometryGeoJSON);
 		OpenEOFuture future = openEO.submit("udp_annual_avg_fcover",
-				Parameters.create("year", 2020, "geometry", testGeometryGeoJSON), Klab.INSTANCE.getRootMonitor(),
+				parameters, Klab.INSTANCE.getRootMonitor(),
 				OpenEO.readUdp(
 						"https://raw.githubusercontent.com/integratedmodelling/OpenEO-UDP-UDF-catalogue/main/UDP/json/udp_annual_avg_fcover.json"));
 
@@ -124,9 +134,10 @@ public class OpenEOTests {
 
 	@Test
 	public void largeProcessTest() {
-
-		Parameters<String> parameters = Parameters.create("geometry", testGeometryGeoJSON, "year", 2021, "resolution",
-				100);
+		JSONObject parameters = new JSONObject();
+		parameters.put("year", 2020);
+		parameters.put("geometry", testGeometryGeoJSON);
+		parameters.put("resolution", 100);
 
 		openEO.submit("dummy_udp", parameters, Klab.INSTANCE.getRootMonitor(), (result) -> {
 			System.out.println(JsonUtils.asString(result));
