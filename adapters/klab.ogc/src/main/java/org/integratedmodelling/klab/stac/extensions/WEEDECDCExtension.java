@@ -1,0 +1,243 @@
+package org.integratedmodelling.klab.stac.extensions;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.hortonmachine.gears.io.rasterreader.OmsRasterReader;
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+import org.integratedmodelling.klab.utils.FileUtils;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
+import kong.unirest.json.JSONObject;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
+/* Reading collections from ECDC STAC
+ */
+
+public class WEEDECDCExtension {
+    /*
+     * Gets the Coverage from ECDC STAC (Ecosystem Characteristics Datacube)
+     */
+    public static GridCoverage2D getECDCCoverage(List<Double> bbox, IGeometry geometry, Object band, String collectionID) {
+        String searchURL = "https://catalogue.weed.apex.esa.int/search";
+        JSONObject body = new JSONObject();
+        JSONArray bboxArr = new JSONArray();
+
+        List<Double> qbbox = new ArrayList<>();
+        qbbox.add(bbox.get(0));
+        qbbox.add(bbox.get(2));
+        qbbox.add(bbox.get(1));
+        qbbox.add(bbox.get(3));
+
+        for (Double coord : qbbox) {
+            System.out.println(coord);
+            bboxArr.put(coord);
+        }
+
+        body.put("limit", 100);
+        body.put("collections", new JSONArray().put(collectionID));
+        body.put("filter-lang", "cql2-json");
+        body.put("bbox", bboxArr);
+
+        List<String> assetURLs = queryAssetHref(searchURL, body);
+        return buildSingleBandCoverage(band, assetURLs);
+    }
+
+    /*
+     * Gets the results from Preprocessed Datacubes from habitat probabilities, and applies a bandmixer
+     */
+    public static GridCoverage2D getWEEDBandMixerCoverage(List<Double> bbox, String collectionId, IGeometry geometry,
+            int typologyLevel) {
+        String searchURL = "https://catalogue.weed.apex.esa.int/search";
+        JSONObject body = new JSONObject();
+        JSONArray bboxArr = new JSONArray();
+
+        List<Double> qbbox = new ArrayList<>();
+        qbbox.add(bbox.get(0));
+        qbbox.add(bbox.get(2));
+        qbbox.add(bbox.get(1));
+        qbbox.add(bbox.get(3));
+
+        for (Double coord : qbbox) {
+            System.out.println(coord);
+            bboxArr.put(coord);
+        }
+
+        body.put("limit", 100);
+        body.put("collections", new JSONArray().put(collectionId));
+        body.put("filter-lang", "cql2-json");
+        body.put("bbox", bboxArr);
+
+        List<String> itemURL = queryItemURL(searchURL, body);
+        return buildBandMixerCoverage(collectionId, itemURL, typologyLevel);
+    }
+
+    public static GridCoverage2D buildBandMixerCoverage(String collectionID, List<String> itemURLs, int typologyLevel) {
+        GridCoverage2D gcov = null;
+        try {
+
+            File coverageFile = File.createTempFile("geo", ".tiff");
+            JSONArray itemURLReq = new JSONArray();
+
+            for (String url : itemURLs) {
+                itemURLReq.put(updateNonASCIIURL(collectionID, url));
+            }
+
+            JSONObject postPayload = new JSONObject();
+            postPayload.put("itemURL", itemURLReq); // The Public URL pointing to the Item
+            postPayload.put("typologyLevel", typologyLevel); // The typology level i.e. 1, 2 or 3
+
+            kong.unirest.HttpResponse<File> stacResponse = Unirest
+                    .post("https://stac-utils.integratedmodelling.org/retrieve_dominant_habitat")
+                    .header("Content-Type", "application/json").connectTimeout(600000).socketTimeout(600000).body(postPayload)
+                    .asObject(r -> {
+                        try (InputStream in = r.getContent(); OutputStream out = new FileOutputStream(coverageFile)) {
+                            byte[] buffer = new byte[8192];
+                            int bytesRead;
+                            while ((bytesRead = in.read(buffer)) != -1) {
+                                out.write(buffer, 0, bytesRead);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException("Error writing response to file", e);
+                        }
+                        return coverageFile;
+                    });
+
+            if (stacResponse.getStatus() != 200) {
+                throw new KlabResourceAccessException("Cannot build Band Mixer coverage: " + stacResponse.getStatusText());
+            }
+            FileUtils.forceDeleteOnExit(coverageFile);
+            gcov = OmsRasterReader.readRaster(coverageFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw new KlabResourceAccessException(e);
+        }
+        return gcov;
+    }
+
+    private static GridCoverage2D buildSingleBandCoverage(Object band, List<String> assetURLs) {
+        GridCoverage2D gcov = null;
+        try {
+
+            File coverageFile = File.createTempFile("geo", ".tiff");
+
+            JSONObject postPayload = new JSONObject();
+            JSONArray assetURLreq = new JSONArray();
+            for (String assetURL : assetURLs) {
+                assetURLreq.put(assetURL);
+            }
+            postPayload.put("url", assetURLreq); // List of hrefs Public URL pointing to the COG
+            postPayload.put("bandId", band); // The BandID in String
+
+            kong.unirest.HttpResponse<File> stacResponse = Unirest
+                    .post("https://stac-utils.integratedmodelling.org/retrieve_band").header("Content-Type", "application/json")
+                    .connectTimeout(600000).socketTimeout(600000).body(postPayload).asObject(r -> {
+                        try (InputStream in = r.getContent(); OutputStream out = new FileOutputStream(coverageFile)) {
+                            byte[] buffer = new byte[8192];
+                            int bytesRead;
+                            while ((bytesRead = in.read(buffer)) != -1) {
+                                out.write(buffer, 0, bytesRead);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException("Error writing response to file", e);
+                        }
+                        return coverageFile;
+                    });
+
+            if (stacResponse.getStatus() != 200) {
+                throw new KlabResourceAccessException("Cannot build Single Band coverage: " + stacResponse.getStatusText());
+            }
+            FileUtils.forceDeleteOnExit(coverageFile);
+            gcov = OmsRasterReader.readRaster(coverageFile.getAbsolutePath());
+        } catch (Exception e) {
+            throw new KlabResourceAccessException(e);
+        }
+        return gcov;
+    }
+
+    private static List<String> queryItemURL(String searchURL, JSONObject body) {
+        int timeout = 50000;
+        kong.unirest.HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body)
+                .header("Content-Type", "application/json").connectTimeout(timeout).asJson();
+
+        if (!response.isSuccess()) {
+            throw new KlabIllegalStateException("STAC Query Failed with Status: " + response.getStatus());
+        }
+
+        JSONArray features = response.getBody().getObject().getJSONArray("features");
+
+        if (features.length() == 0) {
+            throw new KlabIllegalStateException("Found 0 items in STAC, sad :(");
+        }
+        List<String> itemURLs = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < features.length(); i++) {
+                JSONObject feature = features.getJSONObject(i);
+                JSONArray links = feature.getJSONArray("links");
+                for (int j = 0; j < links.length(); j++) {
+                    JSONObject linkObj = links.getJSONObject(j);
+                    String rel = linkObj.getString("rel");
+                    if (rel.equals("self")) {
+                        itemURLs.add(linkObj.getString("href"));
+                        break;
+                    }
+                }
+            }
+        } catch (Exception e) {
+            throw new KlabResourceAccessException(e);
+        }
+        return itemURLs;
+
+    }
+
+    private static List<String> queryAssetHref(String searchURL, JSONObject body) {
+        List<String> assetHrefs = new ArrayList<>();
+
+        int timeout = 50000;
+        kong.unirest.HttpResponse<JsonNode> response = Unirest.post(searchURL).body(body)
+                .header("Content-Type", "application/json").connectTimeout(timeout).asJson();
+
+        if (!response.isSuccess()) {
+            throw new KlabIllegalStateException("ERROR AT READING MODELID");
+        }
+
+        JSONArray features = response.getBody().getObject().getJSONArray("features");
+
+        for (int i = 0; i < features.length(); i++) {
+            JSONObject feature = features.getJSONObject(i);
+            String assetHref = "";
+
+            JSONObject asset = feature.getJSONObject("assets");
+            for (String key : asset.keySet()) {
+                try {
+                    assetHref = asset.getJSONObject(key).getString("href");
+                    assetHrefs.add(assetHref);
+                } catch (Exception e) {
+                    // Ignore the error
+                }
+            }
+        }
+        return assetHrefs;
+    }
+
+    private static String updateNonASCIIURL(String collectionID, String originalURL) {
+        String[] path = originalURL.split("/");
+        String lastPathParam = path[path.length - 1];
+        String encodedFileName = URLEncoder.encode(lastPathParam, StandardCharsets.UTF_8);
+        String baseUrl = "https://catalogue.weed.apex.esa.int/collections/" + collectionID + "/items/";
+        String fullEncodedUrl = baseUrl + encodedFileName;
+
+        return fullEncodedUrl;
+    }
+}
