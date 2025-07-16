@@ -188,7 +188,7 @@ public class Node implements INodeIdentity {
     public Client getClient() {
         if (this.client == null) {
             // client is pre-instrumented to handle Protobuf messages
-            this.client = new NodeClient(this);
+            this.client = new NodeClient(this).withAuthorization(this.token);
             this.client.setUrl(this.urls.toArray(new String[this.urls.size()]));
         }
         return this.client;
@@ -278,6 +278,12 @@ public class Node implements INodeIdentity {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    @Override
+    public Type getType() {
+        // TODO Auto-generated method stub
+        return identityType;
     }
 
 }

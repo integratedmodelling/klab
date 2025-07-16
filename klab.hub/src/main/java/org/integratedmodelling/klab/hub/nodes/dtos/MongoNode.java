@@ -1,10 +1,13 @@
 package org.integratedmodelling.klab.hub.nodes.dtos;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.hub.api.IdentityModel;
+import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.groups.dto.MongoGroup;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
