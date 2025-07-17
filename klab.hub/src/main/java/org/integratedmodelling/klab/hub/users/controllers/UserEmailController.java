@@ -1,23 +1,39 @@
 package org.integratedmodelling.klab.hub.users.controllers;
 
+import java.security.KeyFactory;
+import java.security.PublicKey;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.emails.EmailConfig;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.MailAddressNotAllowedException;
+import org.integratedmodelling.klab.hub.security.NetworkKeyManager;
 import org.integratedmodelling.klab.rest.KlabEmail;
 import org.integratedmodelling.klab.rest.KlabEmail.EmailType;
+import org.jose4j.jwt.JwtClaims;
+import org.jose4j.jwt.MalformedClaimException;
+import org.jose4j.jwt.NumericDate;
+import org.jose4j.jwt.consumer.InvalidJwtException;
+import org.jose4j.jwt.consumer.JwtConsumer;
+import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Controller for email related actions
@@ -33,6 +49,10 @@ public class UserEmailController {
 
     @Autowired
     private EmailConfig emailConfig;
+    
+    private static final int ALLOWED_CLOCK_SKEW_MS = 30000;
+    //private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";    
+    //private static final String JWT_CLAIM_KEY_ROLES = "roles";
 
     /**
      * Send an email. Used by apps in engines.
@@ -40,8 +60,72 @@ public class UserEmailController {
      * @return confirmation or error
      */
     @PostMapping(value = API.HUB.USER_SEND_EMAIL, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasRole('ROLE_USER')")
+    //@PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity< ? > sendEmail(@RequestBody KlabEmail email) {
+        
+        //Authenticate with bearer token or our jwtToken
+        HttpHeaders headers = new HttpHeaders();
+
+        String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
+                .getHeader(API.HUB.LABELS.AUTHORIZATION);
+
+        if (token == null) {
+            /*
+             * Check own jwtToken
+             */
+            
+            String jwtToken = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
+                    .getHeader("Authentication");
+            
+            if (jwtToken == null) {
+                throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "Not authenticated to send an email.");
+            }
+            
+            PublicKey publicKey = null;
+
+            try {
+                byte publicKeyData[] = Base64.getDecoder().decode(NetworkKeyManager.INSTANCE.getEncodedPublicKey());
+                X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
+                KeyFactory kf = KeyFactory.getInstance("RSA");
+                publicKey = kf.generatePublic(spec);
+            } catch (Exception e) {
+                throw new KlabAuthorizationException("invalid public key");
+            }
+            /*
+            *
+            * build a verifier for the token coming from any engine that has validated with
+            * the authenticating hub.
+            */
+
+           JwtConsumer jwtVerifier = new JwtConsumerBuilder().setSkipDefaultAudienceValidation()
+                   .setAllowedClockSkewInSeconds(ALLOWED_CLOCK_SKEW_MS / 1000).setVerificationKey(publicKey).build();
+
+           try {
+
+               JwtClaims claims = jwtVerifier.processToClaims(jwtToken);
+               String username = claims.getSubject();
+//               List<String> groupStrings = claims.getStringListClaimValue(JWT_CLAIM_KEY_PERMISSIONS);
+//               List<String> roleStrings = claims.getStringListClaimValue(JWT_CLAIM_KEY_ROLES);
+
+               /*
+                * Expiration time (exp) - The "exp" (expiration time) claim identifies the
+                * expiration time on or after which the JWT must not be accepted for
+                * processing. The value should be in NumericDate[10][11] format.
+                */
+               NumericDate expirationTime = claims.getExpirationTime();
+               long now = System.currentTimeMillis();
+               if (expirationTime.isBefore(NumericDate.fromMilliseconds(now - ALLOWED_CLOCK_SKEW_MS))) {
+                   throw new KlabAuthorizationException("user " + username + " is using an expired authorization");
+               }
+
+
+           } catch (MalformedClaimException | InvalidJwtException e) {
+               e.printStackTrace();
+           } catch (Exception e) {
+               Logging.INSTANCE.error("Error validating JWT", e);
+           }
+
+        }
 
         // / Currently, the only email that can be used is the one used for SMTP. Therefore no
         // customization is available
