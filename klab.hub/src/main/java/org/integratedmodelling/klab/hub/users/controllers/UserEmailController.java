@@ -51,8 +51,6 @@ public class UserEmailController {
     private EmailConfig emailConfig;
     
     private static final int ALLOWED_CLOCK_SKEW_MS = 30000;
-    //private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";    
-    //private static final String JWT_CLAIM_KEY_ROLES = "roles";
 
     /**
      * Send an email. Used by apps in engines.
@@ -60,12 +58,10 @@ public class UserEmailController {
      * @return confirmation or error
      */
     @PostMapping(value = API.HUB.USER_SEND_EMAIL, produces = MediaType.APPLICATION_JSON_VALUE)
-    //@PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity< ? > sendEmail(@RequestBody KlabEmail email) {
         
-        //Authenticate with bearer token or our jwtToken
-        HttpHeaders headers = new HttpHeaders();
-
+        /* Authenticate with bearer token or our jwtToken */
+        
         String token = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()
                 .getHeader(API.HUB.LABELS.AUTHORIZATION);
 
@@ -91,9 +87,9 @@ public class UserEmailController {
             } catch (Exception e) {
                 throw new KlabAuthorizationException("invalid public key");
             }
+            
             /*
-            *
-            * build a verifier for the token coming from any engine that has validated with
+            * Build a verifier for the token coming from any engine that has validated with
             * the authenticating hub.
             */
 
@@ -104,8 +100,6 @@ public class UserEmailController {
 
                JwtClaims claims = jwtVerifier.processToClaims(jwtToken);
                String username = claims.getSubject();
-//               List<String> groupStrings = claims.getStringListClaimValue(JWT_CLAIM_KEY_PERMISSIONS);
-//               List<String> roleStrings = claims.getStringListClaimValue(JWT_CLAIM_KEY_ROLES);
 
                /*
                 * Expiration time (exp) - The "exp" (expiration time) claim identifies the
