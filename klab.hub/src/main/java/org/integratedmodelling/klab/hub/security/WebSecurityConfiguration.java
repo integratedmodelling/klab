@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.hub.security;
 import java.util.Arrays;
 import java.util.Collections;
 
+import org.integratedmodelling.klab.api.API;
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
@@ -57,7 +58,7 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
         super.configure(http);
         http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements())
                 .permitAll().antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
-                .antMatchers(HttpMethod.POST, HubRequestMatchers.getNode()).permitAll().antMatchers(HttpMethod.POST, "/vault/*")
+                .antMatchers(HttpMethod.POST, HubRequestMatchers.getNode()).permitAll().antMatchers(HttpMethod.POST, API.HUB.USER_SEND_EMAIL)
                 .permitAll().antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated()
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
