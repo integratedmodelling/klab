@@ -589,7 +589,7 @@ public class RuntimeBehavior {
                     public void run() {
                         fire(KlabEmail.EmailStatus.SENDING, scope);
                         try {
-                            client.withAuthentication(user.getToken()).post(url + API.HUB.USER_SEND_EMAIL,
+                            client.withAuthentication(user.getId()).post(url + API.HUB.USER_SEND_EMAIL,
                                     new KlabEmail(null, Set.of(to), Set.of(replayTo), subject, content, type, null),
                                     ResponseEntity.class);
                             fire(KlabEmail.EmailStatus.SENT, scope);
