@@ -311,7 +311,7 @@ public class OpenEO {
 		private String id;
 		private String summary;
 		private String description;
-		private JSONObject parameters = new JSONObject();
+		private List<Parameter> parameters = new ArrayList<>();
 		private Map<String, ProcessNode> process_graph = new LinkedHashMap<>();
 		private ReturnValue returns;
 		private List<Link> links = new ArrayList<>();
@@ -340,11 +340,11 @@ public class OpenEO {
 			this.description = description;
 		}
 
-		public JSONObject getParameters() {
+		public List<Parameter> getParameters() {
 			return parameters;
 		}
 
-		public void setParameters(JSONObject parameters) {
+		public void setParameters(List<Parameter> parameters) {
 			this.parameters = parameters;
 		}
 
