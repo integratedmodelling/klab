@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -21,6 +23,7 @@ public class Group {
 	private List<String> projectUrls = new ArrayList<String>();
 	private List<ObservableReference> observables = new ArrayList<ObservableReference>();
 	private Set<CustomPropertyRest> customProperties= new HashSet<CustomPropertyRest>();
+	public Map<String, CustomPropertyRest> customPropertyMap = new HashMap<>();
 	private List<String> dependsOn = new ArrayList<String>();
 
 	public Group() {
@@ -195,8 +198,18 @@ public class Group {
 	public void setDependsOn(List<String> dependsOn) {
 		this.dependsOn = dependsOn;
 	}
+	
+	
 
-	@Override
+	public Map<String, CustomPropertyRest> getCustomPropertyMap() {
+        return customPropertyMap;
+    }
+
+    public void setCustomPropertyMap(Map<String, CustomPropertyRest> customPropertyMap) {
+        this.customPropertyMap = customPropertyMap;
+    }
+
+    @Override
 	public int hashCode() {
 		return Objects.hash(complimentary, customProperties, defaultExpirationTime, description, iconUrl, id, maxUpload,
 				observables, optIn, projectUrls, sshKey, worldview, dependsOn);

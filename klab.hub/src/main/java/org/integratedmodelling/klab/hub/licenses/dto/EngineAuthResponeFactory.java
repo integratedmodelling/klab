@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.agreements.dto.AgreementEntry;
 import org.integratedmodelling.klab.hub.agreements.exceptions.NoValidAgreementException;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
+import org.integratedmodelling.klab.hub.customProperties.services.CustomPropertyService;
 import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.licenses.exceptions.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.licenses.exceptions.LicenseExpiredException;
@@ -48,12 +49,15 @@ public class EngineAuthResponeFactory {
     private LicenseConfigService configService;
 
     private AgreementService agreementService;
+    
+    private CustomPropertyService customPropertyService;
 
     public EngineAuthResponeFactory(UserProfileService profileService, MongoGroupRepository groupRepository,
-            LicenseConfigService configService, AgreementService agreementService) {
+            LicenseConfigService configService, AgreementService agreementService, CustomPropertyService customPropertyService) {
         this.profileService = profileService;
         this.configService = configService;
         this.agreementService = agreementService;
+        this.customPropertyService = customPropertyService;
     }
 
     public EngineAuthenticationResponse getRespone(EngineAuthenticationRequest request, String remoteAddr)
@@ -331,6 +335,7 @@ public class EngineAuthResponeFactory {
         engine.setEmailAddress(profile.getEmail());
         engine.setId(token);
         engine.getGroups().addAll(profile.getGroupsList());
+        engine.getGroups().forEach(g -> g.setCustomPropertyMap(customPropertyService.resolvePropertiesToMap(g.getCustomProperties())));
         return engine;
     }
 
@@ -340,6 +345,7 @@ public class EngineAuthResponeFactory {
         engine.setEmailAddress(profile.getEmail());
         engine.setId(token);
         engine.getGroups().addAll(profile.getGroupsList());
+        engine.getGroups().forEach(g -> g.setCustomPropertyMap(customPropertyService.resolvePropertiesToMap(g.getCustomProperties())));
         return engine;
     }
 

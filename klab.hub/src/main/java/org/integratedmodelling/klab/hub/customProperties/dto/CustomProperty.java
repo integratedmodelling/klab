@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
-import org.integratedmodelling.klab.hub.users.JsonUtils;
 import org.integratedmodelling.klab.rest.CustomPropertyRest;
+import org.integratedmodelling.klab.rest.ICustomProperty;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 @Document(collection = "CustomProperties")
 @TypeAlias("CustomProperties")
-public class CustomProperty extends GenericModel {
+public class CustomProperty extends GenericModel implements ICustomProperty{
 
     private boolean isForUser = false;
     private boolean isForGroup = false;
@@ -35,7 +35,7 @@ public class CustomProperty extends GenericModel {
     
     private CustomPropertyType type;
     
-    private static final ObjectMapper mapper = new ObjectMapper();    
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public CustomProperty() {
         super();
@@ -84,6 +84,11 @@ public class CustomProperty extends GenericModel {
     public void setKey(String key) {
         this.key = key;
     }
+    
+    @Override
+    public String getValue() {
+        return getValueAsString();
+    }
 
     public String getValueAsString() {
         return value;
@@ -91,7 +96,8 @@ public class CustomProperty extends GenericModel {
     
     public JsonNode getValueAsJsonNode() {
         try {
-            return mapper.readTree(value);
+            JsonNode hola = mapper.readTree(value);
+            return hola;
         } catch (Exception e) {
             throw new RuntimeException("Error deserializing value to JsonNode", e);
         }
@@ -115,37 +121,17 @@ public class CustomProperty extends GenericModel {
 
     public void setValue(Object valueObject) {
         try {
-            this.value = (String) valueObject;
+            this.value = valueObject.toString();
             //this.value = mapper.writeValueAsString(valueObject);
         } catch (Exception e) {
             throw new RuntimeException("Error serializing value", e);
         }
     }
     
-    public CustomPropertyRest getCustomPropertyRest() {
-        CustomPropertyRest customPropertyRest =  new CustomPropertyRest();
-        customPropertyRest.setKey(key);
-        customPropertyRest.setOnlyAdmin(onlyAdmin);
-        
-        /* Set value as String */
-        customPropertyRest.setValue(value);
-        
-        /* If it's JSON or defined in CustomPropertyKey, convert it to its specific type. */
-        CustomPropertyKey propertyKey = CustomPropertyKey.fromKey(key);
-        if (propertyKey != null) {
-            try {
-                Object deserializedValue = mapper.readValue(value, propertyKey.getTypeReference());
-                customPropertyRest.setValueObject(deserializedValue);
-            } catch (Exception e) {
-                throw new RuntimeException("Error deserializing value for key: " + key, e);
-            }
-        } else if (JsonUtils.isValidJson(value)) {
-            customPropertyRest.setValueObject(getValueAsJsonNode());
-        }
-        return customPropertyRest;
+    public CustomPropertyRest getCustomPropertyRestRaw() {
+        return new CustomPropertyRest(this.getKey(), this.getValueAsString(), this.isOnlyAdmin());
     }
-
-
+    
     public boolean isOnlyAdmin() {
         return onlyAdmin;
     }

@@ -1,12 +1,10 @@
 package org.integratedmodelling.klab.raster.wcs;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,6 +24,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
@@ -36,13 +35,11 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.time.extents.TemporalExtension;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.SpatialExtent;
-import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -53,11 +50,15 @@ import org.mapdb.Serializer;
 
 import com.github.underscore.lodash.U;
 
+import klab.commons.customProperties.CustomPropertyKey;
+import klab.commons.customProperties.auth.AuthenticatedUrlClient;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
-/**
- * Wraps a WCS service in a decent API.
+/*
+
+import klab.commons.customProperties.auth.AuthenticatedUrlClient;
+* Wraps a WCS service in a decent API.
  * 
  * @author ferdinando.villa
  *
@@ -129,12 +130,12 @@ public class WCSService {
     public class WCSLayer {
 
         class Band {
-            public Band(Map<?, ?> data) {
+            public Band(Map< ? , ? > data) {
                 if (data.containsKey("field")) {
-                    data = (Map<?, ?>) data.get("field");
+                    data = (Map< ? , ? >) data.get("field");
                 }
                 this.name = data.get("-name").toString();
-                Map<?, ?> quantity = (Map<?, ?>) data.get("swe:Quantity");
+                Map< ? , ? > quantity = (Map< ? , ? >) data.get("swe:Quantity");
                 if (quantity.containsKey("swe:constraint")) {
 
                     String interval = MapUtils.get(quantity, "swe:constraint/swe:AllowedValues/swe:interval", String.class);
@@ -261,11 +262,11 @@ public class WCSService {
                     URL url = new URL(serviceUrl + "?service=WCS&version=" + version + "&request=DescribeCoverage&"
                             + (version.getMajor() >= 2 ? "coverageId=" : "identifiers=") + name);
 
-                    Map<?, ?> coverage = null;
+                    Map< ? , ? > coverage = null;
                     if (cacheExpiration > 0) {
                         String cached = wcsCache.get(url.toString());
                         if (cached != null) {
-                            Map<?, ?> map = JsonUtils.parseObject(cached, Map.class);
+                            Map< ? , ? > map = JsonUtils.parseObject(cached, Map.class);
                             Long ts = (Long) map.get("timestamp");
                             if (this.skipRefresh || (System.currentTimeMillis() - ts) < cacheExpiration) {
                                 coverage = map;
@@ -274,9 +275,17 @@ public class WCSService {
                     }
 
                     if (coverage == null) {
-                        try (InputStream input = url.openStream()) {
+                        
+                        IUserIdentity userData = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+
+                        try (InputStream input = AuthenticatedUrlClient.openStream(
+                                serviceUrl,
+                                url,
+                                userData.getGroups(),
+                                CustomPropertyKey.GEOSERVER_KEYS
+                        )) {
                             String content = IOUtils.toString(input, StandardCharsets.UTF_8);
-                            coverage = (Map<?, ?>) U.fromXmlMap(content);
+                            coverage = (Map< ? , ? >) U.fromXmlMap(content);
                             Map<Object, Object> tocache = new HashMap<>(coverage);
                             tocache.put("timestamp", System.currentTimeMillis());
                             wcsCache.put(url.toString(), JsonUtils.asString(tocache));
@@ -300,12 +309,12 @@ public class WCSService {
             }
         }
 
-        private void parseV1(Map<?, ?> coverage) {
+        private void parseV1(Map< ? , ? > coverage) {
 
             this.identifier = coverage.get(IDENTIFIER).toString();
             JXPathContext context = JXPathContext.newContext(coverage);
             if (coverage.get(SUPPORTED_CRS) instanceof Collection) {
-                for (Object crs : ((Collection<?>) coverage.get(SUPPORTED_CRS))) {
+                for(Object crs : ((Collection< ? >) coverage.get(SUPPORTED_CRS))) {
                     IProjection projection = Projection.create(crs.toString());
                     this.supportedProjections.add(projection);
                 }
@@ -314,9 +323,9 @@ public class WCSService {
             this.originalEnvelope = wgs84envelope;
             this.originalProjection = Projection.getLatLon();
 
-            for (Iterator<?> it = context.iterate("Domain/BoundingBox"); it.hasNext();) {
+            for(Iterator< ? > it = context.iterate("Domain/BoundingBox"); it.hasNext();) {
 
-                Map<?, ?> bbox = (Map<?, ?>) it.next();
+                Map< ? , ? > bbox = (Map< ? , ? >) it.next();
 
                 /*
                  * ignore the EPSG::4326 which has swapped coordinates, and let the other specs
@@ -324,9 +333,9 @@ public class WCSService {
                  */
                 if (bbox.get(CRS) instanceof String && !bbox.get(CRS).equals("urn:ogc:def:crs:EPSG::4326")) {
                     this.originalProjection = Projection.create(bbox.get(CRS).toString());
-                    double[] upperCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(),
+                    double[] upperCorner = NumberUtils.doubleArrayFromString(((Map< ? , ? >) bbox).get(UPPER_CORNER).toString(),
                             "\\s+");
-                    double[] lowerCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(LOWER_CORNER).toString(),
+                    double[] lowerCorner = NumberUtils.doubleArrayFromString(((Map< ? , ? >) bbox).get(LOWER_CORNER).toString(),
                             "\\s+");
                     this.originalEnvelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
                             Projection.getLatLon());
@@ -334,7 +343,7 @@ public class WCSService {
             }
 
             if (coverage.get(RANGE) instanceof Map) {
-                Map<?, ?> range = (Map<?, ?>) coverage.get(RANGE);
+                Map< ? , ? > range = (Map< ? , ? >) coverage.get(RANGE);
                 if (range.containsKey(NULL_VALUE) && !range.get(NULL_VALUE).toString().contains(INFINITY)) {
                     // TODO see if we want this on band 0
                     this.nodata.add(Double.parseDouble(range.get(NULL_VALUE).toString()));
@@ -349,7 +358,7 @@ public class WCSService {
             // Keywords (for URN metadata)
         }
 
-        private void parseV2(Map<?, ?> cov) {
+        private void parseV2(Map< ? , ? > cov) {
 
             try {
 
@@ -359,14 +368,14 @@ public class WCSService {
                 this.originalEnvelope = this.wgs84envelope;
                 this.originalProjection = Projection.getLatLon();
 
-                Map<?, ?> coverage = MapUtils.get(cov, "wcs:CoverageDescriptions/wcs:CoverageDescription", Map.class);
+                Map< ? , ? > coverage = MapUtils.get(cov, "wcs:CoverageDescriptions/wcs:CoverageDescription", Map.class);
 
                 if (MapUtils.get(coverage, COVERAGE_ID, String.class) instanceof String) {
                     this.identifier = coverage.get(COVERAGE_ID).toString();
                 }
 
                 // true bounding box
-                Map<?, ?> bounds = (Map<?, ?>) coverage.get("gml:boundedBy");
+                Map< ? , ? > bounds = (Map< ? , ? >) coverage.get("gml:boundedBy");
                 this.originalProjection = Projection.create(MapUtils.get(bounds, "gml:Envelope/-srsName", String.class));
                 double[] upperCorner = NumberUtils
                         .doubleArrayFromString(MapUtils.get(bounds, "gml:Envelope/gml:upperCorner", String.class), "\\s+");
@@ -376,31 +385,31 @@ public class WCSService {
                         (Projection) this.originalProjection);
 
                 // rangeType: bands
-                Map<?, ?> rangeType = MapUtils.get(coverage, RANGE_TYPE, Map.class);
+                Map< ? , ? > rangeType = MapUtils.get(coverage, RANGE_TYPE, Map.class);
                 if (rangeType instanceof Map && !rangeType.isEmpty()) {
 
                     Object fields = MapUtils.get(rangeType, "swe:DataRecord/swe:field", Object.class);
 
                     if (fields instanceof Map) {
-                        if (((Map<?, ?>) fields).containsKey("field")) {
-                            List<?> bandefs = (List<?>) ((Map<?, ?>) fields).get("field");
-                            for (Object o : bandefs) {
-                                bands.add(new Band((Map<?, ?>) o));
+                        if (((Map< ? , ? >) fields).containsKey("field")) {
+                            List< ? > bandefs = (List< ? >) ((Map< ? , ? >) fields).get("field");
+                            for(Object o : bandefs) {
+                                bands.add(new Band((Map< ? , ? >) o));
                             }
-                        } else if (((Map<?, ?>) fields).containsKey("-name")) {
-                            bands.add(new Band((Map<?, ?>) fields));
+                        } else if (((Map< ? , ? >) fields).containsKey("-name")) {
+                            bands.add(new Band((Map< ? , ? >) fields));
                         }
                     } else if (fields instanceof List) {
-                        for (Object o : (List<?>) fields) {
+                        for(Object o : (List< ? >) fields) {
 
                             if (o instanceof Map) {
-                                if (((Map<?, ?>) o).containsKey("field")) {
-                                    List<?> bandefs = (List<?>) ((Map<?, ?>) o).get("field");
-                                    for (Object fo : bandefs) {
-                                        bands.add(new Band((Map<?, ?>) fo));
+                                if (((Map< ? , ? >) o).containsKey("field")) {
+                                    List< ? > bandefs = (List< ? >) ((Map< ? , ? >) o).get("field");
+                                    for(Object fo : bandefs) {
+                                        bands.add(new Band((Map< ? , ? >) fo));
                                     }
-                                } else if (((Map<?, ?>) o).containsKey("-name")) {
-                                    bands.add(new Band((Map<?, ?>) o));
+                                } else if (((Map< ? , ? >) o).containsKey("-name")) {
+                                    bands.add(new Band((Map< ? , ? >) o));
                                 }
                             }
                         }
@@ -408,7 +417,7 @@ public class WCSService {
                 }
 
                 // resolution and CRS: domainSet
-                Map<?, ?> domain = MapUtils.get(coverage, "gml:domainSet/gml:RectifiedGrid/gml:limits/gml:GridEnvelope",
+                Map< ? , ? > domain = MapUtils.get(coverage, "gml:domainSet/gml:RectifiedGrid/gml:limits/gml:GridEnvelope",
                         Map.class);
                 int[] gridHighRange = NumberUtils.intArrayFromString(domain.get("gml:high").toString(), "\\s+");
                 int[] gridLowRange = NumberUtils.intArrayFromString(domain.get("gml:low").toString(), "\\s+");
@@ -505,7 +514,7 @@ public class WCSService {
          * on all at the beginning.
          */
         WCSService service = new WCSService("https://www.geo.euskadi.eus/WCS_KARTOGRAFIA", Version.create("1.0.0"));
-        for (WCSLayer layer : service.getLayers()) {
+        for(WCSLayer layer : service.getLayers()) {
             System.out.println(layer);
             // this fuck wants
             // https://www.geo.euskadi.eus/geoeuskadi/services/U11/WCS_KARTOGRAFIA/MapServer/WCSServer?SERVICE=WCS&VERSION=1.0.0&REQUEST=DescribeCoverage&COVERAGE=1
@@ -553,30 +562,22 @@ public class WCSService {
 
         long event = Klab.INSTANCE.notifyEventStart(EngineEvent.Type.ResourceValidation);
 
+        IUserIdentity userData = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+
         try {
             // this.parser = new Parser(new WCSConfiguration());
             String url = serviceUrl + "?service=WCS&request=getCapabilities&version=" + version;
 
-            // TODO switch to authorized http client - use Unirest
-            // File tempfile = File.createTempFile("wcsc", ".xml");
-            HttpResponse<String> response = Unirest.get(url).asString();
+            HttpResponse<String> response = AuthenticatedUrlClient.fetchWithUnirest(
+                    serviceUrl,
+                    url,
+                    userData.getGroups(),
+                    CustomPropertyKey.GEOSERVER_KEYS
+            );
 
             if (response.isSuccess()) {
 
                 String content = response.getBody();
-
-                // URLConnection con = url.openConnection();
-                // con.setConnectTimeout(CONNECT_TIMEOUT_MS);
-                // con.setReadTimeout(READ_TIMEOUT_MS);
-                //
-                // /*
-                // * save capabilities XML to file
-                // */
-                // try (InputStream input = con.getInputStream()) {
-                // FileUtils.copyInputStreamToFile(input, tempfile);
-                // } catch (IOException e) {
-                // throw new KlabIOException(e);
-                // }
 
                 /*
                  * hash the file and if we have a hash and it's the same, no need to call
@@ -603,7 +604,7 @@ public class WCSService {
                 // try (InputStream input = new FileInputStream(tempfile)) {
 
                 // String content = IOUtils.toString(input, StandardCharsets.UTF_8);
-                Map<?, ?> capabilitiesType = (Map<?, ?>) U.fromXmlMap(content);
+                Map< ? , ? > capabilitiesType = (Map< ? , ? >) U.fromXmlMap(content);
 
                 if (version.getMajor() == 1) {
 
@@ -612,7 +613,7 @@ public class WCSService {
                      * describeCoverage on each new layer. ArcShit will have NUMBERS as layer IDs,
                      * with just informative labels and envelope (projection in srsName).
                      */
-                    for (Object o : MapUtils.get(capabilitiesType, "WCS_Capabilities/ContentMetadata/CoverageOfferingBrief",
+                    for(Object o : MapUtils.get(capabilitiesType, "WCS_Capabilities/ContentMetadata/CoverageOfferingBrief",
                             List.class)) {
                         Map<String, Object> item = (Map<String, Object>) o;
                         Object name = item.get("name");
@@ -625,15 +626,22 @@ public class WCSService {
                     /**
                      * build the layers individually
                      */
-                    for (String identifier : identifiers) {
+                    for(String identifier : identifiers) {
                         // https://www.geo.euskadi.eus/geoeuskadi/services/U11/WCS_KARTOGRAFIA/MapServer/WCSServer?SERVICE=WCS&VERSION=1.0.0&REQUEST=DescribeCoverage&COVERAGE=1
                         String sburl = serviceUrl + "?SERVICE=WCS&VERSION=" + version + "&REQUEST=DescribeCoverage&COVERAGE="
                                 + identifier;
-                        response = Unirest.get(sburl).asString();
+//                        
+
+                        response = AuthenticatedUrlClient.fetchWithUnirest(
+                                serviceUrl,
+                                sburl,
+                                userData.getGroups(),
+                                CustomPropertyKey.GEOSERVER_KEYS
+                        );
 
                         if (response.isSuccess()) {
-                            Map<?, ?> layer = U.fromXmlMap(response.getBody());
-                            Map<?, ?> offering = MapUtils.get(layer, "CoverageDescription/CoverageOffering", Map.class);
+                            Map< ? , ? > layer = U.fromXmlMap(response.getBody());
+                            Map< ? , ? > offering = MapUtils.get(layer, "CoverageDescription/CoverageOffering", Map.class);
                             System.out.println(layer);
                         }
                     }
@@ -642,7 +650,7 @@ public class WCSService {
 
                     // JXPathContext context = JXPathContext.newContext(capabilitiesType);
                     // System.out.println(MapUtils.dump(capabilitiesType) + "");
-                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                    for(Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
                             Collection.class)) {
                         Map<String, Object> item = (Map<String, Object>) o;
                         Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
@@ -651,7 +659,7 @@ public class WCSService {
                         }
                     }
 
-                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                    for(Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
                             Collection.class)) {
 
                         Map<String, Object> item = (Map<String, Object>) o;
@@ -665,9 +673,9 @@ public class WCSService {
 
                             layer.name = name.toString();
                             double[] upperCorner = NumberUtils
-                                    .doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(), "\\s+");
+                                    .doubleArrayFromString(((Map< ? , ? >) bbox).get(UPPER_CORNER).toString(), "\\s+");
                             double[] lowerCorner = NumberUtils
-                                    .doubleArrayFromString(((Map<?, ?>) bbox).get(LOWER_CORNER).toString(), "\\s+");
+                                    .doubleArrayFromString(((Map< ? , ? >) bbox).get(LOWER_CORNER).toString(), "\\s+");
                             layer.wgs84envelope = Envelope.create(lowerCorner[0], upperCorner[0], lowerCorner[1], upperCorner[1],
                                     Projection.getLatLon());
 

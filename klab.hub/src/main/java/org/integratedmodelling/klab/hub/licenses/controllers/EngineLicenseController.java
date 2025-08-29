@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.agreements.dto.Agreement;
 import org.integratedmodelling.klab.hub.agreements.services.AgreementService;
+import org.integratedmodelling.klab.hub.customProperties.services.CustomPropertyService;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.licenses.dto.EngineAuthResponeFactory;
 import org.integratedmodelling.klab.hub.licenses.dto.LicenseGenerator;
@@ -23,7 +24,6 @@ import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.tags.enums.TagNameEnum;
 import org.integratedmodelling.klab.hub.tags.services.TagNotificationService;
-import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.dto.ProfileResource;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
@@ -52,6 +52,8 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
     private LicenseGenerator licenseGenerator;
 
     private TagNotificationService tagNotificationService;
+    
+    private CustomPropertyService customPropertyService;
 
 //    @Autowired
 //    EngineLicenseController(UserProfileService userProfileService, LicenseConfigService configService,
@@ -69,8 +71,8 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
     @Autowired
     EngineLicenseController(UserProfileService userProfileService, LicenseConfigService configService,
             MongoGroupRepository groupRepository, EmailManager emailManager, AgreementService agreementService,
-            TagNotificationService tagNotificationService) {
-        this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, agreementService);
+            TagNotificationService tagNotificationService, CustomPropertyService customPropertyService) {
+        this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, agreementService, customPropertyService);
         this.licenseGenerator = new LicenseGenerator(configService);
         this.userProfileService = userProfileService;
         this.emailManager = emailManager;

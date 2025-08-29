@@ -1,7 +1,11 @@
-package org.integratedmodelling.klab.authmodels;
+package klab.commons.customProperties.auth;
+
+import org.integratedmodelling.klab.rest.CustomPropertyTypeRest;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
+
 
 /**
  * Base class for authentication types.
@@ -16,6 +20,5 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     @JsonSubTypes.Type(value = BearerAuth.class, name = "bearer"),
     @JsonSubTypes.Type(value = BasicAuth.class, name = "basic")
 })
-public abstract class AuthType {
-    // common to all (optional)
+public interface AuthType extends CustomPropertyTypeRest {
 }
