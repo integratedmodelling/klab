@@ -99,6 +99,7 @@
 		<module>authorities</module>
 		<module>klab.authentication</module>
 		<module>klab.activity</module>
+		<module>klab.commons</module>
 	</modules>
 
 	<properties>
