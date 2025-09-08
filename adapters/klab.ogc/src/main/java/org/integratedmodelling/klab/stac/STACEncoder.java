@@ -53,6 +53,7 @@ import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
@@ -191,6 +192,22 @@ public class STACEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
+    	
+    	String COGURL = null;
+    	 Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
+                 .findFirst().orElseThrow();
+    	 IEnvelope envelope = space.getEnvelope();
+         List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+         
+    	if (resource.getParameters().get("cog") != null) {
+    		COGURL = resource.getParameters().get("cog", String.class);
+    		scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
+    		GridCoverage2D coverage = COGAssetExtension.getCOGWindowCoverage(bbox, COGURL);
+    		encoder = new RasterEncoder();
+            ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+            return;
+    	}
+    	
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = collectionData.getString("id");
@@ -202,10 +219,6 @@ public class STACEncoder implements IResourceEncoder {
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
 
-        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
-                .findFirst().orElseThrow();
-        IEnvelope envelope = space.getEnvelope();
-        List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
         Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
                 .findFirst().orElseThrow();
         Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
