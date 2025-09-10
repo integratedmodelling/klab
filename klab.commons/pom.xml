@@ -106,32 +106,4 @@
 
 	</dependencies>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.openapitools</groupId>
-				<artifactId>openapi-generator-maven-plugin</artifactId>
-				<version>6.6.0</version>
-				<executions>
-					<execution>
-						<id>generate-models</id>
-						<goals>
-							<goal>generate</goal>
-						</goals>
-						<configuration>
-							<inputSpec>
-								${project.basedir}/src/main/resources/openapi.yaml</inputSpec>
-							<generatorName>java</generatorName>
-							<apiPackage>org.klab.commons.api</apiPackage>
-							<modelPackage>org.klab.commons.model</modelPackage>
-							<configOptions>
-								<dateLibrary>java8</dateLibrary>
-							</configOptions>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
-
 </project>

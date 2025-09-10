@@ -11,8 +11,6 @@ import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.integratedmodelling.klab.rest.ICustomProperty;
 import org.springframework.stereotype.Service;
 
-import klab.commons.models.customProperties.CustomPropertyKey;
-
 @Service
 public abstract interface CustomPropertyService {
 
