@@ -25,7 +25,7 @@ public class JwtToken {
 	
 	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
 	private static final String ENGINE_AUDIENCE = "engine";
-	private static final String SERVICE_AUDIENCE = "engine";
+	private static final String SERVICE_AUDIENCE = "service";
 	private static final int EXPIRATION_DAYS = 10;
 	private static final String JWT_CLAIM_KEY_ROLES = "roles";
 	
@@ -71,7 +71,7 @@ public class JwtToken {
         JwtClaims claims = new JwtClaims();
         Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);
         claims.setIssuer(hub.getName());
-        claims.setSubject(service.getId());
+        claims.setSubject(service.getName());
         claims.setAudience(SERVICE_AUDIENCE);
         claims.setIssuedAtToNow();
         claims.setExpirationTimeMinutesInTheFuture(60 * 24 * EXPIRATION_DAYS);
