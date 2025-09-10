@@ -37,9 +37,9 @@ import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import kong.unirest.HttpResponse;
@@ -131,6 +131,7 @@ public class OpenEO {
 
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Schema {
 
 		private String type = "number";
@@ -154,6 +155,7 @@ public class OpenEO {
 
 	}
 
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Parameter {
 
 		private String name;
@@ -303,6 +305,7 @@ public class OpenEO {
 	 * A user defined OpenEO process. Can be used as a "namespace" when running a
 	 * job.
 	 */
+	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class Process {
 
 		private String id;
@@ -512,7 +515,7 @@ public class OpenEO {
 	 * @param budget
 	 * @return
 	 */
-	public String createRemoteJob(String processId, Parameters<String> parameters, Process... processes) {
+	public String createRemoteJob(String processId, JSONObject parameters, Process... processes) {
 
 		Map<String, Object> request = new LinkedHashMap<>();
 
@@ -548,7 +551,7 @@ public class OpenEO {
 	 *                  server side before the run and removed afterwards.
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T runJob(String processId, Parameters<String> parameters, IMonitor monitor, Class<T> resultClass,
+	public <T> T runJob(String processId, JSONObject parameters, IMonitor monitor, Class<T> resultClass,
 			Process... namespace) {
 
 		Map<String, Object> request = new LinkedHashMap<>();
@@ -581,17 +584,15 @@ public class OpenEO {
 	 *                  is used in the namespace. Otherwise the process is stored at
 	 *                  server side before the run and removed afterwards.
 	 */
-	public void runJob(String processId, Parameters<String> parameters, IMonitor monitor,
+	public void runJob(String processId, JSONObject parameters, IMonitor monitor,
 			Consumer<InputStream> resultConsumer, Process... namespace) {
 
-		Map<String, Object> request = new LinkedHashMap<>();
-
-		request.put("process", createJobDefinition(processId, parameters, namespace));
-		request.put("plan", plan);
-		request.put("budget", budget <= 0 ? null : budget);
+		parameters.put("process", createJobDefinition(processId, parameters, namespace));
+		parameters.put("plan", plan);
+		parameters.put("budget", budget <= 0 ? null : budget);
 
 		Unirest.post(endpoint + "/result").contentType("application/json").socketTimeout(responseTimeoutMs)
-				.header("Authorization", authorization.getAuthorization()).body(request).thenConsume((rawr) -> {
+				.header("Authorization", authorization.getAuthorization()).body(parameters).thenConsume((rawr) -> {
 					boolean error = false;
 					if (rawr.getStatus() - 400 >= 0) {
 						monitor.error(new KlabRemoteException("Server returned error code " + rawr.getStatus()));
@@ -632,14 +633,14 @@ public class OpenEO {
 	 *                   at server side before the run and removed afterwards.
 	 * @return
 	 */
-	private Map<String, Object> createJobDefinition(String processId, Parameters<String> parameters,
+	private Map<String, Object> createJobDefinition(String processId, JSONObject parameters,
 			Process... namespace) {
 
 		Map<String, Object> processGraph = new LinkedHashMap<>();
 		Map<String, Object> processCall = new LinkedHashMap<>();
 
 		processCall.put("process_id", processId);
-		processCall.put("arguments", parameters == null ? new HashMap<>() : parameters.getData());
+		processCall.put("arguments", parameters == null ? new HashMap<>() : parameters.toMap());
 		processCall.put("result", true);
 
 		if (namespace != null) {
@@ -723,7 +724,7 @@ public class OpenEO {
 	 *                      afterwards.
 	 * @return
 	 */
-	public boolean submit(String processId, Parameters<String> parameters, IMonitor monitor,
+	public boolean submit(String processId, JSONObject parameters, IMonitor monitor,
 			Consumer<Map<String, Object>> resultHandler, BiConsumer<String, String> errorHandler,
 			Process... namespace) {
 
@@ -745,12 +746,12 @@ public class OpenEO {
 	 * @param namespace
 	 * @return
 	 */
-	public OpenEOFuture submit(String processId, Parameters<String> parameters, IMonitor monitor,
+	public OpenEOFuture submit(String processId, JSONObject parameters, IMonitor monitor,
 			Process... namespace) {
 		return new OpenEOFuture(processId, parameters, monitor, namespace);
 	}
 
-	public boolean validateProcess(Process process, Parameters<String> parameters,
+	public boolean validateProcess(Process process, JSONObject parameters,
 			BiConsumer<String, String> errorHandler) {
 
 		HttpResponse<JsonNode> response = Unirest.post(endpoint + "/validation").contentType("application/json")
@@ -862,7 +863,7 @@ public class OpenEO {
 		AtomicBoolean canceled = new AtomicBoolean(false);
 		String error;
 
-		public OpenEOFuture(String processId, Parameters<String> parameters, IMonitor monitor, Process... namespace) {
+		public OpenEOFuture(String processId, JSONObject parameters, IMonitor monitor, Process... namespace) {
 			this.processId = processId;
 			String jobId = createRemoteJob(processId, parameters, namespace);
 			if (jobId == null) {

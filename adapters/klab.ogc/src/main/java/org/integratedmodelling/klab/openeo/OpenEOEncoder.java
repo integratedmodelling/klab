@@ -46,8 +46,9 @@ import org.integratedmodelling.klab.raster.wcs.WcsEncoder;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
+
+import kong.unirest.json.JSONObject;
 
 public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
@@ -103,7 +104,7 @@ public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 		OpenEO service = OpenEOAdapter.getClient(resource.getParameters().get("serviceUrl").toString());
 		if (service != null && service.isOnline()) {
 
-			Parameters<String> arguments = Parameters.create();
+			JSONObject arguments = new JSONObject();
 			IScale rscal = Scale.create(resource.getGeometry());
 			IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 

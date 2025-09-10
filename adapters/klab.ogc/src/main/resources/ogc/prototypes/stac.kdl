@@ -17,6 +17,10 @@
  		"Relevant only for raster resources.
  		 The band for a multi-band raster. Default is 0."
  		default 0
+ 		
+ 	optional text 'cog'
+ 		"Relevant only for Resources served as Cloud Optimized GeoTiff, with Public Access"
+ 		default ""
  
  	optional enum 'bandmixer'
  		"Relevant only for raster resources.\n

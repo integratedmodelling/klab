@@ -650,8 +650,8 @@ public class WCSService {
 
                     // JXPathContext context = JXPathContext.newContext(capabilitiesType);
                     // System.out.println(MapUtils.dump(capabilitiesType) + "");
-                    for(Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
-                            Collection.class)) {
+                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                            List.class)) {
                         Map<String, Object> item = (Map<String, Object>) o;
                         Object name = item.get(version.getMajor() >= 2 ? COVERAGE_ID : IDENTIFIER);
                         if (name != null) {
@@ -659,8 +659,8 @@ public class WCSService {
                         }
                     }
 
-                    for(Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
-                            Collection.class)) {
+                    for (Object o : MapUtils.get(capabilitiesType, "wcs:Capabilities/wcs:Contents/wcs:CoverageSummary",
+                            List.class)) {
 
                         Map<String, Object> item = (Map<String, Object>) o;
 
