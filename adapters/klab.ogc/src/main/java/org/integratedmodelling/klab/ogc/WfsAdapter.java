@@ -27,8 +27,12 @@ import org.geotools.data.wfs.WFSDataStoreFactory;
 import org.geotools.referencing.ReferencingFactoryFinder;
 import org.geotools.util.factory.Hints;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -42,6 +46,11 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsEncoder;
 import org.integratedmodelling.klab.ogc.vector.wfs.WfsImporter;
 import org.integratedmodelling.klab.ogc.vector.wfs.WfsPublisher;
 import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
+
+import klab.commons.customProperties.CustomPropertyKey;
+import klab.commons.customProperties.auth.AuthType;
+import klab.commons.customProperties.auth.AuthenticatedUrlClient;
+import klab.commons.customProperties.auth.BasicAuth;
 
 /**
  * The Class WfsAdapter.
@@ -97,18 +106,18 @@ public class WfsAdapter implements IResourceAdapter {
     public static WFSDataStore getDatastore(String serverUrl, Version version) {
 
         WFSDataStore ret = dataStores.get(serverUrl);
-
+        
         if (ret == null) {
 
-            if (lastTry.get(serverUrl) != null
-                    && (System.currentTimeMillis() - lastTry.get(serverUrl).get()) < RETRY_INTERVAL_MS) {
-                return null;
-            }
-
-            if (lastTry.get(serverUrl) == null) {
-                lastTry.put(serverUrl, new AtomicLong());
-            }
-            lastTry.get(serverUrl).set(System.currentTimeMillis());
+//            if (lastTry.get(serverUrl) != null
+//                    && (System.currentTimeMillis() - lastTry.get(serverUrl).get()) < RETRY_INTERVAL_MS) {
+//                return null;
+//            }
+//
+//            if (lastTry.get(serverUrl) == null) {
+//                lastTry.put(serverUrl, new AtomicLong());
+//            }
+//            lastTry.get(serverUrl).set(System.currentTimeMillis());
 
             Integer wfsTimeout = TIMEOUT;
             Integer wfsBufsize = BUFFER_SIZE;
@@ -118,12 +127,16 @@ public class WfsAdapter implements IResourceAdapter {
 
             String getCapabilities = serverUrl + "?SERVICE=wfs&REQUEST=getCapabilities&version=" + version;
             WFSDataStoreFactory dsf = new WFSDataStoreFactory();
-
+            
             Map<String, Serializable> connectionParameters = new HashMap<>();
+            
+            IUserIdentity userData = Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class);
+            AuthenticatedUrlClient.prepareWFSAuthenticationParameters(serverUrl, connectionParameters ,userData.getGroups(), CustomPropertyKey.GEOSERVER_KEYS);
+            
             connectionParameters.put(WFSDataStoreFactory.URL.key, getCapabilities);
             connectionParameters.put(WFSDataStoreFactory.TIMEOUT.key, wfsTimeout);
             connectionParameters.put(WFSDataStoreFactory.BUFFER_SIZE.key, wfsBufsize);
-
+            
             /*
              * TODO all other parameters
              */

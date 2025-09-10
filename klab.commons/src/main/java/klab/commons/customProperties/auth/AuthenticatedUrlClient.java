@@ -1,6 +1,7 @@
 package klab.commons.customProperties.auth;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Map;
@@ -71,6 +72,24 @@ public class AuthenticatedUrlClient {
             strategy.apply(url, connection, auth);
         }
         return connection.getInputStream();
+    }
+    
+    /**
+     * Opens an InputStream to a URL with authentication if present.
+     *
+     * @param url the URL to open
+     * @param groups the groups containing authentication info
+     * @param authKey the CustomPropertyKey containing auth data
+     * @return InputStream from the URL
+     * @throws Exception if opening the stream fails
+     */
+    public static void prepareWFSAuthenticationParameters (String serviceUrl, Map<String, Serializable> connectionParameters, Set<Group> groups, CustomPropertyKey authKey) {
+        AuthType auth = findAuthForUrl(serviceUrl, groups, authKey);
+        
+        if (auth != null) {
+            AuthStrategy strategy = getStrategy(auth);
+            strategy.apply(connectionParameters, auth);
+        }
     }
 
     /**
