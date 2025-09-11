@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.tuple.Triple;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.hub.groups.dto.GroupEntry;
 import org.integratedmodelling.klab.hub.licenses.dto.JwtToken;
 import org.integratedmodelling.klab.hub.paginationAndFilter.GenericPageAndFilterConverter;
@@ -14,6 +17,7 @@ import org.integratedmodelling.klab.hub.paginationAndFilter.payload.PageRequest;
 import org.integratedmodelling.klab.hub.paginationAndFilter.payload.PageResponse;
 import org.integratedmodelling.klab.hub.paginationAndFilter.services.FilterBuilderService;
 import org.integratedmodelling.klab.hub.payload.EngineProfileResource;
+import org.integratedmodelling.klab.hub.security.KlabJWTAuthentication;
 import org.integratedmodelling.klab.hub.tokens.dto.TokenVerifyEmailClickback;
 import org.integratedmodelling.klab.hub.tokens.enums.TokenType;
 import org.integratedmodelling.klab.hub.tokens.exceptions.ActivationTokenFailedException;
@@ -187,6 +191,17 @@ public class UserProfileController {
     public ResponseEntity< ? > getFullUserProfile(@PathVariable String id) {
         ProfileResource profile = userService.getRawUserProfile(id);
         return new ResponseEntity<>(profile, HttpStatus.ACCEPTED);
+    }
+    
+    @GetMapping(value = API.HUB.USER_BASE_ID_SERVICES)
+    public ResponseEntity< ? > getGroupsOfUser(HttpServletRequest request, @PathVariable String id) {
+        try {
+            KlabJWTAuthentication.INSTANCE.checkKlabJWT(request);
+        } catch (KlabAuthorizationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+        }
+        ProfileResource profile = userService.getRawUserProfile(id);
+        return new ResponseEntity<>(profile.getGroupsList(), HttpStatus.ACCEPTED);
     }
 
 }
