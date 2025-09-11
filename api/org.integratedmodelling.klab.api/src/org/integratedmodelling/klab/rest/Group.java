@@ -23,7 +23,7 @@ public class Group {
 	private List<String> projectUrls = new ArrayList<String>();
 	private List<ObservableReference> observables = new ArrayList<ObservableReference>();
 	private Set<CustomPropertyRest> customProperties= new HashSet<CustomPropertyRest>();
-	public Map<String, CustomPropertyRest> customPropertyMap = new HashMap<>();
+	private Map<String, CustomPropertyRest> customPropertyMap = new HashMap<>();
 	private List<String> dependsOn = new ArrayList<String>();
 
 	public Group() {

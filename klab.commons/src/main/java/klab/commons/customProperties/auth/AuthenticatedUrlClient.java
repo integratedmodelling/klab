@@ -102,7 +102,7 @@ public class AuthenticatedUrlClient {
      */
     private static AuthType findAuthForUrl(String url, Set<Group> groups, CustomPropertyKey authKey) {
         for (Group group : groups) {
-            CustomPropertyRest property = group.customPropertyMap.get(authKey.getKey());
+            CustomPropertyRest property = group.getCustomPropertyMap().get(authKey.getKey());
             if (property != null) {
                 Object valueObject = property.getValueObject();
                 if (valueObject instanceof Map<?, ?>) {
