@@ -14,6 +14,19 @@
 	<packaging>jar</packaging>
 	<name>klab.commons</name>
 	<description>Common utilities and models for klab</description>
+	
+	<build>
+	  	<plugins>
+	  		<plugin>
+	  			<groupId>com.google.cloud.tools</groupId>
+	  			<artifactId>jib-maven-plugin</artifactId>
+	  			<configuration>
+	  				<!-- we don't want jib to execute on this module -->
+	  				<skip>true</skip>
+	  			</configuration>
+	      	</plugin>
+	    </plugins>
+    </build>
 
 	<dependencies>
 
