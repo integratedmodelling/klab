@@ -109,15 +109,15 @@ public class WfsAdapter implements IResourceAdapter {
         
         if (ret == null) {
 
-//            if (lastTry.get(serverUrl) != null
-//                    && (System.currentTimeMillis() - lastTry.get(serverUrl).get()) < RETRY_INTERVAL_MS) {
-//                return null;
-//            }
-//
-//            if (lastTry.get(serverUrl) == null) {
-//                lastTry.put(serverUrl, new AtomicLong());
-//            }
-//            lastTry.get(serverUrl).set(System.currentTimeMillis());
+            if (lastTry.get(serverUrl) != null
+                    && (System.currentTimeMillis() - lastTry.get(serverUrl).get()) < RETRY_INTERVAL_MS) {
+                return null;
+            }
+
+            if (lastTry.get(serverUrl) == null) {
+                lastTry.put(serverUrl, new AtomicLong());
+            }
+            lastTry.get(serverUrl).set(System.currentTimeMillis());
 
             Integer wfsTimeout = TIMEOUT;
             Integer wfsBufsize = BUFFER_SIZE;
