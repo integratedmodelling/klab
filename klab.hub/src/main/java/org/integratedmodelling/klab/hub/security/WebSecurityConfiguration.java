@@ -56,11 +56,14 @@ public class WebSecurityConfiguration extends KeycloakWebSecurityConfigurerAdapt
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
-        http.cors().and().csrf().disable().authorizeRequests().antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements())
-                .permitAll().antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
-                .antMatchers(HttpMethod.POST, HubRequestMatchers.getNode()).permitAll().antMatchers(HttpMethod.POST, API.HUB.USER_SEND_EMAIL)
-                .permitAll().antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll().anyRequest().authenticated()
-                .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        http.cors().and().csrf().disable().authorizeRequests()
+            .antMatchers(HttpMethod.GET, HubRequestMatchers.getAgreements()).permitAll()
+            .antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication()).permitAll()
+            .antMatchers(HttpMethod.POST, HubRequestMatchers.getNode()).permitAll()
+            .antMatchers(HttpMethod.POST, API.HUB.USER_SEND_EMAIL).permitAll()
+            .antMatchers(HttpMethod.GET, API.HUB.USER_BASE_ID_SERVICES).permitAll()
+            .antMatchers(HttpMethod.GET, HubRequestMatchers.getUi()).permitAll()
+            .anyRequest().authenticated().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 
     @Bean

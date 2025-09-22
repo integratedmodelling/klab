@@ -333,6 +333,14 @@ public interface API {
          */
         public static final String USER_BASE_ID_NOAUTH = USER_BASE_NOAUTH + "/{id}";
         /**
+         * Base URL path for user resources on the hub for services
+         */
+        public static final String USER_BASE_SERVICES = USER_BASE + "/services";
+        /**
+         * Base URL path for user resources on the hub with no authentication.
+         */
+        public static final String USER_BASE_ID_SERVICES = USER_BASE_SERVICES + "/{id}";
+        /**
          * Base URL path for user resources on the hub.
          */
         public static final String USER_BASE_ID = USER_BASE + "/{id}";
@@ -586,9 +594,10 @@ public interface API {
         
         public static interface LABELS {
             /**
-             * Label for authorization HEADER
+             * Label for authorization and Authentication HEADER
              */
             public static final String AUTHORIZATION = "Authorization";
+            public static final String AUTHENTICATION = "Authentication";
         }
         
         public static interface CUSTOM_PROPERTY_KEYS {

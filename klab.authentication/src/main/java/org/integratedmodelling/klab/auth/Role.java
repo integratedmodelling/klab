@@ -41,7 +41,7 @@ public enum Role implements GrantedAuthority {
     
     public static final String NODE = "ROLE_TEMPORARY";
     
-    public static final String SERVICE = "ROLE_TEMPORARY";
+    public static final String SERVICE = "ROLE_SERVICE";
 
     @Override
     public String getAuthority() {

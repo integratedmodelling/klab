@@ -56,7 +56,8 @@ public class Histogram {
 
 		public void add(double d) {
 			if (!degenerate) {
-				bins[(int) ((d - min) / (max - min) * (bins.length - 1))]++;
+			    int size = bins.length - 1; 
+		        bins[(int) Math.min(Math.ceil((d - min) / (max - min) * size), size)]++;
 			}
 		}
 		

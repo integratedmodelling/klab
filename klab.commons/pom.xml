@@ -1,0 +1,122 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>org.integratedmodelling</groupId>
+		<artifactId>klab</artifactId>
+		<version>0.11.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>klab.commons</artifactId>
+	<packaging>jar</packaging>
+	<name>klab.commons</name>
+	<description>Common utilities and models for klab</description>
+	
+	<build>
+	  	<plugins>
+	  		<plugin>
+	  			<groupId>com.google.cloud.tools</groupId>
+	  			<artifactId>jib-maven-plugin</artifactId>
+	  			<configuration>
+	  				<!-- we don't want jib to execute on this module -->
+	  				<skip>true</skip>
+	  			</configuration>
+	      	</plugin>
+	    </plugins>
+    </build>
+
+	<dependencies>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.2</version>
+		</dependency>
+
+
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>org.integratedmodelling.klab.api</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+
+		<!-- Gson for JSON serialization -->
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+			<version>2.10.1</version>
+		</dependency>
+
+		<!-- Jakarta Annotations API -->
+		<dependency>
+			<groupId>jakarta.annotation</groupId>
+			<artifactId>jakarta.annotation-api</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+
+		<!-- OkHttp3 HTTP client -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>okhttp</artifactId>
+			<version>4.11.0</version>
+		</dependency>
+
+		<!-- Okio for I/O -->
+		<dependency>
+			<groupId>com.squareup.okio</groupId>
+			<artifactId>okio</artifactId>
+			<version>3.3.0</version>
+		</dependency>
+
+		<!-- Para javax.annotation -->
+		<dependency>
+			<groupId>javax.annotation</groupId>
+			<artifactId>javax.annotation-api</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+
+		<!-- Para javax.ws.rs.core (JAX-RS API) -->
+		<dependency>
+			<groupId>javax.ws.rs</groupId>
+			<artifactId>javax.ws.rs-api</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+
+		<!-- OkHttp Logging Interceptor -->
+		<dependency>
+			<groupId>com.squareup.okhttp3</groupId>
+			<artifactId>logging-interceptor</artifactId>
+			<version>4.11.0</version>
+		</dependency>
+
+		<!-- GsonFire -->
+		<dependency>
+			<groupId>io.gsonfire</groupId>
+			<artifactId>gson-fire</artifactId>
+			<version>1.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.code.findbugs</groupId>
+			<artifactId>jsr305</artifactId>
+			<version>3.0.2</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>3.14.5</version>
+		</dependency>
+
+	</dependencies>
+
+</project>

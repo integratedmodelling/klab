@@ -29,7 +29,22 @@ public class STACIIASAExtension {
         while (featureIterator.hasNext()) {
             try {
                 JSONObject feature = (JSONObject) featureIterator.next();
-                featureList.add(GeoJSONReader.parseFeature(feature.toString()));
+                String labelName = null;
+                List<String> labels = getBestLabelValue(feature.getJSONObject("properties"));
+                Iterator<Object> classes = collectionData.getJSONArray("label:classes").iterator();
+                while(classes.hasNext()) {
+                    JSONObject clazz = (JSONObject) classes.next();
+                    for (String label : labels) {
+                        if (clazz.getString("value").equalsIgnoreCase(label)) {
+                            labelName = clazz.getString("name");
+                            break;
+                        }
+                    }
+                }
+                //String value = (String) collectionData.getJSONArray("label:classes").toList().stream().filter(l -> ((JSONObject)l).getString("value").equalsIgnoreCase(label)).findFirst().get();
+                feature.getJSONObject("properties").put("eunis", labelName);
+                SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
+                featureList.add(feat);
             } catch (Exception e) {
                 // Ignore unparseable features (they should not happen)
                 continue;
@@ -40,5 +55,30 @@ public class STACIIASAExtension {
         dataStore.addFeatures(featureList);
         return dataStore.getFeatureSource(type.getTypeName());
     }
+
+    private static List<String> getBestLabelValue(JSONObject properties) {
+        List<String> labels = new ArrayList<String>();
+        if (properties.has("eunis2012_L3")) {
+            labels.add(properties.getString("eunis2012_L3"));
+        }
+        if (properties.has("eunis2012_L2")) {
+            labels.add(properties.getString("eunis2012_L2"));
+        }
+        if (properties.has("eunis2012_L1")) {
+            labels.add(properties.getString("eunis2012_L1"));
+        }
+        if (properties.has("eunis2021_L3")) {
+            labels.add(properties.getString("eunis2021_L3"));
+        }
+        if (properties.has("eunis2021_L2")) {
+            labels.add(properties.getString("eunis2021_L2"));
+        }
+        if (properties.has("eunis2021_L1")) {
+            labels.add(properties.getString("eunis2021_L1"));
+        }
+
+        return labels;
+    }
+
 
 }

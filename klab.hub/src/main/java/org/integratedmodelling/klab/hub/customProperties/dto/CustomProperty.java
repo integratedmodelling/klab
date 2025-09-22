@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.integratedmodelling.klab.hub.api.GenericModel;
 import org.integratedmodelling.klab.hub.customProperties.enums.CustomPropertyType;
 import org.integratedmodelling.klab.rest.CustomPropertyRest;
+import org.integratedmodelling.klab.rest.ICustomProperty;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
@@ -13,13 +14,17 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 /**
  * This class is used to catalog CustomProperties that are known and have been used for Users or Groups.
  *
  */
 @Document(collection = "CustomProperties")
 @TypeAlias("CustomProperties")
-public class CustomProperty extends GenericModel {
+public class CustomProperty extends GenericModel implements ICustomProperty{
 
     private boolean isForUser = false;
     private boolean isForGroup = false;
@@ -27,18 +32,22 @@ public class CustomProperty extends GenericModel {
     private String key;
     private String value;
     private boolean onlyAdmin;
-
+    
     private CustomPropertyType type;
+    
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     public CustomProperty() {
         super();
     }
 
-    public CustomProperty(String key, String value) {
+    public CustomProperty(String key, Object valueObject) {
         super();
         this.key = key;
-        this.value = value;
+        setValue(valueObject);
     }
+    
+    
     @CreatedBy
     private String createdBy;
 
@@ -75,15 +84,54 @@ public class CustomProperty extends GenericModel {
     public void setKey(String key) {
         this.key = key;
     }
-
+    
+    @Override
     public String getValue() {
+        return getValueAsString();
+    }
+
+    public String getValueAsString() {
         return value;
     }
-
-    public void setValue(String value) {
-        this.value = value;
+    
+    public JsonNode getValueAsJsonNode() {
+        try {
+            JsonNode hola = mapper.readTree(value);
+            return hola;
+        } catch (Exception e) {
+            throw new RuntimeException("Error deserializing value to JsonNode", e);
+        }
     }
 
+    public <T> T getValueAs(Class<T> clazz) {
+        try {
+            return mapper.readValue(value, clazz);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deserializing value", e);
+        }
+    }
+
+    public <T> T getValueAs(TypeReference<T> typeRef) {
+        try {
+            return mapper.readValue(value, typeRef);
+        } catch (Exception e) {
+            throw new RuntimeException("Error deserializing value", e);
+        }
+    }
+
+    public void setValue(Object valueObject) {
+        try {
+            this.value = valueObject.toString();
+            //this.value = mapper.writeValueAsString(valueObject);
+        } catch (Exception e) {
+            throw new RuntimeException("Error serializing value", e);
+        }
+    }
+    
+    public CustomPropertyRest getCustomPropertyRestRaw() {
+        return new CustomPropertyRest(this.getKey(), this.getValueAsString(), this.isOnlyAdmin());
+    }
+    
     public boolean isOnlyAdmin() {
         return onlyAdmin;
     }
@@ -146,9 +194,5 @@ public class CustomProperty extends GenericModel {
             return false;
         CustomProperty other = (CustomProperty) obj;
         return isForGroup == other.isForGroup && isForUser == other.isForUser && Objects.equals(getName(), other.getName());
-    }
-
-    public CustomPropertyRest getCustomPropertyRest() {
-        return new CustomPropertyRest(this.getKey(), this.getValue(), this.isOnlyAdmin());
     }
 }
