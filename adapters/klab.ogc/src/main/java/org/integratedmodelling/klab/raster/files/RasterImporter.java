@@ -18,8 +18,11 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.imageio.GeoToolsWriteParams;
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.data.shapefile.dbf.DbaseFileWriter;
+import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.styling.ColorMap;
 import org.geotools.styling.ColorMapEntry;
@@ -48,7 +51,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.ZipUtils;
-
+import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.parameter.ParameterValue;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 
 public class RasterImporter extends AbstractFilesetImporter {
@@ -192,7 +196,15 @@ public class RasterImporter extends AbstractFilesetImporter {
                         writer.setMetadataValue(Integer.toString(BaselineTIFFTagSet.TAG_SOFTWARE),
                                 "k.LAB (www.integratedmodelling.org)");
 
-                        writer.write(coverage, null);
+                        GeoTiffWriteParams writeParams = new GeoTiffWriteParams();
+                        writeParams.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+                        // Other lossless compression alternatives: PACKBITS, LZW, LZMA, ZSTD
+                        writeParams.setCompressionType("Deflate");
+                        writeParams.setTilingMode(GeoTiffWriteParams.MODE_EXPLICIT);
+                        writeParams.setTiling(512, 512);
+
+                        ParameterValue<GeoToolsWriteParams> wParams = AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.createValue();
+                        writer.write(coverage, new GeneralParameterValue[]{wParams});
 
                         if (dir != null && addStyle) {
                             if (!options.get(OPTION_DO_NOT_ZIP_MULTIPLE_FILES, Boolean.FALSE)) {
