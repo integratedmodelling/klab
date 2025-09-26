@@ -311,7 +311,7 @@ public class STACEncoder implements IResourceEncoder {
 	            	System.out.println("Successfully Updated CRS");
 	            
 			} catch (Exception e) {
-				e.printStackTrace();
+                throw new KlabResourceAccessException(e);
 			}
             	
 			
