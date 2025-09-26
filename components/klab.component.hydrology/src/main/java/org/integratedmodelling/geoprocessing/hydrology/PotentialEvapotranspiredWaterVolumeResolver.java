@@ -3,6 +3,9 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
 import java.awt.image.DataBuffer;
+import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.function.Function;
 
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -47,9 +50,9 @@ public class PotentialEvapotranspiredWaterVolumeResolver extends AbstractContext
         OmsPotentialEvapotranspiredWaterVolume pet = new OmsPotentialEvapotranspiredWaterVolume();
         pet.pm = taskMonitor;
 
-        int startDay = context.getScale().getTime().getStart().getDayOfYear();
-        int endDay = context.getScale().getTime().getEnd().getDayOfYear();
-        int days = endDay - startDay;
+        OffsetDateTime startDay = OffsetDateTime.parse(context.getScale().getTime().getStart().toRFC3339String());
+        OffsetDateTime endDay = OffsetDateTime.parse(context.getScale().getTime().getEnd().toRFC3339String());
+        long days = ChronoUnit.DAYS.between(startDay, endDay);
         pet.pDaysInTimestep = (double) days;
         pet.inCropCoefficient = getGridCoverage(context, cropCoefficientState);
         pet.inMaxTemp = getGridCoverage(context, maxTempState);
