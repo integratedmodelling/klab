@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.auth.IActorIdentity.KlabMessage;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
+import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.joda.time.DateTime;

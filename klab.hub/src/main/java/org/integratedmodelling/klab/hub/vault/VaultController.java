@@ -17,9 +17,9 @@ public class VaultController {
     }
 
     @PostMapping("/get-secret")
-    public String registerUser(@RequestParam String path, @RequestParam String key, @RequestParam String pahtList) {
+    public String registerUser(@RequestParam String path) {
         // Get the API key dynamically from Vault
-        String secret = vaultService.getSecret(path, key, pahtList);
+        String secret = vaultService.getSecret(path);
         if (secret == null) {
             return "Error: Secret " +secret+ " not found";
         }

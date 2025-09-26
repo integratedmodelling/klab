@@ -2,24 +2,31 @@ package org.integratedmodelling.klab.rest;
 
 import java.util.Objects;
 
-
 /**
  * Custom properties with visibility field
  * @author Enrico Girotto
  *
  */
 
-public class CustomPropertyRest {
+public class CustomPropertyRest implements ICustomProperty{
     
     private String key;
     private String value;
-    private boolean onlyAdmin;
+    private Object valueObject;
+    private boolean onlyAdmin;    
     
     public CustomPropertyRest() {}
     
     public CustomPropertyRest(String key, String value, boolean onlyAdmin) {
         this.key = key;
         this.value = value;
+        this.onlyAdmin = onlyAdmin;
+    }
+    
+    public CustomPropertyRest(String key, String value, boolean onlyAdmin, CustomPropertyTypeRest valueObject) {
+        this.key = key;
+        this.value = value;
+        this.valueObject = valueObject;
         this.onlyAdmin = onlyAdmin;
     }
 
@@ -29,12 +36,22 @@ public class CustomPropertyRest {
     public void setKey(String key) {
         this.key = key;
     }
+    @Override
     public String getValue() {
-        return value;
+        return this.value;
     }
     public void setValue(String value) {
         this.value = value;
     }
+    
+    public Object getValueObject() {
+        return valueObject;
+    }
+
+    public void setValueObject(Object valueObject2) {
+        this.valueObject = valueObject2;
+    }
+
     public boolean isOnlyAdmin() {
         return onlyAdmin;
     }

@@ -57,6 +57,7 @@ import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.stac.extensions.WEEDECDCExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
@@ -221,6 +222,22 @@ public class STACEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
+    	
+    	String COGURL = null;
+    	 Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
+                 .findFirst().orElseThrow();
+    	 IEnvelope envelope = space.getEnvelope();
+         List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+         
+    	if (resource.getParameters().get("cog") != null) {
+    		COGURL = resource.getParameters().get("cog", String.class);
+    		scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
+    		GridCoverage2D coverage = COGAssetExtension.getCOGWindowCoverage(bbox, COGURL);
+    		encoder = new RasterEncoder();
+            ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+            return;
+    	}
+    	
         System.out.println(resource.getParameters());
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");

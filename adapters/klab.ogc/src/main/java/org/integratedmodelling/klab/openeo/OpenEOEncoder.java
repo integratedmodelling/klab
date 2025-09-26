@@ -59,6 +59,8 @@ import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
+import kong.unirest.json.JSONObject;
+
 public class OpenEOEncoder implements IResourceEncoder, FlowchartProvider {
 
 	static Set<String> knownParameters;

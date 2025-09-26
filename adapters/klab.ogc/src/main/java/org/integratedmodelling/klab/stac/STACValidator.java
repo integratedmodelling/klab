@@ -93,6 +93,12 @@ public class STACValidator implements IResourceValidator {
             }
         }
         
+        if (userData.contains("cog")) {
+        	if (userData.get("cog") != null) {
+        		builder.withType(Type.NUMBER);
+        	}  
+        }
+
         readMetadata(collectionData, builder);
         return builder;
     }
@@ -101,6 +107,7 @@ public class STACValidator implements IResourceValidator {
         if (!asset.has("raster:bands")) {
             return null;
         }
+        
         if (asset.getJSONArray("raster:bands").isEmpty()
                 || !asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
             // We assume that most rasters are numeric. When in doubt, we set the default to Number

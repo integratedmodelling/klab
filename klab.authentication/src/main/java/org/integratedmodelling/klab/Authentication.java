@@ -62,6 +62,8 @@ import org.springframework.security.web.authentication.preauth.PreAuthenticatedA
 
 import com.google.common.collect.Sets;
 
+import klab.commons.customProperties.utils.CustomPropertyUtils;
+
 public enum Authentication implements IAuthenticationService {
 
     /**
@@ -384,7 +386,7 @@ public enum Authentication implements IAuthenticationService {
                 NetworkSession networkSession = new NetworkSession(authentication.getUserData().getToken(), hub);
 
                 ret = new KlabUser(authentication.getUserData(), authentication.getAuthentication(), networkSession);
-
+                
                 Network.INSTANCE.buildNetwork(authentication);
 
                 Logging.INSTANCE.info("User " + ((IUserIdentity) ret).getUsername() + " logged in through hub " + hubNode.getId()
@@ -424,6 +426,7 @@ public enum Authentication implements IAuthenticationService {
         }
 
         if (ret != null) {
+            CustomPropertyUtils.deserializeCustomProperties(ret.getGroups());
             registerIdentity(ret);
         }
 
