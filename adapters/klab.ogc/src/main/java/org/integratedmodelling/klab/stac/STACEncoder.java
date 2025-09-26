@@ -237,7 +237,6 @@ public class STACEncoder implements IResourceEncoder {
             ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
             return;
     	}
-    	
         System.out.println(resource.getParameters());
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
