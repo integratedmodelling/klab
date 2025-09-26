@@ -224,10 +224,10 @@ public class STACEncoder implements IResourceEncoder {
             IContextualizationScope scope) {
     	
     	String COGURL = null;
-    	 Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
-                 .findFirst().orElseThrow();
-    	 IEnvelope envelope = space.getEnvelope();
-         List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
+
+        IEnvelope envelope = space.getEnvelope();
+        List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
          
     	if (resource.getParameters().get("cog") != null) {
     		COGURL = resource.getParameters().get("cog", String.class);
@@ -268,11 +268,8 @@ public class STACEncoder implements IResourceEncoder {
         boolean isPreprocessedResults = collectionUrl.contains("inference-alpha2-prepared-v101") || 
         		collectionUrl.contains("inference-alpha3-prepared-v100"); // Preprocessed habitat prob datacubes
         
-        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
-                .findFirst().orElseThrow();
-        IEnvelope envelope = space.getEnvelope();
-        List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
-        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
+       
+       Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
                 .findFirst().orElseThrow();
         Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
 
