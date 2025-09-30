@@ -62,13 +62,11 @@ import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.github.davidmoten.aws.lw.client.Client;
+import com.github.davidmoten.aws.lw.client.Credentials;
+
 import kong.unirest.json.JSONObject;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -168,18 +166,17 @@ public class STACEncoder implements IResourceEncoder {
                 "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private S3Client buildS3Client(String bucketRegion) throws IOException {
+    private Client buildS3Client(String bucketRegion) throws IOException {
         ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
-        AwsCredentials credentials = null;
+        Credentials credentials = null;
         try {
-            credentials = AwsBasicCredentials.create(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
+            credentials = Credentials.of(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
         } catch (Exception e) {
-            throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
+            throw new KlabIOException("Error defining S3 credenetials. " + e.getMessage());
         }
-        return S3Client.builder()
-                .httpClientBuilder(ApacheHttpClient.builder())
-                .region(Region.of(bucketRegion))
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+        return Client.s3()
+                .regionFromEnvironment() // TODO get region from other sources if needed
+                .credentials(credentials)
                 .build();
     }
 
@@ -277,7 +274,9 @@ public class STACEncoder implements IResourceEncoder {
             GridCoverage2D coverage = null;
 
             try {
-                HMRaster outRaster = HMStacCollection.readRasterBandOnRegionStatic(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
+                // TODO fix this
+                HMRaster outRaster = null;
+                // HMRaster outRaster = HMStacCollection.readRasterBandOnRegionStatic(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
                 coverage = outRaster.buildCoverage();
             } catch (Exception e) {
                 throw new KlabResourceAccessException("Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
@@ -348,7 +347,7 @@ public class STACEncoder implements IResourceEncoder {
 
             if (resource.getParameters().contains("awsRegion")) {
                 String bucketRegion = resource.getParameters().get("awsRegion", String.class);
-                S3Client s3Client = buildS3Client(bucketRegion);
+                Client s3Client = buildS3Client(bucketRegion);
                 collection.setS3Client(s3Client);
             }
 

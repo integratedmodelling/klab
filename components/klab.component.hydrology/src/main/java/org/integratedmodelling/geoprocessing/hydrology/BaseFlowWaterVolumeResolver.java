@@ -6,7 +6,7 @@ import java.awt.image.DataBuffer;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.gears.modules.r.cutout.OmsCutOut;
-import org.hortonmachine.hmachine.modules.hydrogeomorphology.baseflow.OmsBaseflowWaterVolume;
+import org.hortonmachine.hmachine.modules.hydrogeomorphology.swy.OmsBaseflowWaterVolume;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;

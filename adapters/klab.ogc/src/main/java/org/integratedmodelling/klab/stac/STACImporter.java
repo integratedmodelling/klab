@@ -28,7 +28,6 @@ import org.integratedmodelling.klab.utils.s3.S3RegionResolver;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 
 import kong.unirest.json.JSONObject;
-import software.amazon.awssdk.regions.Region;
 
 public class STACImporter implements IResourceImporter {
 
@@ -88,8 +87,9 @@ public class STACImporter implements IResourceImporter {
             String href = assetData.getString("href");
             if (S3URLUtils.isS3Endpoint(href)) {
                 String[] bucketAndObject = href.split("://")[1].split("/", 2);
-                Region s3Region = S3RegionResolver.resolveBucketRegion(bucketAndObject[0], bucketAndObject[1], monitor);
-                parameters.put("awsRegion", s3Region.id());
+                // Region s3Region = S3RegionResolver.resolveBucketRegion(bucketAndObject[0], bucketAndObject[1], monitor);
+                String s3Region = "ap-southeast-2"; // TODO resolve the region
+                parameters.put("awsRegion", s3Region);
             }
 
             Builder builder = buildResource(parameters, project, monitor, resourceUrn);

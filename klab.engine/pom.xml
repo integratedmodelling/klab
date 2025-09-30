@@ -974,17 +974,11 @@
 				<version>${mockito.version}</version>
 				<scope>test</scope>
 			</dependency>
-		<!--- AWS dependencies-->
+		<!--- S3 dependencies-->
 		<dependency>
-			<artifactId>apache-client</artifactId> 
-			<groupId>software.amazon.awssdk</groupId> 
-			<version>${aws.version}</version> 
- 			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
+			<groupId>com.github.davidmoten</groupId>
+			<artifactId>aws-lightweight-client-java</artifactId>
+			<version>${s3.version}</version>
 		</dependency>
 		
 		<dependency>
