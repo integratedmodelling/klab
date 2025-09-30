@@ -6,7 +6,7 @@ import java.awt.image.DataBuffer;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.gears.modules.r.cutout.OmsCutOut;
-import org.hortonmachine.hmachine.modules.hydrogeomorphology.infiltration.OmsInfiltratedWaterVolume;
+import org.hortonmachine.hmachine.modules.hydrogeomorphology.swy.OmsSWYRechargeRouting;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -70,7 +70,7 @@ public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("Infiltration");
 
-        OmsInfiltratedWaterVolume v = new OmsInfiltratedWaterVolume();
+        OmsSWYRechargeRouting v = new OmsSWYRechargeRouting();
         try {
             GridCoverage2D flowGC = getGridCoverage(context, flowdirectionState, null);
             v.pm = taskMonitor;
@@ -88,9 +88,9 @@ public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
             // NOTE: also AET and LSUM maps are produced, but not passed as process output,
             // since it is not defined in the semantics.
 
-            GeotoolsUtils.INSTANCE.coverageToState(v.outInfiltration, infiltratedWaterVolumeState,
+            GeotoolsUtils.INSTANCE.coverageToState(v.outRecharge, infiltratedWaterVolumeState,
                     context.getScale(), (val) -> NumberUtils.equal(val, -9999) ? Double.NaN : val);
-            GeotoolsUtils.INSTANCE.coverageToState(v.outNetInfiltration, netInfiltratedWaterVolumeState,
+            GeotoolsUtils.INSTANCE.coverageToState(v.outAvailableRecharge, netInfiltratedWaterVolumeState,
                     context.getScale(), (val) -> NumberUtils.equal(val, -9999) ? Double.NaN : val);
         }
         GeotoolsUtils.INSTANCE.dumpToRaster(context, "Infiltration", netInfiltratedWaterVolumeState,

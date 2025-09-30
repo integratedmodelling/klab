@@ -1,25 +1,13 @@
 package org.integratedmodelling.klab.utils.s3;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
-
-import software.amazon.awssdk.auth.credentials.AnonymousCredentialsProvider;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetBucketLocationRequest;
-import software.amazon.awssdk.services.s3.model.GetBucketLocationResponse;
-import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 public class S3RegionResolver {
 
-    public static Region resolveBucketRegion(String bucketName, String objectKey, IMonitor monitor) {
+    public static String resolveBucketRegion(String bucketName, String objectKey, IMonitor monitor) {
+        /*
         // Step 1: Attempt to dynamically resolve the bucket's region
-        try (S3Client s3 = S3Client.builder()
+        try (Client s3 = S3Client.builder()
                 .httpClientBuilder(ApacheHttpClient.builder())
                 .region(Region.US_EAST_1) // Use the default region
                 .credentialsProvider(AnonymousCredentialsProvider.create()) // Anonymous credentials
@@ -45,11 +33,12 @@ public class S3RegionResolver {
         } catch (Exception e) {
             monitor.debug("Unexpected exception trying to get to the S3 default region: " + e.getMessage());
         }
-
+        */
         // Step 2: Iterate through all regions and test lightweight requests
         return resolveRegionByTesting(bucketName, objectKey, monitor);
     }
 
+    /*
     private static List<Region> getAwsRegions() {
         // List of regions to exclude (e.g., isolated regions or restricted access regions)
         List<Region> excludedRegions = List.of(
@@ -64,8 +53,10 @@ public class S3RegionResolver {
                 .filter(region -> !excludedRegions.contains(region))
                 .collect(Collectors.toList());
     }
+    */
 
-    private static Region resolveRegionByTesting(String bucketName, String objectKey, IMonitor monitor) {
+    private static String resolveRegionByTesting(String bucketName, String objectKey, IMonitor monitor) {
+        /*
         // Get the list of all AWS regions
         List<Region> regions = getAwsRegions();
 
@@ -96,5 +87,7 @@ public class S3RegionResolver {
         }
 
         throw new KlabResourceAccessException("Unable to resolve region for bucket: " + bucketName);
+        */
+        return "ap-southeast-2";
     }
 }
