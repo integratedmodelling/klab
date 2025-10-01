@@ -304,8 +304,8 @@ public class STACEncoder implements IResourceEncoder {
         try {
             manager.open();
             collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
-        } catch (Exception e1) {
-            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
+        } catch (Exception e) {
+            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl + ". Reason :" + e.getMessage());
         }
 
         if (collection == null) {
