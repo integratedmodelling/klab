@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -274,9 +273,22 @@ public class STACEncoder implements IResourceEncoder {
             GridCoverage2D coverage = null;
 
             try {
-                // TODO fix this
-                HMRaster outRaster = null;
-                // HMRaster outRaster = HMStacCollection.readRasterBandOnRegionStatic(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
+                // TODO see if we can access to the same readRasterBandOnRegion without using a collection
+                LogProgressMonitor lpm = new LogProgressMonitor();
+                HMStacManager manager = new HMStacManager(catalogUrl, lpm);
+                HMStacCollection collection = null;
+                try {
+                    manager.open();
+                    collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+                } catch (Exception e1) {
+                    throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
+                }
+
+                if (collection == null) {
+                    scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+                }
+
+                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
                 coverage = outRaster.buildCoverage();
             } catch (Exception e) {
                 throw new KlabResourceAccessException("Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
