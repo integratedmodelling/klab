@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
+import java.util.stream.IntStream;
 
 import org.geotools.geometry.jts.Geometries;
 import org.geotools.process.vector.VectorToRasterProcess;
@@ -82,6 +83,7 @@ public class Rasterizer<T> {
     private HashMap<T, Long> objectToId;
     private HashMap<Long, T> idToObject;
     private long maxId = 0;
+    final private int noData = -1;
 
     private Graphics2D graphics;
 
@@ -102,6 +104,9 @@ public class Rasterizer<T> {
         this.raster = new BufferedImage((int) grid.getXCells(), (int) grid.getYCells(),
                 BufferedImage.TYPE_INT_ARGB);
         this.raster.setAccelerationPriority(1.0f);
+        IntStream.range(0, raster.getHeight())
+            .forEach(x -> IntStream.range(0, raster.getWidth())
+            .forEach(y -> raster.setRGB(x, y, noData)));
         this.graphics = this.raster.createGraphics();
         this.graphics.setPaintMode();
         graphics.setComposite(AlphaComposite.Src);
@@ -239,9 +244,23 @@ public class Rasterizer<T> {
             for (int y = 0; y < this.raster.getHeight(); y++) {
                 xy[0] = x;
                 xy[1] = y;
-                setter.accept(decodeFloat(Float.intBitsToFloat(raster.getRGB(x, y))), xy);
+                if (!isPixelTransparent(x, y))
+                    setter.accept(decodeFloat(Float.intBitsToFloat(raster.getRGB(x, y))), xy);
             }
         }
+    }
+
+    /**
+     * Validates the alpha value of the pixel. If the alpha value is zero, the pixel is considered transparent.
+     * @param x coordinates
+     * @param y coordinates
+     * @return 
+     */
+    private boolean isPixelTransparent(int x, int y) {
+        int pixel = raster.getRGB(x, y);
+        int alpha = (pixel >> 24) & 0xff;
+
+        return alpha == 0;
     }
 
     // ------------------------------------------------------------------
