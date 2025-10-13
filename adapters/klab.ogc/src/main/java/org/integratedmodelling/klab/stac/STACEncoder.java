@@ -204,7 +204,6 @@ public class STACEncoder implements IResourceEncoder {
                         .build();
             }
         }
-  
         
         return S3Client.builder()
                 .httpClientBuilder(ApacheHttpClient.builder())
@@ -554,7 +553,10 @@ public class STACEncoder implements IResourceEncoder {
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
             Set<Integer> EPSGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
-            if (EPSGsAtItems.size() > 1) {
+            if (EPSGsAtItems.isEmpty()) {
+                scope.getMonitor().warn("No EPSGs found on the items. Using the default value.");
+                collection.setAssumedEpsg(4326);
+            } else if (EPSGsAtItems.size() > 1) {
                 scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
             }
             
