@@ -31,6 +31,7 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.factory.GeoTools;
+import org.hortonmachine.gears.utils.features.CoordinateSwappingFeatureCollection;
 import org.hortonmachine.gears.utils.geometry.GeometryHelper;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -77,6 +78,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * The Class RasterEncoder.
  */
 public class VectorEncoder implements IResourceEncoder {
+    protected boolean rasterize;
+    protected boolean intersect;
+    protected boolean presence;
+    protected String idRequested;
+    protected boolean forceXYSwap;
+    protected String defaultTypeName;
+
+    private Map<String, Class<?>> attributes = new HashMap<>();
+    private Map<String, String> attributeNames = new HashMap<>();
+    protected Projection originalProjection;
 
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
@@ -144,49 +155,15 @@ public class VectorEncoder implements IResourceEncoder {
          * merge urn params with resource params: if attr=x, use filter, if just value=x and we have
          * a nameAttribute filter, else add to parameters
          */
-        String idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
+        this.idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
                 ? urnParameters.get(Urn.SINGLE_PARAMETER_KEY)
                 : null;
-        
+
         String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
-        boolean intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
-        boolean presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
-        
-        Map<String, Class<?>> attributes = new HashMap<>();
-        Map<String, String> attributeNames = new HashMap<>();
+        this.intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
+        this.presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
 
-        for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
-            if (!ad.getLocalName().equals(geomName)) {
-                attributes.put(ad.getLocalName(), ad.getType().getBinding());
-                attributeNames.put(ad.getLocalName().toLowerCase(), ad.getLocalName());
-                if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase())
-                        || urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
-                    try {
-                        // use syntax dependent on attribute type
-                        if (ad.getType().getBinding() == String.class) {
-                            filter = ECQL.toFilter(
-                                    ad.getLocalName() + " = '" + Utils.getIgnoreCase(urnParameters, ad.getLocalName()) + "'");
-                        } else {
-                            filter = ECQL
-                                    .toFilter(ad.getLocalName() + " = " + Utils.getIgnoreCase(urnParameters, ad.getLocalName()));
-                        }
-                    } catch (CQLException e) {
-                        // shouldn't happen as filter was validated previously
-                        throw new KlabValidationException(e);
-                    }
-                }
-            }
-        }
-
-        /*
-         * TODO would be nicer to check the request geometry for the data - which may not be the
-         * scale of the result! If it's IRREGULAR MULTIPLE we want objects, otherwise we want a
-         * state. I don't think there is a way to check that at the moment - the scale will be that
-         * of contextualization, not the geometry for the actuator, which may depend on context.
-         */
-        boolean rasterize = (idRequested != null || (scope.getTargetSemantics() != null
-                && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
-                && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
+        filter = readAttributeData(source, urnParameters, filter, geomName);
 
         /*
          * situations like urn#filter=xxxx" - can't contain an equal sign
@@ -220,10 +197,11 @@ public class VectorEncoder implements IResourceEncoder {
         } catch (IOException e) {
             throw new KlabIOException(e);
         }
+        this.defaultTypeName = fc.getSchema().getTypeName() + "_";
 
         CoordinateReferenceSystem crs = fc.getSchema().getCoordinateReferenceSystem();
         crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
-        Projection originalProjection = Projection.create(crs);
+        this.originalProjection = Projection.create(crs);
         IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
 
         ReferencedEnvelope bboxRefEnv = ((Envelope) envelopeInOriginalProjection).getJTSEnvelope();
@@ -231,9 +209,60 @@ public class VectorEncoder implements IResourceEncoder {
         if (filter != null) {
             bbfilter = ff.and(bbfilter, filter);
         }
+        FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
+
+        parseFeatures(it, resource, urnParameters, geometry, builder, scope, bboxRefEnv);
+    }
+
+    private Filter readAttributeData(FeatureSource<SimpleFeatureType, SimpleFeature> source, Map<String, String> urnParameters,
+            Filter filter, String geomName) {
+        for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
+            if (!ad.getLocalName().equals(geomName)) {
+                attributes.put(ad.getLocalName(), ad.getType().getBinding());
+                attributeNames.put(ad.getLocalName().toLowerCase(), ad.getLocalName());
+                if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase())
+                        || urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
+                    try {
+                        // use syntax dependent on attribute type
+                        if (ad.getType().getBinding() == String.class) {
+                            filter = ECQL.toFilter(
+                                    ad.getLocalName() + " = '" + Utils.getIgnoreCase(urnParameters, ad.getLocalName()) + "'");
+                        } else {
+                            filter = ECQL
+                                    .toFilter(ad.getLocalName() + " = " + Utils.getIgnoreCase(urnParameters, ad.getLocalName()));
+                        }
+                    } catch (CQLException e) {
+                        // shouldn't happen as filter was validated previously
+                        throw new KlabValidationException(e);
+                    }
+                }
+            }
+        }
+        return filter;
+    }
+//, , IContextualizationScope scope
+    protected void parseFeatures(FeatureIterator<SimpleFeature> it, IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope scope, ReferencedEnvelope bboxRefEnv
+//            ,
+//            String idRequested, Map<String, Class< ? >> attributes,
+//            Map<String, String> attributeNames, FeatureCollection<SimpleFeatureType, SimpleFeature> fc,
+//            Projection originalProjection, Rasterizer<Object> rasterizer, double cellWidth, Polygon polygonEnv,
+//            String nameAttribute
+            ) {
+        
+        Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
+        /*
+         * TODO would be nicer to check the request geometry for the data - which may not be the
+         * scale of the result! If it's IRREGULAR MULTIPLE we want objects, otherwise we want a
+         * state. I don't think there is a way to check that at the moment - the scale will be that
+         * of contextualization, not the geometry for the actuator, which may depend on context.
+         */
+        boolean rasterize = (idRequested != null || (scope.getTargetSemantics() != null
+                && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
+                && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
         Rasterizer<Object> rasterizer = null;
         double cellWidth = -1.0;
+
         Polygon polygonEnv = null;
         if (rasterize) {
             IGrid grid = ((Space) requestScale.getSpace()).getGrid();
@@ -251,10 +280,7 @@ public class VectorEncoder implements IResourceEncoder {
             nameAttribute = "NAME";
         }
 
-//        SpatialDisplay display = new SpatialDisplay(requestScale);
-        
         int n = 1;
-        FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
         while (it.hasNext()) {
 
             if (presence) {
@@ -270,13 +296,16 @@ public class VectorEncoder implements IResourceEncoder {
                 continue;
             }
 
+            if (forceXYSwap) {
+                shape = CoordinateSwappingFeatureCollection.swapXY(shape);
+            }
+
             if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
                 // shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
                 if (!shape.isValid()) {
                     shape = shape.buffer(0);
                 }
             }
-            
 
             IShape objectShape = null;
             if(rasterize) {
@@ -292,8 +321,8 @@ public class VectorEncoder implements IResourceEncoder {
             }else {
                 objectShape = Shape.create(shape, originalProjection)
                         .transform(requestScale.getSpace().getProjection());
-    
-                if (intersect) {
+
+                if (this.intersect) {
                     objectShape = objectShape.intersection(requestScale.getSpace().getShape());
                 }
             }
@@ -320,7 +349,7 @@ public class VectorEncoder implements IResourceEncoder {
                 final Object vval = value;
                 rasterizer.add(objectShape, (s) -> vval);
 
-            } else if (!presence) {
+            } else if (!this.presence) {
 
                 IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
                 String objectName = null;
@@ -337,7 +366,7 @@ public class VectorEncoder implements IResourceEncoder {
                     }
                 }
                 if (objectName /* still */ == null) {
-                    objectName = fc.getSchema().getTypeName() + "_" + (n++);
+                    objectName = defaultTypeName + (n++);
                 }
 
                 builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
@@ -362,12 +391,10 @@ public class VectorEncoder implements IResourceEncoder {
 
         it.close();
 
-//        display.show();
-        
-        if (presence) {
+        if (this.presence) {
             builder = builder.withMetadata("presence", Boolean.FALSE);
         }
-        
+
         if (rasterize) {
             final Builder stateBuilder = builder;
             rasterizer.finish((b, xy) -> {
@@ -375,7 +402,6 @@ public class VectorEncoder implements IResourceEncoder {
             });
 //            builder = builder.finishState();
         }
-
     }
 
     @Override
