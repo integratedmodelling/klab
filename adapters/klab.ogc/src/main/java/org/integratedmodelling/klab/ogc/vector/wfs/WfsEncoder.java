@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.geotools.data.FeatureSource;
-import org.geotools.data.simple.SimpleFeatureCollection;º   
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.ogc.WfsAdapter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
 import org.integratedmodelling.klab.scale.Scale;
@@ -53,17 +54,15 @@ public class WfsEncoder extends VectorEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
-        //String wfsUrl = "https://visualizador.ideam.gov.co/gisserver/services/Vulnerabilidad_Susceptibilidad_Ambiental/MapServer/WFSServer?service=WFS&request=GetCapabilities";
         String wfsUrl = resource.getParameters().get("serviceUrl", String.class) + "?service=WFS&request=GetCapabilities";
-        String desiredLayerName = resource.getParameters().get("wfsIdentifier", String.class);
-        //String desiredLayerName = "Categorizacion_de_SZH_por_Evaluacion_Integrada_ENA_2014";
+        String layerName = resource.getParameters().get("wfsIdentifier", String.class);
 
-        Wfs wfs = new Wfs(wfsUrl, desiredLayerName);
+        Wfs wfs = new Wfs(wfsUrl, layerName);
         wfs.forceNormalizeGeometryName();
         wfs.forceArcgisCompatibility();
 
-        // TODO read swap from parameters
-        this.forceXYSwap = false;
+        this.forceXYSwap = resource.getParameters().contains("swapAxis")
+                && resource.getParameters().get("swapAxis", Boolean.class);
         if (forceXYSwap) {
             wfs.forceCoordinateSwapping();
         }
@@ -84,7 +83,6 @@ public class WfsEncoder extends VectorEncoder {
             IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
             ReferencedEnvelope bboxRefEnv = ((org.integratedmodelling.klab.components.geospace.extents.Envelope) envelopeInOriginalProjection).getJTSEnvelope();
 
-            int n = 1;
             FeatureIterator<SimpleFeature> it = fc.features();
             this.intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
             this.presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
@@ -95,14 +93,12 @@ public class WfsEncoder extends VectorEncoder {
             parseFeatures(it, resource, urnParameters, geometry, builder, scope, bboxRefEnv);
 
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new KlabResourceAccessException("Cannot access layer '" + layerName + "'. Reason: " + e.getMessage());
         } finally {
             try {
                 wfs.close();
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                throw new KlabResourceAccessException("Error closing WFS resource of layer '" + layerName + "'. Reason: " + e.getMessage());
             }
         }
     

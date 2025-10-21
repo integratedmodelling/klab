@@ -32,4 +32,8 @@
  	
  	optional text 'filter'
  		""
+
+ 	optional boolean 'swapAxis'
+ 		"Swap the order of the XY axis of the geometry."
+ 		default false
  }
