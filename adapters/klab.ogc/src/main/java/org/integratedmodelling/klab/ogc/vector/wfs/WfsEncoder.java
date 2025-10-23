@@ -66,9 +66,9 @@ public class WfsEncoder extends VectorEncoder {
         if (forceXYSwap) {
             wfs.forceCoordinateSwapping();
         }
+
         try {
             wfs.connect();
-            System.out.println("Version: " + wfs.getVersion());
 
             Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
             IEnvelope geomAsEnv = space.getEnvelope();
@@ -81,7 +81,8 @@ public class WfsEncoder extends VectorEncoder {
             crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
             this.originalProjection = Projection.create(crs);
             IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
-            ReferencedEnvelope bboxRefEnv = ((org.integratedmodelling.klab.components.geospace.extents.Envelope) envelopeInOriginalProjection).getJTSEnvelope();
+            ReferencedEnvelope bboxRefEnv = ((org.integratedmodelling.klab.components.geospace.extents.Envelope) envelopeInOriginalProjection)
+                    .getJTSEnvelope();
 
             FeatureIterator<SimpleFeature> it = fc.features();
             this.intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
@@ -98,7 +99,8 @@ public class WfsEncoder extends VectorEncoder {
             try {
                 wfs.close();
             } catch (Exception e) {
-                throw new KlabResourceAccessException("Error closing WFS resource of layer '" + layerName + "'. Reason: " + e.getMessage());
+                throw new KlabResourceAccessException(
+                        "Error closing WFS resource of layer '" + layerName + "'. Reason: " + e.getMessage());
             }
         }
     
