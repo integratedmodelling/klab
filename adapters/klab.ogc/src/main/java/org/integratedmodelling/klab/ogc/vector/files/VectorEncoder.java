@@ -163,6 +163,16 @@ public class VectorEncoder implements IResourceEncoder {
         this.intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
         this.presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
 
+        /*
+         * TODO would be nicer to check the request geometry for the data - which may not be the
+         * scale of the result! If it's IRREGULAR MULTIPLE we want objects, otherwise we want a
+         * state. I don't think there is a way to check that at the moment - the scale will be that
+         * of contextualization, not the geometry for the actuator, which may depend on context.
+         */
+        this.rasterize = (idRequested != null || (scope.getTargetSemantics() != null
+                && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
+                && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
+
         filter = readAttributeData(source, urnParameters, filter, geomName);
 
         /*
@@ -177,7 +187,7 @@ public class VectorEncoder implements IResourceEncoder {
                 throw new KlabValidationException(e);
             }
         }
-        
+
         /*
          * filters set into the resource parameters
          */
@@ -240,26 +250,10 @@ public class VectorEncoder implements IResourceEncoder {
         }
         return filter;
     }
-//, , IContextualizationScope scope
-    protected void parseFeatures(FeatureIterator<SimpleFeature> it, IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder, IContextualizationScope scope, ReferencedEnvelope bboxRefEnv
-//            ,
-//            String idRequested, Map<String, Class< ? >> attributes,
-//            Map<String, String> attributeNames, FeatureCollection<SimpleFeatureType, SimpleFeature> fc,
-//            Projection originalProjection, Rasterizer<Object> rasterizer, double cellWidth, Polygon polygonEnv,
-//            String nameAttribute
-            ) {
-        
-        Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
-        /*
-         * TODO would be nicer to check the request geometry for the data - which may not be the
-         * scale of the result! If it's IRREGULAR MULTIPLE we want objects, otherwise we want a
-         * state. I don't think there is a way to check that at the moment - the scale will be that
-         * of contextualization, not the geometry for the actuator, which may depend on context.
-         */
-        boolean rasterize = (idRequested != null || (scope.getTargetSemantics() != null
-                && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
-                && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
+    protected void parseFeatures(FeatureIterator<SimpleFeature> it, IResource resource, Map<String, String> urnParameters,
+            IGeometry geometry, Builder builder, IContextualizationScope scope, ReferencedEnvelope bboxRefEnv) {
+        Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
         Rasterizer<Object> rasterizer = null;
         double cellWidth = -1.0;
 
@@ -291,7 +285,6 @@ public class VectorEncoder implements IResourceEncoder {
 
             SimpleFeature feature = it.next();
             Geometry shape = (Geometry) feature.getDefaultGeometry();
-
             if (shape.isEmpty()) {
                 continue;
             }
@@ -308,7 +301,7 @@ public class VectorEncoder implements IResourceEncoder {
             }
 
             IShape objectShape = null;
-            if(rasterize) {
+            if (rasterize) {
                 // do always intersect
                 try {
                     Geometry intersection = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
@@ -317,8 +310,8 @@ public class VectorEncoder implements IResourceEncoder {
                 } catch (Exception e) {
                     throw new KlabIOException(e);
                 }
-                
-            }else {
+
+            } else {
                 objectShape = Shape.create(shape, originalProjection)
                         .transform(requestScale.getSpace().getProjection());
 
@@ -334,7 +327,6 @@ public class VectorEncoder implements IResourceEncoder {
             }
 
             if (rasterize) {
-
                 Object value = Boolean.TRUE;
 
                 if (idRequested != null) {
@@ -370,7 +362,7 @@ public class VectorEncoder implements IResourceEncoder {
                 }
 
                 builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
-                for(String key : attributes.keySet()) {
+                for (String key : attributes.keySet()) {
                     Object nattr = feature.getAttribute(key);
                     if (nattr == null) {
                         nattr = feature.getAttribute(key.toUpperCase());
