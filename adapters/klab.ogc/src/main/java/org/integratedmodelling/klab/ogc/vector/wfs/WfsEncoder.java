@@ -23,6 +23,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.wfs.WFSDataStore;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.wfs.Wfs;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -59,7 +60,7 @@ public class WfsEncoder extends VectorEncoder {
 
         Wfs wfs = new Wfs(wfsUrl, layerName);
         wfs.forceNormalizeGeometryName();
-        wfs.forceArcgisCompatibility();
+           wfs.forceArcgisCompatibility();
 
         this.forceXYSwap = resource.getParameters().contains("swapAxis")
                 && resource.getParameters().get("swapAxis", Boolean.class);
@@ -72,13 +73,24 @@ public class WfsEncoder extends VectorEncoder {
 
             Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
             IEnvelope geomAsEnv = space.getEnvelope();
-            Envelope env = new Envelope(geomAsEnv.getMinX(), geomAsEnv.getMaxX(), geomAsEnv.getMinY(), geomAsEnv.getMaxY());
+            Envelope env = new Envelope(geomAsEnv.getMinY(), geomAsEnv.getMaxY(), geomAsEnv.getMinX(), geomAsEnv.getMaxX());
+            // La de arriba funciona para wfs sin swap
+            //Envelope env = new Envelope(geomAsEnv.getMinY(), geomAsEnv.getMaxY(), geomAsEnv.getMinX(), geomAsEnv.getMaxX());
             Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
 
+            CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
             SimpleFeatureCollection fc = wfs.getFeatureCollection(env);
-            this.defaultTypeName = fc.getSchema().getTypeName() + "_";
-            CoordinateReferenceSystem crs = fc.getSchema().getCoordinateReferenceSystem();
+            if (fc.isEmpty()) {
+                throw new KlabResourceAccessException("No feature for layer " + layerName + " found in this context");
+            }
+            if (fc.getSchema() != null) {
+                this.defaultTypeName = fc.getSchema().getTypeName() + "_";
+                crs = fc.getSchema().getCoordinateReferenceSystem();
+            } else {
+                this.defaultTypeName = "element_";
+            }
             crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
+
             this.originalProjection = Projection.create(crs);
             IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
             ReferencedEnvelope bboxRefEnv = ((org.integratedmodelling.klab.components.geospace.extents.Envelope) envelopeInOriginalProjection)

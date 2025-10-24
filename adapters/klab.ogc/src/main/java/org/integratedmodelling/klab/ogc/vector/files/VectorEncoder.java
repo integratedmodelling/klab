@@ -78,7 +78,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * The Class RasterEncoder.
  */
 public class VectorEncoder implements IResourceEncoder {
-    protected boolean rasterize;
     protected boolean intersect;
     protected boolean presence;
     protected String idRequested;
@@ -162,16 +161,6 @@ public class VectorEncoder implements IResourceEncoder {
         String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
         this.intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
         this.presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
-
-        /*
-         * TODO would be nicer to check the request geometry for the data - which may not be the
-         * scale of the result! If it's IRREGULAR MULTIPLE we want objects, otherwise we want a
-         * state. I don't think there is a way to check that at the moment - the scale will be that
-         * of contextualization, not the geometry for the actuator, which may depend on context.
-         */
-        this.rasterize = (idRequested != null || (scope.getTargetSemantics() != null
-                && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
-                && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
         filter = readAttributeData(source, urnParameters, filter, geomName);
 
@@ -257,6 +246,16 @@ public class VectorEncoder implements IResourceEncoder {
         Rasterizer<Object> rasterizer = null;
         double cellWidth = -1.0;
 
+        /*
+         * TODO would be nicer to check the request geometry for the data - which may not be the
+         * scale of the result! If it's IRREGULAR MULTIPLE we want objects, otherwise we want a
+         * state. I don't think there is a way to check that at the moment - the scale will be that
+         * of contextualization, not the geometry for the actuator, which may depend on context.
+         */
+        boolean rasterize = (idRequested != null || (scope.getTargetSemantics() != null
+                && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
+                && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
+
         Polygon polygonEnv = null;
         if (rasterize) {
             IGrid grid = ((Space) requestScale.getSpace()).getGrid();
@@ -304,9 +303,15 @@ public class VectorEncoder implements IResourceEncoder {
             if (rasterize) {
                 // do always intersect
                 try {
-                    Geometry intersection = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
-                    objectShape = Shape.create(intersection, originalProjection)
-                            .transform(requestScale.getSpace().getProjection());
+                    Geometry intersection_previous = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
+                    Geometry intersection = forceXYSwap
+                            ? GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth)
+                            : GeometryHelper.multiPolygonIntersection(CoordinateSwappingFeatureCollection.swapXY(polygonEnv),
+                                    shape, cellWidth);
+                    objectShape = forceXYSwap
+                            ? Shape.create(intersection, originalProjection).transform(requestScale.getSpace().getProjection())
+                            : Shape.create(CoordinateSwappingFeatureCollection.swapXY(intersection), originalProjection)
+                                    .transform(requestScale.getSpace().getProjection());
                 } catch (Exception e) {
                     throw new KlabIOException(e);
                 }
