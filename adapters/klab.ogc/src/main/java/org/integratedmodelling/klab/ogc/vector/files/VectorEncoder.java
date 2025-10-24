@@ -303,7 +303,6 @@ public class VectorEncoder implements IResourceEncoder {
             if (rasterize) {
                 // do always intersect
                 try {
-                    Geometry intersection_previous = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
                     Geometry intersection = forceXYSwap
                             ? GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth)
                             : GeometryHelper.multiPolygonIntersection(CoordinateSwappingFeatureCollection.swapXY(polygonEnv),
@@ -317,8 +316,9 @@ public class VectorEncoder implements IResourceEncoder {
                 }
 
             } else {
-                objectShape = Shape.create(shape, originalProjection)
-                        .transform(requestScale.getSpace().getProjection());
+                objectShape = forceXYSwap
+                        ? Shape.create(shape, originalProjection).transform(requestScale.getSpace().getProjection())
+                        : Shape.create(CoordinateSwappingFeatureCollection.swapXY(shape), originalProjection).transform(requestScale.getSpace().getProjection());
 
                 if (this.intersect) {
                     objectShape = objectShape.intersection(requestScale.getSpace().getShape());
