@@ -33,7 +33,8 @@
  	optional text 'filter'
  		""
 
- 	optional boolean 'swapAxis'
- 		"Swap the order of the XY axis of the geometry."
- 		default false
+ 	optional enum 'axisOrder'
+ 		"Select the order of the XY axis: 'lat_lon' (default), or 'lon_lat'."
+ 		default "lat_lon"
+		values lat_lon, lon_lat 		
  }

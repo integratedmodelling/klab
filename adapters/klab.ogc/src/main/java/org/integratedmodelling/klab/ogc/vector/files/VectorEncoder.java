@@ -81,7 +81,6 @@ public class VectorEncoder implements IResourceEncoder {
     protected boolean intersect;
     protected boolean presence;
     protected String idRequested;
-    protected boolean forceXYSwap;
     protected String defaultTypeName;
 
     private Map<String, Class<?>> attributes = new HashMap<>();
@@ -288,10 +287,6 @@ public class VectorEncoder implements IResourceEncoder {
                 continue;
             }
 
-            if (forceXYSwap) {
-                shape = CoordinateSwappingFeatureCollection.swapXY(shape);
-            }
-
             if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
                 // shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
                 if (!shape.isValid()) {
@@ -303,29 +298,19 @@ public class VectorEncoder implements IResourceEncoder {
             if (rasterize) {
                 // do always intersect
                 try {
-                    Geometry intersection = forceXYSwap
-                            ? GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth)
-                            : GeometryHelper.multiPolygonIntersection(CoordinateSwappingFeatureCollection.swapXY(polygonEnv),
-                                    shape, cellWidth);
-                    objectShape = forceXYSwap
-                            ? Shape.create(intersection, originalProjection).transform(requestScale.getSpace().getProjection())
-                            : Shape.create(CoordinateSwappingFeatureCollection.swapXY(intersection), originalProjection)
-                                    .transform(requestScale.getSpace().getProjection());
+                    Geometry intersection = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
+                    objectShape = Shape.create(intersection, originalProjection).transform(requestScale.getSpace().getProjection());
                 } catch (Exception e) {
                     throw new KlabIOException(e);
                 }
 
             } else {
-                objectShape = forceXYSwap
-                        ? Shape.create(shape, originalProjection).transform(requestScale.getSpace().getProjection())
-                        : Shape.create(CoordinateSwappingFeatureCollection.swapXY(shape), originalProjection).transform(requestScale.getSpace().getProjection());
+                objectShape = Shape.create(shape, originalProjection).transform(requestScale.getSpace().getProjection());
 
                 if (this.intersect) {
                     objectShape = objectShape.intersection(requestScale.getSpace().getShape());
                 }
             }
-
-//                display.add(objectShape);
 
             if (objectShape.isEmpty()) {
                 continue;
