@@ -51,6 +51,11 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * encoder.
  */
 public class WfsEncoder extends VectorEncoder {
+    protected AxisOrder resourceAxisOrder;
+    private enum AxisOrder {
+        lat_lon,
+        lon_lat,
+    }
 
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
@@ -60,11 +65,12 @@ public class WfsEncoder extends VectorEncoder {
 
         Wfs wfs = new Wfs(wfsUrl, layerName);
         wfs.forceNormalizeGeometryName();
-           wfs.forceArcgisCompatibility();
+        wfs.forceArcgisCompatibility();
 
-        this.forceXYSwap = resource.getParameters().contains("swapAxis")
-                && resource.getParameters().get("swapAxis", Boolean.class);
-        if (forceXYSwap) {
+        this.resourceAxisOrder = resource.getParameters().contains("axisOrder")
+                ? AxisOrder.valueOf(resource.getParameters().get("axisOrder", String.class))
+                : AxisOrder.lat_lon;
+        if (resourceAxisOrder == AxisOrder.lat_lon) {
             wfs.forceCoordinateSwapping();
         }
 
@@ -73,9 +79,9 @@ public class WfsEncoder extends VectorEncoder {
 
             Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
             IEnvelope geomAsEnv = space.getEnvelope();
-            Envelope env = new Envelope(geomAsEnv.getMinY(), geomAsEnv.getMaxY(), geomAsEnv.getMinX(), geomAsEnv.getMaxX());
-            // La de arriba funciona para wfs sin swap
-            //Envelope env = new Envelope(geomAsEnv.getMinY(), geomAsEnv.getMaxY(), geomAsEnv.getMinX(), geomAsEnv.getMaxX());
+            Envelope env = resourceAxisOrder == AxisOrder.lat_lon
+                    ? new Envelope(geomAsEnv.getMinX(), geomAsEnv.getMaxX(), geomAsEnv.getMinY(), geomAsEnv.getMaxY())
+                    : new Envelope(geomAsEnv.getMinY(), geomAsEnv.getMaxY(), geomAsEnv.getMinX(), geomAsEnv.getMaxX());
             Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
 
             CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
