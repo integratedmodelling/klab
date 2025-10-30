@@ -17,8 +17,6 @@ import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.geojson.feature.FeatureJSON;
-import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -43,11 +41,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-
-import com.graphbuilder.curve.Point;
 
 public class OpenBuildingsInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
     private IDirectObservation contextSubject = null;
@@ -86,24 +81,16 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                 SimpleFeature feature = featureIterator.next();
                 featureCount++;
 
-                System.out.println("\n--- Feature " + featureCount + " ---");
-                System.out.println("ID: " + feature.getID());
-
                 Geometry geometry = (Geometry) feature.getDefaultGeometry();
-                
                 // We validate if it intersects with our context
                 if (geometry == null || geometry.isEmpty()) {
                     continue;
                 }
-                System.out.println("Geometry Type: " + geometry.getGeometryType());
-                System.out.println("Geometry WKT: " + geometry.toText());
 
                 if (!geometry.intersects(contextGeometry)) {
                     continue;
                 }
 
-                // Get properties (attributes)
-                System.out.println("Properties:");
                 for (Property property : feature.getProperties()) {
                     if (property.getName().toString().equals("tile_url")) {
                         downloadableFiles.add(property.getValue().toString());
@@ -133,7 +120,7 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                     double lat = Double.parseDouble(record.get(0));
                     double lon = Double.parseDouble(record.get(1));
 
-                    if (!contextGeometry.contains(Shape.makePoint(lon, lat))) { // TODO check coordinates
+                    if (!contextGeometry.contains(Shape.makePoint(lon, lat))) {
                         continue;
                     }
                     IMetadata metadata = new Metadata();
@@ -142,7 +129,6 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                     String geometryWkt = record.get(4);
 
                     Shape buildingShape = Shape.create(geometryWkt, Projection.create(Projection.DEFAULT_PROJECTION_CODE));
-                    //buildingShape = buildingShape.transform(Projection.create(Projection.DEFAULT_PROJECTION_CODE));
                     String id = CamelCase.toLowerCase(Observables.INSTANCE.getDisplayName(semantics), '-') + "_" + n++;
                     ISubject subject = (ISubject) scope.newObservation(semantics, id, getScale(buildingShape, contextSubject), metadata);
 
