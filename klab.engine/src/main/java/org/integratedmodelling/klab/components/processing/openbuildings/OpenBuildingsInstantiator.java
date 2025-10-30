@@ -75,7 +75,7 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
     @Override
     public List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope) throws KlabException {
         List<IObjectArtifact> ret = new ArrayList<>();
-        String tilesfile = "klab.engine/src/main/resources/components/org.integratedmodelling.geospace/openbuildings/tiles.geojson";
+        String tilesfile = "../../klab.engine/src/main/resources/components/org.integratedmodelling.geospace/openbuildings/tiles.geojson";
 
         Geometry contextGeometry = ((Shape) contextSubject.getScale().getSpace().getShape()).getJTSGeometry();
 
@@ -105,8 +105,8 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                 // Get properties (attributes)
                 System.out.println("Properties:");
                 for (Property property : feature.getProperties()) {
-                    if (property.getName().equals("tile_url")) {
-                        downloadableFiles.add(tilesfile);
+                    if (property.getName().toString().equals("tile_url")) {
+                        downloadableFiles.add(property.getValue().toString());
                     }
                 }
             }
@@ -133,7 +133,7 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                     double lat = Double.parseDouble(record.get(0));
                     double lon = Double.parseDouble(record.get(1));
 
-                    if (!contextGeometry.contains(Shape.makePoint(lat, lon))) { // TODO check coordinates
+                    if (!contextGeometry.contains(Shape.makePoint(lon, lat))) { // TODO check coordinates
                         continue;
                     }
                     IMetadata metadata = new Metadata();
@@ -141,7 +141,8 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                     metadata.put("area_in_meters", Double.parseDouble(record.get(2)));
                     String geometryWkt = record.get(4);
 
-                    Shape buildingShape = Shape.create(geometryWkt, Projection.create("EPSG:3857"));
+                    Shape buildingShape = Shape.create(geometryWkt, Projection.create(Projection.DEFAULT_PROJECTION_CODE));
+                    //buildingShape = buildingShape.transform(Projection.create(Projection.DEFAULT_PROJECTION_CODE));
                     String id = CamelCase.toLowerCase(Observables.INSTANCE.getDisplayName(semantics), '-') + "_" + n++;
                     ISubject subject = (ISubject) scope.newObservation(semantics, id, getScale(buildingShape, contextSubject), metadata);
 
