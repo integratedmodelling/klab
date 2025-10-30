@@ -48,6 +48,12 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
     private IDirectObservation contextSubject = null;
     private List<String> downloadableFiles = new Vector<>();
 
+    private static int LATITUDE_INDEX = 0;
+    private static int LONGITUDE_INDEX = 1;
+    private static int AREA_INDEX = 2;
+    private static int CONFIDENCE_INDEX = 3;
+    private static int GEOMETRY_INDEX = 4;
+
     private double threshold = 90.0;
 
     public OpenBuildingsInstantiator(Parameters<Object> params, IContextualizationScope scope) {
@@ -121,21 +127,21 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                 // TODO optimize -> stream
                 int n = 1;
                 for (CSVRecord record : csvParser) {
-                    double recordConfidence = Double.parseDouble(record.get(3));
+                    double recordConfidence = Double.parseDouble(record.get(CONFIDENCE_INDEX));
                     if (recordConfidence < threshold) {
                         continue;
                     }
 
-                    double lat = Double.parseDouble(record.get(0));
-                    double lon = Double.parseDouble(record.get(1));
+                    double lat = Double.parseDouble(record.get(LATITUDE_INDEX));
+                    double lon = Double.parseDouble(record.get(LONGITUDE_INDEX));
 
                     if (!contextGeometry.contains(Shape.makePoint(lon, lat))) {
                         continue;
                     }
                     IMetadata metadata = new Metadata();
                     metadata.put("confidence", recordConfidence);
-                    metadata.put("area_in_meters", Double.parseDouble(record.get(2)));
-                    String geometryWkt = record.get(4);
+                    metadata.put("area_in_meters", Double.parseDouble(record.get(AREA_INDEX)));
+                    String geometryWkt = record.get(GEOMETRY_INDEX);
 
                     Shape buildingShape = Shape.create(geometryWkt, Projection.create(Projection.DEFAULT_PROJECTION_CODE));
                     String id = CamelCase.toLowerCase(Observables.INSTANCE.getDisplayName(semantics), '-') + "_" + n++;
