@@ -6,10 +6,9 @@ const export object query
 	""
      label 'Query OpenBuildings'
 {
-	
 	optional number threshold
-		""
-		 default 90
+		"The threshold of the query. Any building below that confidence level will be removed from the final visualization. Default: 0.9."
+		 default 0.9
 
 	class org.integratedmodelling.klab.components.processing.openbuildings.OpenBuildingsInstantiator
 }
