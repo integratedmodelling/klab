@@ -48,10 +48,14 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
     private IDirectObservation contextSubject = null;
     private List<String> downloadableFiles = new Vector<>();
 
-    public OpenBuildingsInstantiator(Parameters<Object> create, IContextualizationScope scope) {
+    private double threshold = 90.0;
+
+    public OpenBuildingsInstantiator(Parameters<Object> params, IContextualizationScope scope) {
         this.contextSubject = scope.getContextObservation();
 
-        // TODO manage parameters
+        if (params.containsKey("threshold")) {
+            this.threshold = params.get("threshold", Double.class);
+        }
     }
 
     public OpenBuildingsInstantiator() {
@@ -114,9 +118,14 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                 BufferedReader bufferedReader = new BufferedReader(reader);
 
                 CSVParser csvParser = new CSVParser(bufferedReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim());
-                // TODO if it works, optimize
+                // TODO optimize -> stream
                 int n = 1;
                 for (CSVRecord record : csvParser) {
+                    double recordConfidence = Double.parseDouble(record.get(3));
+                    if (recordConfidence < threshold) {
+                        continue;
+                    }
+
                     double lat = Double.parseDouble(record.get(0));
                     double lon = Double.parseDouble(record.get(1));
 
@@ -124,7 +133,7 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                         continue;
                     }
                     IMetadata metadata = new Metadata();
-                    metadata.put("confidence", Double.parseDouble(record.get(3)));
+                    metadata.put("confidence", recordConfidence);
                     metadata.put("area_in_meters", Double.parseDouble(record.get(2)));
                     String geometryWkt = record.get(4);
 
