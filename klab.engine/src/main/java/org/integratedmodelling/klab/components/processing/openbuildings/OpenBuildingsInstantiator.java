@@ -124,7 +124,6 @@ public class OpenBuildingsInstantiator extends AbstractContextualizer implements
                 BufferedReader bufferedReader = new BufferedReader(reader);
 
                 CSVParser csvParser = new CSVParser(bufferedReader, CSVFormat.DEFAULT.withFirstRecordAsHeader().withTrim());
-                // TODO optimize -> stream
                 int n = 1;
                 for (CSVRecord record : csvParser) {
                     double recordConfidence = Double.parseDouble(record.get(CONFIDENCE_INDEX));
