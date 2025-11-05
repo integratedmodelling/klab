@@ -5,7 +5,7 @@ import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 import java.awt.image.DataBuffer;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.hortonmachine.hmachine.modules.hydrogeomorphology.scsrunoff.OmsScsRunoff;
+import org.hortonmachine.hmachine.modules.hydrogeomorphology.swy.OmsSWYQuickflow;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
-public class ScsRunoffResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
+public class OmsSWYQuickflowResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
     @Override
     public Type getType() {
@@ -28,7 +28,7 @@ public class ScsRunoffResolver extends AbstractContextualizer implements IResolv
     public IProcess resolve(IProcess runoffProcess, IContextualizationScope context) throws KlabException {
 
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
-        taskMonitor.setTaskName("SCS Runoff");
+        taskMonitor.setTaskName("SWY Quickflow");
 
         IState rainfallVolumeState = getInput("rainfall_volume", IState.class);
         IState streamPresenceState = getInput("presence_of_stream", IState.class);
@@ -41,22 +41,22 @@ public class ScsRunoffResolver extends AbstractContextualizer implements IResolv
 
         IState runoffState = getOutput("runoff_water_volume", IState.class);
 
-        OmsScsRunoff scsRunoff = new OmsScsRunoff();
-        scsRunoff.pm = taskMonitor;
-        scsRunoff.inRainfall = getGridCoverage(context, rainfallVolumeState);
-        scsRunoff.inNet = getGridCoverage(context, streamPresenceState);
-        scsRunoff.inCurveNumber = getGridCoverage(context, curveNumberState);
-        scsRunoff.inNumberOfEvents = getGridCoverage(context, numberOfEventsState);
+        OmsSWYQuickflow swyQuickflow = new OmsSWYQuickflow();
+        swyQuickflow.pm = taskMonitor;
+        swyQuickflow.inRainfall = getGridCoverage(context, rainfallVolumeState);
+        swyQuickflow.inNet = getGridCoverage(context, streamPresenceState);
+        swyQuickflow.inCurveNumber = getGridCoverage(context, curveNumberState);
+        swyQuickflow.inNumberOfEvents = getGridCoverage(context, numberOfEventsState);
         try {
-            scsRunoff.process();
+            swyQuickflow.process();
         } catch (Exception e) {
             throw new KlabException(e);
         }
         if (!context.getMonitor().isInterrupted()) {
-            GeotoolsUtils.INSTANCE.coverageToState(scsRunoff.outputDischarge, runoffState, context.getScale(), null);
+            GeotoolsUtils.INSTANCE.coverageToState(swyQuickflow.outQuickflow, runoffState, context.getScale(), null);
         }
 
-        GeotoolsUtils.INSTANCE.dumpToRaster(context, "ScsRunoff", rainfallVolumeState, streamPresenceState, curveNumberState,
+        GeotoolsUtils.INSTANCE.dumpToRaster(context, "SWYQuickflow", rainfallVolumeState, streamPresenceState, curveNumberState,
                 runoffState, numberOfEventsState);
 
         return runoffProcess;
@@ -71,7 +71,7 @@ public class ScsRunoffResolver extends AbstractContextualizer implements IResolv
 
     @Override
     public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
-        return new ScsRunoffResolver();
+        return new OmsSWYQuickflowResolver();
     }
 
 }
