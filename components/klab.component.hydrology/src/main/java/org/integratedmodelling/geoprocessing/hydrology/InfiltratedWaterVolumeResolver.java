@@ -78,8 +78,8 @@ public class InfiltratedWaterVolumeResolver extends AbstractContextualizer
             v.inPet = getGridCoverage(context, petState, flowGC);
             v.inFlowdirections = flowGC;
             v.inNet = getGridCoverage(context, streamPresenceState, null);
-            v.inRainfall = getGridCoverage(context, rainfallVolumeState, flowGC);
-            v.inRunoff = getGridCoverage(context, runoffVolumeState, flowGC);
+            v.inPrecipitation = getGridCoverage(context, rainfallVolumeState, flowGC);
+            v.inQuickflow = getGridCoverage(context, runoffVolumeState, flowGC);
             v.process();
         } catch (Exception e) {
             throw new KlabException(e);
