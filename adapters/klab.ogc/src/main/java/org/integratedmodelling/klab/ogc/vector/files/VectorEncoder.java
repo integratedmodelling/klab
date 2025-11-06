@@ -31,7 +31,6 @@ import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.util.factory.GeoTools;
-import org.hortonmachine.gears.utils.features.CoordinateSwappingFeatureCollection;
 import org.hortonmachine.gears.utils.geometry.GeometryHelper;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -78,14 +77,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * The Class RasterEncoder.
  */
 public class VectorEncoder implements IResourceEncoder {
-    protected boolean intersect;
-    protected boolean presence;
-    protected String idRequested;
-    protected String defaultTypeName;
-
-    private Map<String, Class<?>> attributes = new HashMap<>();
-    private Map<String, String> attributeNames = new HashMap<>();
-    protected Projection originalProjection;
 
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
@@ -153,67 +144,17 @@ public class VectorEncoder implements IResourceEncoder {
          * merge urn params with resource params: if attr=x, use filter, if just value=x and we have
          * a nameAttribute filter, else add to parameters
          */
-        this.idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
+        String idRequested = urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY) && urnParameters.size() == 1
                 ? urnParameters.get(Urn.SINGLE_PARAMETER_KEY)
                 : null;
-
+        
         String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
-        this.intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
-        this.presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
+        boolean intersect = urnParameters.containsKey("intersect") ? Boolean.parseBoolean(urnParameters.get("intersect")) : true;
+        boolean presence = urnParameters.containsKey("presence") ? Boolean.parseBoolean(urnParameters.get("presence")) : false;
+        
+        Map<String, Class<?>> attributes = new HashMap<>();
+        Map<String, String> attributeNames = new HashMap<>();
 
-        filter = readAttributeData(source, urnParameters, filter, geomName);
-
-        /*
-         * situations like urn#filter=xxxx" - can't contain an equal sign
-         */
-        if (urnParameters.containsKey("filter")) {
-            try {
-                Filter pfilter = ECQL.toFilter(urnParameters.get("filter"));
-                filter = filter == null ? pfilter : ff.and(filter, pfilter);
-            } catch (CQLException e) {
-                // shouldn't happen as filter was validated previously
-                throw new KlabValidationException(e);
-            }
-        }
-
-        /*
-         * filters set into the resource parameters
-         */
-        if (resource.getParameters().contains("filter") && !resource.getParameters().get("filter").toString().trim().isEmpty()) {
-            try {
-                Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class).trim());
-                filter = filter == null ? pfilter : ff.and(filter, pfilter);
-            } catch (CQLException e) {
-                // shouldn't happen as filter was validated previously
-                throw new KlabValidationException(e);
-            }
-        }
-
-        FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
-        try {
-            fc = source.getFeatures();
-        } catch (IOException e) {
-            throw new KlabIOException(e);
-        }
-        this.defaultTypeName = fc.getSchema().getTypeName() + "_";
-
-        CoordinateReferenceSystem crs = fc.getSchema().getCoordinateReferenceSystem();
-        crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
-        this.originalProjection = Projection.create(crs);
-        IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
-
-        ReferencedEnvelope bboxRefEnv = ((Envelope) envelopeInOriginalProjection).getJTSEnvelope();
-        Filter bbfilter = ff.bbox(ff.property(geomName), bboxRefEnv);
-        if (filter != null) {
-            bbfilter = ff.and(bbfilter, filter);
-        }
-        FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
-
-        parseFeatures(it, resource, urnParameters, geometry, builder, scope, bboxRefEnv);
-    }
-
-    private Filter readAttributeData(FeatureSource<SimpleFeatureType, SimpleFeature> source, Map<String, String> urnParameters,
-            Filter filter, String geomName) {
         for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
             if (!ad.getLocalName().equals(geomName)) {
                 attributes.put(ad.getLocalName(), ad.getType().getBinding());
@@ -236,14 +177,6 @@ public class VectorEncoder implements IResourceEncoder {
                 }
             }
         }
-        return filter;
-    }
-
-    protected void parseFeatures(FeatureIterator<SimpleFeature> it, IResource resource, Map<String, String> urnParameters,
-            IGeometry geometry, Builder builder, IContextualizationScope scope, ReferencedEnvelope bboxRefEnv) {
-        Scale requestScale = geometry instanceof Scale ? (Scale) geometry : Scale.create(geometry);
-        Rasterizer<Object> rasterizer = null;
-        double cellWidth = -1.0;
 
         /*
          * TODO would be nicer to check the request geometry for the data - which may not be the
@@ -255,6 +188,52 @@ public class VectorEncoder implements IResourceEncoder {
                 && (scope.getTargetSemantics().is(Type.QUALITY) || scope.getTargetSemantics().is(Type.TRAIT))))
                 && requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
+        /*
+         * situations like urn#filter=xxxx" - can't contain an equal sign
+         */
+        if (urnParameters.containsKey("filter")) {
+            try {
+                Filter pfilter = ECQL.toFilter(urnParameters.get("filter"));
+                filter = filter == null ? pfilter : ff.and(filter, pfilter);
+            } catch (CQLException e) {
+                // shouldn't happen as filter was validated previously
+                throw new KlabValidationException(e);
+            }
+        }
+        
+        /*
+         * filters set into the resource parameters
+         */
+        if (resource.getParameters().contains("filter") && !resource.getParameters().get("filter").toString().trim().isEmpty()) {
+            try {
+                Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class).trim());
+                filter = filter == null ? pfilter : ff.and(filter, pfilter);
+            } catch (CQLException e) {
+                // shouldn't happen as filter was validated previously
+                throw new KlabValidationException(e);
+            }
+        }
+
+        FeatureCollection<SimpleFeatureType, SimpleFeature> fc;
+        try {
+            fc = source.getFeatures();
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+
+        CoordinateReferenceSystem crs = fc.getSchema().getCoordinateReferenceSystem();
+        crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
+        Projection originalProjection = Projection.create(crs);
+        IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);
+
+        ReferencedEnvelope bboxRefEnv = ((Envelope) envelopeInOriginalProjection).getJTSEnvelope();
+        Filter bbfilter = ff.bbox(ff.property(geomName), bboxRefEnv);
+        if (filter != null) {
+            bbfilter = ff.and(bbfilter, filter);
+        }
+
+        Rasterizer<Object> rasterizer = null;
+        double cellWidth = -1.0;
         Polygon polygonEnv = null;
         if (rasterize) {
             IGrid grid = ((Space) requestScale.getSpace()).getGrid();
@@ -272,7 +251,10 @@ public class VectorEncoder implements IResourceEncoder {
             nameAttribute = "NAME";
         }
 
+//        SpatialDisplay display = new SpatialDisplay(requestScale);
+        
         int n = 1;
+        FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
         while (it.hasNext()) {
 
             if (presence) {
@@ -283,6 +265,7 @@ public class VectorEncoder implements IResourceEncoder {
 
             SimpleFeature feature = it.next();
             Geometry shape = (Geometry) feature.getDefaultGeometry();
+
             if (shape.isEmpty()) {
                 continue;
             }
@@ -293,30 +276,36 @@ public class VectorEncoder implements IResourceEncoder {
                     shape = shape.buffer(0);
                 }
             }
+            
 
             IShape objectShape = null;
-            if (rasterize) {
+            if(rasterize) {
                 // do always intersect
                 try {
                     Geometry intersection = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
-                    objectShape = Shape.create(intersection, originalProjection).transform(requestScale.getSpace().getProjection());
+                    objectShape = Shape.create(intersection, originalProjection)
+                            .transform(requestScale.getSpace().getProjection());
                 } catch (Exception e) {
                     throw new KlabIOException(e);
                 }
-
-            } else {
-                objectShape = Shape.create(shape, originalProjection).transform(requestScale.getSpace().getProjection());
-
-                if (this.intersect) {
+                
+            }else {
+                objectShape = Shape.create(shape, originalProjection)
+                        .transform(requestScale.getSpace().getProjection());
+    
+                if (intersect) {
                     objectShape = objectShape.intersection(requestScale.getSpace().getShape());
                 }
             }
+
+//                display.add(objectShape);
 
             if (objectShape.isEmpty()) {
                 continue;
             }
 
             if (rasterize) {
+
                 Object value = Boolean.TRUE;
 
                 if (idRequested != null) {
@@ -331,7 +320,7 @@ public class VectorEncoder implements IResourceEncoder {
                 final Object vval = value;
                 rasterizer.add(objectShape, (s) -> vval);
 
-            } else if (!this.presence) {
+            } else if (!presence) {
 
                 IScale objectScale = Scale.createLike(scope.getScale(), objectShape);
                 String objectName = null;
@@ -348,11 +337,11 @@ public class VectorEncoder implements IResourceEncoder {
                     }
                 }
                 if (objectName /* still */ == null) {
-                    objectName = defaultTypeName + (n++);
+                    objectName = fc.getSchema().getTypeName() + "_" + (n++);
                 }
 
                 builder = builder.startObject(scope.getTargetName(), objectName, objectScale);
-                for (String key : attributes.keySet()) {
+                for(String key : attributes.keySet()) {
                     Object nattr = feature.getAttribute(key);
                     if (nattr == null) {
                         nattr = feature.getAttribute(key.toUpperCase());
@@ -373,10 +362,12 @@ public class VectorEncoder implements IResourceEncoder {
 
         it.close();
 
-        if (this.presence) {
+//        display.show();
+        
+        if (presence) {
             builder = builder.withMetadata("presence", Boolean.FALSE);
         }
-
+        
         if (rasterize) {
             final Builder stateBuilder = builder;
             rasterizer.finish((b, xy) -> {
@@ -384,6 +375,7 @@ public class VectorEncoder implements IResourceEncoder {
             });
 //            builder = builder.finishState();
         }
+
     }
 
     @Override
