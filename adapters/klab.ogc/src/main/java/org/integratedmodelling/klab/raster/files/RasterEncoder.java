@@ -69,6 +69,8 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.coverage.util.CoverageUtilities;
+import it.geosolutions.jaiext.range.NoDataContainer;
 
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -113,6 +115,13 @@ public class RasterEncoder implements IResourceEncoder {
         }
         int nBands = coverage.getNumSampleDimensions();
         Set<Double> nodata = getNodata(resource, coverage, band);
+        
+        if (nodata.isEmpty()) {
+        	NoDataContainer nodataContainer = CoverageUtilities.getNoDataProperty((GridCoverage2D) coverage);
+        	double nodataValue = nodataContainer.getAsSingleValue();
+        	nodata.add(nodataValue);
+        }
+        
         GroovyShell shell = null;
         Binding binding = null;
         Script transformation = null;

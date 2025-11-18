@@ -15,6 +15,7 @@ import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.CrsUtilities;
@@ -36,6 +37,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -60,6 +62,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.DirectPosition;
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.github.davidmoten.aws.lw.client.Client;
@@ -199,8 +204,35 @@ public class STACEncoder implements IResourceEncoder {
             COGURL = resource.getParameters().get("cog", String.class);
             scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
             GridCoverage2D coverage = COGAssetExtension.getCOGWindowCoverage(bbox, COGURL);
-            encoder = new RasterEncoder();
-            ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+            
+	   	  	String rcrs = geometry.getDimension(IGeometry.Dimension.Type.SPACE).getParameters().get(
+	        		org.integratedmodelling.klab.common.Geometry.PARAMETER_SPACE_PROJECTION, 
+	        		String.class);
+	        
+			Projection crs = Projection.create(rcrs);
+			org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(bbox.get(0),
+					bbox.get(1), bbox.get(2), bbox.get(3));
+			
+			HMRaster raster = HMRaster.fromGridCoverage(coverage);
+			HMRaster outRaster = new HMRasterWritableBuilder().setRegion(RegionMap.fromEnvelopeAndGrid(requestedExtend, 
+					(int) space.shape()[0], 
+					(int) space.shape()[1])).setCrs(crs.getCoordinateReferenceSystem())
+					.setNoValue(raster.getNovalue())
+					.build();
+			
+			System.out.println(raster.getNovalue());
+				
+			GridCoverage2D adjCoverage = null;
+			try {
+				outRaster.mapRaster(null, raster, null);
+				adjCoverage = outRaster.buildCoverage();
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			encoder = new RasterEncoder();
+            ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, adjCoverage, geometry, builder, scope);
             return;
         }
 	
