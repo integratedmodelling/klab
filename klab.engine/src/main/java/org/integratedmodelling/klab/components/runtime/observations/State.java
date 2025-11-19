@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.IReducible;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -144,6 +145,15 @@ public class State extends Observation implements IState, IKeyHolder {
 			}
 			throw new KlabUnimplementedException("Groovy support for non-conventional states");
 		}
+		
+        public double getCurrentSum(IDirectObservation context) {
+            if (storage instanceof AbstractAdaptiveStorage) {
+                AbstractAdaptiveStorage< ? >.Slice slice = ((AbstractAdaptiveStorage< ? >) storage).getSlice(context.getScale());
+                dumpStatistics();
+                return slice == null ? Double.NaN : slice.getRawStatistics().getSum();
+            }
+            throw new KlabUnimplementedException("Groovy support for non-conventional states");
+        }
 
 		public double getStd() {
 			if (storage instanceof AbstractAdaptiveStorage) {
