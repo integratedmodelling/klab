@@ -219,16 +219,13 @@ public class STACEncoder implements IResourceEncoder {
 					(int) space.shape()[1])).setCrs(crs.getCoordinateReferenceSystem())
 					.setNoValue(raster.getNovalue())
 					.build();
-			
-			System.out.println(raster.getNovalue());
 				
 			GridCoverage2D adjCoverage = null;
 			try {
 				outRaster.mapRaster(null, raster, null);
 				adjCoverage = outRaster.buildCoverage();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				throw new KlabResourceAccessException("Cannot build COG Output " + e.getMessage());
 			}
 			
 			encoder = new RasterEncoder();
