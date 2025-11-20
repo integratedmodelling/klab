@@ -426,7 +426,7 @@ export process baseflowcalc
 		
 	geometry T1S2
 
-	class org.integratedmodelling.geoprocessing.hydrology.BaseFlowWaterVolumeResolver
+	class org.integratedmodelling.geoprocessing.hydrology.OmsSWYBaseflowRoutingResolver
 }
 
 export process infiltratedcalc
@@ -537,7 +537,7 @@ export process scsrunoffcalc
 		
 	geometry T1S2
 
-	class org.integratedmodelling.geoprocessing.hydrology.ScsRunoffResolver
+	class org.integratedmodelling.geoprocessing.hydrology.OmsSWYQuickflowResolver
 }
 
 export number floodlevels

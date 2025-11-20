@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +15,7 @@ import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
+import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.CrsUtilities;
@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -61,14 +62,15 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.geometry.DirectPosition;
+import org.geotools.referencing.CRS;
+import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.github.davidmoten.aws.lw.client.Client;
+import com.github.davidmoten.aws.lw.client.Credentials;
+
 import kong.unirest.json.JSONObject;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.AwsCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -168,18 +170,17 @@ public class STACEncoder implements IResourceEncoder {
                 "Ordered STAC items. First: [" + items.get(0).getTimestamp() + "]; Last [" + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private S3Client buildS3Client(String bucketRegion) throws IOException {
+    private Client buildS3Client(String bucketRegion) throws IOException {
         ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
-        AwsCredentials credentials = null;
+        Credentials credentials = null;
         try {
-            credentials = AwsBasicCredentials.create(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
+            credentials = Credentials.of(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
         } catch (Exception e) {
-            throw new KlabIOException("Error defining AWS credenetials. " + e.getMessage());
+            throw new KlabIOException("Error defining S3 credenetials. " + e.getMessage());
         }
-        return S3Client.builder()
-                .httpClientBuilder(ApacheHttpClient.builder())
-                .region(Region.of(bucketRegion))
-                .credentialsProvider(StaticCredentialsProvider.create(credentials))
+        return Client.s3()
+                .regionFromEnvironment() // TODO get region from other sources if needed
+                .credentials(credentials)
                 .build();
     }
 
@@ -192,22 +193,46 @@ public class STACEncoder implements IResourceEncoder {
     @Override
     public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
             IContextualizationScope scope) {
-    	
-    	String COGURL = null;
-    	 Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
-                 .findFirst().orElseThrow();
-    	 IEnvelope envelope = space.getEnvelope();
-         List<Double> bbox =  List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
-         
-    	if (resource.getParameters().get("cog") != null) {
-    		COGURL = resource.getParameters().get("cog", String.class);
-    		scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
-    		GridCoverage2D coverage = COGAssetExtension.getCOGWindowCoverage(bbox, COGURL);
-    		encoder = new RasterEncoder();
-            ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+
+        String COGURL = null;
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space)
+                .findFirst().orElseThrow();
+        IEnvelope envelope = space.getEnvelope();
+        List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+
+        if (resource.getParameters().get("cog") != null) {
+            COGURL = resource.getParameters().get("cog", String.class);
+            scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
+            GridCoverage2D coverage = COGAssetExtension.getCOGWindowCoverage(bbox, COGURL);
+            
+	   	  	String rcrs = geometry.getDimension(IGeometry.Dimension.Type.SPACE).getParameters().get(
+	        		org.integratedmodelling.klab.common.Geometry.PARAMETER_SPACE_PROJECTION, 
+	        		String.class);
+	        
+			Projection crs = Projection.create(rcrs);
+			org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(bbox.get(0),
+					bbox.get(1), bbox.get(2), bbox.get(3));
+			
+			HMRaster raster = HMRaster.fromGridCoverage(coverage);
+			HMRaster outRaster = new HMRasterWritableBuilder().setRegion(RegionMap.fromEnvelopeAndGrid(requestedExtend, 
+					(int) space.shape()[0], 
+					(int) space.shape()[1])).setCrs(crs.getCoordinateReferenceSystem())
+					.setNoValue(raster.getNovalue())
+					.build();
+				
+			GridCoverage2D adjCoverage = null;
+			try {
+				outRaster.mapRaster(null, raster, null);
+				adjCoverage = outRaster.buildCoverage();
+			} catch (Exception e) {
+				throw new KlabResourceAccessException("Cannot build COG Output " + e.getMessage());
+			}
+			
+			encoder = new RasterEncoder();
+            ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, adjCoverage, geometry, builder, scope);
             return;
-    	}
-    	
+        }
+	
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = collectionData.getString("id");
@@ -277,7 +302,22 @@ public class STACEncoder implements IResourceEncoder {
             GridCoverage2D coverage = null;
 
             try {
-                HMRaster outRaster = HMStacCollection.readRasterBandOnRegionStatic(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
+                // TODO see if we can access to the same readRasterBandOnRegion without using a collection
+                LogProgressMonitor lpm = new LogProgressMonitor();
+                HMStacManager manager = new HMStacManager(catalogUrl, lpm);
+                HMStacCollection collection = null;
+                try {
+                    manager.open();
+                    collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+                } catch (Exception e1) {
+                    throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
+                }
+
+                if (collection == null) {
+                    scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+                }
+
+                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
                 coverage = outRaster.buildCoverage();
             } catch (Exception e) {
                 throw new KlabResourceAccessException("Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
@@ -293,8 +333,8 @@ public class STACEncoder implements IResourceEncoder {
         try {
             manager.open();
             collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
-        } catch (Exception e1) {
-            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
+        } catch (Exception e) {
+            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl + ". Reason :" + e.getMessage());
         }
 
         if (collection == null) {
@@ -348,7 +388,7 @@ public class STACEncoder implements IResourceEncoder {
 
             if (resource.getParameters().contains("awsRegion")) {
                 String bucketRegion = resource.getParameters().get("awsRegion", String.class);
-                S3Client s3Client = buildS3Client(bucketRegion);
+                Client s3Client = buildS3Client(bucketRegion);
                 collection.setS3Client(s3Client);
             }
 

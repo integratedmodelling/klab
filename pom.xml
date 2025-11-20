@@ -112,7 +112,7 @@
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS
 			should be the same one that geotools and HM needs. -->
 		<geotools.version>28.0</geotools.version>
-		<hortonmachine.version>0.10.9-S3-SDK-2.0-SNAPSHOT</hortonmachine.version>
+        <hortonmachine.version>0.10.11-SNAPSHOT</hortonmachine.version>
 		<jts.version>1.20.0</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>11</maven.compiler.source>
@@ -144,7 +144,7 @@
 		<mockito.version>5.6.0</mockito.version>
 		<hamcrest.version>2.2</hamcrest.version>
 		<powermock.version>2.0.9</powermock.version>
-		<aws.version>2.29.14</aws.version>
+		<s3.version>0.1.23</s3.version>
 		<keycloak.version>24.0.4</keycloak.version>
 	</properties>
 
@@ -281,5 +281,16 @@
 			<name>Maven Central snapshots</name>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
+		<repository>
+    		<name>Central Portal Snapshots</name>
+    		<id>central-portal-snapshots</id>
+    		<url>https://central.sonatype.com/repository/maven-snapshots/</url>
+    		<releases>
+      			<enabled>false</enabled>
+    		</releases>
+    		<snapshots>
+      			<enabled>true</enabled>
+    		</snapshots>
+  		</repository>
 	</repositories>
 </project>

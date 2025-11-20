@@ -62,23 +62,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!--- AWS dependencies-->
-		<dependency>
-			<artifactId>apache-client</artifactId> 
-			<groupId>software.amazon.awssdk</groupId> 
-			<version>${aws.version}</version> 
- 			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>protocol-core</artifactId>
-			<version>${aws.version}</version>
-		</dependency>
+        <!--- S3 dependencies-->
+        <dependency>
+            <groupId>com.github.davidmoten</groupId>
+            <artifactId>aws-lightweight-client-java</artifactId>
+            <version>${s3.version}</version>
+        </dependency>
 
 		<!-- <dependency> <groupId>org.geotools.xsd</groupId> <artifactId>gt-xsd-core</artifactId> 
 			<version>${geotools.version}</version> </dependency>

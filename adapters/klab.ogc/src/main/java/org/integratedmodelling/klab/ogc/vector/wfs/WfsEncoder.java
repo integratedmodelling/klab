@@ -35,24 +35,24 @@ import org.opengis.feature.simple.SimpleFeatureType;
  */
 public class WfsEncoder extends VectorEncoder {
 
-	@Override
-	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
-	    
-		WFSDataStore dataStore = WfsAdapter.getDatastore(resource.getParameters().get("serviceUrl", String.class),
-				Version.create(resource.getParameters().get("wfsVersion", "1.0.0")));
-		if (dataStore == null) {
+    @Override
+    protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
+        
+        WFSDataStore dataStore = WfsAdapter.getDatastore(resource.getParameters().get("serviceUrl", String.class),
+                Version.create(resource.getParameters().get("wfsVersion", "1.0.0")));
+        if (dataStore == null) {
             throw new KlabIOException("datastore " + resource.getParameters().get("serviceUrl", String.class) + " is unreachable");
-		}
-		try {
-			return dataStore.getFeatureSource(resource.getParameters().get("wfsIdentifier", String.class));
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
-	}
+        }
+        try {
+            return dataStore.getFeatureSource(resource.getParameters().get("wfsIdentifier", String.class));
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+    }
 
-	@Override
-	public boolean isOnline(IResource resource, IMonitor monitor) {
-		return true; // NetUtilities.urlResponds(resource.getParameters().get("serviceUrl", String.class));
-	}
+    @Override
+    public boolean isOnline(IResource resource, IMonitor monitor) {
+        return true; // NetUtilities.urlResponds(resource.getParameters().get("serviceUrl", String.class));
+    }
 
 }

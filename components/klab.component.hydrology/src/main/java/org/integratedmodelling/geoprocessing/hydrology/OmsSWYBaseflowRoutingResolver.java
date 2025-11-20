@@ -6,7 +6,7 @@ import java.awt.image.DataBuffer;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.gears.modules.r.cutout.OmsCutOut;
-import org.hortonmachine.hmachine.modules.hydrogeomorphology.baseflow.OmsBaseflowWaterVolume;
+import org.hortonmachine.hmachine.modules.hydrogeomorphology.swy.OmsSWYBaseflowRouting;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractC
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
-public class BaseFlowWaterVolumeResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
+public class OmsSWYBaseflowRoutingResolver extends AbstractContextualizer implements IResolver<IProcess>, IExpression {
 
     @Override
     public Type getType() {
@@ -40,13 +40,13 @@ public class BaseFlowWaterVolumeResolver extends AbstractContextualizer implemen
         IState baseflowWaterVolumeState = getOutput("base_flow_water_volume", IState.class);
         TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
         taskMonitor.setTaskName("Baseflow");
-        OmsBaseflowWaterVolume b = new OmsBaseflowWaterVolume();
+        OmsSWYBaseflowRouting b = new OmsSWYBaseflowRouting();
         try {
             GridCoverage2D flowGc = getGridCoverage(context, flowdirectionState, null);
 
             b.pm = taskMonitor;
-            b.inInfiltration = getGridCoverage(context, infiltratedWaterVolumeState, flowGc);
-            b.inNetInfiltration = getGridCoverage(context, netInfiltratedWaterVolumeState, flowGc);
+            b.inRecharge = getGridCoverage(context, infiltratedWaterVolumeState, flowGc);
+            b.inAvailableRecharge = getGridCoverage(context, netInfiltratedWaterVolumeState, flowGc);
             b.inNet = getGridCoverage(context, streamPresenceState, flowGc);
             b.inFlowdirections = flowGc;
             b.process();
@@ -88,7 +88,7 @@ public class BaseFlowWaterVolumeResolver extends AbstractContextualizer implemen
 
     @Override
     public Object eval(IContextualizationScope context, Object... parameters) throws KlabException {
-        return new BaseFlowWaterVolumeResolver();
+        return new OmsSWYBaseflowRoutingResolver();
     }
 
 }
