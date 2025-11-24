@@ -118,8 +118,10 @@ public class RasterEncoder implements IResourceEncoder {
         
         if (nodata.isEmpty()) {
         	NoDataContainer nodataContainer = CoverageUtilities.getNoDataProperty((GridCoverage2D) coverage);
-        	double nodataValue = nodataContainer.getAsSingleValue();
-        	nodata.add(nodataValue);
+        	if (nodataContainer != null) {
+        		double nodataValue = nodataContainer.getAsSingleValue();
+        		nodata.add(nodataValue);
+        	}
         }
         
         GroovyShell shell = null;
