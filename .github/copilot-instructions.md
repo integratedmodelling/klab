@@ -11,7 +11,7 @@ When providing file references or links in responses:
    - The repository structure or directory context separately
 
 3. **Use searchable syntax** - When referencing files, use the `repo:user/repo` syntax to enable easy searching:
-   - Example: `repo:integratedmodelling/klab`
+   - Example: `repo:integratedmodelling/klab filename.java`
    - This allows users to search for the file themselves without following potentially incorrect paths
 
 ## Example
