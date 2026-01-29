@@ -12,6 +12,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.data.IPublicResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -63,10 +64,21 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 
 	public synchronized IResource get(String urn) {
 		ResourceDescriptor descriptor = descriptors.get(urn);
+		Urn kurn = new Urn(urn);
 		if (descriptor == null) {
-			Urn kurn = new Urn(urn);
+
 			INodeIdentity node = Network.INSTANCE.getNode(kurn.getNodeName());
-			if (node != null /* && node.isOnline() */) {
+
+			if (node == null) {
+				// check for 1.0 resource
+				var klabService = Network.INSTANCE.getKlabService(IIdentity.Type.RESOURCES, kurn.getNodeName());
+				if (klabService != null) {
+					var resource = resolveKlab10Resource(klabService, urn);
+					if (resource != null) {
+						return resource;
+					}
+				}
+			} else {
 				try {
 					ResourceReference res = node.getClient().get(API.url(API.NODE.RESOURCE.RESOLVE_URN, API.P_URN, urn),
 							ResourceReference.class);
@@ -100,6 +112,25 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 			}
 		}
 		return descriptor.metadata == null ? null : new Resource(descriptor.metadata);
+	}
+
+	private Resource resolveKlab10Resource(INodeIdentity klabService, String urn) {
+		// TODO Auto-generated method stub
+
+		var client = klabService.getClient();
+		try {
+			var definition = client.get(API.KLAB_1.RESOURCES.RETRIEVE, Map.class, "urn", urn, "knowledgeClass",
+					API.KLAB_1.KnowledgeClass.RESOURCE.name());
+
+			if (definition instanceof Map map) {
+				var descriptor = new ResourceReference();
+				return new Resource(descriptor);
+			}
+
+		} catch (Throwable t) {
+			// just return null
+		}
+		return null;
 	}
 
 	@Override

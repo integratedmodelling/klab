@@ -30,7 +30,7 @@ public class EngineAuthenticationResponse {
     }
 
     public List<NodeReference> getServices() {
-        return nodes;
+        return services;
     }
 
     public void setServices(List<NodeReference> services) {
