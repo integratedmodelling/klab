@@ -128,7 +128,8 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 			var definition = client.get(API.KLAB_1.RESOURCES.RETRIEVE, Map.class, "urn", urn, "knowledgeClass",
 					API.KLAB_1.KnowledgeClass.RESOURCE.name());
 
-			if (definition instanceof Map map) {
+			if (definition instanceof Map) {
+				Map map = (Map)definition;
 				var descriptor = new ResourceReference();
 
 				descriptor.setUrn(map.get("urn").toString());
@@ -140,8 +141,10 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 				var metadata = API.getParameterMap(map.get("metadata"));
 				for (var key : metadata.keySet()) {
 					var value = metadata.get(key);
-					if (value instanceof String string)
+					if (value instanceof String) {
+						String string = (String)value;
 						descriptor.getMetadata().put(key.toString(), string);
+					}
 				}
 				descriptor.setGeometry(Geometry.create((Map<?, ?>) map.get("geometry")).encode());
 
