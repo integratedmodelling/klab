@@ -260,6 +260,10 @@ public enum Resources implements IResourceService {
 
 		var user = Authentication.INSTANCE.authenticate(certificate);
 		var resource = Resources.INSTANCE.resolveResource(KLAB10_URN);
+		var scale = Scale.create(resource.getGeometry());
+		
+		System.out.println("Resource: " + resource.toString());
+		System.out.println("Scale: " + scale.encode());
 	}
 
 	public IProject getLocalProject() {

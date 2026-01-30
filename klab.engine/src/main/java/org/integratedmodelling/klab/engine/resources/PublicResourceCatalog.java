@@ -9,15 +9,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.data.IPublicResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class PublicResourceCatalog implements IPublicResourceCatalog {
 
@@ -124,11 +130,63 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 
 			if (definition instanceof Map map) {
 				var descriptor = new ResourceReference();
+
+				descriptor.setUrn(map.get("urn").toString());
+				descriptor.setVersion(Version.create((Map<?, ?>) map.get("version")).toString());
+				descriptor.setAdapterType(map.get("adapterType").toString());
+				descriptor.setLocalName(map.get("localName").toString());
+				descriptor.setType(Type.valueOf(map.get("type").toString()));
+				descriptor.setResourceTimestamp((Long) map.get("timestamp"));
+				var metadata = API.getParameterMap(map.get("metadata"));
+				for (var key : metadata.keySet()) {
+					var value = metadata.get(key);
+					if (value instanceof String string)
+						descriptor.getMetadata().put(key.toString(), string);
+				}
+				descriptor.setGeometry(Geometry.create((Map<?, ?>) map.get("geometry")).encode());
+
+				var parameters = API.getParameterMap(map.get("parameters"));
+				for (var parameter : parameters.keySet()) {
+					descriptor.getParameters().put(parameter, parameters.get(parameter).toString());
+				}
+
+				for (var attribute : (Collection<?>) map.get("attributes")) {
+					var amap = (Map<?,?>)attribute;
+					var attr = new AttributeReference();
+					attr.setIndex(((Number)amap.get("index")).intValue());
+					attr.setName(amap.get("name").toString());
+					attr.setOptional((Boolean)amap.get("optional"));
+					attr.setKey((Boolean)amap.get("key"));
+					attr.setType(Type.valueOf(amap.get("type").toString()));
+					descriptor.getAttributes().add(attr);
+				}
+				for (var input : (Collection<?>) map.get("inputs")) {
+					var amap = (Map<?,?>)input;
+					var attr = new AttributeReference();
+					attr.setIndex(((Number)amap.get("index")).intValue());
+					attr.setName(amap.get("name").toString());
+					attr.setOptional((Boolean)amap.get("optional"));
+					attr.setKey((Boolean)amap.get("key"));
+					attr.setType(Type.valueOf(amap.get("type").toString()));
+					descriptor.getDependencies().add(attr);
+				}
+				for (var output : (Collection<?>) map.get("outputs")) {
+					var amap = (Map<?,?>)output;
+					var attr = new AttributeReference();
+					attr.setIndex(((Number)amap.get("index")).intValue());
+					attr.setName(amap.get("name").toString());
+					attr.setOptional((Boolean)amap.get("optional"));
+					attr.setKey((Boolean)amap.get("key"));
+					attr.setType(Type.valueOf(amap.get("type").toString()));
+					descriptor.getOutputs().add(attr);
+				}
+
 				return new Resource(descriptor);
 			}
 
 		} catch (Throwable t) {
 			// just return null
+			Logging.INSTANCE.error(t);
 		}
 		return null;
 	}

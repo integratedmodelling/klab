@@ -13,6 +13,9 @@
  */
 package org.integratedmodelling.klab.api;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
@@ -1455,6 +1458,43 @@ public interface API {
 
 		}
 
+	}
+
+	/**
+	 * Methods to support back-porting of k.LAB 1.0 structures
+	 * 
+	 * TODO fill in a Map recognizing and handling a 1.0 Parameter structure. TODO
+	 * move this to Network or somewhere else sensible
+	 * 
+	 * @param object
+	 * @return
+	 */
+	public static Map<String, Object> getParameterMap(Object object) {
+
+		var ret = new HashMap<String, Object>();
+		if (object instanceof Map) {
+			var map = ((Map<?, ?>) object);
+			if (map.get("delegate") instanceof Map) {
+				return getParameterMap((Map<?, ?>) ((Map<?, ?>) object).get("delegate"));
+			}
+
+			for (var key : map.keySet()) {
+				var value = map.get(key);
+				if (value instanceof Map) {
+					value = getParameterMap(map);
+				} else if (value instanceof Collection) {
+					var list = new ArrayList<Object>();
+					for (var val : ((Collection<?>) value)) {
+						list.add(val instanceof Map ? getParameterMap(val) : val);
+					}
+					value = list;
+				}
+
+				ret.put(key.toString(), value);
+			}
+
+		}
+		return ret;
 	}
 
 }
