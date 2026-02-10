@@ -67,8 +67,8 @@ import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.coverage.grid.GridCoverage;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.util.CoverageUtilities;
 import it.geosolutions.jaiext.range.NoDataContainer;
 

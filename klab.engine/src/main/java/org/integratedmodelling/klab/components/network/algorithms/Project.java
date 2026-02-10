@@ -82,13 +82,13 @@ import org.geotools.coverage.grid.GridCoverageBuilder;
 import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.coverage.grid.GridEnvelope2D;
 import org.geotools.feature.SchemaException;
-import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 //import org.geotools.graph.structure.Graph;
 //import org.geotools.graph.structure.Node;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultEngineeringCRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 //import org.thema.common.Config;
 //import org.thema.common.JTS;
 //import org.thema.common.ProgressBar;
@@ -297,7 +297,7 @@ public final class Project {
 //            codes.remove((int)noData);
 //        }
 //        
-//        Envelope2D gZone = cov.getEnvelope2D();
+//        ReferencedEnvelope gZone = cov.getEnvelope2D();
 //        zone = gZone.getBounds2D();
 //        CoordinateReferenceSystem crs = cov.getCoordinateReferenceSystem2D();
 //        if(crs instanceof DefaultEngineeringCRS) {
@@ -320,7 +320,7 @@ public final class Project {
 //        }
 //        resolution = grid2space.getMatrixEntries()[0];
 //
-//        Envelope2D extZone = new Envelope2D(crs,
+//        ReferencedEnvelope extZone = new ReferencedEnvelope(crs,
 //                gZone.x-resolution, gZone.y-resolution, gZone.width+2*resolution, gZone.height+2*resolution);
 //        
 //        TreeMap<Integer, Envelope> envMap = new TreeMap<>();
@@ -1565,7 +1565,7 @@ public final class Project {
 //        }
 //
 //        GridCoverage2D gridCov = new GridCoverageFactory().create("rasterpatch",
-//                newRaster, new Envelope2D(getCRS(), zone));
+//                newRaster, new ReferencedEnvelope(getCRS(), zone));
 //        IOImage.saveTiffCoverage(new File(dir, PATCH_RASTER), gridCov);
 //        
 //        TreeSet<Integer> newCodes = new TreeSet<>(codes);
@@ -1711,7 +1711,7 @@ public final class Project {
 //        }
 //
 //        GridCoverage2D gridCov = new GridCoverageFactory().create("rasterpatch",
-//                newRaster, new Envelope2D(getCRS(), zone));
+//                newRaster, new ReferencedEnvelope(getCRS(), zone));
 //        IOImage.saveTiffCoverage(new File(dir, PATCH_RASTER), gridCov);
 //        
 //        TreeSet<Integer> newCodes = new TreeSet<>(codes);
@@ -1970,7 +1970,7 @@ public final class Project {
 //        }
 //
 //        GridEnvelope2D grid = cov.getGridGeometry().getGridRange2D();
-//        Envelope2D env = cov.getEnvelope2D();
+//        ReferencedEnvelope env = cov.getEnvelope2D();
 //        double res = env.getWidth() / grid.getWidth();
 //        if(res != resolution) {
 //            throw new IllegalArgumentException(java.util.ResourceBundle.getBundle("org/thema/graphab/Bundle").getString("Resolution_does_not_match."));

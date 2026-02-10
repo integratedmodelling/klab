@@ -41,12 +41,12 @@ import org.geotools.coverage.grid.io.imageio.GeoToolsWriteParams;
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.gce.geotiff.GeoTiffWriteParams;
 import org.geotools.gce.geotiff.GeoTiffWriter;
-import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.metadata.iso.citation.Citations;
 import org.geotools.referencing.CRS;
-import org.geotools.styling.ColorMapEntry;
-import org.geotools.styling.RasterSymbolizer;
+import org.geotools.api.style.ColorMapEntry;
+import org.geotools.api.style.RasterSymbolizer;
 import org.geotools.swing.data.JFileDataStoreChooser;
 import org.geotools.util.factory.Hints;
 import org.hortonmachine.gears.utils.files.FileUtilities;
@@ -74,13 +74,13 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.jaitools.tiledimage.DiskMemImage;
-import org.opengis.filter.expression.Literal;
-import org.opengis.metadata.Identifier;
-import org.opengis.metadata.citation.Citation;
-import org.opengis.parameter.GeneralParameterValue;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.filter.expression.Literal;
+import org.geotools.api.metadata.Identifier;
+import org.geotools.api.metadata.citation.Citation;
+import org.geotools.api.parameter.GeneralParameterValue;
+import org.geotools.api.parameter.ParameterValueGroup;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 public enum GeotoolsUtils {
 
@@ -113,7 +113,7 @@ public enum GeotoolsUtils {
         double east = grid.getEast();
         double north = grid.getNorth();
         CoordinateReferenceSystem crs = ((Projection) grid.getProjection()).getCoordinateReferenceSystem();
-        Envelope2D writeEnvelope = new Envelope2D(crs, west, south, east - west, north - south);
+        ReferencedEnvelope writeEnvelope = ReferencedEnvelope.rect(west, south, east - west, north - south, crs);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
 
         GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
@@ -142,7 +142,7 @@ public enum GeotoolsUtils {
         double east = grid.getEast();
         double north = grid.getNorth();
         CoordinateReferenceSystem crs = ((Projection) grid.getProjection()).getCoordinateReferenceSystem();
-        Envelope2D writeEnvelope = new Envelope2D(crs, west, south, east - west, north - south);
+        ReferencedEnvelope writeEnvelope = ReferencedEnvelope.rect(west, south, east - west, north - south, crs);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
 
         GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
@@ -173,7 +173,7 @@ public enum GeotoolsUtils {
         double east = grid.getEast();
         double north = grid.getNorth();
         CoordinateReferenceSystem crs = ((Projection) grid.getProjection()).getCoordinateReferenceSystem();
-        Envelope2D writeEnvelope = new Envelope2D(crs, west, south, east - west, north - south);
+        ReferencedEnvelope writeEnvelope = ReferencedEnvelope.rect(west, south, east - west, north - south, crs);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
 
         GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
@@ -754,7 +754,7 @@ public enum GeotoolsUtils {
                 tileHeight = height;
             }
 
-            Envelope2D envelope = new Envelope2D(crs, 0, 0, width, height);
+            ReferencedEnvelope envelope = ReferencedEnvelope.rect(0, 0, width, height, crs);
             SampleModel sampleModel = new ComponentSampleModel(DataBuffer.TYPE_FLOAT, tileWidth, tileHeight, 1, tileWidth,
                     new int[]{0});
             DiskMemImage img = new DiskMemImage(width, height, sampleModel);

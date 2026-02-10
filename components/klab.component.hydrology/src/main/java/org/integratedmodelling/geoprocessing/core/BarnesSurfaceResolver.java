@@ -48,12 +48,12 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Point;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.crs.ProjectedCRS;
-import org.opengis.referencing.datum.Ellipsoid;
+import org.geotools.api.feature.simple.SimpleFeatureType;
+import org.geotools.api.geometry.Bounds;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.crs.GeographicCRS;
+import org.geotools.api.referencing.crs.ProjectedCRS;
+import org.geotools.api.referencing.datum.Ellipsoid;
 
 public class BarnesSurfaceResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 
@@ -87,7 +87,7 @@ public class BarnesSurfaceResolver extends AbstractContextualizer implements IRe
 				grid.getEast(), grid.getWest(), (int) grid.getXCells(), (int) grid.getYCells(),
 				grid.getProjection().getCoordinateReferenceSystem());
 				
-		Envelope env = inInterpolationGrid.getEnvelope();
+		Bounds env = inInterpolationGrid.getEnvelope();
 		
 		CoordinateReferenceSystem Crs = grid.getProjection().getCoordinateReferenceSystem();
 		

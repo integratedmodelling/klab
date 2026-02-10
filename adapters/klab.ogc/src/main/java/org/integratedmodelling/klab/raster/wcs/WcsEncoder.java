@@ -44,9 +44,9 @@ import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
 import org.integratedmodelling.klab.utils.FileUtils;
-import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.geometry.Envelope;
+import org.geotools.api.coverage.grid.GridCoverage;
+import org.geotools.api.geometry.Position;
+import org.geotools.api.geometry.Bounds;
 
 /**
  * The Class WcsEncoder.
@@ -136,10 +136,10 @@ public class WcsEncoder implements IResourceEncoder {
 			double[] extent = space.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
 
 			GridCoverage2D coverage = OmsRasterReader.readRaster(coverageFile.getAbsolutePath());
-			Envelope envelope = coverage.getEnvelope();
-			DirectPosition lowerCorner = envelope.getLowerCorner();
+			Bounds envelope = coverage.getEnvelope();
+			Position lowerCorner = envelope.getLowerCorner();
 			double[] westSouth = lowerCorner.getCoordinate();
-			DirectPosition upperCorner = envelope.getUpperCorner();
+			Position upperCorner = envelope.getUpperCorner();
 			double[] eastNorth = upperCorner.getCoordinate();
 
 			org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(extent[0],

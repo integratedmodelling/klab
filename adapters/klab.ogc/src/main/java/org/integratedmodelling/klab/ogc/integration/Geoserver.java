@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.At
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.opengis.coverage.grid.GridCoverage;
+import org.geotools.api.coverage.grid.GridCoverage;
 
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;

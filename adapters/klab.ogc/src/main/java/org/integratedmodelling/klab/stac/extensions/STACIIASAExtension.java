@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.geotools.data.FeatureSource;
+import org.geotools.api.data.FeatureSource;
 import org.geotools.data.geojson.GeoJSONReader;
 import org.geotools.data.memory.MemoryDataStore;
 import org.integratedmodelling.klab.stac.STACUtils;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeatureType;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;

@@ -41,8 +41,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotools.api.feature.Property;
+import org.geotools.api.feature.simple.SimpleFeature;
 
 public class OpenBuildingsInstantiator extends AbstractContextualizer implements IInstantiator, IExpression {
     private IDirectObservation contextSubject = null;

@@ -11,10 +11,10 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.operation.TransformException;
 
-public class Envelope implements IEnvelope {
+public class Bounds implements IEnvelope {
 
     /**
      * Default minimum resolution in meters when a ROI is created from a user interacting with a
@@ -44,7 +44,7 @@ public class Envelope implements IEnvelope {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Envelope other = (Envelope) obj;
+        Bounds other = (Bounds) obj;
         if (envelope == null) {
             if (other.envelope != null)
                 return false;
@@ -58,38 +58,38 @@ public class Envelope implements IEnvelope {
         return true;
     }
 
-    public static Envelope create(org.locationtech.jts.geom.Envelope envelope, Projection projection) {
-        Envelope ret = new Envelope();
+    public static Bounds create(org.locationtech.jts.geom.Envelope envelope, Projection projection) {
+        Bounds ret = new Envelope();
         ret.envelope = new ReferencedEnvelope(envelope, projection.getCoordinateReferenceSystem());
         ret.projection = projection;
         return ret;
     }
 
-    public static Envelope create(org.opengis.geometry.Envelope envelope, Projection projection) {
-        Envelope ret = new Envelope();
+    public static Bounds create(org.geotools.api.geometry.Bounds envelope, Projection projection) {
+        Bounds ret = new Envelope();
         ret.envelope = new ReferencedEnvelope(envelope);
         ret.projection = projection;
         return ret;
     }
 
-    public static Envelope create(ReferencedEnvelope envelope) {
-        Envelope ret = new Envelope();
+    public static Bounds create(ReferencedEnvelope envelope) {
+        Bounds ret = new Envelope();
         ret.envelope = envelope;
         ret.projection = Projection.create(envelope.getCoordinateReferenceSystem());
         return ret;
     }
 
-    public static Envelope create(double minX, double maxX, double minY, double maxY, IProjection projection) {
+    public static Bounds create(double minX, double maxX, double minY, double maxY, IProjection projection) {
         return create(new ReferencedEnvelope(minX, maxX, minY, maxY, ((Projection) projection).getCoordinateReferenceSystem()));
     }
 
-    public Envelope copy() {
+    public Bounds copy() {
         return create(new ReferencedEnvelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY(),
                 envelope.getCoordinateReferenceSystem()));
     }
 
-    public static Envelope create(ReferencedEnvelope envelope, boolean swapXY) {
-        Envelope ret = new Envelope();
+    public static Bounds create(ReferencedEnvelope envelope, boolean swapXY) {
+        Bounds ret = new Envelope();
         ret.envelope = swapXY
                 ? new ReferencedEnvelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(), envelope.getMaxX(),
                         envelope.getCoordinateReferenceSystem())
@@ -165,7 +165,7 @@ public class Envelope implements IEnvelope {
         return Shape.makeCell(this.envelope.getMinX(), this.envelope.getMinY(), this.envelope.getMaxX(), this.envelope.getMaxY());
     }
 
-    public static Envelope create(double minx, double maxx, double miny, double maxy, Projection crs) {
+    public static Bounds create(double minx, double maxx, double miny, double maxy, Projection crs) {
         return create(new ReferencedEnvelope(minx, maxx, miny, maxy, crs.getCoordinateReferenceSystem()));
     }
 
@@ -180,13 +180,13 @@ public class Envelope implements IEnvelope {
     }
 
     @Override
-    public Envelope transform(IProjection projection, boolean lenient) {
+    public Bounds transform(IProjection projection, boolean lenient) {
 
         if (projection.equals(this.projection)) {
             return this;
         }
 
-        Envelope ret = new Envelope();
+        Bounds ret = new Envelope();
         try {
             ret.envelope = this.envelope.transform(((Projection) projection).crs, lenient);
         } catch (TransformException | FactoryException e) {
@@ -257,7 +257,7 @@ public class Envelope implements IEnvelope {
     public int getScaleRank() {
 
         if (this.scaleRank == null) {
-            Envelope envelope = transform(Projection.getLatLon(), true);
+            Bounds envelope = transform(Projection.getLatLon(), true);
 
             int zoomLevel;
             double latDiff = envelope.getHeight();
@@ -283,7 +283,7 @@ public class Envelope implements IEnvelope {
     }
 
     public boolean intersects(IEnvelope envelope) {
-        return this.envelope.intersects((org.locationtech.jts.geom.Envelope) ((Envelope) envelope).envelope);
+        return this.envelope.intersects((org.locationtech.jts.geom.Envelope) ((Bounds) envelope).envelope);
     }
 
     @Override
@@ -326,7 +326,7 @@ public class Envelope implements IEnvelope {
     @Override
     public boolean overlaps(IEnvelope other) {
         try {
-            return this.envelope.intersects(((Envelope)other).getJTSEnvelope().toBounds(this.projection.getCRS()));
+            return this.envelope.intersects(((Bounds)other).getJTSEnvelope().toBounds(this.projection.getCRS()));
         } catch (TransformException e) {
             return false;
         }

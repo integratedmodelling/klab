@@ -11,7 +11,7 @@ import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.DOIReader;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeature;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
