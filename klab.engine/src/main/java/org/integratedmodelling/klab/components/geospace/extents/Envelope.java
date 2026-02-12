@@ -14,7 +14,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.operation.TransformException;
 
-public class Bounds implements IEnvelope {
+public class Envelope implements IEnvelope {
 
     /**
      * Default minimum resolution in meters when a ROI is created from a user interacting with a
@@ -44,7 +44,7 @@ public class Bounds implements IEnvelope {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Bounds other = (Bounds) obj;
+        Envelope other = (Envelope) obj;
         if (envelope == null) {
             if (other.envelope != null)
                 return false;
@@ -58,38 +58,38 @@ public class Bounds implements IEnvelope {
         return true;
     }
 
-    public static Bounds create(org.locationtech.jts.geom.Envelope envelope, Projection projection) {
-        Bounds ret = new Envelope();
+    public static Envelope create(org.locationtech.jts.geom.Envelope envelope, Projection projection) {
+    	Envelope ret = new Envelope();
         ret.envelope = new ReferencedEnvelope(envelope, projection.getCoordinateReferenceSystem());
         ret.projection = projection;
         return ret;
     }
 
-    public static Bounds create(org.geotools.api.geometry.Bounds envelope, Projection projection) {
-        Bounds ret = new Envelope();
+    public static Envelope create(org.geotools.api.geometry.Bounds envelope, Projection projection) {
+    	Envelope ret = new Envelope();
         ret.envelope = new ReferencedEnvelope(envelope);
         ret.projection = projection;
         return ret;
     }
 
-    public static Bounds create(ReferencedEnvelope envelope) {
-        Bounds ret = new Envelope();
+    public static Envelope create(ReferencedEnvelope envelope) {
+    	Envelope ret = new Envelope();
         ret.envelope = envelope;
         ret.projection = Projection.create(envelope.getCoordinateReferenceSystem());
         return ret;
     }
 
-    public static Bounds create(double minX, double maxX, double minY, double maxY, IProjection projection) {
+    public static Envelope create(double minX, double maxX, double minY, double maxY, IProjection projection) {
         return create(new ReferencedEnvelope(minX, maxX, minY, maxY, ((Projection) projection).getCoordinateReferenceSystem()));
     }
 
-    public Bounds copy() {
+    public Envelope copy() {
         return create(new ReferencedEnvelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY(),
                 envelope.getCoordinateReferenceSystem()));
     }
 
-    public static Bounds create(ReferencedEnvelope envelope, boolean swapXY) {
-        Bounds ret = new Envelope();
+    public static Envelope create(ReferencedEnvelope envelope, boolean swapXY) {
+    	Envelope ret = new Envelope();
         ret.envelope = swapXY
                 ? new ReferencedEnvelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(), envelope.getMaxX(),
                         envelope.getCoordinateReferenceSystem())
@@ -165,7 +165,7 @@ public class Bounds implements IEnvelope {
         return Shape.makeCell(this.envelope.getMinX(), this.envelope.getMinY(), this.envelope.getMaxX(), this.envelope.getMaxY());
     }
 
-    public static Bounds create(double minx, double maxx, double miny, double maxy, Projection crs) {
+    public static Envelope create(double minx, double maxx, double miny, double maxy, Projection crs) {
         return create(new ReferencedEnvelope(minx, maxx, miny, maxy, crs.getCoordinateReferenceSystem()));
     }
 
@@ -180,13 +180,13 @@ public class Bounds implements IEnvelope {
     }
 
     @Override
-    public Bounds transform(IProjection projection, boolean lenient) {
+    public Envelope transform(IProjection projection, boolean lenient) {
 
         if (projection.equals(this.projection)) {
             return this;
         }
 
-        Bounds ret = new Envelope();
+        Envelope ret = new Envelope();
         try {
             ret.envelope = this.envelope.transform(((Projection) projection).crs, lenient);
         } catch (TransformException | FactoryException e) {
@@ -257,7 +257,7 @@ public class Bounds implements IEnvelope {
     public int getScaleRank() {
 
         if (this.scaleRank == null) {
-            Bounds envelope = transform(Projection.getLatLon(), true);
+        	Envelope envelope = transform(Projection.getLatLon(), true);
 
             int zoomLevel;
             double latDiff = envelope.getHeight();
@@ -283,7 +283,7 @@ public class Bounds implements IEnvelope {
     }
 
     public boolean intersects(IEnvelope envelope) {
-        return this.envelope.intersects((org.locationtech.jts.geom.Envelope) ((Bounds) envelope).envelope);
+        return this.envelope.intersects((org.locationtech.jts.geom.Envelope) ((Envelope) envelope).envelope);
     }
 
     @Override
@@ -326,7 +326,7 @@ public class Bounds implements IEnvelope {
     @Override
     public boolean overlaps(IEnvelope other) {
         try {
-            return this.envelope.intersects(((Bounds)other).getJTSEnvelope().toBounds(this.projection.getCRS()));
+            return this.envelope.intersects(((Envelope)other).getJTSEnvelope().toBounds(this.projection.getCRS()));
         } catch (TransformException e) {
             return false;
         }
