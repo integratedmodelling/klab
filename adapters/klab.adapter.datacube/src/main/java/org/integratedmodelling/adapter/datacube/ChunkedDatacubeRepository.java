@@ -24,10 +24,10 @@ import java.util.function.Function;
 import java.util.logging.Level;
 
 import javax.annotation.Nullable;
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.imagen.iterator.RandomIter;
+import org.eclipse.imagen.iterator.RandomIterFactory;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.adapter.datacube.api.IDatacube;
 import org.integratedmodelling.klab.Configuration;
@@ -40,8 +40,6 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Availability;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
-import org.integratedmodelling.klab.api.observations.IState;
-import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
