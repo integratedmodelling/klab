@@ -19,15 +19,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import javax.media.jai.ImageLayout;
-import javax.media.jai.JAI;
-import javax.media.jai.ParameterBlockJAI;
-import javax.media.jai.RasterFactory;
-import javax.media.jai.RenderedOp;
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
-import javax.media.jai.iterator.RectIterFactory;
-import javax.media.jai.iterator.WritableRectIter;
+import org.eclipse.imagen.ImageLayout;
+import org.eclipse.imagen.ImageN;
+import org.eclipse.imagen.ParameterBlockImageN;
+import org.eclipse.imagen.RasterFactory;
+import org.eclipse.imagen.RenderedOp;
+import org.eclipse.imagen.iterator.RandomIter;
+import org.eclipse.imagen.iterator.RandomIterFactory;
+import org.eclipse.imagen.iterator.RectIterFactory;
+import org.eclipse.imagen.iterator.WritableRectIter;
 
 import org.eclipse.lsp4j.AbstractTextDocumentRegistrationAndWorkDoneProgressOptions;
 import org.geotools.coverage.Category;
@@ -1020,7 +1020,7 @@ class BigCoverage {
             return;
         }
 
-        ParameterBlockJAI pb = new ParameterBlockJAI("Constant");
+        ParameterBlockImageN pb = new ParameterBlockImageN("Constant");
         pb.setParameter("width", (float) IMAGE_WIDTH);
         pb.setParameter("height", (float) IMAGE_HEIGHT);
         pb.setParameter("bandValues", new Double[]{0.0d});
@@ -1031,9 +1031,9 @@ class BigCoverage {
         layout.setTileWidth(tileWidth);
         layout.setTileHeight(tileWidth);
 
-        RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+        RenderingHints hints = new RenderingHints(ImageN.KEY_IMAGE_LAYOUT, layout);
 
-        RenderedOp image = JAI.create("Constant", pb, hints);
+        RenderedOp image = ImageN.create("Constant", pb, hints);
 
         GeoTiffWriter writer = new GeoTiffWriter(file, null);
         GridCoverageFactory factory = new GridCoverageFactory();

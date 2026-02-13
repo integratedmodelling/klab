@@ -167,7 +167,7 @@ public class NeighborhoodResolver extends AbstractContextualizer implements IRes
             }
 
             /*
-             * build offset mask for quick addressing TODO can use kernels from JAI tools
+             * build offset mask for quick addressing TODO can use kernels from ImageN tools
              */
             this.maskSize = hCells * 2 + 1;
             this.offsetMask = new Pair[maskSize][maskSize];

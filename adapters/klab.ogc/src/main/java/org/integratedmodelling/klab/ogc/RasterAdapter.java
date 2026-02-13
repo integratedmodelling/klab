@@ -75,7 +75,7 @@ public class RasterAdapter implements IResourceAdapter {
 	public static final String INTERPOLATION_TYPE_FIELD = "interpolation";
 
 	/**
-	 * Possible values of interpolation type (JAI classes)
+	 * Possible values of interpolation type (ImageN classes)
 	 */
 	public static final String[] INTERPOLATION_TYPE_VALUES = { "bilinear", "nearest", "bicubic", "bicubic2" };
 
