@@ -140,7 +140,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		File metadata = new File(resourcePath + File.separator + "resource.json");
 		try {
 			FileUtils.writeStringToFile(metadata, JsonUtils.printAsJson(resource.getReference()),
-					StandardCharsets.UTF_8);
+					StandardCharsets.UTF_8.name());
 
 			// publish, validate and insert
 			ret = publisher.publish(resource, this, Klab.INSTANCE.getRootMonitor());
@@ -303,7 +303,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		try {
 			// write out the modified resource, overwriting the original
 			FileUtils.writeStringToFile(metadata, JsonUtils.printAsJson(((Resource) ret).getReference()),
-					StandardCharsets.UTF_8);
+					StandardCharsets.UTF_8.name());
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
