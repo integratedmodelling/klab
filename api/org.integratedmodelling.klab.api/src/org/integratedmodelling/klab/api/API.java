@@ -1481,7 +1481,7 @@ public interface API {
 			for (var key : map.keySet()) {
 				var value = map.get(key);
 				if (value instanceof Map) {
-					value = getParameterMap(map);
+					value = getParameterMap(value);
 				} else if (value instanceof Collection) {
 					var list = new ArrayList<Object>();
 					for (var val : ((Collection<?>) value)) {
