@@ -62,8 +62,9 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 
 	public boolean isOnline(String urn) {
 		ResourceDescriptor descriptor = descriptors.get(urn);
-		if (descriptor == null || !descriptor.online) {
-			return false;
+		if (descriptor == null) {
+			Urn kurn = new Urn(urn);
+			return Network.INSTANCE.getKlabService(IIdentity.Type.RESOURCES, kurn.getNodeName()) != null;
 		}
 		return descriptor.nodes.size() > 0;
 	}
@@ -133,7 +134,7 @@ public class PublicResourceCatalog implements IPublicResourceCatalog {
 				var descriptor = new ResourceReference();
 
 				descriptor.setUrn(map.get("urn").toString());
-				descriptor.setVersion(Version.create((Map<?, ?>) map.get("version")).toString());
+				descriptor.setVersion(Version.create((Map<?, ?>) map.get("version")).toString()); 
 				descriptor.setAdapterType(map.get("adapterType").toString());
 				descriptor.setLocalName(map.get("localName").toString());
 				descriptor.setType(Type.valueOf(map.get("type").toString()));

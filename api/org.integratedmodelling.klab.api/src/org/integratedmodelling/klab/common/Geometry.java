@@ -1097,7 +1097,12 @@ public class Geometry implements IGeometry {
 
 	private static Map<String, Object> readParameters(String kvs) {
 		Map<String, Object> ret = new HashMap<>();
-		for (String kvp : kvs.trim().split(",")) {
+		if (kvs == null || kvs.trim().isEmpty()) {
+	        return ret;
+	    }
+	    // Split only on commas that are followed by "someKey="
+	    String[] pairs = kvs.trim().split(",(?=\\s*[A-Za-z_][A-Za-z0-9_]*\\s*=)");
+		for (String kvp : pairs) {
 			String[] kk = kvp.trim().split("=");
 			if (kk.length != 2) {
 				throw new KlabIllegalArgumentException("wrong key/value pair in geometry definition: " + kvs);
@@ -1117,6 +1122,8 @@ public class Geometry implements IGeometry {
 				v = Integer.parseInt(val);
 			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesDouble(((String) val))) {
 				v = Double.parseDouble(val);
+			} else if (PARAMETER_SPACE_GRIDRESOLUTION.equals(key) && ((String)val).contains(".")) {
+				v = val.replace("."," ");
 			} else {
 				v = val;
 			}
