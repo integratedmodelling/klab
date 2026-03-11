@@ -33,6 +33,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -1259,7 +1260,7 @@ public enum Resources implements IResourceService {
 			IContextualizationScope scope, IArtifact targetArtifact) {
 
 		Urn urn = new Urn(resource.getUrn(), urnParameters);
-		boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
+		boolean local = Urns.INSTANCE.isLocal(resource.getUrn()) || isExternalService(urn);
 		RuntimeException error = null;
 
 		SessionActivity.ResourceActivity descriptor = null;
@@ -1422,6 +1423,10 @@ public enum Resources implements IResourceService {
 		}
 
 		return null;
+	}
+
+	boolean isExternalService(Urn urn) {
+		return Network.INSTANCE.getKlabService(IIdentity.Type.RESOURCES, urn.getNodeName()) != null;
 	}
 
 	/**
