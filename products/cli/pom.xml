@@ -38,11 +38,29 @@
 			            <phase>prepare-package</phase>
 			            <configuration>
 			                <target>
-			                    <exec executable="zip" failonerror="true">
-			                        <arg value="-d"/>
-			                        <arg value="${project.build.directory}/lib/oms-3.5.12.jar"/>
-			                        <arg value="org/apache/commons/io/*"/>
-			                    </exec>
+			                    <mkdir dir="${project.build.directory}/oms-unpacked"/>
+			                    <unzip
+			                        src="${project.build.directory}/lib/oms-3.5.12.jar"
+			                        dest="${project.build.directory}/oms-unpacked"/>
+			                    <delete dir="${project.build.directory}/oms-unpacked/org/apache/commons/io"/>
+			                    <delete dir="${project.build.directory}/oms-unpacked/META-INF/maven/commons-io"/>
+			                    <delete>
+			                        <fileset dir="${project.build.directory}/oms-unpacked/META-INF">
+			                            <include name="*.SF"/>
+			                            <include name="*.RSA"/>
+			                            <include name="*.DSA"/>
+			                        </fileset>
+			                    </delete>
+			                    <jar
+			                        destfile="${project.build.directory}/lib/oms-3.5.12-clean.jar"
+			                        basedir="${project.build.directory}/oms-unpacked"
+			                        manifest="${project.build.directory}/oms-unpacked/META-INF/MANIFEST.MF"
+			                        excludes="META-INF/MANIFEST.MF"/>
+			                    <move
+			                        file="${project.build.directory}/lib/oms-3.5.12-clean.jar"
+			                        tofile="${project.build.directory}/lib/oms-3.5.12.jar"
+			                        overwrite="true"/>
+			                    <delete dir="${project.build.directory}/oms-unpacked"/>
 			                </target>
 			            </configuration>
 			            <goals>
