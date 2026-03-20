@@ -28,10 +28,6 @@
 					<groupId>org.mongodb</groupId>
 					<artifactId>mongo-java-driver</artifactId>
 				</exclusion>
-				<exclusion>
-		            <groupId>edu.colostate.omslab</groupId>
-		            <artifactId>oms</artifactId>
-		        </exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -57,5 +53,6 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+		
 	</dependencies>
 </project>
