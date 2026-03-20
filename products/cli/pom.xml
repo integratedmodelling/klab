@@ -29,6 +29,29 @@
 				</executions>
 			</plugin>
 			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-antrun-plugin</artifactId>
+			    <version>3.1.0</version>
+			    <executions>
+			        <execution>
+			            <id>strip-commons-io-from-oms</id>
+			            <phase>prepare-package</phase>
+			            <configuration>
+			                <target>
+			                    <exec executable="zip" failonerror="true">
+			                        <arg value="-d"/>
+			                        <arg value="${project.build.directory}/lib/oms-3.5.12.jar"/>
+			                        <arg value="org/apache/commons/io/*"/>
+			                    </exec>
+			                </target>
+			            </configuration>
+			            <goals>
+			                <goal>run</goal>
+			            </goals>
+			        </execution>
+			    </executions>
+			</plugin>
+			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
 				<configuration>
