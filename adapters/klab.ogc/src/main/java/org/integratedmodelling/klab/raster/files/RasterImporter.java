@@ -204,6 +204,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                         writeParams.setTiling(512, 512);
 
                         ParameterValue<GeoToolsWriteParams> wParams = AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.createValue();
+                        wParams.setValue(writeParams);
                         writer.write(coverage, new GeneralParameterValue[]{wParams});
 
                         if (dir != null && addStyle) {

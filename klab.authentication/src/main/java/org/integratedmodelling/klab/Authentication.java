@@ -190,7 +190,7 @@ public enum Authentication implements IAuthenticationService {
         }
         return null;
     }
-
+    
     /**
      * Install a server-specific strategy to translate the principal into a user identity
      * 

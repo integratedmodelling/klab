@@ -65,6 +65,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Utils;
 import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.geom.MultiPoint;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -279,8 +281,8 @@ public class VectorEncoder implements IResourceEncoder {
             
 
             IShape objectShape = null;
-            if(rasterize) {
-                // do always intersect
+            if(rasterize && !(shape instanceof Point || shape instanceof MultiPoint)) {
+                // do always intersect except points
                 try {
                     Geometry intersection = GeometryHelper.multiPolygonIntersection(polygonEnv, shape, cellWidth);
                     objectShape = Shape.create(intersection, originalProjection)

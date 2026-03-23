@@ -9,9 +9,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -23,9 +25,11 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
 
 public class Geometry implements IGeometry {
@@ -1093,10 +1097,15 @@ public class Geometry implements IGeometry {
 
 	private static Map<String, Object> readParameters(String kvs) {
 		Map<String, Object> ret = new HashMap<>();
-		for (String kvp : kvs.trim().split(",")) {
+		if (kvs == null || kvs.trim().isEmpty()) {
+	        return ret;
+	    }
+	    // Split only on commas that are followed by "someKey="
+	    String[] pairs = kvs.trim().split(",(?=\\s*[A-Za-z_][A-Za-z0-9_]*\\s*=)");
+		for (String kvp : pairs) {
 			String[] kk = kvp.trim().split("=");
 			if (kk.length != 2) {
-				throw new KlabIllegalArgumentException("wrong key/value pair in geometry definition: " + kvp);
+				throw new KlabIllegalArgumentException("wrong key/value pair in geometry definition: " + kvs);
 			}
 			String key = kk[0].trim();
 			String val = kk[1].trim();
@@ -1113,6 +1122,8 @@ public class Geometry implements IGeometry {
 				v = Integer.parseInt(val);
 			} else if (!PARAMETER_SPACE_SHAPE.equals(key) && NumberUtils.encodesDouble(((String) val))) {
 				v = Double.parseDouble(val);
+			} else if (PARAMETER_SPACE_GRIDRESOLUTION.equals(key) && ((String)val).contains(".")) {
+				v = val.replace("."," ");
 			} else {
 				v = val;
 			}
@@ -1607,6 +1618,52 @@ public class Geometry implements IGeometry {
 		ret.regular = true;
 		geometry.dimensions.add(ret);
 		return ret;
+	}
+
+	/**
+	 * Create a new Geometry from the JSON representing a k.LAB 1.0 geometry. Assume
+	 * the map is correct and contains all it needs, no checking but potential NPEs
+	 * and ClassCast exceptions if misused.
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static Geometry create(Map<?, ?> map) {
+
+		if ((Boolean) map.get("empty")) {
+			return emptyGeometry;
+		}
+
+		Geometry ret = new Geometry();
+
+		for (var value : (List<?>) (map.get("dimensions"))) {
+			var dmap = (Map<?, ?>) value;
+			var dimension = new DimensionImpl();
+			dimension.type = Dimension.Type.valueOf(dmap.get("type").toString());
+			dimension.regular = (Boolean) dmap.get("regular");
+			dimension.dimensionality = ((Number) dmap.get("dimensionality")).intValue();
+			dimension.generic = (Boolean) dmap.get("generic");
+			dimension.coverage = ((Number) dmap.get("coverage")).doubleValue();
+
+			var parameters = API.getParameterMap(dmap.get("parameters"));
+			for (var parameter : parameters.keySet()) {
+				dimension.parameters.put(parameter, processParameter(parameters.get(parameter)));
+			}
+
+			ret.dimensions.add(dimension);
+		}
+
+		return ret;
+	}
+
+	private static Object processParameter(Object parameter) {
+		if (parameter instanceof List<?>) {
+			List<Object> plist = (List<Object>) parameter;
+			parameter = plist.toArray();
+			//			List<String> list = plist.stream().map(o -> o == null ? "null" : o.toString()).collect(Collectors.toList());
+//			parameter = StringUtil.join(list, " ");
+		}
+		return parameter;
 	}
 
 }

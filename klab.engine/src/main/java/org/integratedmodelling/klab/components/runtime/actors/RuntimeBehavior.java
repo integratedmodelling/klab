@@ -645,6 +645,19 @@ public class RuntimeBehavior {
                         }
 
                         if (file != null) {
+	                    	Object suggestedFilename = arguments.get("filename");
+	                        if (suggestedFilename instanceof KActorsValue) {
+	                            suggestedFilename = ((KActorsValue) suggestedFilename).evaluate(scope, identity, true);
+	                            if (suggestedFilename != null) {
+	                        		File output = Configuration.INSTANCE
+	                                        .getExportFile(suggestedFilename.toString());
+	                                try {
+	                                    FileUtils.copyFile(file, output);
+	                                } catch (IOException e) {
+	                                    fail(scope, e);
+	                                }
+	                        	}
+	                        }
                             fire(file, scope);
                         } else {
                             fail(scope);

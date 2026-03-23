@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 // TODO: Auto-generated Javadoc
@@ -449,6 +450,22 @@ public class Version implements Comparable<Version>, Serializable {
 			currentVersion = create(CURRENT);
 		}
 		return currentVersion;
+	}
+
+	/**
+	 * Compatibility with 1.0 - expects a 1.0 serialized Version without further
+	 * checking
+	 * 
+	 * @param map
+	 * @return
+	 */
+	public static Version create(Map<?, ?> map) {
+		var ret = new Version();
+		ret.major = ((Number)map.get("major")).intValue();
+		ret.minor = ((Number)map.get("minor")).intValue();
+		ret.build = ((Number)map.get("build")).intValue();
+		// ignore the modifier
+		return ret;
 	}
 
 }
