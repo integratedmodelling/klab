@@ -29,6 +29,47 @@
 				</executions>
 			</plugin>
 			<plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-antrun-plugin</artifactId>
+			    <version>3.1.0</version>
+			    <executions>
+			        <execution>
+			            <id>strip-commons-io-from-oms</id>
+			            <phase>prepare-package</phase>
+			            <configuration>
+			                <target>
+			                    <mkdir dir="${project.build.directory}/oms-unpacked"/>
+			                    <unzip
+			                        src="${project.build.directory}/lib/oms-3.5.12.jar"
+			                        dest="${project.build.directory}/oms-unpacked"/>
+			                    <delete dir="${project.build.directory}/oms-unpacked/org/apache/commons/io"/>
+			                    <delete dir="${project.build.directory}/oms-unpacked/META-INF/maven/commons-io"/>
+			                    <delete>
+			                        <fileset dir="${project.build.directory}/oms-unpacked/META-INF">
+			                            <include name="*.SF"/>
+			                            <include name="*.RSA"/>
+			                            <include name="*.DSA"/>
+			                        </fileset>
+			                    </delete>
+			                    <jar
+			                        destfile="${project.build.directory}/lib/oms-3.5.12-clean.jar"
+			                        basedir="${project.build.directory}/oms-unpacked"
+			                        manifest="${project.build.directory}/oms-unpacked/META-INF/MANIFEST.MF"
+			                        excludes="META-INF/MANIFEST.MF"/>
+			                    <move
+			                        file="${project.build.directory}/lib/oms-3.5.12-clean.jar"
+			                        tofile="${project.build.directory}/lib/oms-3.5.12.jar"
+			                        overwrite="true"/>
+			                    <delete dir="${project.build.directory}/oms-unpacked"/>
+			                </target>
+			            </configuration>
+			            <goals>
+			                <goal>run</goal>
+			            </goals>
+			        </execution>
+			    </executions>
+			</plugin>
+			<plugin>
 				<groupId>com.google.cloud.tools</groupId>
 				<artifactId>jib-maven-plugin</artifactId>
 				<configuration>

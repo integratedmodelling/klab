@@ -15,9 +15,10 @@ import java.util.Set;
 import java.util.function.Function;
 
 import javax.annotation.Nullable;
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
 
+import org.eclipse.imagen.iterator.RandomIter;
+import org.eclipse.imagen.iterator.RandomIterFactory;
+import org.geotools.api.coverage.grid.GridCoverage;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.geotiff.GeoTiffReader;
 import org.integratedmodelling.klab.Configuration;
@@ -39,7 +40,6 @@ import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.At
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.opengis.coverage.grid.GridCoverage;
 
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;

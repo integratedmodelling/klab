@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.api.data.SimpleFeatureSource;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.grid.Grids;
 import org.integratedmodelling.klab.Configuration;
@@ -44,7 +44,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeature;
 
 @UrnAdapter(type = GridAdapter.NAME, version = Version.CURRENT)
 public class GridAdapter implements IUrnAdapter {

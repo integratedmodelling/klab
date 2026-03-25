@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 import java.awt.image.Raster;
 
 
-import com.sun.media.jai.iterator.WrapperRI;
+import org.eclipse.imagen.media.iterator.WrapperRI;
 
 /**
  * RenderedImage wrapper for {@link Raster}s.

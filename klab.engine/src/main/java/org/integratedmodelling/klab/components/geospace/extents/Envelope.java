@@ -11,8 +11,8 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.locationtech.jts.geom.Geometry;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.operation.TransformException;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.operation.TransformException;
 
 public class Envelope implements IEnvelope {
 
@@ -59,21 +59,21 @@ public class Envelope implements IEnvelope {
     }
 
     public static Envelope create(org.locationtech.jts.geom.Envelope envelope, Projection projection) {
-        Envelope ret = new Envelope();
+    	Envelope ret = new Envelope();
         ret.envelope = new ReferencedEnvelope(envelope, projection.getCoordinateReferenceSystem());
         ret.projection = projection;
         return ret;
     }
 
-    public static Envelope create(org.opengis.geometry.Envelope envelope, Projection projection) {
-        Envelope ret = new Envelope();
+    public static Envelope create(org.geotools.api.geometry.Bounds envelope, Projection projection) {
+    	Envelope ret = new Envelope();
         ret.envelope = new ReferencedEnvelope(envelope);
         ret.projection = projection;
         return ret;
     }
 
     public static Envelope create(ReferencedEnvelope envelope) {
-        Envelope ret = new Envelope();
+    	Envelope ret = new Envelope();
         ret.envelope = envelope;
         ret.projection = Projection.create(envelope.getCoordinateReferenceSystem());
         return ret;
@@ -89,7 +89,7 @@ public class Envelope implements IEnvelope {
     }
 
     public static Envelope create(ReferencedEnvelope envelope, boolean swapXY) {
-        Envelope ret = new Envelope();
+    	Envelope ret = new Envelope();
         ret.envelope = swapXY
                 ? new ReferencedEnvelope(envelope.getMinY(), envelope.getMaxY(), envelope.getMinX(), envelope.getMaxX(),
                         envelope.getCoordinateReferenceSystem())
@@ -257,7 +257,7 @@ public class Envelope implements IEnvelope {
     public int getScaleRank() {
 
         if (this.scaleRank == null) {
-            Envelope envelope = transform(Projection.getLatLon(), true);
+        	Envelope envelope = transform(Projection.getLatLon(), true);
 
             int zoomLevel;
             double latDiff = envelope.getHeight();

@@ -172,7 +172,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			try {
 				File resFile = new File(resourcePath + File.separator + "resource.json");
 				if (!resFile.exists() || resFile.lastModified() < ref.getResourceTimestamp()) {
-					FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref), StandardCharsets.UTF_8);
+					FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref), StandardCharsets.UTF_8.name());
 				}
 			} catch (IOException e) {
 				throw new KlabIOException(e);
@@ -329,7 +329,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		            }
 		        }
 				FileUtils.writeStringToFile(new File(newData.getFirst() + File.separator + "resource.json"),
-						JsonUtils.printAsJson(newData.getSecond()), StandardCharsets.UTF_8);
+						JsonUtils.printAsJson(newData.getSecond()), StandardCharsets.UTF_8.name());
 				FileUtils.deleteDirectory(previousDir);
 				resources.remove(resource.getUrn());
 				resources.put(resource.getUrn(), newData.getSecond());
@@ -371,7 +371,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			try {
 				File resFile = new File(resourcePath + File.separator + "resource.json");
 				if (!resFile.exists() || resFile.lastModified() < ref.getResourceTimestamp()) {
-					FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref), StandardCharsets.UTF_8);
+					FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref), StandardCharsets.UTF_8.name());
 				}
 			} catch (IOException e) {
 				throw new KlabIOException(e);

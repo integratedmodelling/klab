@@ -45,9 +45,9 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
-import org.opengis.coverage.SampleDimension;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.coverage.SampleDimension;
+import org.geotools.api.geometry.Bounds;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * The Class RasterValidator.
@@ -72,7 +72,7 @@ public class RasterValidator implements IResourceValidator {
             AbstractGridFormat format = GridFormatFinder.findFormat(file);
             AbstractGridCoverage2DReader reader = format.getReader(file);
             GridCoverage2D coverage = reader.read(null);
-            Envelope envelope = coverage.getEnvelope();
+            Bounds envelope = coverage.getEnvelope();
             CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
             GridGeometry2D grid = coverage.getGridGeometry();
             org.integratedmodelling.klab.components.geospace.extents.Envelope refenv = org.integratedmodelling.klab.components.geospace.extents.Envelope

@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.semantic;
 import java.util.Arrays;
 
 import javax.annotation.PreDestroy;
-import javax.inject.Singleton;
 
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@Singleton
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { /*
 								 * "org.integratedmodelling.klab.node.security",

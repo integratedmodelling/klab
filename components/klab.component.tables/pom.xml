@@ -36,9 +36,20 @@
 		</dependency>
 
 		<dependency>
-			<groupId>tech.tablesaw</groupId>
-			<artifactId>tablesaw-excel</artifactId>
-			<version>0.38.5</version>
+		    <groupId>tech.tablesaw</groupId>
+		    <artifactId>tablesaw-excel</artifactId>
+		    <version>0.38.5</version>
+		    <exclusions>
+		        <exclusion>
+		            <groupId>org.apache.poi</groupId>
+		            <artifactId>poi-ooxml</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
 		</dependency>
 
 		<!-- SDMX -->
@@ -76,3 +87,4 @@
 	</dependencies>
 
 </project>
+

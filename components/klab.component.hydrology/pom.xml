@@ -53,5 +53,6 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+		
 	</dependencies>
 </project>
