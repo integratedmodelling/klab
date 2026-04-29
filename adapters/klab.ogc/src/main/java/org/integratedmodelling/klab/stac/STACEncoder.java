@@ -343,9 +343,7 @@ public class STACEncoder implements IResourceEncoder {
                                 return false;
                             }
                     };
-                		
-
-                System.out.println("Making HM Call...");
+                	
                 HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, p, items, true, MergeMode.SUBSTITUTE, lpm);
                 coverage = outRaster.buildCoverage();
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
@@ -359,7 +357,6 @@ public class STACEncoder implements IResourceEncoder {
             return;
         }
 
-        System.out.println("Found Search Option!");
         LogProgressMonitor lpm = new LogProgressMonitor();
         HMStacManager manager = new HMStacManager(catalogUrl, lpm);
         HMStacCollection collection = null;
@@ -389,10 +386,7 @@ public class STACEncoder implements IResourceEncoder {
         }
         ITimeInstant start = time.getStart();
         ITimeInstant end = time.getEnd();
-        //collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()));
-        
-        System.out.println(start.getMilliseconds());
-        System.out.println(end.getMilliseconds());
+        //collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds())); --> Filter later :)
 
         GridCoverage2D coverage = null;
         try {
@@ -433,7 +427,6 @@ public class STACEncoder implements IResourceEncoder {
                 	var bands = asset.getAssetNode().get("eo:bands");
                             if (bands != null && bands.isArray()) {
                             	var bandsArray = (ArrayNode) bands;
-                                System.out.println("Bueno!");
                                 for (var bandNode : bandsArray) {
                                     String bandName = bandNode.get("name").asText();
                                     if (bandName.equals(assetId)) { // under eo:band it's one of the band
