@@ -47,6 +47,22 @@
 			<version>1.68</version>
 		</dependency>
 		
+		<dependency>
+	        <groupId>com.fasterxml.jackson.core</groupId>
+	        <artifactId>jackson-core</artifactId>
+	    </dependency>
+	    
+	    <dependency>
+	        <groupId>com.fasterxml.jackson.core</groupId>
+	        <artifactId>jackson-databind</artifactId>
+	        
+	    </dependency>
+	    
+	    <dependency>
+	        <groupId>com.fasterxml.jackson.core</groupId>
+	        <artifactId>jackson-annotations</artifactId>
+	    </dependency>
+		
        <dependency>
             <groupId>org.hortonmachine</groupId>
             <artifactId>hm-gears</artifactId>
@@ -56,6 +72,7 @@
                     <groupId>javax.measure</groupId>
                     <artifactId>jsr-275</artifactId>
                 </exclusion>
+                
                 <exclusion>
                     <groupId>org.mongodb</groupId>
                     <artifactId>mongo-java-driver</artifactId>
