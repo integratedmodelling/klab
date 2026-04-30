@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.stac;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
+import java.util.function.Predicate;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,13 +13,14 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.api.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
+import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
-import org.hortonmachine.gears.utils.CrsUtilities;
+import org.hortonmachine.gears.utils.crs.CrsUtilities;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.integratedmodelling.klab.Authentication;
@@ -58,6 +60,7 @@ import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
+import org.geotools.coverage.processing.Operations;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.geotools.api.feature.simple.SimpleFeature;
@@ -67,8 +70,11 @@ import org.geotools.referencing.CRS;
 import org.geotools.api.referencing.FactoryException;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 
 import kong.unirest.json.JSONObject;
 
@@ -239,6 +245,7 @@ public class STACEncoder implements IResourceEncoder {
         String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collectionData);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
         String assetId = resource.getParameters().get("asset", String.class);
+        Integer bandIndex = resource.getParameters().get("band", Integer.class);
 
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
@@ -316,9 +323,31 @@ public class STACEncoder implements IResourceEncoder {
                 if (collection == null) {
                     scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
                 }
-
-                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, true, MergeMode.SUBSTITUTE, new LogProgressMonitor());
+                
+                var p = new Predicate<HMStacAsset>() {
+                	
+                    @Override
+                    public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there
+                    	
+                                var bands = asset.getAssetNode().get("eo:bands");
+                                if (bands != null && bands.isArray()) {
+                                    ArrayNode bandsArray = (ArrayNode) bands;
+                                    for (var bandNode : bandsArray) {
+                                        String bandName = bandNode.get("name").asText();
+                                        if (bandName.equals(assetId)) { // under eo:band it's one of the band
+                                            return true;
+                                        }
+                                    }
+                                }
+                                return false;
+                            }
+                    };
+                	
+                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, p, items, true, MergeMode.SUBSTITUTE, lpm);
                 coverage = outRaster.buildCoverage();
+                if (bandIndex != null) { // Which means theat it's a Multi Band COG
+                	coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
+                }
             } catch (Exception e) {
                 throw new KlabResourceAccessException("Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
             }
@@ -349,23 +378,22 @@ public class STACEncoder implements IResourceEncoder {
         Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
         collection.setGeometryFilter(poly);
+        
 
         if (resourceTime != null && resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
             time = validateTemporalDimension(time, resourceTime);
         }
         ITimeInstant start = time.getStart();
         ITimeInstant end = time.getEnd();
-        collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds()));
+        //collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds())); --> Filter later :)
 
         GridCoverage2D coverage = null;
         try {
             List<HMStacItem> items = collection.searchItems();
-
             if (items.isEmpty()) {
                 manager.close();
                 throw new KlabIllegalStateException("No STAC items found for this context.");
             }
-            scope.getMonitor().debug("Found " + items.size() + " STAC items.");
 
             if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
                 sortByDate(items, scope.getMonitor());
@@ -381,10 +409,6 @@ public class STACEncoder implements IResourceEncoder {
                     space.getProjection().getCoordinateReferenceSystem());
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
-            Set<Integer> EPSGsAtItems = items.stream().map(i -> i.getEpsg()).collect(Collectors.toUnmodifiableSet());
-            if (EPSGsAtItems.size() > 1) {
-                scope.getMonitor().warn("Multiple EPSGs found on the items " + EPSGsAtItems.toString() + ". The transformation process could affect the data.");
-            }
 
             if (resource.getParameters().contains("awsRegion")) {
                 String bucketRegion = resource.getParameters().get("awsRegion", String.class);
@@ -395,10 +419,75 @@ public class STACEncoder implements IResourceEncoder {
             // Allow transform ensures the process to finish, but I would not bet on the resulting
             // data.
             final boolean allowTransform = true;
-            HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetId, items, allowTransform, mergeMode, lpm);
-            coverage = outRaster.buildCoverage();
-            manager.close();
+            var p = new Predicate<HMStacAsset>() {
+            	
+                @Override
+                public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there
+                	var bands = asset.getAssetNode().get("eo:bands");
+                            if (bands != null && bands.isArray()) {
+                            	var bandsArray = (ArrayNode) bands;
+                                for (var bandNode : bandsArray) {
+                                    String bandName = bandNode.get("name").asText();
+                                    if (bandName.equals(assetId)) { // under eo:band it's one of the band
+                                        return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        }
+                };
+                
+                // Filter here based on time, since in some STAC collections they don't yet support temporal filtering :( like ECDC
+                 items = items.stream().filter(new Predicate<HMStacItem>() {
+                	 
+                	@Override 
+                	public boolean test(HMStacItem item) {
+                		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                		long itemStart = LocalDateTime
+                		        .parse(item.getStartTimestamp(), formatter)
+                		        .atZone(ZoneOffset.UTC)
+                		        .toInstant()
+                		        .toEpochMilli();
+                		
+						long itemEnd = LocalDateTime
+                		        .parse(item.getEndTimestamp(), formatter)
+                		        .atZone(ZoneOffset.UTC)
+                		        .toInstant()
+                		        .toEpochMilli();
+						
+						if (start.getMilliseconds() >= itemStart && end.getMilliseconds() <= itemEnd) { return true; }
+						return false;
+                	}
+                }).collect(Collectors.toList());
+                 
+                if (items.size() == 0) {
+                	throw new KlabIllegalStateException("No STAC items found covering the entire time duration of the context requested");
+                } else {
+                	 scope.getMonitor().debug("Found " + items.size() + " STAC items satisfying the temporal constraint.");
+                }
+                
+                
+                Set<Integer> EPSGAtAssets =
+                	    items.stream()
+                	        .flatMap(item -> item.getAssets().stream())
+                	        .filter(p)
+                	        .map(HMStacAsset::getEpsg)
+                	        .collect(Collectors.toUnmodifiableSet());
+               
+                
+                if (EPSGAtAssets.size() > 1) {
+                    scope.getMonitor().warn("Multiple EPSGs found on the assets in items " + EPSGAtAssets.toString() + ". The transformation process could affect the data.");
+                }
+
+                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, p, items, allowTransform, MergeMode.SUBSTITUTE, lpm);
+                coverage = outRaster.buildCoverage();
+                if (bandIndex != null) { // Which means theat it's a Multi Band COG
+                	coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
+                }
+     
+                manager.close();
         } catch (Exception e) {
+        	e.printStackTrace();
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
         }
         encoder = new RasterEncoder();
