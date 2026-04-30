@@ -332,7 +332,6 @@ public class STACEncoder implements IResourceEncoder {
                                 var bands = asset.getAssetNode().get("eo:bands");
                                 if (bands != null && bands.isArray()) {
                                     ArrayNode bandsArray = (ArrayNode) bands;
-                                    System.out.println("Bueno!");
                                     for (var bandNode : bandsArray) {
                                         String bandName = bandNode.get("name").asText();
                                         if (bandName.equals(assetId)) { // under eo:band it's one of the band
@@ -480,8 +479,6 @@ public class STACEncoder implements IResourceEncoder {
                     scope.getMonitor().warn("Multiple EPSGs found on the assets in items " + EPSGAtAssets.toString() + ". The transformation process could affect the data.");
                 }
 
-                
-                System.out.println("Making HM Call!...");
                 HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, p, items, allowTransform, MergeMode.SUBSTITUTE, lpm);
                 coverage = outRaster.buildCoverage();
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
