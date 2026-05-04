@@ -120,6 +120,20 @@ public interface IConfigurationService {
     public static final String KLAB_GRID_CONSTRAINT = "klab.grid.forceSquarecells";
 
     /**
+     * If defined and set to <code>true</code>, then datum shifts are allowed to be 
+     * processed without Bursa Wolf parameters. This could generate important data shifts.
+     */
+    public static final String KLAB_CRS_ALLOWLENIENT = "klab.crs.allowlenient";
+    
+    /**
+     * If defined, specifies a comma-separated list of CRS authority codes for which longitude
+     * is used as the first axis (i.e. x=longitude, y=latitude). For these codes 
+     * HMCrsTransformer(String fromEpsgCode, String toEpsgCode, boolean longitudeFirst)
+     * will have longitudeFirst set to <code>true</code>.
+     */
+    public static final String KLAB_CRS_LONGITUDEFIRST_CODES = "klab.crs.longitudefirst.codes";
+
+    /**
      * If defined and set to <code>true</code>, then intermediate data processed by the models are
      * to be dumped to disk.
      */

@@ -3,10 +3,8 @@ package org.integratedmodelling.klab.components.geospace.extents;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,11 +16,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.eclipse.xtext.util.Arrays;
+import org.geotools.api.referencing.crs.GeographicCRS;
 import org.geotools.geojson.GeoJSON;
-import org.geotools.geometry.jts.JTS;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
-import org.hortonmachine.gears.utils.geometry.GeometryHelper;
+import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -42,10 +39,10 @@ import org.integratedmodelling.klab.api.observations.scale.ITopologicallyCompara
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
-import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.Geospace;
@@ -74,14 +71,12 @@ import org.locationtech.jts.geom.MultiPolygon;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.Polygonal;
-import org.locationtech.jts.geom.TopologyException;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.locationtech.jts.io.ParseException;
 import org.locationtech.jts.io.WKBReader;
 import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
-import org.locationtech.jts.operation.overlay.snap.SnapIfNeededOverlayOp;
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
 /**
@@ -101,6 +96,8 @@ public class Shape extends AbstractSpatialAbstractExtent implements IShape {
 	IShape.Type type = null;
 	Projection projection;
 	IMetadata metadata;
+	
+	
 	// to avoid multiple rounds of simplification
 	private boolean simplified = false;
 
@@ -307,41 +304,126 @@ public class Shape extends AbstractSpatialAbstractExtent implements IShape {
 		}
 		Geometry g = null;
 
+		String fromCode = projection.getCode();
+		String toCode = ((Projection) otherProjection).getCode();
+		List<String> longitudeFirstCodes = getLongitudeFirstCodes();
+		boolean fromLongitudeFirst = false; // false for geotools means system default
+		if(longitudeFirstCodes.contains(fromCode)) {
+			fromLongitudeFirst = true;
+		}
+		boolean toLongitudeFirst = false; // false for geotools means system default
+		if(longitudeFirstCodes.contains(toCode)) {
+			toLongitudeFirst = true;
+		}
 		try {
-			g = JTS.transform(shapeGeometry, CRS.findMathTransform(projection.crs, ((Projection) otherProjection).crs));
+			var transformer = new HMCrsTransformer(fromCode, toCode, fromLongitudeFirst, toLongitudeFirst);
+			transformer.setAcceptLenientDatumShift(doAllowLenientTransformations());
+			g = transformer.transform(shapeGeometry);
 		} catch (Exception e) {
 			throw new KlabValidationException(e);
 		}
 
 		return Shape.create(g, (Projection) otherProjection);
 	}
+	
+	private static boolean doAllowLenientTransformations() {
+        String constraint = Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_CRS_ALLOWLENIENT, "false");
+        return Boolean.parseBoolean(constraint);
+    }
 
+	/**
+	 * @return the crs codes for which a longitudeFirst = true needs to be set when transforming.
+	 */
+	private static List<String> getLongitudeFirstCodes() {
+        String constraint = Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_CRS_LONGITUDEFIRST_CODES, null);
+        if (constraint == null) {
+			return List.of();
+		}
+        String[] split = constraint.split(";");
+        return List.of(split);
+    }
+	
 	@Override
 	public Envelope getEnvelope() {
 		return envelope;
 	}
 
-	@Override
-	public Shape intersection(IShape other) {
-		if ((projection != null || other.getProjection() != null) && !projection.equals(other.getProjection())) {
-			try {
-				other = other.transform(projection);
-			} catch (KlabValidationException e) {
-				return empty();
-			}
-		}
-		Geometry fixedShape = fix(shapeGeometry);
-		Geometry fixedOther = fix(((Shape) other).shapeGeometry);
-		Geometry intersection = null;
-        try {
-            
-            intersection = fixedShape.intersection(fixedOther);
-        } catch (Exception e) {
-            GeotoolsUtils.INSTANCE.dumpFailingOperationGeometries("intersection", shapeGeometry, ((Shape) other).shapeGeometry);
-            e.printStackTrace();
-        }
-        return create(intersection, projection);
-	}
+    @Override
+    public Shape intersection(IShape other) {
+
+            Projection thisProjection = projection;
+            Projection otherProjection = (Projection) other.getProjection();
+
+            try {
+                    boolean thisIsGeographic = thisProjection.getCRS() instanceof GeographicCRS;
+                    boolean otherIsGeographic = otherProjection.getCRS() instanceof GeographicCRS;
+
+                    if (thisIsGeographic && !otherIsGeographic) {
+                            // Safe space is this projection (geographic), transform other into it
+                            Shape otherTransformed = (Shape) other.transform(thisProjection);
+                            Geometry thisFixed = fix(shapeGeometry);
+                            Geometry otherFixed = fix(otherTransformed.shapeGeometry);
+                            Geometry intersection = thisFixed.intersection(otherFixed);
+                            return create(intersection, thisProjection);
+
+                    } else if (!thisIsGeographic && otherIsGeographic) {
+                            // Safe space is other's projection (geographic) — transform this into it,
+                            // intersect there, then reproject the result back to this projection
+                            Shape thisTransformed = (Shape) this.transform(otherProjection);
+                            Geometry thisFixed = fix(thisTransformed.shapeGeometry);
+                            Geometry otherFixed = fix(((Shape) other).shapeGeometry);
+                            Geometry intersection = thisFixed.intersection(otherFixed);
+                            Shape intersectionShape = create(intersection, otherProjection);
+                            Shape intersectionReprojected = (Shape) intersectionShape.transform(thisProjection);
+                            return intersectionReprojected;
+                    }
+            } catch (Exception e) {
+                    // fall through to original logic
+            }
+
+            // Both same CRS, both geographic, or both projected — original flow
+            if ((thisProjection != null || otherProjection != null) && !thisProjection.equals(otherProjection)) {
+                    try {
+                            other = other.transform(thisProjection);
+                    } catch (KlabValidationException e) {
+                            return empty();
+                    }
+            }
+
+            Geometry fixedShape = fix(shapeGeometry);
+            Geometry fixedOther = fix(((Shape) other).shapeGeometry);
+            Geometry intersection = null;
+            try {
+                    intersection = fixedShape.intersection(fixedOther);
+            } catch (Exception e) {
+                    GeotoolsUtils.INSTANCE.dumpFailingOperationGeometries("intersection", shapeGeometry,
+                                    ((Shape) other).shapeGeometry);
+                    e.printStackTrace();
+            }
+            return create(intersection, projection);
+    }
+
+//	@Override
+//	public Shape intersection2(IShape other) {
+//		if ((projection != null || other.getProjection() != null) && !projection.equals(other.getProjection())) {
+//			try {
+//				other = other.transform(projection);
+//			} catch (KlabValidationException e) {
+//				return empty();
+//			}
+//		}
+//		Geometry fixedShape = fix(shapeGeometry);
+//		Geometry fixedOther = fix(((Shape) other).shapeGeometry);
+//		Geometry intersection = null;
+//        try {
+//            
+//            intersection = fixedShape.intersection(fixedOther);
+//        } catch (Exception e) {
+//            GeotoolsUtils.INSTANCE.dumpFailingOperationGeometries("intersection", shapeGeometry, ((Shape) other).shapeGeometry);
+//            e.printStackTrace();
+//        }
+//        return create(intersection, projection);
+//	}
 
 	public Shape fixInvalid() {
 		/*
