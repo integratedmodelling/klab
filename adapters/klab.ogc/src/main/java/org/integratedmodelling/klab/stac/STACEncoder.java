@@ -311,40 +311,41 @@ public class STACEncoder implements IResourceEncoder {
             try {
                 // TODO see if we can access to the same readRasterBandOnRegion without using a collection
                 LogProgressMonitor lpm = new LogProgressMonitor();
-                HMStacManager manager = new HMStacManager(catalogUrl, lpm);
-                HMStacCollection collection = null;
-                try {
-                    manager.open();
-                    collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
-                } catch (Exception e1) {
-                    throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
-                }
+                try (HMStacManager manager = new HMStacManager(catalogUrl, lpm)) {
+					HMStacCollection collection = null;
+					try {
+					    manager.open();
+					    collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+					} catch (Exception e1) {
+					    throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
+					}
 
-                if (collection == null) {
-                    scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
-                }
-                
-                var p = new Predicate<HMStacAsset>() {
-                	
-                    @Override
-                    public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there
-                    	
-                                var bands = asset.getAssetNode().get("eo:bands");
-                                if (bands != null && bands.isArray()) {
-                                    ArrayNode bandsArray = (ArrayNode) bands;
-                                    for (var bandNode : bandsArray) {
-                                        String bandName = bandNode.get("name").asText();
-                                        if (bandName.equals(assetId)) { // under eo:band it's one of the band
-                                            return true;
-                                        }
-                                    }
-                                }
-                                return false;
-                            }
-                    };
-                	
-                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, p, items, true, MergeMode.SUBSTITUTE, lpm);
-                coverage = outRaster.buildCoverage();
+					if (collection == null) {
+					    scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+					}
+					
+					var p = new Predicate<HMStacAsset>() {
+						
+					    @Override
+					    public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there
+					    	
+					                var bands = asset.getAssetNode().get("eo:bands");
+					                if (bands != null && bands.isArray()) {
+					                    ArrayNode bandsArray = (ArrayNode) bands;
+					                    for (var bandNode : bandsArray) {
+					                        String bandName = bandNode.get("name").asText();
+					                        if (bandName.equals(assetId)) { // under eo:band it's one of the band
+					                            return true;
+					                        }
+					                    }
+					                }
+					                return false;
+					            }
+					    };
+						
+					HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, p, items, true, MergeMode.SUBSTITUTE, lpm);
+					coverage = outRaster.buildCoverage();
+				}
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                 	coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
                 }
@@ -363,6 +364,12 @@ public class STACEncoder implements IResourceEncoder {
             manager.open();
             collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
         } catch (Exception e) {
+        	try {
+				manager.close();
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
             throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl + ". Reason :" + e.getMessage());
         }
 
@@ -461,6 +468,7 @@ public class STACEncoder implements IResourceEncoder {
                 }).collect(Collectors.toList());
                  
                 if (items.size() == 0) {
+                	manager.close();
                 	throw new KlabIllegalStateException("No STAC items found covering the entire time duration of the context requested");
                 } else {
                 	 scope.getMonitor().debug("Found " + items.size() + " STAC items satisfying the temporal constraint.");
