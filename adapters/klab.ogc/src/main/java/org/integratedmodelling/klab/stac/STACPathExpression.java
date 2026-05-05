@@ -13,6 +13,8 @@ import org.hortonmachine.gears.io.stac.HMStacAsset;
 public final class STACPathExpression {
 
 	private final List<PathPart> path;
+	
+	public static final String PREDICATE_EO_BANDS_NAME = "eo:bands[*]>name";
 
     private STACPathExpression(List<PathPart> path) {
         this.path = path;
@@ -103,6 +105,37 @@ public final class STACPathExpression {
         }
 
         return parts;
+    }
+    
+    private static boolean valueEquals(Object actualValue, String expectedValue) {
+        if (actualValue == null) {
+            return expectedValue == null;
+        }
+
+        if (expectedValue == null) {
+            return false;
+        }
+
+        if (actualValue instanceof Number number) {
+            return numberEquals(number, expectedValue);
+        }
+
+        if (actualValue instanceof Boolean bool) {
+            return Boolean.toString(bool).equalsIgnoreCase(expectedValue);
+        }
+
+        return Objects.equals(String.valueOf(actualValue), expectedValue);
+    }
+
+    private static boolean numberEquals(Number actualValue, String expectedValue) {
+        try {
+            BigDecimal actual = new BigDecimal(actualValue.toString());
+            BigDecimal expected = new BigDecimal(expectedValue);
+
+            return actual.compareTo(expected) == 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private static boolean jsonValueEquals(JsonNode actualValue, String expectedValue) {
@@ -208,11 +241,41 @@ public final class STACPathExpression {
         WILDCARD
     }
     
-    public static final String PREDICATE_EO_BANDS_NAME = "eo:bands[*]>name";
-    
     public final class STACAssetPredicate {
 
         private STACAssetPredicate() {
+        }
+        
+        public static Predicate<HMStacAsset> fromJsonPath(
+                String jsonPath,
+                String expectedValue
+        ) {
+            STACPathExpression expression = STACPathExpression.parse(jsonPath);
+
+            return asset -> {
+                if (asset == null || asset.getAssetNode() == null) {
+                    return false;
+                }
+
+                return expression.matches(asset.getAssetNode(), expectedValue);
+            };
+        }
+
+        public static Predicate<HMStacAsset> fromAssetAttribute(
+                String attributeName,
+                String expectedValue
+        ) {
+            AssetAttribute attribute = AssetAttribute.fromName(attributeName);
+
+            return asset -> {
+                if (asset == null) {
+                    return false;
+                }
+
+                Object actualValue = attribute.read(asset);
+
+                return valueEquals(actualValue, expectedValue);
+            };
         }
 
         public static Predicate<HMStacAsset> from(String jsonPath, String expectedValue) {
@@ -222,6 +285,74 @@ public final class STACPathExpression {
         }
     }
     
-    
+    public enum AssetAttribute {
+
+        ID("id") {
+            @Override
+            Object read(HMStacAsset asset) {
+                return asset.getId();
+            }
+        },
+
+        TITLE("title") {
+            @Override
+            Object read(HMStacAsset asset) {
+                return asset.getTitle();
+            }
+        },
+
+        TYPE("type") {
+            @Override
+            Object read(HMStacAsset asset) {
+                return asset.getType();
+            }
+        },
+
+        VALID("valid") {
+            @Override
+            Object read(HMStacAsset asset) {
+                return asset.isValid();
+            }
+        },
+
+        EPSG("epsg") {
+            @Override
+            Object read(HMStacAsset asset) {
+                return asset.getEpsg();
+            }
+        },
+
+        NON_VALID_REASON("nonValidReason") {
+            @Override
+            Object read(HMStacAsset asset) {
+                return asset.getNonValidReason();
+            }
+        };
+
+        private final String name;
+
+        AssetAttribute(String name) {
+            this.name = name;
+        }
+
+        abstract Object read(HMStacAsset asset);
+
+        public static AssetAttribute fromName(String name) {
+            if (name == null || name.isBlank()) {
+                throw new IllegalArgumentException("Asset attribute name cannot be empty");
+            }
+
+            for (AssetAttribute attribute : values()) {
+                if (attribute.name.equalsIgnoreCase(name.trim())) {
+                    return attribute;
+                }
+            }
+
+            throw new IllegalArgumentException(
+                    "Unsupported HMStacAsset attribute: " + name
+                            + ". Supported attributes are: id, title, type, valid, epsg, nonValidReason"
+            );
+        }
+    }
    
 }
