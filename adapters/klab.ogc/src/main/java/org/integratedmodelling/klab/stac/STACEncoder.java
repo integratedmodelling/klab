@@ -473,7 +473,7 @@ public class STACEncoder implements IResourceEncoder {
     private Predicate<HMStacAsset> getAssetPredicate(IResource resource){
         String assetId = resource.getParameters().get("asset", String.class);
         if (assetId != null) {
-            return STACPathExpression.STACAssetPredicate.fromHMStacAssetAttribute(AssetAttribute.ID.name(), assetId);
+            return STACPathExpression.STACAssetPredicate.fromHMStacAssetId(assetId);
         }
         String jsonSelector = resource.getParameters().get("jsonSelector", String.class);
         String jsonValue = resource.getParameters().get("jsonValue", String.class);
@@ -484,7 +484,8 @@ public class STACEncoder implements IResourceEncoder {
                 throw new KlabIllegalArgumentException("Invalid STAC asset JSON selector: " + jsonSelector, e);
             }
         } else {
-            throw new KlabIllegalArgumentException("Search parameters didn't exists");
+            throw new KlabIllegalArgumentException(
+                    "Either asset or both jsonSelector and jsonValue must be provided");
         }
     }
 

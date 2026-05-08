@@ -82,7 +82,7 @@ public class STACValidator implements IResourceValidator {
                     }
                 }
             } else {
-                throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue have to be filled");
+                throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue must be provided");
             }
         }
         

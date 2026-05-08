@@ -142,7 +142,7 @@ public final class STACPathExpression {
             return expectedValue == null;
         }
 
-        if (expectedValue == null) {
+        if (expectedValue == null || !actualValue.isValueNode()) {
             return false;
         }
 
@@ -151,10 +151,15 @@ public final class STACPathExpression {
         }
 
         if (actualValue.isBoolean()) {
-            return Boolean.toString(actualValue.booleanValue()).equalsIgnoreCase(expectedValue);
+            return Boolean.toString(actualValue.booleanValue())
+                    .equalsIgnoreCase(expectedValue);
         }
 
-        return Objects.equals(actualValue.asText(), expectedValue);
+        if (actualValue.isTextual()) {
+            return Objects.equals(actualValue.asText(), expectedValue);
+        }
+
+        return false;
     }
 
     private static boolean numberEquals(Number actualValue, String expectedValue) {
@@ -280,6 +285,10 @@ public final class STACPathExpression {
 
                 return valueEquals(actualValue, expectedValue);
             };
+        }
+        
+        public static Predicate<HMStacAsset> fromHMStacAssetId(String expectedValue) {
+            return fromHMStacAssetAttribute("id", expectedValue);
         }
     }
 
