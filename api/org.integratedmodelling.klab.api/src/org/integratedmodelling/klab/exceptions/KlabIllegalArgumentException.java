@@ -39,17 +39,28 @@ public class KlabIllegalArgumentException extends KlabException {
 	/**
 	 * Instantiates a new klab illegal status exception.
 	 *
-	 * @param arg0 the arg 0
+	 * @param message the message
 	 */
-	public KlabIllegalArgumentException(String arg0) {
-		super(arg0);
+	public KlabIllegalArgumentException(String message) {
+		super(message);
 		// TODO Auto-generated constructor stub
 	}
+	
+	/**
+     * Instantiates a new klab illegal status exception.
+     *
+     * @param message the message
+     * @param e the exception
+     */
+    public KlabIllegalArgumentException(String message, Throwable e) {
+        super(message, e);
+        // TODO Auto-generated constructor stub
+    }
 
 	/**
 	 * Instantiates a new klab illegal status exception.
 	 *
-	 * @param e the e
+	 * @param e the exception
 	 */
 	public KlabIllegalArgumentException(Throwable e) {
 		super(e);

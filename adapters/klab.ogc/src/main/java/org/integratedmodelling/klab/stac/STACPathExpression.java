@@ -1,20 +1,31 @@
 package org.integratedmodelling.klab.stac;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import kong.unirest.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 
 public final class STACPathExpression {
 
-	private final List<PathPart> path;
-	
-	public static final String PREDICATE_EO_BANDS_NAME = "eo:bands[*]>name";
+    private final List<PathPart> path;
+
+    /*
+     * This works: eo:bands[*]>name
+     * This probably does not behave as a user might expect: eo:bands>name
+     * because eo:bands resolves to an array node, and then the next path part tries to read field name directly from an array.
+     * That returns nothing. That is acceptable, but it should be documented: arrays require either [n] or [*].
+     */
+    public static final String PREDICATE_EO_BANDS_NAME = "eo:bands[*]>name";
 
     private STACPathExpression(List<PathPart> path) {
         this.path = path;
@@ -24,14 +35,13 @@ public final class STACPathExpression {
         if (jsonPath == null || jsonPath.isBlank()) {
             throw new IllegalArgumentException("JSON path cannot be empty");
         }
-
         return new STACPathExpression(parsePath(jsonPath));
     }
 
     public boolean matches(JsonNode root, String expectedValue) {
         List<JsonNode> resolvedNodes = resolve(root);
 
-        for (JsonNode node : resolvedNodes) {
+        for(JsonNode node : resolvedNodes) {
             if (jsonValueEquals(node, expectedValue)) {
                 return true;
             }
@@ -44,10 +54,10 @@ public final class STACPathExpression {
         List<JsonNode> currentNodes = new ArrayList<>();
         currentNodes.add(root);
 
-        for (PathPart part : path) {
+        for(PathPart part : path) {
             List<JsonNode> nextNodes = new ArrayList<>();
 
-            for (JsonNode current : currentNodes) {
+            for(JsonNode current : currentNodes) {
                 if (current == null || current.isNull() || current.isMissingNode()) {
                     continue;
                 }
@@ -70,7 +80,7 @@ public final class STACPathExpression {
                     }
                 } else if (part.arrayMode() == ArrayMode.WILDCARD) {
                     if (fieldNode.isArray()) {
-                        for (JsonNode arrayElement : fieldNode) {
+                        for(JsonNode arrayElement : fieldNode) {
                             if (arrayElement != null && !arrayElement.isNull() && !arrayElement.isMissingNode()) {
                                 nextNodes.add(arrayElement);
                             }
@@ -94,7 +104,7 @@ public final class STACPathExpression {
 
         List<PathPart> parts = new ArrayList<>();
 
-        for (String token : tokens) {
+        for(String token : tokens) {
             String trimmed = token.trim();
 
             if (trimmed.isEmpty()) {
@@ -106,7 +116,7 @@ public final class STACPathExpression {
 
         return parts;
     }
-    
+
     private static boolean valueEquals(Object actualValue, String expectedValue) {
         if (actualValue == null) {
             return expectedValue == null;
@@ -127,6 +137,26 @@ public final class STACPathExpression {
         return Objects.equals(String.valueOf(actualValue), expectedValue);
     }
 
+    private static boolean jsonValueEquals(JsonNode actualValue, String expectedValue) {
+        if (actualValue == null || actualValue.isNull() || actualValue.isMissingNode()) {
+            return expectedValue == null;
+        }
+
+        if (expectedValue == null) {
+            return false;
+        }
+
+        if (actualValue.isNumber()) {
+            return numberEquals(actualValue.decimalValue(), expectedValue);
+        }
+
+        if (actualValue.isBoolean()) {
+            return Boolean.toString(actualValue.booleanValue()).equalsIgnoreCase(expectedValue);
+        }
+
+        return Objects.equals(actualValue.asText(), expectedValue);
+    }
+
     private static boolean numberEquals(Number actualValue, String expectedValue) {
         try {
             BigDecimal actual = new BigDecimal(actualValue.toString());
@@ -138,47 +168,7 @@ public final class STACPathExpression {
         }
     }
 
-    private static boolean jsonValueEquals(JsonNode actualValue, String expectedValue) {
-        if (actualValue == null || actualValue.isNull() || actualValue.isMissingNode()) {
-            return expectedValue == null;
-        }
-
-        if (expectedValue == null) {
-            return false;
-        }
-
-        if (actualValue.isNumber()) {
-            return numberEquals(actualValue, expectedValue);
-        }
-
-        if (actualValue.isBoolean()) {
-            return Boolean.toString(actualValue.booleanValue())
-                    .equalsIgnoreCase(expectedValue);
-        }
-
-        if (actualValue.isTextual()) {
-            return Objects.equals(actualValue.asText(), expectedValue);
-        }
-
-        return Objects.equals(actualValue.asText(), expectedValue);
-    }
-
-    private static boolean numberEquals(JsonNode actualValue, String expectedValue) {
-        try {
-            BigDecimal actual = actualValue.decimalValue();
-            BigDecimal expected = new BigDecimal(expectedValue);
-
-            return actual.compareTo(expected) == 0;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-    
-    public record PathPart(
-            String fieldName,
-            ArrayMode arrayMode,
-            Integer arrayIndex
-    ) {
+    public record PathPart(String fieldName, ArrayMode arrayMode, Integer arrayIndex) {
 
         public static PathPart parse(String token) {
             int bracketStart = token.indexOf('[');
@@ -190,24 +180,18 @@ public final class STACPathExpression {
             int bracketEnd = token.indexOf(']', bracketStart);
 
             if (bracketEnd < 0) {
-                throw new IllegalArgumentException(
-                        "Invalid array syntax in path element: " + token
-                );
+                throw new IllegalArgumentException("Invalid array syntax in path element: " + token);
             }
 
             if (bracketEnd != token.length() - 1) {
-                throw new IllegalArgumentException(
-                        "Unexpected characters after array syntax in path element: " + token
-                );
+                throw new IllegalArgumentException("Unexpected characters after array syntax in path element: " + token);
             }
 
             String fieldName = token.substring(0, bracketStart).trim();
             String indexText = token.substring(bracketStart + 1, bracketEnd).trim();
 
             if (fieldName.isEmpty()) {
-                throw new IllegalArgumentException(
-                        "Field name cannot be empty in path element: " + token
-                );
+                throw new IllegalArgumentException("Field name cannot be empty in path element: " + token);
             }
 
             if ("*".equals(indexText)) {
@@ -219,52 +203,72 @@ public final class STACPathExpression {
             try {
                 index = Integer.parseInt(indexText);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(
-                        "Invalid array index in path element: " + token,
-                        e
-                );
+                throw new IllegalArgumentException("Invalid array index in path element: " + token, e);
             }
 
             if (index < 0) {
-                throw new IllegalArgumentException(
-                        "Array index cannot be negative in path element: " + token
-                );
+                throw new IllegalArgumentException("Array index cannot be negative in path element: " + token);
             }
 
             return new PathPart(fieldName, ArrayMode.INDEX, index);
         }
     }
-    
+
     public enum ArrayMode {
-        NONE,
-        INDEX,
-        WILDCARD
+        NONE, INDEX, WILDCARD
     }
-    
-    public final class STACAssetPredicate {
+
+    public static final class STACAssetPredicate {
+
+        private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
         private STACAssetPredicate() {
         }
-        
-        public static Predicate<HMStacAsset> fromJsonPath(
-                String jsonPath,
-                String expectedValue
-        ) {
+
+        public static <T> Predicate<T> fromJsonPath(String jsonPath, String expectedValue,
+                Function<T, JsonNode> jsonNodeExtractor) {
             STACPathExpression expression = STACPathExpression.parse(jsonPath);
 
-            return asset -> {
-                if (asset == null || asset.getAssetNode() == null) {
+            return object -> {
+                if (object == null) {
                     return false;
                 }
 
-                return expression.matches(asset.getAssetNode(), expectedValue);
+                JsonNode node = jsonNodeExtractor.apply(object);
+
+                if (node == null || node.isNull() || node.isMissingNode()) {
+                    return false;
+                }
+
+                return expression.matches(node, expectedValue);
             };
         }
 
-        public static Predicate<HMStacAsset> fromAssetAttribute(
-                String attributeName,
-                String expectedValue
-        ) {
+        public static Predicate<HMStacAsset> fromHMStacAsset(String jsonPath, String expectedValue) {
+            return fromJsonPath(jsonPath, expectedValue, asset -> asset == null ? null : asset.getAssetNode());
+        }
+
+        public static Predicate<JsonNode> fromJsonNode(String jsonPath, String expectedValue) {
+            return fromJsonPath(jsonPath, expectedValue, node -> node);
+        }
+
+        public static Predicate<JSONObject> fromKongJsonObject(String jsonPath, String expectedValue) {
+            return fromJsonPath(jsonPath, expectedValue, STACAssetPredicate::toJsonNode);
+        }
+
+        private static JsonNode toJsonNode(JSONObject jsonObject) {
+            if (jsonObject == null) {
+                return null;
+            }
+
+            try {
+                return OBJECT_MAPPER.readTree(jsonObject.toString());
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException("Cannot convert JSONObject to JsonNode", e);
+            }
+        }
+
+        public static Predicate<HMStacAsset> fromHMStacAssetAttribute(String attributeName, String expectedValue) {
             AssetAttribute attribute = AssetAttribute.fromName(attributeName);
 
             return asset -> {
@@ -277,14 +281,8 @@ public final class STACPathExpression {
                 return valueEquals(actualValue, expectedValue);
             };
         }
-
-        public static Predicate<HMStacAsset> from(String jsonPath, String expectedValue) {
-            STACPathExpression expression = STACPathExpression.parse(jsonPath);
-
-            return asset -> expression.matches(asset.getAssetNode(), expectedValue);
-        }
     }
-    
+
     public enum AssetAttribute {
 
         ID("id") {
@@ -342,17 +340,15 @@ public final class STACPathExpression {
                 throw new IllegalArgumentException("Asset attribute name cannot be empty");
             }
 
-            for (AssetAttribute attribute : values()) {
+            for(AssetAttribute attribute : values()) {
                 if (attribute.name.equalsIgnoreCase(name.trim())) {
                     return attribute;
                 }
             }
 
-            throw new IllegalArgumentException(
-                    "Unsupported HMStacAsset attribute: " + name
-                            + ". Supported attributes are: id, title, type, valid, epsg, nonValidReason"
-            );
+            throw new IllegalArgumentException("Unsupported HMStacAsset attribute: " + name
+                    + ". Supported attributes are: id, title, type, valid, epsg, nonValidReason");
         }
     }
-   
+
 }

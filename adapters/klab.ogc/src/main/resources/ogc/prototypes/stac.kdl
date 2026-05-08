@@ -15,8 +15,16 @@
  
  	optional number 'band'
  		"Relevant only for raster resources.
- 		 The band for a multi-band raster. Default is 0."
+ 		 The band index number for a multi-band raster. Default is 0."
  		default 0
+ 		
+ 	optional text 'jsonSelector'
+ 		"JSON selector"
+ 		default ""
+ 		
+ 	optional text 'jsonValue'
+ 		"JSON value"
+ 		default ""
  		
  	optional text 'cog'
  		"Relevant only for Resources served as Cloud Optimized GeoTiff, with Public Access"

@@ -18,40 +18,86 @@ class STACPathExpressionAndAttributeTest {
 
     private static JsonNode testJson() throws Exception {
         String json = """
-                {
-                  "node1": {
-                    "node2": [
-                      {
-                        "name": "something",
-                        "count": 10,
-                        "active": true
-                      },
-                      {
-                        "name": "other",
-                        "count": 20,
-                        "active": false
-                      }
-                    ]
-                  },
-                  "eo:bands": [
-                    {
-                      "name": "B01",
-                      "common_name": "coastal"
-                    },
-                    {
-                      "name": "B04",
-                      "common_name": "red"
-                    },
-                    {
-                      "name": "B08",
-                      "common_name": "nir"
-                    }
-                  ],
-                  "properties": {
-                    "cloud_cover": 12.5,
-                    "enabled": true
-                  }
-                }
+                "{assets": {
+        "peat_thickness": {
+          "href": "https://s3.waw4-1.cloudferro.com/ecdc-waw4-1-ekqouvq3otv8hmw0njzuvo0g4dy0ys8r985n7dggjis3erkpn5o/ECDC/Soil/Soil_V2_global_20010101_20211231_peat_thickness.tif",
+          "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+          "roles": [
+            "data"
+          ],
+          "Method to produce": "Spatial distribution is based on the prediction using the Quantile Random Forest algorithm, informed by land surface data (soil, climate, organisms, and topography), to develop regional models over six regions for peat thickness. Peat thickness models are based on approximately 27,000 data points. Highest accuracy observed in African peatlands.",
+          "Link to resource": [
+            "https://zenodo.org/records/14183473"
+          ],
+          "proj:code": "EPSG:4326",
+          "proj:geometry": {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  180,
+                  -60.007461
+                ],
+                [
+                  180,
+                  88.007948
+                ],
+                [
+                  -180,
+                  88.007948
+                ],
+                [
+                  -180,
+                  -60.007461
+                ],
+                [
+                  180,
+                  -60.007461
+                ]
+              ]
+            ]
+          },
+          "proj:bbox": [
+            -180,
+            -60.007461,
+            180,
+            88.007948
+          ],
+          "proj:shape": [
+            16477,
+            40076
+          ],
+          "proj:transform": [
+            0.008983152841201715,
+            0,
+            -180.004416632,
+            0,
+            -0.008983152841172543,
+            88.007948385,
+            0,
+            0,
+            1
+          ],
+          "eo:bands": [
+            {
+              "name": "peat_thickness"
+            }
+          ],
+          "raster:bands": [
+            {
+              "sampling": "area",
+              "data_type": "float32",
+              "statistics": {
+                "minimum": 1.9351852,
+                "maximum": 1006.69586
+              },
+              "unit": "cm",
+              "scale": 1,
+              "offset": 0
+            }
+          ]
+        }
+      }}
                 """;
 
         return MAPPER.readTree(json);
@@ -62,13 +108,13 @@ class STACPathExpressionAndAttributeTest {
         JsonNode root = testJson();
 
         STACPathExpression expression =
-                STACPathExpression.parse("node1>node2[0]>name");
+                STACPathExpression.parse("eo:bands[*]>name");
 
         List<JsonNode> resolved = expression.resolve(root);
 
         assertEquals(1, resolved.size());
         assertEquals("something", resolved.get(0).asText());
-        assertTrue(expression.matches(root, "something"));
+        assertTrue(expression.matches(root, "peat_thickness"));
         assertFalse(expression.matches(root, "other"));
     }
 

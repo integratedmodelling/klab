@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
@@ -62,18 +64,25 @@ public class STACValidator implements IResourceValidator {
             JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
             JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
-            Type type = readRasterDataType(asset);
-            // Currently, only files:values is supported. If needed, the classification extension could be used too.
-            Map<String, Object> vals = STACAssetParser.getFileValues(asset);
-            if (!vals.isEmpty()) {
-                CodelistReference codelist = populateCodelist(assetId, vals);
-                if (type == null) {
-                    type = codelist.getType();
+            generateCodeList(builder, assetId, asset);
+        } else if (userData.contains("jsonSelector")) {
+            if (userData.contains("jsonValue")) {
+                JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
+                Predicate<JSONObject> predicate =
+                        STACPathExpression.STACAssetPredicate.fromKongJsonObject(
+                                userData.get("jsonSelector", String.class),
+                                userData.get("jsonValue", String.class)
+                        );
+
+                for (String assetId : assets.keySet()) {
+                    JSONObject asset = assets.getJSONObject(assetId);
+
+                    if (predicate.test(asset)) {
+                        generateCodeList(builder, assetId, asset);
+                    }
                 }
-                builder.addCodeList(codelist);
-            }
-            if (type != null) {
-                builder.withType(type);
+            } else {
+                throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue have to be filled");
             }
         }
         
@@ -85,6 +94,22 @@ public class STACValidator implements IResourceValidator {
 
         readMetadata(collectionData, builder);
         return builder;
+    }
+
+    private void generateCodeList(Builder builder, String assetId, JSONObject asset) {
+        Type type = readRasterDataType(asset);
+        // Currently, only files:values is supported. If needed, the classification extension could be used too.
+        Map<String, Object> vals = STACAssetParser.getFileValues(asset);
+        if (!vals.isEmpty()) {
+            CodelistReference codelist = populateCodelist(assetId, vals);
+            if (type == null) {
+                type = codelist.getType();
+            }
+            builder.addCodeList(codelist);
+        }
+        if (type != null) {
+            builder.withType(type);
+        }
     }
 
     private Type readRasterDataType(JSONObject asset) {
