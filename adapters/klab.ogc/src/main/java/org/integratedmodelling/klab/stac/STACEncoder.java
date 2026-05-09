@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.api.data.FeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -58,23 +59,31 @@ import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
+import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.geotools.coverage.processing.Operations;
+import org.geotools.data.geojson.GeoJSONReader;
+import org.geotools.data.memory.MemoryDataStore;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
-import org.geotools.api.geometry.Position;
-import org.geotools.referencing.CRS;
-import org.geotools.api.referencing.FactoryException;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
+import com.kjetland.jackson.jsonSchema.annotations.JsonSchemaOptions.Item;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import org.locationtech.jts.operation.union.UnaryUnionOp;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.data.DataUtilities;
+import java.util.ArrayList;
 
 import kong.unirest.json.JSONObject;
 
@@ -246,7 +255,6 @@ public class STACEncoder implements IResourceEncoder {
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
         String assetId = resource.getParameters().get("asset", String.class);
         Integer bandIndex = resource.getParameters().get("band", Integer.class);
-
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         // This is part of a WIP that will be removed in the future
         boolean isIIASA = catalogUrl.contains("iiasa.blob");
@@ -266,8 +274,8 @@ public class STACEncoder implements IResourceEncoder {
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
-
-        // These are the static STAC catalogs
+     
+        // These are the static STAC catalogue
         if (!hasSearchOption) {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
             Time time2 = time; //TODO make the time and query time different
@@ -355,7 +363,8 @@ public class STACEncoder implements IResourceEncoder {
             ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
             return;
         }
-
+        
+        System.out.println("Found the Search Option!");
         LogProgressMonitor lpm = new LogProgressMonitor();
         HMStacManager manager = new HMStacManager(catalogUrl, lpm);
         HMStacCollection collection = null;
@@ -385,10 +394,26 @@ public class STACEncoder implements IResourceEncoder {
         }
         ITimeInstant start = time.getStart();
         ITimeInstant end = time.getEnd();
+        
+        if (assetId == null) {
+        	scope.getMonitor().debug("Query STAC " + collectionUrl + "to get the features");
+        	 	// Only get the features from STAC Collection, no need to interact with Rasters
+            	FeatureSource<SimpleFeatureType, SimpleFeature> source;
+                try {
+                    source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, start, end);
+                } catch (Exception e) {
+                   throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
+                }
+                encoder = new VectorEncoder();
+                ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+                return;
+        }
+        
         //collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds())); --> Filter later :)
-
+        
         GridCoverage2D coverage = null;
         try {
+        	System.out.println("Searcing STAC..");
             List<HMStacItem> items = collection.searchItems();
             if (items.isEmpty()) {
                 manager.close();
@@ -422,7 +447,7 @@ public class STACEncoder implements IResourceEncoder {
             var p = new Predicate<HMStacAsset>() {
             	
                 @Override
-                public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there
+                public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there, adding support for customised predicates
                 	var bands = asset.getAssetNode().get("eo:bands");
                             if (bands != null && bands.isArray()) {
                             	var bandsArray = (ArrayNode) bands;
@@ -438,33 +463,29 @@ public class STACEncoder implements IResourceEncoder {
                 };
                 
                 // Filter here based on time, since in some STAC collections they don't yet support temporal filtering :( like ECDC
-                 items = items.stream().filter(new Predicate<HMStacItem>() {
-                	 
-                	@Override 
-                	public boolean test(HMStacItem item) {
-                		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                		long itemStart = LocalDateTime
-                		        .parse(item.getStartTimestamp(), formatter)
-                		        .atZone(ZoneOffset.UTC)
-                		        .toInstant()
-                		        .toEpochMilli();
-                		
-						long itemEnd = LocalDateTime
-                		        .parse(item.getEndTimestamp(), formatter)
-                		        .atZone(ZoneOffset.UTC)
-                		        .toInstant()
-                		        .toEpochMilli();
-						
-						if (start.getMilliseconds() >= itemStart && end.getMilliseconds() <= itemEnd) { return true; }
-						return false;
-                	}
-                }).collect(Collectors.toList());
-                 
+                items = items.stream().filter(item -> {
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                    long itemStart = LocalDateTime
+                            .parse(item.getStartTimestamp(), formatter)
+                            .atZone(ZoneOffset.UTC)
+                            .toInstant()
+                            .toEpochMilli();
+
+                    long itemEnd = LocalDateTime
+                            .parse(item.getEndTimestamp(), formatter)
+                            .atZone(ZoneOffset.UTC)
+                            .toInstant()
+                            .toEpochMilli();
+
+                      return start.getMilliseconds() >= itemStart && end.getMilliseconds() <= itemEnd;
+                  }).collect(Collectors.toList());
                 if (items.size() == 0) {
                 	throw new KlabIllegalStateException("No STAC items found covering the entire time duration of the context requested");
                 } else {
                 	 scope.getMonitor().debug("Found " + items.size() + " STAC items satisfying the temporal constraint.");
                 }
+                
+                // Once the support for customized predicate is added, we can apply for features as well
                 
                 
                 Set<Integer> EPSGAtAssets =

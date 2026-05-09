@@ -59,28 +59,29 @@ public class STACValidator implements IResourceValidator {
 
         if (userData.contains("asset")) {
             String assetId = userData.get("asset", String.class);
-            JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
-            JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
+            	JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
+                JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
-            Type type = readRasterDataType(asset);
-            // Currently, only files:values is supported. If needed, the classification extension could be used too.
-            Map<String, Object> vals = STACAssetParser.getFileValues(asset);
-            if (!vals.isEmpty()) {
-                CodelistReference codelist = populateCodelist(assetId, vals);
-                if (type == null) {
-                    type = codelist.getType();
+                Type type = readRasterDataType(asset);
+                // Currently, only files:values is supported. If needed, the classification extension could be used too.
+                Map<String, Object> vals = STACAssetParser.getFileValues(asset);
+                if (!vals.isEmpty()) {
+                    CodelistReference codelist = populateCodelist(assetId, vals);
+                    if (type == null) {
+                        type = codelist.getType();
+                    }
+                    builder.addCodeList(codelist);
                 }
-                builder.addCodeList(codelist);
+                if (type != null) {
+                    builder.withType(type);
+                }
             }
-            if (type != null) {
-                builder.withType(type);
-            }
-        }
-        
+    
         if (userData.contains("cog")) {
         	if (userData.get("cog") != null) {
         		builder.withType(Type.NUMBER);
-        	}  
+        	} 
+        	
         }
 
         readMetadata(collectionData, builder);
