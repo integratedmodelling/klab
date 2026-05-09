@@ -30,12 +30,10 @@ import java.time.*;
 public class STACFeatureExtension {
 	public static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatures(JSONObject catalogData, String collectionId, List<Double> bbox, ITimeInstant start, ITimeInstant end) throws Exception {
 		
-		System.out.println("Getting features from STAC!");
 		String searchEndpoint = STACUtils.getLinkTo(catalogData, "search")
 		        .orElseThrow(() -> new Exception("Search Link not found for the Catalog"));
 		
 		List<SimpleFeature> featureList = new ArrayList<>();
-		System.out.println(searchEndpoint);
 
 		JSONArray bboxArray = new JSONArray();
 		for (Double v : bbox) {
@@ -57,10 +55,7 @@ public class STACFeatureExtension {
 		            .asJson();
 
 		    JSONObject body = response.getBody().getObject();
-		    System.out.println(body);
-		
 		    JSONArray features = body.getJSONArray("features");
-		    System.out.println(features.length());
 		    
 		    Iterator<Object> featureIterator = features.iterator();
 
@@ -112,7 +107,10 @@ public class STACFeatureExtension {
 		        }
 		    }
 		}
-		System.out.println(featureList.size());
+		if (featureList.isEmpty()) {
+			throw new Exception("No features found for the given parameters");
+		}
+		
         SimpleFeatureType type = featureList.get(0).getType();
         MemoryDataStore dataStore = new org.geotools.data.memory.MemoryDataStore(type);
         dataStore.addFeatures(featureList);

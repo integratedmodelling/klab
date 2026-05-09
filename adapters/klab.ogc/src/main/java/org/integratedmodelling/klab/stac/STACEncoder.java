@@ -364,7 +364,6 @@ public class STACEncoder implements IResourceEncoder {
             return;
         }
         
-        System.out.println("Found the Search Option!");
         LogProgressMonitor lpm = new LogProgressMonitor();
         HMStacManager manager = new HMStacManager(catalogUrl, lpm);
         HMStacCollection collection = null;
@@ -413,7 +412,6 @@ public class STACEncoder implements IResourceEncoder {
         
         GridCoverage2D coverage = null;
         try {
-        	System.out.println("Searcing STAC..");
             List<HMStacItem> items = collection.searchItems();
             if (items.isEmpty()) {
                 manager.close();
