@@ -496,9 +496,11 @@ public class STACEncoder implements IResourceEncoder {
                     items.stream()
                         .flatMap(item -> item.getAssets().stream()
                             .filter(pred)
+                            .findFirst()
                             .map(asset -> asset.getEpsg() != null
                                 ? asset.getEpsg()
-                                : item.getEpsg()))
+                                : item.getEpsg())
+                            .stream())
                         .collect(Collectors.toUnmodifiableSet());
             
             if (EPSGAtAssets.size() > 1) {
@@ -552,7 +554,15 @@ public class STACEncoder implements IResourceEncoder {
      */
     private boolean isWithinRange(HMStacItem item, long startMillis, long endMillis) {
     	 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    	 String startTimestamp = item.getStartTimestamp();
+         String endTimestamp = item.getEndTimestamp();
+
+         if (startTimestamp == null || endTimestamp == null) {
+             return true; // Assume the time part is ok
+         }
+         
 		try {
+			
 			long itemStart = LocalDateTime
 				.parse(item.getStartTimestamp(), formatter)
 				.atZone(ZoneOffset.UTC)
