@@ -445,6 +445,7 @@ public class STACEncoder implements IResourceEncoder {
                     return start.getMilliseconds() >= itemStart && end.getMilliseconds() <= itemEnd;
                 }).collect(Collectors.toList());
             if (items.size() == 0) {
+                manager.close();
                 throw new KlabIllegalStateException("No STAC items found covering the entire time duration of the context requested");
             } else {
                     scope.getMonitor().debug("Found " + items.size() + " STAC items satisfying the temporal constraint.");
@@ -474,7 +475,13 @@ public class STACEncoder implements IResourceEncoder {
                 };
             } else if (resource.getParameters().get("jsonSelector", String.class) != null) {
                 // based on the JSON Expression on JSONSelector and JSONValue
-                assetPredicate = getAssetPredicate(resource);
+                try {
+                    assetPredicate = getAssetPredicate(resource);
+                } catch (Exception e) {
+                    manager.close();
+                    throw new KlabResourceAccessException("Couldn't form a predicate with the JSON Expressions");
+                }
+                
             } else {
                 // NO JSONSelector and JSONValue found, NO assetID was passed as well
                 scope.getMonitor().debug("Query STAC " + collectionUrl + "to get the features");
@@ -483,10 +490,12 @@ public class STACEncoder implements IResourceEncoder {
                 try {
                     source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, start, end);
                 } catch (Exception e) {
+                    manager.close();
                    throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
                 }
                 encoder = new VectorEncoder();
                 ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+                manager.close();
                 return;
             }
             // Once the support for customized predicate is added, we can apply for features as well
