@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
@@ -57,10 +59,26 @@ public class STACValidator implements IResourceValidator {
         // The default URL of the resource is the collection endpoint. May be overwritten. 
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
+        JSONObject asset = null;
+        String assetId = null;
+
         if (userData.contains("asset")) {
-            String assetId = userData.get("asset", String.class);
-            	JSONObject asset = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
+             assetId = userData.get("asset", String.class);
+            	asset = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
                 //JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
+            } else if (userData.contains("jsonSelector")) {
+                if (userData.contains("jsonValue")) {
+                    Predicate<JSONObject> predicate =
+                            STACPathExpression.STACAssetPredicate.fromKongJsonObject(
+                                    userData.get("jsonSelector", String.class),
+                                    userData.get("jsonValue", String.class)
+                            );
+                    asset = STACCollectionParser.readAssetInformationFromCollectionWithPredicate(collectionUrl, collectionData, predicate);
+                    assetId = (String) asset.get("id"); // Since the Asset Id is not directly defined
+                    }
+                } else {
+                    throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue must be provided");
+                }
 
                 Type type = readRasterDataType(asset);
                 // Currently, only files:values is supported. If needed, the classification extension could be used too.
@@ -75,17 +93,32 @@ public class STACValidator implements IResourceValidator {
                 if (type != null) {
                     builder.withType(type);
                 }
+                generateCodeList(builder, assetId, asset);
+
+            if (userData.contains("cog")) {
+                if (userData.get("cog") != null) {
+                    builder.withType(Type.NUMBER);
+                } 
             }
-    
-        if (userData.contains("cog")) {
-        	if (userData.get("cog") != null) {
-        		builder.withType(Type.NUMBER);
-        	} 
-        	
-        }
 
         readMetadata(collectionData, builder);
         return builder;
+    }
+
+    private void generateCodeList(Builder builder, String assetId, JSONObject asset) {
+        Type type = readRasterDataType(asset);
+        // Currently, only files:values is supported. If needed, the classification extension could be used too.
+        Map<String, Object> vals = STACAssetParser.getFileValues(asset);
+        if (!vals.isEmpty()) {
+            CodelistReference codelist = populateCodelist(assetId, vals);
+            if (type == null) {
+                type = codelist.getType();
+            }
+            builder.addCodeList(codelist);
+        }
+        if (type != null) {
+            builder.withType(type);
+        }
     }
 
     private Type readRasterDataType(JSONObject asset) {

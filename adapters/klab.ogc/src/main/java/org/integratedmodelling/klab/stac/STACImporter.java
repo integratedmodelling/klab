@@ -43,6 +43,10 @@ public class STACImporter implements IResourceImporter {
         // TODO Auto-generated method stub
         return false;
     }
+    
+    private boolean hasAssetSelector(IParameters<String> parameters) {
+        return (parameters.contains("asset")||(parameters.contains("jsonSelector") && parameters.contains("jsonValue")));
+    }
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
             throws Exception {
@@ -59,7 +63,7 @@ public class STACImporter implements IResourceImporter {
 
         boolean isBulkImport = parameters.contains("bulkImport");
         parameters.remove("bulkImport");
-        if (!parameters.contains("asset") && !isBulkImport) {
+        if (!hasAssetSelector(parameters) && !isBulkImport) {
             Builder builder = buildResource(parameters, project, monitor, collectionId);
             if (builder != null) {
                 ret.add(builder);
