@@ -73,7 +73,7 @@ public class STACImporter implements IResourceImporter {
             return;
         }
         
-        String assetId = (String) parameters.get("asset");
+        String assetId = parameters.get("asset", String.class);
         JSONObject assetData = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
         
         /*
