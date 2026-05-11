@@ -45,7 +45,7 @@ public class STACImporter implements IResourceImporter {
     }
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
-            throws MalformedURLException {
+            throws Exception {
         String collectionUrl = parameters.get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = STACCollectionParser.readCollectionId(collectionData);
@@ -69,7 +69,7 @@ public class STACImporter implements IResourceImporter {
             return;
         }
         
-        String assetId = parameters.get("asset");
+        String assetId = (String) parameters.get("asset");
         JSONObject assetData = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
         
         /*
