@@ -53,7 +53,7 @@ import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.STACAdapter;
-import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
+import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder; 
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;

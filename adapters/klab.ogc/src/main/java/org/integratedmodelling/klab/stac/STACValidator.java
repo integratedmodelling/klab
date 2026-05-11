@@ -59,8 +59,8 @@ public class STACValidator implements IResourceValidator {
 
         if (userData.contains("asset")) {
             String assetId = userData.get("asset", String.class);
-            	JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
-                JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
+            	JSONObject asset = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
+                //JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
 
                 Type type = readRasterDataType(asset);
                 // Currently, only files:values is supported. If needed, the classification extension could be used too.

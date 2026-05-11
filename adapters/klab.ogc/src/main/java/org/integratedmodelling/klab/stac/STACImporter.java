@@ -68,7 +68,42 @@ public class STACImporter implements IResourceImporter {
             }
             return;
         }
-        JSONObject assets = STACCollectionParser.readAssetsFromCollection(collectionUrl, collectionData);
+        
+        String assetId = parameters.get("asset");
+        JSONObject assetData = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
+        
+        /*
+         * If the particular asset Id wasn't found, then 
+         * still proceed to create the resource since it can happen
+         * for a number of reasons. Pagination, STAC Backend etc.
+         * In that case however, a better handling of S3 URL needs to figured out
+         */
+        if (assetData != null) {
+        	if (!STACAssetParser.isSupportedMediaType(assetData)) {
+                throw new Exception("Unsupported media type for the asset");
+             }
+        	String href = assetData.getString("href");
+            if (S3URLUtils.isS3Endpoint(href)) {
+                String[] bucketAndObject = href.split("://")[1].split("/", 2);
+                String s3Region = "unknown"; // TODO resolve the region
+                parameters.put("awsRegion", s3Region);
+            }
+        }
+        
+        
+        parameters.put("asset", assetId);
+        String resourceUrn = collectionId + "-" + assetId;
+        Builder builder = buildResource(parameters, project, monitor, resourceUrn);
+        if (builder != null) {
+            ret.add(builder);
+        } else {
+            monitor.warn("STAC resource with asset " + resourceUrn + " is invalid and cannot be imported");
+        }
+        
+        // Think of a way to do the REGEX matching. Possibly not worth it to support 
+        // this for something as diverse as STAC
+        
+        /*
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
         for(String assetId : assetIds) {
             if (regex != null && !assetId.matches(regex)) {
@@ -77,10 +112,13 @@ public class STACImporter implements IResourceImporter {
             }
 
             JSONObject assetData = STACAssetMapParser.getAsset(assets, assetId);
-            if (!STACAssetParser.isSupportedMediaType(assetData)) {
-                Logging.INSTANCE.info("Asset " + assetId + " doesn't have a supported media type, skipped");
-                continue;
+            if (assetData != null) {
+            	if (!STACAssetParser.isSupportedMediaType(assetData)) {
+                    Logging.INSTANCE.info("Asset " + assetId + " doesn't have a supported media type, skipped");
+                    continue;
+                }
             }
+           
             parameters.put("asset", assetId);
             String resourceUrn = collectionId + "-" + assetId;
             String href = assetData.getString("href");
@@ -97,6 +135,8 @@ public class STACImporter implements IResourceImporter {
                 monitor.warn("STAC resource with asset " + resourceUrn + " is invalid and cannot be imported");
             }
         }
+        
+        */
     }
 
     private Builder buildResource(IParameters<String> parameters, IProject project, IMonitor monitor, String resourceUrn) throws MalformedURLException {

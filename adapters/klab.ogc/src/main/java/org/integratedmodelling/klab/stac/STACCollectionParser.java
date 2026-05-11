@@ -16,6 +16,7 @@ import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema.Items;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACCollectionParser {
@@ -62,7 +63,7 @@ public class STACCollectionParser {
      * @return The asset list as a JSON
      * @throws KlabResourceAccessException
      */
-    public static JSONObject readAssetsFromCollection(String collectionUrl, JSONObject collection) throws KlabResourceAccessException {
+    public static JSONObject readAssetInformationFromCollection(String collectionUrl, JSONObject collection, String assetId) throws KlabResourceAccessException {
         String collectionId = collection.getString("id");
         String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collection);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
@@ -91,21 +92,42 @@ public class STACCollectionParser {
                 return itemData.getJSONObject("assets");
             }
             throw new KlabResourceNotFoundException("Cannot find assets at STAC collection \"" + collectionUrl + "\"");
-        }
+        } 
 
-        // TODO Move the query to another place. 
-        String parameters = "?collections=" + collectionId + "&limit=1";
-        HttpResponse<JsonNode> response = Unirest.get(searchEndpoint.get() + parameters).asJson();
+        JSONObject searchPayload = new JSONObject()
+				.put("limit", 100)
+				.put("bbox", new JSONArray().put(-180.0).put(-90.0).put(180.0).put(90.0))
+				.put("collections", new JSONArray().put(collectionId));
+        
+        HttpResponse<JsonNode> response = Unirest
+	            .post(searchEndpoint.get())
+	            .header("Content-Type", "application/json")
+	            .body(searchPayload)
+	            .asJson();
 
         if (!response.isSuccess()) {
-            throw new KlabResourceAccessException(); //TODO set message
+            throw new KlabResourceAccessException("Unable to import collection, Search failed"); //TODO set message
         }
 
         JSONObject searchResponse = response.getBody().getObject();
         if (searchResponse.getJSONArray("features").length() == 0) {
-            throw new KlabResourceAccessException(); // TODO set message there is no feature
+            throw new KlabResourceAccessException("No features were found in the collection to be imported"); // TODO set message there is no feature
+        }
+        
+        JSONArray features = searchResponse.getJSONArray("features");
+
+        for (int i = 0; i < features.length(); i++) {
+            JSONObject feature = features.getJSONObject(i);
+
+            JSONObject assetInfo = feature
+                .getJSONObject("assets")
+                .optJSONObject(assetId);
+
+            if (assetInfo != null) {
+                return assetInfo;
+            }
         }
 
-        return searchResponse.getJSONArray("features").getJSONObject(0).getJSONObject("assets");
+        throw new KlabResourceAccessException("No Asset with ID: " + assetId + " was found in the collection");
     }
 }
