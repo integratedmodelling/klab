@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.stac;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import kong.unirest.json.JSONObject;
 
@@ -19,13 +20,8 @@ public final class STACPathExpression {
 
     private final List<PathPart> path;
 
-    /*
-     * This works: eo:bands[*]>name
-     * This probably does not behave as a user might expect: eo:bands>name
-     * because eo:bands resolves to an array node, and then the next path part tries to read field name directly from an array.
-     * That returns nothing. That is acceptable, but it should be documented: arrays require either [n] or [*].
-     */
-    public static final String PREDICATE_EO_BANDS_NAME = "eo:bands[*]>name";
+    public static final String PREDICATE_EO_BANDS_NAME = "eo:bands.name";
+    public static final String MEDIA_TYPE_BANDS_NAME = "type";
 
     private STACPathExpression(List<PathPart> path) {
         this.path = path;
@@ -54,39 +50,15 @@ public final class STACPathExpression {
         List<JsonNode> currentNodes = new ArrayList<>();
         currentNodes.add(root);
 
-        for(PathPart part : path) {
+        for (PathPart part : path) {
             List<JsonNode> nextNodes = new ArrayList<>();
 
-            for(JsonNode current : currentNodes) {
+            for (JsonNode current : currentNodes) {
                 if (current == null || current.isNull() || current.isMissingNode()) {
                     continue;
                 }
 
-                JsonNode fieldNode = current.get(part.fieldName());
-
-                if (fieldNode == null || fieldNode.isNull() || fieldNode.isMissingNode()) {
-                    continue;
-                }
-
-                if (part.arrayMode() == ArrayMode.NONE) {
-                    nextNodes.add(fieldNode);
-                } else if (part.arrayMode() == ArrayMode.INDEX) {
-                    if (fieldNode.isArray()) {
-                        JsonNode indexedNode = fieldNode.get(part.arrayIndex());
-
-                        if (indexedNode != null && !indexedNode.isNull() && !indexedNode.isMissingNode()) {
-                            nextNodes.add(indexedNode);
-                        }
-                    }
-                } else if (part.arrayMode() == ArrayMode.WILDCARD) {
-                    if (fieldNode.isArray()) {
-                        for(JsonNode arrayElement : fieldNode) {
-                            if (arrayElement != null && !arrayElement.isNull() && !arrayElement.isMissingNode()) {
-                                nextNodes.add(arrayElement);
-                            }
-                        }
-                    }
-                }
+                resolvePart(current, part, nextNodes);
             }
 
             currentNodes = nextNodes;
@@ -99,8 +71,87 @@ public final class STACPathExpression {
         return currentNodes;
     }
 
+    private static void resolvePart(JsonNode current, PathPart part, List<JsonNode> nextNodes) {
+        if (current.isArray()) {
+            resolveFromArray(current, part, nextNodes);
+        } else if (current.isObject()) {
+            resolveFromObject(current, part, nextNodes);
+        }
+    }
+
+    private static void resolveFromArray(JsonNode arrayNode, PathPart part, List<JsonNode> nextNodes) {
+        if (part.arrayMode() == ArrayMode.INDEX) {
+            JsonNode indexedNode = arrayNode.get(part.arrayIndex());
+
+            if (isUsable(indexedNode)) {
+                resolvePart(indexedNode, new PathPart(part.fieldName(), ArrayMode.NONE, null), nextNodes);
+            }
+
+            
+        } else {
+            for (JsonNode element : arrayNode) {
+                if (isUsable(element)) {
+                    resolvePart(element, part, nextNodes);
+                }
+            }
+        }
+    }
+
+    private static void resolveFromObject(JsonNode objectNode, PathPart part, List<JsonNode> nextNodes) {
+        JsonNode directField = objectNode.get(part.fieldName());
+
+        if (isUsable(directField)) {
+            addResolvedField(directField, part, nextNodes);
+        } else {
+            objectNode.fields().forEachRemaining(entry -> {
+                String mapKey = entry.getKey();
+                JsonNode mapValue = entry.getValue();
+
+                if (!isUsable(mapValue) || !mapValue.isObject()) {
+                    return;
+                }
+
+                if ("id".equalsIgnoreCase(part.fieldName())) {
+                    nextNodes.add(TextNode.valueOf(mapKey));
+                    return;
+                }
+
+                JsonNode nestedField = mapValue.get(part.fieldName());
+
+                if (isUsable(nestedField)) {
+                    addResolvedField(nestedField, part, nextNodes);
+                }
+            });
+
+        }
+    }
+
+    private static void addResolvedField(JsonNode fieldNode, PathPart part, List<JsonNode> nextNodes) {
+        if (part.arrayMode() == ArrayMode.INDEX) {
+            if (fieldNode.isArray()) {
+                JsonNode indexedNode = fieldNode.get(part.arrayIndex());
+
+                if (isUsable(indexedNode)) {
+                    nextNodes.add(indexedNode);
+                }
+            }
+        } else if (fieldNode.isArray()) {
+            for (JsonNode element : fieldNode) {
+                if (isUsable(element)) {
+                    nextNodes.add(element);
+                }
+            }
+        } else {
+            nextNodes.add(fieldNode);
+        }
+    }
+
+    private static boolean isUsable(JsonNode node) {
+        return node != null && !node.isNull() && !node.isMissingNode();
+    }
+
     private static List<PathPart> parsePath(String jsonPath) {
-        String[] tokens = jsonPath.split(">");
+        String[] tokens = jsonPath.split("\\.");
 
         List<PathPart> parts = new ArrayList<>();
 
@@ -151,8 +202,7 @@ public final class STACPathExpression {
         }
 
         if (actualValue.isBoolean()) {
-            return Boolean.toString(actualValue.booleanValue())
-                    .equalsIgnoreCase(expectedValue);
+            return Boolean.toString(actualValue.booleanValue()).equalsIgnoreCase(expectedValue);
         }
 
         if (actualValue.isTextual()) {
@@ -199,28 +249,21 @@ public final class STACPathExpression {
                 throw new IllegalArgumentException("Field name cannot be empty in path element: " + token);
             }
 
-            if ("*".equals(indexText)) {
-                return new PathPart(fieldName, ArrayMode.WILDCARD, null);
-            }
-
             int index;
-
             try {
                 index = Integer.parseInt(indexText);
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Invalid array index in path element: " + token, e);
             }
-
             if (index < 0) {
                 throw new IllegalArgumentException("Array index cannot be negative in path element: " + token);
             }
-
             return new PathPart(fieldName, ArrayMode.INDEX, index);
         }
     }
 
     public enum ArrayMode {
-        NONE, INDEX, WILDCARD
+        NONE, INDEX
     }
 
     public static final class STACAssetPredicate {
@@ -286,7 +329,7 @@ public final class STACPathExpression {
                 return valueEquals(actualValue, expectedValue);
             };
         }
-        
+
         public static Predicate<HMStacAsset> fromHMStacAssetId(String expectedValue) {
             return fromHMStacAssetAttribute("id", expectedValue);
         }
