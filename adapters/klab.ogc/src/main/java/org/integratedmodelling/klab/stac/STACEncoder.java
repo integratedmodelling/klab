@@ -490,12 +490,17 @@ public class STACEncoder implements IResourceEncoder {
             }
             
             // Once the support for customized predicate is added, we can apply for features as well
+            
+            var pred = assetPredicate;
             Set<Integer> EPSGAtAssets =
                     items.stream()
-                        .flatMap(item -> item.getAssets().stream())
-                        .filter(assetPredicate)
-                        .map(HMStacAsset::getEpsg)
+                        .flatMap(item -> item.getAssets().stream()
+                            .filter(pred)
+                            .map(asset -> asset.getEpsg() != null
+                                ? asset.getEpsg()
+                                : item.getEpsg()))
                         .collect(Collectors.toUnmodifiableSet());
+            
             if (EPSGAtAssets.size() > 1) {
                 scope.getMonitor().warn("Multiple EPSGs found on the assets in items " + EPSGAtAssets.toString() 
                 + "."
