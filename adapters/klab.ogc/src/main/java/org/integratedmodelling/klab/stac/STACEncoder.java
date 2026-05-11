@@ -5,10 +5,6 @@ import java.io.OutputStream;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -92,7 +88,7 @@ import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.data.DataUtilities;
-import java.util.ArrayList;
+import java.util.*;
 
 import kong.unirest.json.JSONObject;
 
@@ -185,6 +181,9 @@ public class STACEncoder implements IResourceEncoder {
         }
     }
 
+    /*
+        Helper to Sort Items (of type HMStacItem) based on their timestamp
+     */
     private void sortByDate(List<HMStacItem> items, IMonitor monitor) {
         if (items.stream().anyMatch(i -> i.getTimestamp() == null)) {
             throw new KlabIllegalStateException("STAC items are lacking a timestamp and could not be sorted by date.");
@@ -224,6 +223,8 @@ public class STACEncoder implements IResourceEncoder {
         IEnvelope envelope = space.getEnvelope();
         List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
 
+        // Only for Backward Compatiability
+        // A new COG Adapter would be added
         if (resource.getParameters().get("cog") != null) {
             COGURL = resource.getParameters().get("cog", String.class);
             scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
@@ -263,16 +264,24 @@ public class STACEncoder implements IResourceEncoder {
         String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collectionData);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
         Integer bandIndex = resource.getParameters().get("band", Integer.class);
-        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
-        // This is part of a WIP that will be removed in the future
-        boolean isIIASA = catalogUrl.contains("iiasa.blob");
         String assetId = resource.getParameters().get("asset", String.class);
-
-        Time time = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time)
-                .findFirst().orElseThrow();
+        boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
+        final boolean allowTransform = true;
+        Time ctxTime = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
         Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
+    
+        Time effectiveTime = ctxTime;
+        if (resourceTime != null
+                && resourceTime.getStart() != null
+                && resourceTime.getEnd() != null
+                && resourceTime.getCoveredExtent() > 0) {
 
-        if (isIIASA) {
+            effectiveTime = validateTemporalDimension(ctxTime, resourceTime);
+        }
+
+
+        // This is part of a WIP that will be removed in the future
+        if (catalogUrl.contains("iiasa.blob")) {
             FeatureSource<SimpleFeatureType, SimpleFeature> source;
             try {
                 source = STACIIASAExtension.getFeatures(collectionData, bbox);
@@ -283,27 +292,55 @@ public class STACEncoder implements IResourceEncoder {
             ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
+        
+        /*
+        Select the Predicate based on the assetId, JSONSelector Query, and the JSONValue
+         */
+
+        Predicate<HMStacAsset> assetPredicate = null;
+        if (assetId != null) {
+            assetPredicate = new Predicate<HMStacAsset>() {
+            @Override
+            public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there, adding support for customised predicates
+                    var bands = asset.getAssetNode().get("eo:bands");
+                        if (bands != null && bands.isArray()) {
+                        var bandsArray = (ArrayNode) bands;
+                        for (var bandNode : bandsArray) {
+                            String bandName = bandNode.get("name").asText();
+                            if (bandName.equals(assetId)) { // under eo:band it's one of the band
+                                return true;
+                            }
+                        }
+                    } else { // meaning eo:bands is not present like Microsoft Planetary, in this case this would be like the asset key i.e. Id
+                        return asset.getId().equals(assetId);
+                    }
+                    return false;
+                }
+            };
+        } else if (resource.getParameters().get("jsonSelector", String.class) != null) {
+            // based on the JSON Expression on JSONSelector and JSONValue
+            try {
+                assetPredicate = getAssetPredicate(resource);
+            } catch (Exception e){
+                throw new KlabResourceAccessException("Couldn't form a predicate with the JSON Expressions");
+            }
+            
+        }
      
         // These are the static STAC catalogue
         if (!hasSearchOption) {
             List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
-            Time time2 = time; //TODO make the time and query time different
             features = features.stream().filter(f -> {
                 Geometry fGeometry = (Geometry) f.getDefaultGeometry();
                 return fGeometry.intersects(space.getShape().getJTSGeometry());
             }).toList();
-            features = features.stream().filter(f -> isFeatureInTimeRange(time2, f)).toList();
-            if (features.isEmpty()) {
-                throw new KlabResourceNotFoundException("There are no items in this context for the collection " + collectionId);
-            }
             CoordinateReferenceSystem crs = features.get(0).getFeatureType().getCoordinateReferenceSystem();
             if (crs == null) {
                 crs = CrsUtilities.getCrsFromSrid(4326); // We go to the standard
             }
-
+            var time2 = effectiveTime;
             // TODO merge with similar code from below
             IGrid grid = space.getGrid();
-
             RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
                     space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(),
                     (int) grid.getYCells());
@@ -313,15 +350,17 @@ public class STACEncoder implements IResourceEncoder {
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
             // end //TODO
-
-            List<HMStacItem> items = features.stream().map(f -> {
-                try {
-                    return HMStacItem.fromSimpleFeature(f);
-                } catch (Exception e) {
-                    scope.getMonitor().warn("Cannot parse feature " + f.getID() + ". Ignored.");
-                }
-                return null;
-            }).filter(i -> i != null).toList();
+            List<HMStacItem> items = features.stream()
+            	    .map(f -> {
+            	        try {
+            	            return HMStacItem.fromSimpleFeature(f);
+            	        } catch (Exception e) {
+            	            scope.getMonitor().warn("Cannot parse feature " + f.getID() + ". Ignored.");
+            	            return null;
+            	        }})
+            	    .filter(Objects::nonNull)
+            	    .filter(item -> isWithinRange(item, time2.getStart().getMilliseconds(), time2.getEnd().getMilliseconds()))
+            	    .toList();
 
             GridCoverage2D coverage = null;
 
@@ -388,14 +427,7 @@ public class STACEncoder implements IResourceEncoder {
 
         Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
         Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
-        collection.setGeometryFilter(poly);
-        
-
-        if (resourceTime != null && resourceTime.getStart() != null && resourceTime.getEnd() != null && resourceTime.getCoveredExtent() > 0) {
-            time = validateTemporalDimension(time, resourceTime);
-        }
-        ITimeInstant start = time.getStart();
-        ITimeInstant end = time.getEnd();    
+        collection.setGeometryFilter(poly); 
         //collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds())); --> Filter later :)
         
         GridCoverage2D coverage = null;
@@ -426,24 +458,12 @@ public class STACEncoder implements IResourceEncoder {
                 Client s3Client = buildS3Client(bucketRegion);
                 collection.setS3Client(s3Client);
             }
-
+            var time = effectiveTime;
             // Filter here based on time, since in some STAC collections they don't yet support temporal filtering :( like ECDC
-            items = items.stream().filter(item -> {
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                long itemStart = LocalDateTime
-                        .parse(item.getStartTimestamp(), formatter)
-                        .atZone(ZoneOffset.UTC)
-                        .toInstant()
-                        .toEpochMilli();
+            items = items.stream()
+                .filter(item -> isWithinRange(item, time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()))
+                .collect(Collectors.toList());
 
-                long itemEnd = LocalDateTime
-                        .parse(item.getEndTimestamp(), formatter)
-                        .atZone(ZoneOffset.UTC)
-                        .toInstant()
-                        .toEpochMilli();
-
-                    return start.getMilliseconds() >= itemStart && end.getMilliseconds() <= itemEnd;
-                }).collect(Collectors.toList());
             if (items.size() == 0) {
                 manager.close();
                 throw new KlabIllegalStateException("No STAC items found covering the entire time duration of the context requested");
@@ -452,43 +472,13 @@ public class STACEncoder implements IResourceEncoder {
             }
 
             // Allow transform ensures the process to finish, but I would not bet on the resulting data
-            Predicate<HMStacAsset> assetPredicate = null;
-            final boolean allowTransform = true;
-            if (assetId != null) {
-                assetPredicate = new Predicate<HMStacAsset>() {
-                @Override
-                public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there, adding support for customised predicates
-                	    var bands = asset.getAssetNode().get("eo:bands");
-                            if (bands != null && bands.isArray()) {
-                            var bandsArray = (ArrayNode) bands;
-                            for (var bandNode : bandsArray) {
-                                String bandName = bandNode.get("name").asText();
-                                if (bandName.equals(assetId)) { // under eo:band it's one of the band
-                                    return true;
-                                }
-                            }
-                        } else { // meaning eo:bands is not present like Microsoft Planetary, in this case this would be like the asset key i.e. Id
-                            return asset.getId().equals(assetId);
-                        }
-                        return false;
-                    }
-                };
-            } else if (resource.getParameters().get("jsonSelector", String.class) != null) {
-                // based on the JSON Expression on JSONSelector and JSONValue
-                try {
-                    assetPredicate = getAssetPredicate(resource);
-                } catch (Exception e) {
-                    manager.close();
-                    throw new KlabResourceAccessException("Couldn't form a predicate with the JSON Expressions");
-                }
-                
-            } else {
+            if (assetPredicate == null) {
                 // NO JSONSelector and JSONValue found, NO assetID was passed as well
                 scope.getMonitor().debug("Query STAC " + collectionUrl + "to get the features");
         	 	// Only get the features from STAC Collection, no need to interact with Rasters
             	FeatureSource<SimpleFeatureType, SimpleFeature> source;
                 try {
-                    source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, start, end);
+                    source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, effectiveTime.getStart(), effectiveTime.getEnd());
                 } catch (Exception e) {
                     manager.close();
                    throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
@@ -498,6 +488,7 @@ public class STACEncoder implements IResourceEncoder {
                 manager.close();
                 return;
             }
+            
             // Once the support for customized predicate is added, we can apply for features as well
             Set<Integer> EPSGAtAssets =
                     items.stream()
@@ -550,26 +541,31 @@ public class STACEncoder implements IResourceEncoder {
         }
     }
 
-    private boolean isFeatureInTimeRange(Time time2, SimpleFeature f) {
-        Date datetime = (Date) f.getAttribute("datetime");
-        if (datetime != null) {
-            if (isDateWithinRange(time2, datetime)) {
-                return true;
-            }
-        }
 
-        Date itemStart = (Date) f.getAttribute("start_datetime");
-        if (itemStart == null) {
-            return false;
-        }
-        Date itemEnd = (Date) f.getAttribute("end_datetime");
-        if (itemEnd == null) {
-            return itemStart.toInstant().getEpochSecond() <= time2.getStart().getMilliseconds();
-        }
-        if (isDateWithinRange(time2, itemStart) || isDateWithinRange(time2, itemEnd)) {
-            return true;
-        }
-        return false;
+    /*
+        To check if an Item (of type HMStacItem) is within a time range
+     */
+    private boolean isWithinRange(HMStacItem item, long startMillis, long endMillis) {
+    	 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		try {
+			long itemStart = LocalDateTime
+				.parse(item.getStartTimestamp(), formatter)
+				.atZone(ZoneOffset.UTC)
+				.toInstant()
+				.toEpochMilli();
+		
+			long itemEnd = LocalDateTime
+				.parse(item.getEndTimestamp(), formatter)
+				.atZone(ZoneOffset.UTC)
+				.toInstant()
+				.toEpochMilli();
+
+			return startMillis >= itemStart && endMillis <= itemEnd;
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
     }
 
     private List<SimpleFeature> getFeaturesFromStaticCollection(String collectionUrl, JSONObject collectionData, String collectionId) {
