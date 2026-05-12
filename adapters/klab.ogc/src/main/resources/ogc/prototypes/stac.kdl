@@ -11,7 +11,7 @@
  		"[REQUIRED] The URL pointing to the STAC collection file that contains the resource dataset."
  		
  	optional text 'asset'
- 		"The asset that is going to be retrieved from the items. Should be left it blank when the information is stored in the feature."
+ 		"The asset that is going to be retrieved from the items. Should be left blank when the information is stored in the feature."
  
  	optional number 'band'
  		"Relevant only for raster resources.
