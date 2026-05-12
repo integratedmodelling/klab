@@ -305,16 +305,16 @@ public class STACEncoder implements IResourceEncoder {
             public boolean test(HMStacAsset asset) { // Assuming for now that "eo:bands" would be there, adding support for customised predicates
                     var bands = asset.getAssetNode().get("eo:bands");
                         if (bands != null && bands.isArray()) {
-                        var bandsArray = (ArrayNode) bands;
-                        for (var bandNode : bandsArray) {
-                            String bandName = bandNode.get("name").asText();
-                            if (bandName.equals(assetId)) { // under eo:band it's one of the band
-                                return true;
-                            }
-                        }
-                    } else { // meaning eo:bands is not present like Microsoft Planetary, in this case this would be like the asset key i.e. Id
-                        return asset.getId().equals(assetId);
-                    }
+	                        var bandsArray = (ArrayNode) bands;
+	                        for (var bandNode : bandsArray) {
+	                            String bandName = bandNode.get("name").asText();
+	                            if (bandName.equals(assetId)) { // under eo:band it's one of the band
+	                                return true;
+	                            }
+	                        }
+	                    } else { // meaning eo:bands is not present like Microsoft Planetary, in this case this would be like the asset key i.e. Id
+	                        return asset.getId().equals(assetId);
+	                    }
                     return false;
                 }
             };
@@ -419,6 +419,7 @@ public class STACEncoder implements IResourceEncoder {
 
         if (collection == null) {
             scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+            throw new KlabResourceAccessException("Collection" + resource.getParameters().get("collection", String.class) +" cannot be accessed."); // Fail fast
         }
 
         IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
