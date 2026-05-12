@@ -407,33 +407,23 @@ public class STACEncoder implements IResourceEncoder {
         try {
             manager.open();
             collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
-        } catch (Exception e) {
-        	try {
-				manager.close();
-			} catch (Exception e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl + ". Reason :" + e.getMessage());
-        }
 
-        if (collection == null) {
-            scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
-            throw new KlabResourceAccessException("Collection" + resource.getParameters().get("collection", String.class) +" cannot be accessed."); // Fail fast
-        }
+	        if (collection == null) {
+	            scope.getMonitor().error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+	            manager.close();
+	            throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl); // Fail fast
+	        }
 
-        IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
-                ? ((Observation) scope.getTargetArtifact()).getObservable()
-                : null;
-        HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
-
-        Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
-        Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
-        collection.setGeometryFilter(poly); 
-        //collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds())); --> Filter later :)
-        
-        GridCoverage2D coverage = null;
-        try {
+	        IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
+	                ? ((Observation) scope.getTargetArtifact()).getObservable()
+	                : null;
+	        HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
+	        Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+	        Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
+	        collection.setGeometryFilter(poly); 
+	        //collection.setTimestampFilter(new Date(start.getMilliseconds()), new Date(end.getMilliseconds())); --> Filter later :)
+	        
+	        GridCoverage2D coverage = null;
         
         	// Allow transform ensures the process to finish, but I would not bet on the resulting data
             if (assetPredicate == null) {
