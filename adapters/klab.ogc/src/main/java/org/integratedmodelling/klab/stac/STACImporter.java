@@ -74,8 +74,9 @@ public class STACImporter implements IResourceImporter {
         }
         
         String assetId = parameters.get("asset", String.class);
-        JSONObject assetData = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
+        JSONObject assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
         
+        JSONObject assetData = assetNode.getJSONObject(assetId);
         /*
          * If the particular asset Id wasn't found, then 
          * still proceed to create the resource since it can happen
