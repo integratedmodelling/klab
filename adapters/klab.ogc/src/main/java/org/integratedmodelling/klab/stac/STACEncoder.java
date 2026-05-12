@@ -508,12 +508,12 @@ public class STACEncoder implements IResourceEncoder {
             	coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
             }
             manager.close();
+            encoder = new RasterEncoder();
+            ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
         } catch (Exception e) {
         	e.printStackTrace();
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
         }
-        encoder = new RasterEncoder();
-        ((RasterEncoder)encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
     }
     
     private Predicate<HMStacAsset> getAssetPredicate(IResource resource){
