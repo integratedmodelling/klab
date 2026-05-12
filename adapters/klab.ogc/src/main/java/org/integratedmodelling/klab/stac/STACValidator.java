@@ -45,61 +45,62 @@ public class STACValidator implements IResourceValidator {
         String collectionUrl = userData.get("collection", String.class);
         String collectionId = userData.get("collectionId", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
-        if (collectionId ==  null) {
+        if (collectionId == null) {
             collectionId = collectionData.getString("id");
             userData.put("collectionId", collectionId);
         }
         IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
 
-        Builder builder = new ResourceBuilder(urn)
-                .withParameters(userData)
-                .withGeometry(geometry)
-                .withType(Type.OBJECT);
+        Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry).withType(Type.OBJECT);
 
-        // The default URL of the resource is the collection endpoint. May be overwritten. 
+        // The default URL of the resource is the collection endpoint. May be overwritten.
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
-        JSONObject asset = null;
-        String assetId = null;
+        JSONObject assetNode;
 
         if (userData.contains("asset")) {
-             assetId = userData.get("asset", String.class);
-            	asset = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
-                //JSONObject asset = STACAssetMapParser.getAsset(assets, assetId);
-            } else if (userData.contains("jsonSelector")) {
-                if (userData.contains("jsonValue")) {
-                    Predicate<JSONObject> predicate =
-                            STACPathExpression.STACAssetPredicate.fromKongJsonObject(
-                                    userData.get("jsonSelector", String.class),
-                                    userData.get("jsonValue", String.class)
-                            );
-                    asset = STACCollectionParser.readAssetInformationFromCollectionWithPredicate(collectionUrl, collectionData, predicate);
-                    assetId = (String) asset.get("id"); // Since the Asset Id is not directly defined
-                    }
-                } else {
-                    throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue must be provided");
-                }
+            String requestedAssetId = userData.get("asset", String.class);
 
-                Type type = readRasterDataType(asset);
-                // Currently, only files:values is supported. If needed, the classification extension could be used too.
-                Map<String, Object> vals = STACAssetParser.getFileValues(asset);
-                if (!vals.isEmpty()) {
-                    CodelistReference codelist = populateCodelist(assetId, vals);
-                    if (type == null) {
-                        type = codelist.getType();
-                    }
-                    builder.addCodeList(codelist);
-                }
-                if (type != null) {
-                    builder.withType(type);
-                }
-                generateCodeList(builder, assetId, asset);
+            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, requestedAssetId);
 
-            if (userData.contains("cog")) {
-                if (userData.get("cog") != null) {
-                    builder.withType(Type.NUMBER);
-                } 
+        } else if (userData.contains("jsonSelector")) {
+            if (!userData.contains("jsonValue")) {
+                throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue must be provided");
             }
+
+            Predicate<JSONObject> predicate = STACPathExpression.STACAssetPredicate
+                    .fromKongJsonObject(userData.get("jsonSelector", String.class), userData.get("jsonValue", String.class));
+
+            assetNode = STACCollectionParser.readAssetInformationFromCollectionWithPredicate(collectionUrl, collectionData,
+                    predicate);
+
+        } else {
+            throw new KlabIllegalArgumentException("Either asset or jsonSelector/jsonValue must be provided");
+        }
+
+        String assetId = assetNode.keys().next();
+        JSONObject asset = assetNode.getJSONObject(assetId);
+
+        Type type = readRasterDataType(asset);
+        // Currently, only files:values is supported. If needed, the classification extension could be used too.
+        Map<String, Object> vals = STACAssetParser.getFileValues(asset);
+        if (!vals.isEmpty()) {
+            CodelistReference codelist = populateCodelist(assetId, vals);
+            if (type == null) {
+                type = codelist.getType();
+            }
+            builder.addCodeList(codelist);
+        }
+        if (type != null) {
+            builder.withType(type);
+        }
+        generateCodeList(builder, assetId, asset);
+
+        if (userData.contains("cog")) {
+            if (userData.get("cog") != null) {
+                builder.withType(Type.NUMBER);
+            }
+        }
 
         readMetadata(collectionData, builder);
         return builder;
@@ -107,7 +108,8 @@ public class STACValidator implements IResourceValidator {
 
     private void generateCodeList(Builder builder, String assetId, JSONObject asset) {
         Type type = readRasterDataType(asset);
-        // Currently, only files:values is supported. If needed, the classification extension could be used too.
+        // Currently, only files:values is supported. If needed, the classification extension could
+        // be used too.
         Map<String, Object> vals = STACAssetParser.getFileValues(asset);
         if (!vals.isEmpty()) {
             CodelistReference codelist = populateCodelist(assetId, vals);
@@ -125,7 +127,7 @@ public class STACValidator implements IResourceValidator {
         if (!asset.has("raster:bands")) {
             return null;
         }
-        
+
         if (asset.getJSONArray("raster:bands").isEmpty()
                 || !asset.getJSONArray("raster:bands").getJSONObject(0).has("data_type")) {
             // We assume that most rasters are numeric. When in doubt, we set the default to Number
@@ -133,7 +135,8 @@ public class STACValidator implements IResourceValidator {
         }
         String type = asset.getJSONArray("raster:bands").getJSONObject(0).getString("data_type");
         // https://github.com/stac-extensions/raster?tab=readme-ov-file#data-types
-        final Set<String> NUMERIC_DATA_TYPES = Set.of("int8", "int16", "int32", "int64", "uint8", "unit16", "uint32", "uint64", "float16", "float32", "float64");
+        final Set<String> NUMERIC_DATA_TYPES = Set.of("int8", "int16", "int32", "int64", "uint8", "unit16", "uint32", "uint64",
+                "float16", "float32", "float64");
         if (NUMERIC_DATA_TYPES.contains(type)) {
             return Type.NUMBER;
         }
@@ -155,8 +158,8 @@ public class STACValidator implements IResourceValidator {
         MappingReference direct = new MappingReference();
         MappingReference inverse = new MappingReference();
         vals.entrySet().forEach(code -> {
-            direct.getMappings().add(new Pair<>(code.getKey(), (String)code.getValue()));
-            codelist.getCodeDescriptions().put(code.getKey(), (String)code.getValue());
+            direct.getMappings().add(new Pair<>(code.getKey(), (String) code.getValue()));
+            codelist.getCodeDescriptions().put(code.getKey(), (String) code.getValue());
         });
         Type type = STACUtils.inferValueType(vals.entrySet().stream().findFirst().get().getKey());
         codelist.setType(type);
@@ -166,7 +169,8 @@ public class STACValidator implements IResourceValidator {
     }
 
     private void readMetadata(final JSONObject json, Builder builder) {
-        // We could check the doi only if the Scientific Notation extension is provided, but we can try anyway
+        // We could check the doi only if the Scientific Notation extension is provided, but we can
+        // try anyway
         String doi = STACUtils.readDOI(json);
         if (doi != null && !doi.isBlank()) {
             builder.withMetadata(IMetadata.DC_URL, doi);
@@ -233,7 +237,7 @@ public class STACValidator implements IResourceValidator {
     }
 
     @Override
-    public Map<? extends String, ? extends Object> describeResource(IResource resource) {
+    public Map< ? extends String, ? extends Object> describeResource(IResource resource) {
         // TODO Auto-generated method stub
         return null;
     }
