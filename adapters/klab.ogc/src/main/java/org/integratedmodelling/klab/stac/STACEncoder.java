@@ -293,6 +293,7 @@ public class STACEncoder implements IResourceEncoder {
             return;
         }
         
+        
         /*
         Select the Predicate based on the assetId, JSONSelector Query, and the JSONValue
          */
@@ -508,13 +509,6 @@ public class STACEncoder implements IResourceEncoder {
                 scope.getMonitor().warn("Multiple EPSGs found on the assets in items " + EPSGAtAssets.toString() 
                 + "."
                 + "The transformation process could affect the data.");
-            }
-                 
-            if (items.size() == 0) {
-            	manager.close();
-            	throw new KlabIllegalStateException("No STAC items found covering the entire time duration of the context requested");
-            } else {
-            	 scope.getMonitor().debug("Found " + items.size() + " STAC items satisfying the temporal constraint.");
             }
 
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform, MergeMode.SUBSTITUTE, lpm);
