@@ -432,6 +432,25 @@ public class STACEncoder implements IResourceEncoder {
         
         GridCoverage2D coverage = null;
         try {
+        
+        	// Allow transform ensures the process to finish, but I would not bet on the resulting data
+            if (assetPredicate == null) {
+                // NO JSONSelector and JSONValue found, NO assetID was passed as well
+                scope.getMonitor().debug("Query STAC " + collectionUrl + "to get the features");
+        	 	// Only get the features from STAC Collection, no need to interact with Rasters
+            	FeatureSource<SimpleFeatureType, SimpleFeature> source;
+                try {
+                    source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, effectiveTime.getStart(), effectiveTime.getEnd());
+                } catch (Exception e) {
+                    manager.close();
+                   throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
+                }
+                encoder = new VectorEncoder();
+                ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+                manager.close();
+                return;
+            }
+            
             List<HMStacItem> items = collection.searchItems();
             if (items.isEmpty()) {
                 manager.close();
@@ -469,24 +488,6 @@ public class STACEncoder implements IResourceEncoder {
                 throw new KlabIllegalStateException("No STAC items found covering the entire time duration of the context requested");
             } else {
                     scope.getMonitor().debug("Found " + items.size() + " STAC items satisfying the temporal constraint.");
-            }
-
-            // Allow transform ensures the process to finish, but I would not bet on the resulting data
-            if (assetPredicate == null) {
-                // NO JSONSelector and JSONValue found, NO assetID was passed as well
-                scope.getMonitor().debug("Query STAC " + collectionUrl + "to get the features");
-        	 	// Only get the features from STAC Collection, no need to interact with Rasters
-            	FeatureSource<SimpleFeatureType, SimpleFeature> source;
-                try {
-                    source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, effectiveTime.getStart(), effectiveTime.getEnd());
-                } catch (Exception e) {
-                    manager.close();
-                   throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
-                }
-                encoder = new VectorEncoder();
-                ((VectorEncoder)encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
-                manager.close();
-                return;
             }
             
             // Once the support for customized predicate is added, we can apply for features as well
