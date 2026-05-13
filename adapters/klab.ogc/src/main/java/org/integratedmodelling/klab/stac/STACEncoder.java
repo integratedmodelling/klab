@@ -486,6 +486,10 @@ public class STACEncoder implements IResourceEncoder {
 
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
                     MergeMode.SUBSTITUTE, lpm);
+            if (outRaster == null) {
+                scope.getMonitor().error("No STAC assets were found. Please check the spatial/temporal coverage of the resource");
+                throw new KlabIllegalStateException("No STAC assets were found. Please check the spatial/temporal coverage of the resource");
+            }
             coverage = outRaster.buildCoverage();
             if (bandIndex != null) { // Which means theat it's a Multi Band COG
                 coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
