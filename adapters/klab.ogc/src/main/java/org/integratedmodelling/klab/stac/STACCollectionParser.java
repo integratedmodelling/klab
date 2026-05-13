@@ -140,7 +140,7 @@ public class STACCollectionParser {
             throw new KlabResourceAccessException("No features were found in the collection to be imported");
         }
 
-        for (int i = 0; i < features.length(); i++) {
+        for(int i = 0; i < features.length(); i++) {
             JSONObject feature = features.optJSONObject(i);
             if (feature == null) {
                 continue;

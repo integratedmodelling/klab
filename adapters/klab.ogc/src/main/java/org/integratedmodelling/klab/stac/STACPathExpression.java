@@ -50,10 +50,10 @@ public final class STACPathExpression {
         List<JsonNode> currentNodes = new ArrayList<>();
         currentNodes.add(root);
 
-        for (PathPart part : path) {
+        for(PathPart part : path) {
             List<JsonNode> nextNodes = new ArrayList<>();
 
-            for (JsonNode current : currentNodes) {
+            for(JsonNode current : currentNodes) {
                 if (current == null || current.isNull() || current.isMissingNode()) {
                     continue;
                 }
@@ -87,9 +87,8 @@ public final class STACPathExpression {
                 resolvePart(indexedNode, new PathPart(part.fieldName(), ArrayMode.NONE, null), nextNodes);
             }
 
-            
         } else {
-            for (JsonNode element : arrayNode) {
+            for(JsonNode element : arrayNode) {
                 if (isUsable(element)) {
                     resolvePart(element, part, nextNodes);
                 }
@@ -136,7 +135,7 @@ public final class STACPathExpression {
                 }
             }
         } else if (fieldNode.isArray()) {
-            for (JsonNode element : fieldNode) {
+            for(JsonNode element : fieldNode) {
                 if (isUsable(element)) {
                     nextNodes.add(element);
                 }

@@ -71,8 +71,7 @@ public class STACValidator implements IResourceValidator {
             Predicate<JSONObject> predicate = STACPathExpression.STACAssetPredicate
                     .fromKongJsonObject(userData.get("jsonSelector", String.class), userData.get("jsonValue", String.class));
 
-            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData,
-                    predicate);
+            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, predicate);
 
         } else {
             // Just import Features
@@ -85,7 +84,8 @@ public class STACValidator implements IResourceValidator {
         JSONObject asset = assetNode.getJSONObject(assetId);
 
         Type type = readRasterDataType(asset);
-        // Currently, only files:values is supported. If needed, the classification extension could be used too.
+        // Currently, only files:values is supported. If needed, the classification extension could
+        // be used too.
         Map<String, Object> vals = STACAssetParser.getFileValues(asset);
         if (!vals.isEmpty()) {
             CodelistReference codelist = populateCodelist(assetId, vals);
