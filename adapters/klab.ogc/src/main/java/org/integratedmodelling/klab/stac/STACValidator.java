@@ -49,8 +49,9 @@ public class STACValidator implements IResourceValidator {
             collectionId = collectionData.getString("id");
             userData.put("collectionId", collectionId);
         }
-        IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
 
+    
+        IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry).withType(Type.OBJECT);
 
         // The default URL of the resource is the collection endpoint. May be overwritten.
@@ -60,7 +61,6 @@ public class STACValidator implements IResourceValidator {
 
         if (userData.contains("asset")) {
             String requestedAssetId = userData.get("asset", String.class);
-
             assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, requestedAssetId);
 
         } else if (userData.contains("jsonSelector")) {
@@ -75,7 +75,10 @@ public class STACValidator implements IResourceValidator {
                     predicate);
 
         } else {
-            throw new KlabIllegalArgumentException("Either asset or jsonSelector/jsonValue must be provided");
+            // Just import Features
+        	monitor.info("import STAC Collection for Features");
+        	readMetadata(collectionData, builder);
+        	return builder;
         }
 
         String assetId = assetNode.keys().next();

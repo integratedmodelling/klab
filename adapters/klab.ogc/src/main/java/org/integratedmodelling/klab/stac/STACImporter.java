@@ -74,30 +74,48 @@ public class STACImporter implements IResourceImporter {
         }
         
         String assetId = parameters.get("asset", String.class);
-        JSONObject assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
-        
-        JSONObject assetData = assetNode.getJSONObject(assetId);
+        String resourceUrn = collectionId;
+        JSONObject assetData = null;
         /*
-         * If the particular asset Id wasn't found, then 
-         * still proceed to create the resource since it can happen
-         * for a number of reasons. Pagination, STAC Backend etc.
-         * In that case however, a better handling of S3 URL needs to figured out
+        This is only for the part, to check the Asset is under an S3 Bucket
          */
-        if (assetData != null) {
-        	if (!STACAssetParser.isSupportedMediaType(assetData)) {
-                throw new Exception("Unsupported media type for the asset");
-             }
-        	String href = assetData.getString("href");
-            if (S3URLUtils.isS3Endpoint(href)) {
-                String[] bucketAndObject = href.split("://")[1].split("/", 2);
-                String s3Region = "unknown"; // TODO resolve the region
-                parameters.put("awsRegion", s3Region);
+        if (assetId != null) {
+            JSONObject assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
+            assetData = assetNode.getJSONObject(assetId);
+            /*
+            * If the particular asset Id wasn't found, then 
+            * still proceed to create the resource since it can happen
+            * for a number of reasons. Pagination, STAC Backend etc.
+            * In that case however, a better handling of S3 URL needs to figured out
+            */
+            if (assetData != null) {
+                if (!STACAssetParser.isSupportedMediaType(assetData)) {
+                    throw new Exception("Unsupported media type for the asset");
+                }
+                String href = assetData.getString("href");
+                if (S3URLUtils.isS3Endpoint(href)) {
+                    String[] bucketAndObject = href.split("://")[1].split("/", 2);
+                    String s3Region = "unknown"; // TODO resolve the region
+                    parameters.put("awsRegion", s3Region);
+                }
             }
+            resourceUrn = collectionId + "-" + assetId;
+        } 
+        
+        //TODO: Check if assetId is null, and instead a jsonSelector and Value is passed!
+        //else if (parameters.get("jsonSelector", String.class) != null) {
+        //    String selector = parameters.get("jsonSelector", String.class);
+        //    String val = parameters.get("jsonValue", String.class);
+        //	assetData = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, null, STACPathExpression.STACAssetPredicate.fromKongJsonObject(selector, val));
+        //}
+        
+        String href = assetData.getString("href");
+        if (S3URLUtils.isS3Endpoint(href)) {
+            String[] bucketAndObject = href.split("://")[1].split("/", 2);
+            String s3Region = "unknown"; // TODO resolve the region
+            parameters.put("awsRegion", s3Region);
         }
-        
-        
-        parameters.put("asset", assetId);
-        String resourceUrn = collectionId + "-" + assetId;
+    
         Builder builder = buildResource(parameters, project, monitor, resourceUrn);
         if (builder != null) {
             ret.add(builder);
