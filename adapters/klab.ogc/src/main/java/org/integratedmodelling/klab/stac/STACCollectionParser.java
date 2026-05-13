@@ -181,7 +181,7 @@ public class STACCollectionParser {
      * @return a JSONObject containing one entry: assetId -> asset JSON object
      * @throws KlabResourceAccessException if the collection cannot be searched or no matching asset is found
      */
-    public static JSONObject readAssetInformationFromCollectionWithPredicate(String collectionUrl, JSONObject collection,
+    public static JSONObject readAssetInformationFromCollection(String collectionUrl, JSONObject collection,
             Predicate<JSONObject> predicate) throws KlabResourceAccessException {
         return readAssetInformationFromCollection(collectionUrl, collection, null, predicate);
     }

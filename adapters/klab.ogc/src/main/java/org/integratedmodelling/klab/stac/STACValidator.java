@@ -71,7 +71,7 @@ public class STACValidator implements IResourceValidator {
             Predicate<JSONObject> predicate = STACPathExpression.STACAssetPredicate
                     .fromKongJsonObject(userData.get("jsonSelector", String.class), userData.get("jsonValue", String.class));
 
-            assetNode = STACCollectionParser.readAssetInformationFromCollectionWithPredicate(collectionUrl, collectionData,
+            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData,
                     predicate);
 
         } else {
