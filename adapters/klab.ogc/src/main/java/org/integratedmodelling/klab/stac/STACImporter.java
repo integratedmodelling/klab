@@ -9,10 +9,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -43,9 +41,9 @@ public class STACImporter implements IResourceImporter {
         // TODO Auto-generated method stub
         return false;
     }
-    
+
     private boolean hasAssetSelector(IParameters<String> parameters) {
-        return (parameters.contains("asset")||(parameters.contains("jsonSelector") && parameters.contains("jsonValue")));
+        return (parameters.contains("asset") || (parameters.contains("jsonSelector") && parameters.contains("jsonValue")));
     }
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
@@ -54,12 +52,6 @@ public class STACImporter implements IResourceImporter {
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = STACCollectionParser.readCollectionId(collectionData);
         parameters.put("collectionId", collectionId);
-
-        String regex = null;
-        if (parameters.contains("regex")) {
-            regex = parameters.get(Resources.REGEX_ENTRY, String.class);
-            parameters.remove(Resources.REGEX_ENTRY);
-        }
 
         boolean isBulkImport = parameters.contains("bulkImport");
         parameters.remove("bulkImport");
@@ -72,10 +64,10 @@ public class STACImporter implements IResourceImporter {
             }
             return;
         }
-        
+
         String assetId = parameters.get("asset", String.class);
         JSONObject assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
-        
+
         JSONObject assetData = assetNode.getJSONObject(assetId);
         /*
          * If the particular asset Id wasn't found, then 
@@ -84,18 +76,17 @@ public class STACImporter implements IResourceImporter {
          * In that case however, a better handling of S3 URL needs to figured out
          */
         if (assetData != null) {
-        	if (!STACAssetParser.isSupportedMediaType(assetData)) {
+            if (!STACAssetParser.isSupportedMediaType(assetData)) {
                 throw new Exception("Unsupported media type for the asset");
-             }
-        	String href = assetData.getString("href");
+            }
+            String href = assetData.getString("href");
             if (S3URLUtils.isS3Endpoint(href)) {
-                String[] bucketAndObject = href.split("://")[1].split("/", 2);
+                // String[] bucketAndObject = href.split("://")[1].split("/", 2);
                 String s3Region = "unknown"; // TODO resolve the region
                 parameters.put("awsRegion", s3Region);
             }
         }
-        
-        
+
         parameters.put("asset", assetId);
         String resourceUrn = collectionId + "-" + assetId;
         Builder builder = buildResource(parameters, project, monitor, resourceUrn);
@@ -104,10 +95,16 @@ public class STACImporter implements IResourceImporter {
         } else {
             monitor.warn("STAC resource with asset " + resourceUrn + " is invalid and cannot be imported");
         }
-        
-        // Think of a way to do the REGEX matching. Possibly not worth it to support 
+
+        // Think of a way to do the REGEX matching. Possibly not worth it to support
         // this for something as diverse as STAC
-        
+
+        // String regex = null;
+        if (parameters.contains("regex")) {
+            // regex = parameters.get(Resources.REGEX_ENTRY, String.class);
+            parameters.remove(Resources.REGEX_ENTRY);
+        }
+
         /*
         Set<String> assetIds = STACAssetMapParser.readAssetNames(assets);
         for(String assetId : assetIds) {
@@ -115,7 +112,7 @@ public class STACImporter implements IResourceImporter {
                 Logging.INSTANCE.info("Asset " + assetId + " doesn't match REGEX, skipped");
                 continue;
             }
-
+        
             JSONObject assetData = STACAssetMapParser.getAsset(assets, assetId);
             if (assetData != null) {
             	if (!STACAssetParser.isSupportedMediaType(assetData)) {
@@ -132,7 +129,7 @@ public class STACImporter implements IResourceImporter {
                 String s3Region = "unknown"; // TODO resolve the region
                 parameters.put("awsRegion", s3Region);
             }
-
+        
             Builder builder = buildResource(parameters, project, monitor, resourceUrn);
             if (builder != null) {
                 ret.add(builder);
@@ -144,10 +141,10 @@ public class STACImporter implements IResourceImporter {
         */
     }
 
-    private Builder buildResource(IParameters<String> parameters, IProject project, IMonitor monitor, String resourceUrn) throws MalformedURLException {
-        Builder builder = validator.validate(
-                Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project), new URL(parameters.get("collection", String.class)),
-                parameters, monitor);
+    private Builder buildResource(IParameters<String> parameters, IProject project, IMonitor monitor, String resourceUrn)
+            throws MalformedURLException {
+        Builder builder = validator.validate(Resources.INSTANCE.createLocalResourceUrn(resourceUrn, project),
+                new URL(parameters.get("collection", String.class)), parameters, monitor);
 
         if (builder == null) {
             return null;
