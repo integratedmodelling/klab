@@ -32,7 +32,7 @@ public class STACCollectionParser {
      * @param parameters
      * @return geometry
      */
-    public static IGeometry readGeometry(JSONObject collection) {
+    public static IGeometry readGeometry(JSONObject collection, boolean featureOnly) {
         GeometryBuilder gBuilder = Geometry.builder();
 
         JSONObject extent = collection.getJSONObject("extent");
@@ -49,7 +49,7 @@ public class STACCollectionParser {
         }
 
         // TODO find non-ad-hoc cases
-        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012")) {
+        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012") || featureOnly) {
             return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
         }
         return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");

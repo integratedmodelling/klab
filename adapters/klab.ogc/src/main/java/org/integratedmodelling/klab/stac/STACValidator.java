@@ -50,8 +50,12 @@ public class STACValidator implements IResourceValidator {
             userData.put("collectionId", collectionId);
         }
 
-    
-        IGeometry geometry = STACCollectionParser.readGeometry(collectionData);
+        IGeometry geometry = null;
+        if (!userData.contains("asset") && !userData.contains("jsonSelector")) {
+            geometry = STACCollectionParser.readGeometry(collectionData, true);
+        } else {
+            geometry = STACCollectionParser.readGeometry(collectionData, false);
+        }
         Builder builder = new ResourceBuilder(urn).withParameters(userData).withGeometry(geometry).withType(Type.OBJECT);
 
         // The default URL of the resource is the collection endpoint. May be overwritten.
