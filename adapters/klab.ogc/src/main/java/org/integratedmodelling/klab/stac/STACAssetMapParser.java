@@ -10,6 +10,11 @@ public class STACAssetMapParser {
     }
 
     public static JSONObject getAsset(JSONObject assetMap, String assetId) {
-        return assetMap.getJSONObject(assetId);
+    	/*
+    	 * Not failing if the assetId is not found, the reason being that in
+    	 * some collections the items have different assets, and the Asset naming related conventions that MSFT
+    	 * Planetary follows is not necessarily followed by evryone!
+    	 */
+        return assetMap.optJSONObject(assetId);
     }
 }
