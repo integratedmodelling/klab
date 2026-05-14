@@ -62,12 +62,36 @@ public class STACCollectionParser {
 
         if (assetId != null) {
             JSONObject asset = assets.optJSONObject(assetId);
-            if (asset == null) {
-                return null;
+            if (asset != null) {
+            	JSONObject result = new JSONObject();
+                result.put(assetId, asset);
+                return result;
+            } else {
+            	return assets.keySet().stream()
+                        .map(key -> {
+                            JSONObject assetNode = assets.optJSONObject(key);
+                            if (assetNode == null) {
+                                return null;
+                            }
+                            if (!assetNode.has("eo:bands")) {
+                                return null;
+                            }
+                            JSONArray bandsArray = assetNode.optJSONArray("eo:bands");
+                            for (var bandObj:bandsArray) {
+                            	JSONObject band = (JSONObject) bandObj;
+                            	if (assetId.equals(band.get("name"))) {
+                            		JSONObject result = new JSONObject();
+                                    result.put(key, assetNode);
+                                    return result;
+                            	}
+                            }
+                            
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .orElse(null);
             }
-            JSONObject result = new JSONObject();
-            result.put(assetId, asset);
-            return result;
         }
 
         if (predicate != null) {
