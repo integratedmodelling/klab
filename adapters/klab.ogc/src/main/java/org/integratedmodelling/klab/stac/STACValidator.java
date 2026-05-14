@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 
 import kong.unirest.json.JSONObject;
 
@@ -86,6 +87,17 @@ public class STACValidator implements IResourceValidator {
 
         String assetId = assetNode.keys().next();
         JSONObject asset = assetNode.getJSONObject(assetId);
+        String href = asset.getString("href");
+        if (S3URLUtils.isS3Endpoint(href)) {
+        	if (href.contains("waw3")) {
+        		userData.put("s3EndpointUrl", "https://s3.waw3-1.cloudferro.com");
+        	} else if (href.contains("waw4")) {
+        		userData.put("s3EndpointUrl", "https://s3.waw4-1.cloudferro.com");
+        	} else {
+        		userData.put("s3EndpointUrl", "unknown");
+        	}
+        	
+        }
 
         Type type = readRasterDataType(asset);
         // Currently, only files:values is supported. If needed, the classification extension could

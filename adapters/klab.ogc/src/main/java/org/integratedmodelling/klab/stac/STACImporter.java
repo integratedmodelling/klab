@@ -73,7 +73,11 @@ public class STACImporter implements IResourceImporter {
          */
         if (assetId != null) {
             JSONObject assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, assetId);
-            assetData = assetNode.getJSONObject(assetId);
+            //assetData = assetNode.getJSONObject(assetId);
+            assetData = (JSONObject) assetNode.toMap()
+            	    .values()
+            	    .iterator()
+            	    .next();
             /*
             * If the particular asset Id wasn't found, then 
             * still proceed to create the resource since it can happen
