@@ -181,8 +181,8 @@ public class STACEncoder implements IResourceEncoder {
                 + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private Client buildS3Client(String bucketRegion) throws IOException {
-        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+    private Client buildS3Client(String endpointURL) throws IOException {
+        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(endpointURL);
         Credentials credentials = null;
         try {
             credentials = Credentials.of(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
@@ -451,9 +451,9 @@ public class STACEncoder implements IResourceEncoder {
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
 
-            if (resource.getParameters().contains("awsRegion")) {
-                String bucketRegion = resource.getParameters().get("awsRegion", String.class);
-                Client s3Client = buildS3Client(bucketRegion);
+            if (resource.getParameters().contains("s3EndpointUrl")) {
+                String s3EndpointURL = resource.getParameters().get("s3EndpointUrl", String.class);
+                Client s3Client = buildS3Client(s3EndpointURL);
                 collection.setS3Client(s3Client);
             }
             var time = effectiveTime;

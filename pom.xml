@@ -145,6 +145,7 @@
 		<hamcrest.version>2.2</hamcrest.version>
 		<powermock.version>2.0.9</powermock.version>
 		<s3.version>0.1.23</s3.version>
+		<aws.version>2.29.14</aws.version>
 		<keycloak.version>24.0.4</keycloak.version>
 		<poi.version>5.4.1</poi.version>
     	<commons-io.version>2.14.0</commons-io.version>
