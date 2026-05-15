@@ -20,6 +20,7 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -181,16 +182,20 @@ public class STACEncoder implements IResourceEncoder {
                 + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private Client buildS3Client(String bucketRegion) throws IOException {
-        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(S3URLUtils.AWS_ENDPOINT);
+    private Client buildS3Client(String endpointURL) throws IOException {
+        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(endpointURL);
         Credentials credentials = null;
+        String defaultS3Region = "us-east-1";
         try {
             credentials = Credentials.of(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
         } catch (Exception e) {
             throw new KlabIOException("Error defining S3 credenetials. " + e.getMessage());
         }
-        return Client.s3().regionFromEnvironment() // TODO get region from other sources if needed
-                .credentials(credentials).build();
+        return  Client.s3()
+                .region(defaultS3Region)
+                .credentials(credentials)
+                .baseUrlFactory((service, region) -> endpointURL)
+                .build();
     }
 
     private boolean isDateWithinRange(Time rangeTime, Date date) {
@@ -375,10 +380,20 @@ public class STACEncoder implements IResourceEncoder {
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                     coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
                 }
+                CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+                if (!CRS.equalsIgnoreMetadata(
+                        coverage.getCoordinateReferenceSystem(),
+                        targetCRS)) {
+
+                    coverage = (GridCoverage2D) Operations.DEFAULT.resample(
+                            coverage,
+                            targetCRS);
+                }
             } catch (Exception e) {
                 throw new KlabResourceAccessException(
                         "Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
             }
+                
             encoder = new RasterEncoder();
             ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
             return;
@@ -451,9 +466,9 @@ public class STACEncoder implements IResourceEncoder {
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
 
-            if (resource.getParameters().contains("awsRegion")) {
-                String bucketRegion = resource.getParameters().get("awsRegion", String.class);
-                Client s3Client = buildS3Client(bucketRegion);
+            if (resource.getParameters().contains("s3EndpointUrl")) {
+                String s3EndpointURL = resource.getParameters().get("s3EndpointUrl", String.class);
+                Client s3Client = buildS3Client(s3EndpointURL);
                 collection.setS3Client(s3Client);
             }
             var time = effectiveTime;
