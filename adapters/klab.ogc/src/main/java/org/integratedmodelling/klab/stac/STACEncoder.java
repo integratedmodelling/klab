@@ -184,13 +184,17 @@ public class STACEncoder implements IResourceEncoder {
     private Client buildS3Client(String endpointURL) throws IOException {
         ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(endpointURL);
         Credentials credentials = null;
+        String defaultS3Region = "us-east-1";
         try {
             credentials = Credentials.of(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
         } catch (Exception e) {
             throw new KlabIOException("Error defining S3 credenetials. " + e.getMessage());
         }
-        return Client.s3().regionFromEnvironment() // TODO get region from other sources if needed
-                .credentials(credentials).build();
+        return  Client.s3()
+                .region(defaultS3Region)
+                .credentials(credentials)
+                .baseUrlFactory((service, region) -> endpointURL)
+                .build();
     }
 
     private boolean isDateWithinRange(Time rangeTime, Date date) {

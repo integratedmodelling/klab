@@ -89,25 +89,6 @@
             <artifactId>aws-lightweight-client-java</artifactId>
             <version>${s3.version}</version>
         </dependency>
-        
-        <!-- AWS Dependencies -->
-		<dependency>
-			<artifactId>apache-client</artifactId> 
-			<groupId>software.amazon.awssdk</groupId> 
-			<version>2.29.14</version> 
- 			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>protocol-core</artifactId>
-			<version>2.29.14</version>
-		</dependency>
-
 		<!-- <dependency> <groupId>org.geotools.xsd</groupId> <artifactId>gt-xsd-core</artifactId> 
 			<version>${geotools.version}</version> </dependency>
 		<dependency>
