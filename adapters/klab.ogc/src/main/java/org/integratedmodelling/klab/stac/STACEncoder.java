@@ -20,6 +20,7 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -379,10 +380,20 @@ public class STACEncoder implements IResourceEncoder {
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                     coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
                 }
+                CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+                if (!CRS.equalsIgnoreMetadata(
+                        coverage.getCoordinateReferenceSystem(),
+                        targetCRS)) {
+
+                    coverage = (GridCoverage2D) Operations.DEFAULT.resample(
+                            coverage,
+                            targetCRS);
+                }
             } catch (Exception e) {
                 throw new KlabResourceAccessException(
                         "Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
             }
+                
             encoder = new RasterEncoder();
             ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
             return;
