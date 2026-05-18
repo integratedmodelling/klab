@@ -516,9 +516,6 @@ public class STACEncoder implements IResourceEncoder {
             if (!CRS.equalsIgnoreMetadata(
                     coverage.getCoordinateReferenceSystem(),
                     targetCRS)) {
-            	
-            	System.out.println("Resampling! Found " +  coverage.getCoordinateReferenceSystem() 
-            	+ " Resampling to " + targetCRS);
 
                 coverage = (GridCoverage2D) Operations.DEFAULT.resample(
                         coverage,
