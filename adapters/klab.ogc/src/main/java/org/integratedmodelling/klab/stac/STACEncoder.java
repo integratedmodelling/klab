@@ -32,6 +32,9 @@ import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.crs.CrsUtilities;
 import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
+import org.hortonmachine.gears.utils.crs.HMCrsRegistry;
+import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
+
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -375,19 +378,17 @@ public class STACEncoder implements IResourceEncoder {
                     }
                     HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, predicate, items, true,
                             MergeMode.SUBSTITUTE, lpm);
+                    CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+                    if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
+                    	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+                    	transformer.setAcceptLenientDatumShift(true);
+                    	outRaster = transformer.transform(outRaster);
+                    }
+                    
                     coverage = outRaster.buildCoverage();
                 }
-                CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                     coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
-                }
-                if (!CRS.equalsIgnoreMetadata(
-                        coverage.getCoordinateReferenceSystem(),
-                        targetCRS)) {
-
-                    coverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                            coverage,
-                            targetCRS);
                 }
             } catch (Exception e) {
                 throw new KlabResourceAccessException(
@@ -413,7 +414,7 @@ public class STACEncoder implements IResourceEncoder {
                 throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl); // Fail
                                                                                                             // fast
             }
-
+            
             IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                     ? ((Observation) scope.getTargetArtifact()).getObservable()
                     : null;
@@ -505,21 +506,20 @@ public class STACEncoder implements IResourceEncoder {
                 scope.getMonitor().error("No STAC assets were found. Please check the spatial/temporal coverage of the resource");
                 throw new KlabIllegalStateException("No STAC assets were found. Please check the spatial/temporal coverage of the resource");
             }
+            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
+            	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+            	transformer.setAcceptLenientDatumShift(true);
+            	outRaster = transformer.transform(outRaster);
+            }
+            
             coverage = outRaster.buildCoverage();
             if (bandIndex != null) { // Which means theat it's a Multi Band COG
                 coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
             }
-            CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+      
             manager.close();
             encoder = new RasterEncoder();
-            if (!CRS.equalsIgnoreMetadata(
-                    coverage.getCoordinateReferenceSystem(),
-                    targetCRS)) {
-
-                coverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                        coverage,
-                        targetCRS);
-            }
             ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
         } catch (Exception e) {
             e.printStackTrace();
