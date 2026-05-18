@@ -72,6 +72,7 @@ import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+import org.hortonmachine.gears.utils.crs.HMCrsRegistry;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.davidmoten.aws.lw.client.Client;
@@ -377,7 +378,7 @@ public class STACEncoder implements IResourceEncoder {
                             MergeMode.SUBSTITUTE, lpm);
                     coverage = outRaster.buildCoverage();
                 }
-                CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+                CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                     coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
                 }
@@ -413,7 +414,7 @@ public class STACEncoder implements IResourceEncoder {
                 throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl); // Fail
                                                                                                             // fast
             }
-
+            
             IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                     ? ((Observation) scope.getTargetArtifact()).getObservable()
                     : null;
@@ -509,12 +510,15 @@ public class STACEncoder implements IResourceEncoder {
             if (bandIndex != null) { // Which means theat it's a Multi Band COG
                 coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
             }
-            CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
             manager.close();
             encoder = new RasterEncoder();
             if (!CRS.equalsIgnoreMetadata(
                     coverage.getCoordinateReferenceSystem(),
                     targetCRS)) {
+            	
+            	System.out.println("Resampling! Found " +  coverage.getCoordinateReferenceSystem() 
+            	+ " Resampling to " + targetCRS);
 
                 coverage = (GridCoverage2D) Operations.DEFAULT.resample(
                         coverage,
