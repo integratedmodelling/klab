@@ -377,10 +377,10 @@ public class STACEncoder implements IResourceEncoder {
                             MergeMode.SUBSTITUTE, lpm);
                     coverage = outRaster.buildCoverage();
                 }
+                CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                     coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
                 }
-                CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
                 if (!CRS.equalsIgnoreMetadata(
                         coverage.getCoordinateReferenceSystem(),
                         targetCRS)) {
@@ -509,8 +509,17 @@ public class STACEncoder implements IResourceEncoder {
             if (bandIndex != null) { // Which means theat it's a Multi Band COG
                 coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
             }
+            CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
             manager.close();
             encoder = new RasterEncoder();
+            if (!CRS.equalsIgnoreMetadata(
+                    coverage.getCoordinateReferenceSystem(),
+                    targetCRS)) {
+
+                coverage = (GridCoverage2D) Operations.DEFAULT.resample(
+                        coverage,
+                        targetCRS);
+            }
             ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
         } catch (Exception e) {
             e.printStackTrace();
