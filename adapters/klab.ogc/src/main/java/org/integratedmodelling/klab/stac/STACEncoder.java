@@ -374,7 +374,7 @@ public class STACEncoder implements IResourceEncoder {
                         predicate = getAssetPredicate(resource);
                     } catch (KlabIllegalArgumentException e) {
                         manager.close();
-                        throw e;
+                        throw e;  
                     }
                     HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, predicate, items, true,
                             MergeMode.SUBSTITUTE, lpm);
@@ -450,7 +450,7 @@ public class STACEncoder implements IResourceEncoder {
             List<HMStacItem> items = collection.searchItems();
             if (items.isEmpty()) {
                 manager.close();
-                throw new KlabIllegalStateException("No STAC items found for this context.");
+                throw new KlabIllegalStateException("No STAC items found for this context, check the Spatial/ Temporal bounds of items and the Context");
             }
 
             if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
@@ -501,10 +501,10 @@ public class STACEncoder implements IResourceEncoder {
             }
 
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
-                    MergeMode.SUBSTITUTE, lpm);
+                    MergeMode.SUBSTITUTE, lpm); 
             if (outRaster == null) {
-                scope.getMonitor().error("No STAC assets were found. Please check the spatial/temporal coverage of the resource");
-                throw new KlabIllegalStateException("No STAC assets were found. Please check the spatial/temporal coverage of the resource");
+                scope.getMonitor().error("Unable to build the output from the STAC Resource");
+                throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
             }
             CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
             if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
@@ -513,8 +513,13 @@ public class STACEncoder implements IResourceEncoder {
             	outRaster = transformer.transform(outRaster);
             }
             
-            coverage = outRaster.buildCoverage();
-            if (bandIndex != null) { // Which means theat it's a Multi Band COG
+            
+			HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
+					.setCrs(targetCRS).setNoValue(outRaster.getNovalue()).build();
+			paddedRaster.mapRaster(null, outRaster, null);
+			coverage = paddedRaster.buildCoverage();
+			
+			if (bandIndex != null) { // Which means theat it's a Multi Band COG
                 coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
             }
       
