@@ -13,7 +13,7 @@ import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.hortonmachine.gears.libs.modules.HMConstants;
 import org.hortonmachine.gears.utils.coverage.CoverageUtilities;
 import org.hortonmachine.gears.utils.math.matrixes.MatrixException;
-import org.hortonmachine.hmachine.modules.statistics.kriging.old.OmsKriging;
+import org.hortonmachine.hmachine.modules.statistics.krigingexp.old.OmsKriging;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
