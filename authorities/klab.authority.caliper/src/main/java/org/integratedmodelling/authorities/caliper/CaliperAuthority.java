@@ -61,7 +61,7 @@ public class CaliperAuthority implements IAuthority {
             + "  ?concept skos:prefLabel ?label_en . FILTER(contains(lcase(str(?label_en)), '{QUERY_STRING}')) .\r\n"
             + "  ?concept skos:notation ?code .\r\n" + "  ?concept skos:broader ?broader .\r\n" + "} order by ?code";
 
-    private static final String SPARQL_ENDPOINT = "https://stats.fao.org/caliper/AllVocs/";
+    private static final String SPARQL_ENDPOINT = "https://caliper.integratedmodelling.org/caliper/sparql";
     private static final Map<String, String> CALIPER_SCHEMES = new HashMap<>();
     private static final Map<String, String> CALIPER_DESCRIPTIONS = new HashMap<>();
     private static final Map<String, String> CALIPER_URLS = new HashMap<>();
@@ -70,26 +70,26 @@ public class CaliperAuthority implements IAuthority {
 
         // TODO all this should come from caliper, filtered as needed and cached
 
-//        CALIPER_SCHEMES.put("ISIC", "http://unstats.un.org/classifications/ISIC/rev4/scheme");
+        CALIPER_SCHEMES.put("ISIC", "https://unstats.un.org/classifications/ISIC/rev4/scheme");
         // CALIPER_SCHEMES.put("ICC10", "http://stats-class.fao.uniroma2.it/ICC/v1.0/scheme");
-        CALIPER_SCHEMES.put("ICC", "http://stats.fao.org/classifications/ICC/v1.1/scheme");
+        CALIPER_SCHEMES.put("ICC", "https://stats.fao.org/classifications/ICC/v1.1/scheme");
 //        CALIPER_SCHEMES.put("M49", "http://stats.fao.org/classifications/geo/M49");
 //        CALIPER_SCHEMES.put("SDGEO", "http://stats.fao.org/classifications/geo/M49/SDG-groups");
 //        CALIPER_SCHEMES.put("FOODEX2", "http://stats.fao.org/classifications/foodex2/all");
         // CALIPER_SCHEMES.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0/scheme");
-        CALIPER_SCHEMES.put("CPC", "http://unstats.un.org/classifications/CPC/v2.1/core");
+        CALIPER_SCHEMES.put("CPC", "https://unstats.un.org/classifications/CPC/v2.1/core");
         // CALIPER_SCHEMES.put("CPC21FERT", "http://stats-class.fao.uniroma2.it/CPC/v2.1/fert");
         // CALIPER_SCHEMES.put("FCL", "http://stats-class.fao.uniroma2.it/FCL/v2019/scheme");
-        CALIPER_SCHEMES.put("HS", "http://stats.fao.org/classifications/HS/fao_mapping_targets/scheme");
+        //CALIPER_SCHEMES.put("HS", "http://stats.fao.org/classifications/HS/fao_mapping_targets/scheme");
 
-        CALIPER_URLS.put("ISIC", "http://unstats.un.org/classifications/ISIC/rev4");
+        CALIPER_URLS.put("ISIC", "https://unstats.un.org/classifications/ISIC/rev4");
         // CALIPER_SCHEMES.put("ICC10", "http://stats-class.fao.uniroma2.it/ICC/v1.0");
-        CALIPER_URLS.put("ICC", "http://stats.fao.org/classifications/ICC/v1.1");
+        CALIPER_URLS.put("ICC", "https://stats.fao.org/classifications/ICC/v1.1");
 //        CALIPER_URLS.put("M49", "http://stats.fao.org/classifications/geo/m49");
 //        CALIPER_URLS.put("SDGEO", "http://stats.fao.org/classifications/geo/M49/SDG-groups");
 //        CALIPER_URLS.put("FOODEX2", "http://stats.fao.org/classifications/foodex2");
         // CALIPER_SCHEMES.put("CPC20", "http://stats-class.fao.uniroma2.it/CPC/v2.0");
-        CALIPER_URLS.put("CPC", "http://stats.fao.org/classifications/CPC/v2.1");
+        CALIPER_URLS.put("CPC", "https://stats.fao.org/classifications/CPC/v2.1");
         // CALIPER_SCHEMES.put("CPC21FERT", "http://stats-class.fao.uniroma2.it/CPC/v2.1/fert");
         // CALIPER_SCHEMES.put("FCL", "http://stats-class.fao.uniroma2.it/FCL/v2019");
 //        CALIPER_URLS.put("HS", "http://stats.fao.org/classifications/HS/fao_mapping_targets");
