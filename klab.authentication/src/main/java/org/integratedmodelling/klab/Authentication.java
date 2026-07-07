@@ -463,7 +463,7 @@ public enum Authentication implements IAuthenticationService {
      * @return the credential or null if not present
      */
     private ExternalAuthenticationCredentials getCredentialsByUrl(String hostUrl) {
-        return externalCredentials.values().stream().filter(credential -> credential.getURL().equals(hostUrl)).sorted()
+        return externalCredentials.values().stream().filter(credential -> credential.getURL().equals(hostUrl))
                 .findFirst().orElse(null);
     }
 
