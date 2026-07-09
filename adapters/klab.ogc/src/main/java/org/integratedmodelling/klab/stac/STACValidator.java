@@ -93,6 +93,8 @@ public class STACValidator implements IResourceValidator {
         		userData.put("s3EndpointUrl", "https://s3.waw3-1.cloudferro.com");
         	} else if (href.contains("waw4")) {
         		userData.put("s3EndpointUrl", "https://s3.waw4-1.cloudferro.com");
+        	} else if (collectionUrl.contains("https://stac.dataspace.copernicus.eu/")){
+        		userData.put("s3EndpointUrl", "https://eodata.dataspace.copernicus.eu/");
         	} else {
         		userData.put("s3EndpointUrl", "unknown");
         	}
@@ -143,6 +145,12 @@ public class STACValidator implements IResourceValidator {
     }
 
     private Type readRasterDataType(JSONObject asset) {
+    	
+    	if (asset.has("type")) {
+    		if(asset.get("type").toString().contains("image/tiff")) { // Numbers
+    			return Type.NUMBER;
+    		}
+    	}
         if (!asset.has("raster:bands")) {
             return null;
         }
