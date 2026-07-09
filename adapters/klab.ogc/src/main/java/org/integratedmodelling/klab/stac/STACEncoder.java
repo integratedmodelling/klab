@@ -430,11 +430,18 @@ public class STACEncoder implements IResourceEncoder {
             HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
             Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
             Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
-            collection.setGeometryFilter(poly);
+            //collection.setGeometryFilter(poly);
             // collection.setTimestampFilter(new Date(start.getMilliseconds()), new
             // Date(end.getMilliseconds())); --> Filter later :)
 
             GridCoverage2D coverage = null;
+            
+            collection.setBboxFilter(new double[] {
+            		bbox.get(0),
+            		bbox.get(2),
+            		bbox.get(1),
+            		bbox.get(3)
+            });
 
             // Allow transform ensures the process to finish, but I would not bet on the resulting
             // data
@@ -456,7 +463,6 @@ public class STACEncoder implements IResourceEncoder {
                 return;
             }
             
-
             List<HMStacItem> items = collection.searchItems();
             if (items.isEmpty()) {
                 manager.close();
@@ -487,7 +493,7 @@ public class STACEncoder implements IResourceEncoder {
             // temporal filtering :( like ECDC
             items = items.stream()
                     .filter(item -> isWithinRange(item, time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()); 
 
             if (items.size() == 0) {
                 manager.close();
@@ -631,7 +637,8 @@ public class STACEncoder implements IResourceEncoder {
             long itemEnd = LocalDateTime.parse(item.getEndTimestamp(), formatter).atZone(ZoneOffset.UTC).toInstant()
                     .toEpochMilli();
 
-            return startMillis >= itemStart && endMillis <= itemEnd;
+            return (startMillis >= itemStart || Math.abs(startMillis - itemStart) < 10000)  
+            		&& (endMillis <= itemEnd || Math.abs(endMillis - itemEnd) < 10000); // Allow some small tolerance
 
         } catch (Exception e) {
             e.printStackTrace();
