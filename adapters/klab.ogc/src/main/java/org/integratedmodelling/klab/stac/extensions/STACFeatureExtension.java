@@ -42,7 +42,7 @@ public class STACFeatureExtension {
 		
 
 		JSONObject searchPayload = new JSONObject()
-				.put("limit", 100)
+				.put("limit", 1000)
 				.put("bbox", bboxArray)
 				.put("collections", new JSONArray().put(collectionId));
 
@@ -66,26 +66,25 @@ public class STACFeatureExtension {
 		            HMStacItem item = HMStacItem.fromSimpleFeature(feat);
 		            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		            
-		            if (item.getStartTimestamp() != null && item.getEndTimestamp() != null) {
-		            	long itemStart = LocalDateTime
-	                            .parse(item.getStartTimestamp(), formatter)
-	                            .atZone(ZoneOffset.UTC)
-	                            .toInstant()
-	                            .toEpochMilli();
+		            if (item.getStartTimestamp() == null || item.getEndTimestamp() == null) { // Assume best case scenario
+		            	featureList.add(feat);
+		            	continue;
+		            } 
+		            
+	            	long itemStart = LocalDateTime
+                            .parse(item.getStartTimestamp(), formatter)
+                            .atZone(ZoneOffset.UTC)
+                            .toInstant()
+                            .toEpochMilli();
 
-	                    long itemEnd = LocalDateTime
-	                            .parse(item.getEndTimestamp(), formatter)
-	                            .atZone(ZoneOffset.UTC)
-	                            .toInstant()
-	                            .toEpochMilli();
-	                    if (start.getMilliseconds() >= itemStart && end.getMilliseconds() <= itemEnd) {
-	                    	featureList.add(feat);
-	                    }
-		            } else {
-		            	 featureList.add(feat);
-		            }
-		           
-
+                    long itemEnd = LocalDateTime
+                            .parse(item.getEndTimestamp(), formatter)
+                            .atZone(ZoneOffset.UTC)
+                            .toInstant()
+                            .toEpochMilli();
+                    if (start.getMilliseconds() >= itemStart && end.getMilliseconds() <= itemEnd) {
+                    	featureList.add(feat);
+                    }
 		        } catch (Exception e) {
 		            e.printStackTrace();
 		        }

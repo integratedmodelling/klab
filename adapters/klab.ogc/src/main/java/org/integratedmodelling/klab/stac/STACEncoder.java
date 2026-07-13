@@ -2,9 +2,11 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -63,23 +65,30 @@ import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.ogc.OpenEOAdapter;
 import org.integratedmodelling.klab.ogc.STACAdapter;
 import org.integratedmodelling.klab.ogc.vector.files.VectorEncoder;
+import org.integratedmodelling.klab.openeo.OpenEO;
+import org.integratedmodelling.klab.openeo.OpenEO.OpenEOFuture;
+import org.integratedmodelling.klab.openeo.OpenEO.Process;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
 import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.operation.union.UnaryUnionOp;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
 
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACEncoder implements IResourceEncoder {
@@ -360,7 +369,7 @@ public class STACEncoder implements IResourceEncoder {
                     HMStacCollection collection = null;
                     try {
                         manager.open();
-                        collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+                        collection = manager.getCollectionById(collectionId);
                     } catch (Exception e1) {
                         throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
                     }
@@ -405,7 +414,7 @@ public class STACEncoder implements IResourceEncoder {
         HMStacCollection collection = null;
         try {
             manager.open();
-            collection = manager.getCollectionById(resource.getParameters().get("collectionId", String.class));
+            collection = manager.getCollectionById(collectionId);
 
             if (collection == null) {
                 scope.getMonitor()
@@ -421,11 +430,18 @@ public class STACEncoder implements IResourceEncoder {
             HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
             Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
             Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
-            collection.setGeometryFilter(poly);
+            //collection.setGeometryFilter(poly);
             // collection.setTimestampFilter(new Date(start.getMilliseconds()), new
             // Date(end.getMilliseconds())); --> Filter later :)
 
             GridCoverage2D coverage = null;
+            
+            collection.setBboxFilter(new double[] {
+            		bbox.get(0),
+            		bbox.get(2),
+            		bbox.get(1),
+            		bbox.get(3)
+            });
 
             // Allow transform ensures the process to finish, but I would not bet on the resulting
             // data
@@ -446,7 +462,7 @@ public class STACEncoder implements IResourceEncoder {
                 manager.close();
                 return;
             }
-
+            
             List<HMStacItem> items = collection.searchItems();
             if (items.isEmpty()) {
                 manager.close();
@@ -477,7 +493,7 @@ public class STACEncoder implements IResourceEncoder {
             // temporal filtering :( like ECDC
             items = items.stream()
                     .filter(item -> isWithinRange(item, time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()); 
 
             if (items.size() == 0) {
                 manager.close();
@@ -499,6 +515,57 @@ public class STACEncoder implements IResourceEncoder {
                 scope.getMonitor().warn("Multiple EPSGs found on the assets in items " + EPSGAtAssets.toString() + "."
                         + "The transformation process could affect the data.");
             }
+            
+            
+            // Specific Implementation for the Slow Requests flow in WEED 
+            if (collection.getId().contains("EU_modelV2-1-MECE") 
+            		&& resource.getUrn().contains("im.resources-main")) { 
+            	Geometry unionMLStacInference = UnaryUnionOp.union(
+            		    items.stream()
+            		         .map(item -> item.getGeometry())
+            		         .filter(g -> g != null && !g.isEmpty())
+            		         .collect(Collectors.toList())
+            		);
+            	
+            	if (!unionMLStacInference.contains(poly)) {
+            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
+            		
+            		OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
+            		List<Process> processes = new ArrayList<>();
+            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter.json";
+            		String processID = "udp_starter";
+            		
+            		Process process = JsonUtils.load(new URL(processNamespace),
+							Process.class);
+					process.encodeSelf(processNamespace);
+					processes.add(process);
+					
+					JSONObject arguments = new JSONObject()
+							.put("bbox", new JSONObject()
+								.put("crs", 4326)
+								.put("west", bbox.get(0))
+								.put("south", bbox.get(3))
+								.put("east", bbox.get(1))
+								.put("north", bbox.get(2))) 
+						.put("digitalId", "AM1729")  // Forms the STAC coordinate later
+						.put("scenarioId", "DT_SLOW_FLOW") // Forms the STAC coordinate later 
+						.put("year", ctxTime.getEnd().getYear())
+						.put("onnx_model", "EUNIS2021plus_panEU_v201_2024_OneZone") // Hardcoding for now only for Europe, until the "BEST" model is decided!
+						.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.3vh554o6h6c"); 
+						
+					
+            		OpenEOFuture job = service.submit(processID, arguments,
+    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+            		
+            		if (job.isCancelled()) {
+						scope.getMonitor().warn("job canceled");
+					} else if (job.getError() != null) {
+						scope.getMonitor().error(job.getError());
+					} else {
+						scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
+					}
+            	}
+            } 
 
             HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
                     MergeMode.SUBSTITUTE, lpm); 
@@ -570,7 +637,8 @@ public class STACEncoder implements IResourceEncoder {
             long itemEnd = LocalDateTime.parse(item.getEndTimestamp(), formatter).atZone(ZoneOffset.UTC).toInstant()
                     .toEpochMilli();
 
-            return startMillis >= itemStart && endMillis <= itemEnd;
+            return (startMillis >= itemStart || Math.abs(startMillis - itemStart) < 10000)  
+            		&& (endMillis <= itemEnd || Math.abs(endMillis - itemEnd) < 10000); // Allow some small tolerance
 
         } catch (Exception e) {
             e.printStackTrace();
