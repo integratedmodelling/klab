@@ -560,6 +560,9 @@ public class ResourceEditor extends ViewPart {
 
     private File getResourcePath(ResourceReference resource) {
         String path = resource.getLocalPath();
+        if (path == null) {
+            return null;
+        }
         String project = Path.getFirst(path, "/");
         IKimProject prj = Kim.INSTANCE.getProject(project);
         if (project != null) {
