@@ -65,12 +65,19 @@ public class STACValidator implements IResourceValidator {
         JSONObject assetNode;
 
         if (userData.contains("asset")) {
+        	if(userData.contains("cog")) {
+        		throw new KlabIllegalArgumentException("STAC asset and cog URL both shouldn't be provided while importing");
+        	}
             String requestedAssetId = userData.get("asset", String.class);
             assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, requestedAssetId);
 
         } else if (userData.contains("jsonSelector")) {
             if (!userData.contains("jsonValue")) {
                 throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue must be provided");
+            }
+            
+            if(userData.contains("cog")) {
+            	throw new KlabIllegalArgumentException("jsonSelector and jsonValue shouldn't be provided along with cog URL while importing");
             }
 
             Predicate<JSONObject> predicate = STACPathExpression.STACAssetPredicate
