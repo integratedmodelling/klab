@@ -33,26 +33,34 @@ public class STACCollectionParser {
      * @return geometry
      */
     public static IGeometry readGeometry(JSONObject collection, boolean featureOnly) {
-        GeometryBuilder gBuilder = Geometry.builder();
+    	
+    	GeometryBuilder gBuilder = Geometry.builder();
 
         JSONObject extent = collection.getJSONObject("extent");
         List bbox = extent.getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0).toList();
-        gBuilder.space().boundingBox(Double.valueOf(bbox.get(0).toString()), Double.valueOf(bbox.get(1).toString()),
-                Double.valueOf(bbox.get(2).toString()), Double.valueOf(bbox.get(3).toString()));
+        gBuilder.space().boundingBox(Double.valueOf(bbox.get(0).toString()), Double.valueOf(bbox.get(2).toString()),
+                Double.valueOf(bbox.get(1).toString()), Double.valueOf(bbox.get(3).toString())); // In STAC, the geometry obj should necessarily be in WGS84 so it's good
+        
+        // IMPORTANT: In k.LAB it's minX, maxX, minY, maxY; but in STAC or geoserver the bbox is
+        // minX, minY, maxX, maxY
 
-        List interval = extent.getJSONObject("temporal").getJSONArray("interval").getJSONArray(0).toList();
-        if (interval.get(0) != null) {
-            gBuilder.time().start(Instant.parse(interval.get(0).toString()).toEpochMilli());
-        }
-        if (interval.size() > 1 && interval.get(1) != null) {
-            gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
-        }
+        // Avoid setting the time since, they get filtered later on
+        
+//        List interval = extent.getJSONObject("temporal").getJSONArray("interval").getJSONArray(0).toList();
+//        if (interval.get(0) != null) {
+//            gBuilder.time().start(Instant.parse(interval.get(0).toString()).toEpochMilli());
+//        }
+//        if (interval.size() > 1 && interval.get(1) != null) {
+//            gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
+//        }
+        
+        //TODO: Figure out a way to know if time would be logical or grid
 
         // TODO find non-ad-hoc cases
-        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012") || featureOnly) {
-            return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
-        }
-        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");
+//        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012") || featureOnly) {
+//            return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
+//        }
+        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
     }
 
     private static JSONObject findAsset(JSONObject assets, String assetId, Predicate<JSONObject> predicate) {
