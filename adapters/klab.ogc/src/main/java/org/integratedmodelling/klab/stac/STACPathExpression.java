@@ -282,18 +282,9 @@ public final class STACPathExpression {
                 }
 
                 JsonNode node = jsonNodeExtractor.apply(object);
-            
+
                 if (node == null || node.isNull() || node.isMissingNode()) {
                     return false;
-                }
-                
-                /*
-                 * Check if {"a.b": expectedValue} exists and also {"a": { "b": expectedValue }}
-                 */
-                
-                JsonNode directValue = node.get(jsonPath);
-                if (directValue != null && !directValue.isNull()) {
-                    return expectedValue.equals(directValue.asText());
                 }
 
                 return expression.matches(node, expectedValue);
@@ -309,7 +300,7 @@ public final class STACPathExpression {
         }
 
         public static Predicate<JSONObject> fromKongJsonObject(String jsonPath, String expectedValue) {
-        	return fromJsonPath(jsonPath, expectedValue, STACAssetPredicate::toJsonNode);
+            return fromJsonPath(jsonPath, expectedValue, STACAssetPredicate::toJsonNode);
         }
 
         private static JsonNode toJsonNode(JSONObject jsonObject) {

@@ -316,16 +316,10 @@ public class STACEncoder implements IResourceEncoder {
                     return false;
                 }
             };
-        }
-        
-        if (resource.getParameters().get("jsonSelector", String.class) != null) {
-            // based on the JSON Expression on JSONSelector and JSONValue;
+        } else if (resource.getParameters().get("jsonSelector", String.class) != null) {
+            // based on the JSON Expression on JSONSelector and JSONValue
             try {
-            	if (assetPredicate != null) {
-            		assetPredicate = assetPredicate.and(getAssetPredicateFromJSONSelector(resource)); // Predicate based on JSONPath AND the AssetID
-            	} else {
-            		assetPredicate = getAssetPredicateFromJSONSelector(resource);
-            	}
+                assetPredicate = getAssetPredicate(resource);
             } catch (Exception e) {
                 throw new KlabResourceAccessException("Couldn't form a predicate with the JSON Expressions");
             }
@@ -386,7 +380,7 @@ public class STACEncoder implements IResourceEncoder {
                     }
                     Predicate<HMStacAsset> predicate;
                     try {
-                        predicate = getAssetPredicateFromJSONSelector(resource);
+                        predicate = getAssetPredicate(resource);
                     } catch (KlabIllegalArgumentException e) {
                         manager.close();
                         throw e;  
@@ -605,7 +599,11 @@ public class STACEncoder implements IResourceEncoder {
         }
     }
 
-    private Predicate<HMStacAsset> getAssetPredicateFromJSONSelector(IResource resource) {
+    private Predicate<HMStacAsset> getAssetPredicate(IResource resource) {
+        String assetId = resource.getParameters().get("asset", String.class);
+        if (assetId != null) {
+            return STACPathExpression.STACAssetPredicate.fromHMStacAssetId(assetId);
+        }
         String jsonSelector = resource.getParameters().get("jsonSelector", String.class);
         String jsonValue = resource.getParameters().get("jsonValue", String.class);
         if (jsonSelector != null && !jsonSelector.isBlank() && jsonValue != null) {
