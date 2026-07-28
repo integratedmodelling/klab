@@ -76,6 +76,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.UnknownContentTypeException;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -101,6 +102,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class Client extends RestTemplate implements IClient {
 
     public static final String KLAB_VERSION_HEADER = "KlabVersion";
+    public static final String KLAB_USER_AGENT = "k.LAB/0.11.0";
     public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
 
     ObjectMapper objectMapper;
@@ -597,6 +599,8 @@ public class Client extends RestTemplate implements IClient {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Accept", cls.equals(String.class) ? "text/plain" : "application/json");
         headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+        // add user-agent to avoid 403 from Nominatim
+        headers.set(HttpHeaders.USER_AGENT, KLAB_USER_AGENT);
         setAuthTokens(headers);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -634,7 +638,7 @@ public class Client extends RestTemplate implements IClient {
         } else if (String.class.equals(cls)) {
             response = basicTemplate.exchange(url, HttpMethod.GET, entity, String.class);
         } else /* if (Map.class.isAssignableFrom(cls)) */ {
-            response = exchange(url, HttpMethod.GET, entity, Map.class);
+        	response = exchange(url, HttpMethod.GET, entity, Map.class);
         }
 
         switch(response.getStatusCodeValue()) {
