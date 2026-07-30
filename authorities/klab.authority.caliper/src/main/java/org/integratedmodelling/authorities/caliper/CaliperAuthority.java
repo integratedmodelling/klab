@@ -38,15 +38,7 @@ import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.json.JSONObject;
 
-@Authority(id = CaliperAuthority.ID, description = CaliperAuthority.DESCRIPTION, catalogs = {"ISIC", /*
-                                                                                                      * "ICC10",
-                                                                                                      */
-        "ICC"/*
-              * , "WCACROPS"
-              */, "M49"/* , "FPCD" */, "SDGEO", "FOODEX2", /* "CPC20", */ "CPC"/* , "CPC21AG" */,
-        /* "CPC21FERT", *//* "FCL", */ "HS"/*
-                                            * , "WRB"
-                                            */}, version = Version.CURRENT)
+@Authority(id = CaliperAuthority.ID, description = CaliperAuthority.DESCRIPTION, catalogs = {"ISIC","ICC","CPC"}, version = Version.CURRENT)
 public class CaliperAuthority implements IAuthority {
 
     public static final String ID = "CALIPER";
