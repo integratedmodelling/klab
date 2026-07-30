@@ -3,11 +3,9 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
 import java.awt.image.DataBuffer;
-
-import javax.media.jai.iterator.RandomIter;
+import java.util.ArrayList;
 
 import org.geotools.coverage.grid.GridCoverage2D;
-import org.geotools.coverage.util.CoverageUtilities;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -19,10 +17,6 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.runtime.contextualizers.AbstractContextualizer;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Parameters;
-
-import oms3.gen.doubleAccess;
-
-import java.util.ArrayList;
 
 public class MarineFloodResolver extends AbstractContextualizer implements IResolver<IState>, IExpression {
 	

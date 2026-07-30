@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.stac;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Predicate;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.common.Geometry;
@@ -11,11 +11,10 @@ import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
-import com.fasterxml.jackson.module.jsonSchema.types.ArraySchema.Items;
-
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
+import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
 public class STACCollectionParser {
@@ -33,41 +32,101 @@ public class STACCollectionParser {
      * @param parameters
      * @return geometry
      */
-    public static IGeometry readGeometry(JSONObject collection) {
-        GeometryBuilder gBuilder = Geometry.builder();
-        
+    public static IGeometry readGeometry(JSONObject collection, boolean featureOnly) {
+    	
+    	GeometryBuilder gBuilder = Geometry.builder();
+
         JSONObject extent = collection.getJSONObject("extent");
         List bbox = extent.getJSONObject("spatial").getJSONArray("bbox").getJSONArray(0).toList();
-        gBuilder.space().boundingBox(Double.valueOf(bbox.get(0).toString()), Double.valueOf(bbox.get(1).toString()),
-                Double.valueOf(bbox.get(2).toString()), Double.valueOf(bbox.get(3).toString()));
+        gBuilder.space().boundingBox(Double.valueOf(bbox.get(0).toString()), Double.valueOf(bbox.get(2).toString()),
+                Double.valueOf(bbox.get(1).toString()), Double.valueOf(bbox.get(3).toString())); // In STAC, the geometry obj should necessarily be in WGS84 so it's good
+        
+        // IMPORTANT: In k.LAB it's minX, maxX, minY, maxY; but in STAC or geoserver the bbox is
+        // minX, minY, maxX, maxY
 
-        List interval = extent.getJSONObject("temporal").getJSONArray("interval").getJSONArray(0).toList();
-        if (interval.get(0) != null) {
-            gBuilder.time().start(Instant.parse(interval.get(0).toString()).toEpochMilli());
-        }
-        if (interval.size() > 1 && interval.get(1) != null) {
-            gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
-        }
+        // Avoid setting the time since, they get filtered later on
+        
+//        List interval = extent.getJSONObject("temporal").getJSONArray("interval").getJSONArray(0).toList();
+//        if (interval.get(0) != null) {
+//            gBuilder.time().start(Instant.parse(interval.get(0).toString()).toEpochMilli());
+//        }
+//        if (interval.size() > 1 && interval.get(1) != null) {
+//            gBuilder.time().end(Instant.parse(interval.get(1).toString()).toEpochMilli());
+//        }
+        
+        //TODO: Figure out a way to know if time would be logical or grid
 
         // TODO find non-ad-hoc cases
-        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012")) {
-            return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
-        }
-        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("grid");
+//        if (collection.getString("id").equals("slovak_SK_v5_reference-points_EUNIS2012") || featureOnly) {
+//            return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE).withTimeType("logical");
+//        }
+        return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE);
     }
 
-    /**
-     * Reads the assets of a STAC collection and returns them as a JSON.
-     * @param collection as a JSON
-     * @return The asset list as a JSON
-     * @throws KlabResourceAccessException
-     */
-    public static JSONObject readAssetsFromCollection(String collectionUrl, JSONObject collection) throws KlabResourceAccessException {
+    private static JSONObject findAsset(JSONObject assets, String assetId, Predicate<JSONObject> predicate) {
+        if (assets == null) {
+            return null;
+        }
+
+        if (assetId != null) {
+            JSONObject asset = assets.optJSONObject(assetId);
+            if (asset != null) {
+            	JSONObject result = new JSONObject();
+                result.put(assetId, asset);
+                return result;
+            } else {
+            	return assets.keySet().stream()
+                        .map(key -> {
+                            JSONObject assetNode = assets.optJSONObject(key);
+                            if (assetNode == null) {
+                                return null;
+                            }
+                            if (!assetNode.has("eo:bands")) {
+                                return null;
+                            }
+                            JSONArray bandsArray = assetNode.optJSONArray("eo:bands");
+                            for (var bandObj:bandsArray) {
+                            	JSONObject band = (JSONObject) bandObj;
+                            	if (assetId.equals(band.get("name"))) {
+                            		JSONObject result = new JSONObject();
+                                    result.put(key, assetNode);
+                                    return result;
+                            	}
+                            }
+                            
+                            return null;
+                        })
+                        .filter(Objects::nonNull)
+                        .findFirst()
+                        .orElse(null);
+            }
+        }
+
+        if (predicate != null) {
+            return assets.keySet().stream().map(key -> {
+                JSONObject asset = assets.optJSONObject(key);
+                if (asset == null || !predicate.test(asset)) {
+                    return null;
+                }
+                JSONObject result = new JSONObject();
+                result.put(key, asset);
+                return result;
+            }).filter(Objects::nonNull).findFirst().orElse(null);
+        }
+
+        return null;
+    }
+
+    private static JSONObject readAssetInformationFromCollection(String collectionUrl, JSONObject collection, String assetId,
+            Predicate<JSONObject> predicate) throws KlabResourceAccessException {
+        if ((assetId == null) == (predicate == null)) {
+            throw new KlabResourceAccessException("Exactly one of assetId or predicate must be provided");
+        }
         String collectionId = collection.getString("id");
         String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collection);
         JSONObject catalogData = STACUtils.requestMetadata(catalogUrl, "catalog");
 
-        Optional<String> searchEndpoint = STACUtils.containsLinkTo(catalogData, "search") 
+        Optional<String> searchEndpoint = STACUtils.containsLinkTo(catalogData, "search")
                 ? STACUtils.getLinkTo(catalogData, "search")
                 : STACUtils.getLinkTo(collection, "search");
 
@@ -75,7 +134,10 @@ public class STACCollectionParser {
         if (searchEndpoint.isEmpty()) {
             // Check the assets
             if (collection.has("assets")) {
-                return collection.getJSONObject("assets");
+                JSONObject assetInfo = findAsset(collection.optJSONObject("assets"), assetId, predicate);
+                if (assetInfo != null) {
+                    return assetInfo;
+                }
             }
             // Try to get the assets from a link that has type `item`
             Optional<String> itemHref = STACUtils.getLinkTo(collection, "item");
@@ -85,27 +147,74 @@ public class STACCollectionParser {
             String itemUrl = itemHref.get().startsWith(".")
                     ? collectionUrl.replace("collection.json", "") + itemHref.get().replace("./", "")
                     : itemHref.get();
-            // TODO get assets from the item
             JSONObject itemData = STACUtils.requestMetadata(itemUrl, "feature");
-            if (itemData.has("assets")) {
-                return itemData.getJSONObject("assets");
+            JSONObject assetInfo = findAsset(itemData.optJSONObject("assets"), assetId, predicate);
+            if (assetInfo != null) {
+                return assetInfo;
             }
             throw new KlabResourceNotFoundException("Cannot find assets at STAC collection \"" + collectionUrl + "\"");
         }
 
-        // TODO Move the query to another place. 
-        String parameters = "?collections=" + collectionId + "&limit=1";
-        HttpResponse<JsonNode> response = Unirest.get(searchEndpoint.get() + parameters).asJson();
+        JSONObject searchPayload = new JSONObject().put("limit", 100)
+                .put("bbox", new JSONArray().put(-180.0).put(-90.0).put(180.0).put(90.0))
+                .put("collections", new JSONArray().put(collectionId));
+
+        HttpResponse<JsonNode> response = Unirest.post(searchEndpoint.get()).header("Content-Type", "application/json")
+                .body(searchPayload).asJson();
 
         if (!response.isSuccess()) {
-            throw new KlabResourceAccessException(); //TODO set message
+            throw new KlabResourceAccessException("Unable to import collection, Search failed"); 
         }
 
         JSONObject searchResponse = response.getBody().getObject();
-        if (searchResponse.getJSONArray("features").length() == 0) {
-            throw new KlabResourceAccessException(); // TODO set message there is no feature
+        JSONArray features = searchResponse.optJSONArray("features");
+        if (features == null || features.length() == 0) {
+            throw new KlabResourceAccessException("No features were found in the collection to be imported");
         }
 
-        return searchResponse.getJSONArray("features").getJSONObject(0).getJSONObject("assets");
+        for(int i = 0; i < features.length(); i++) {
+            JSONObject feature = features.optJSONObject(i);
+            if (feature == null) {
+                continue;
+            }
+
+            JSONObject assetInfo = findAsset(feature.optJSONObject("assets"), assetId, predicate);
+            if (assetInfo != null) {
+                return assetInfo;
+            }
+        }
+        if (assetId != null) {
+            throw new KlabResourceAccessException("No asset with ID \"" + assetId + "\" was found in the collection");
+        }
+
+        throw new KlabResourceAccessException("No asset matching the predicate was found in the collection");
+    }
+
+    /**
+     * Reads an asset from a STAC collection by asset key.
+     *
+     * @param collectionUrl URL of the STAC collection
+     * @param collection collection metadata as JSON
+     * @param assetId asset key to find inside each feature's assets object
+     * @return a JSONObject containing one entry: assetId -> asset JSON object
+     * @throws KlabResourceAccessException if the collection cannot be searched or no matching asset is found
+     */
+    public static JSONObject readAssetInformationFromCollection(String collectionUrl, JSONObject collection, String assetId)
+            throws KlabResourceAccessException {
+        return readAssetInformationFromCollection(collectionUrl, collection, assetId, null);
+    }
+
+    /**
+     * Reads the first asset in a STAC collection whose asset JSON object matches the predicate.
+     *
+     * @param collectionUrl URL of the STAC collection
+     * @param collection collection metadata as JSON
+     * @param predicate predicate evaluated against each asset JSON object
+     * @return a JSONObject containing one entry: assetId -> asset JSON object
+     * @throws KlabResourceAccessException if the collection cannot be searched or no matching asset is found
+     */
+    public static JSONObject readAssetInformationFromCollection(String collectionUrl, JSONObject collection,
+            Predicate<JSONObject> predicate) throws KlabResourceAccessException {
+        return readAssetInformationFromCollection(collectionUrl, collection, null, predicate);
     }
 }

@@ -455,19 +455,27 @@ public class Scale extends GroovyObjectSupport implements IScale {
 	private class ScaleIterator implements Iterator<ILocator> {
 
 		long offset = 0;
+		
+		private void moveToCovered() {
+			while (this.offset < size() && !isCovered(offset)) {
+				this.offset++;
+			}
+		}
 
 		@Override
 		public boolean hasNext() {
+			moveToCovered();
 			return offset < size();
 		}
 
 		@Override
 		public IScale next() {
+			moveToCovered();
 			IScale ret = new Scale(Scale.this, offset);
 			this.offset++;
-			while (this.offset < size() && !isCovered(offset)) {
-				this.offset++;
-			}
+//			while (this.offset < size() && !isCovered(offset)) {
+//				this.offset++;
+//			}
 			return ret;
 		}
 	}

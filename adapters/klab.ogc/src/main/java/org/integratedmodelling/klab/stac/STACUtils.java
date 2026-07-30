@@ -11,7 +11,7 @@ import org.geotools.data.geojson.GeoJSONReader;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.DOIReader;
-import org.opengis.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeature;
 
 import com.fasterxml.jackson.core.JsonParseException;
 
@@ -32,13 +32,14 @@ public class STACUtils {
             return null;
         }
         List<String> keywords = json.getJSONArray("keywords").toList();
-        return keywords.isEmpty() ? null :
-            keywords.stream().collect(Collectors.joining(","));
+        return keywords.isEmpty() ? null : keywords.stream().collect(Collectors.joining(","));
     }
 
-    final private static Set<String> DOI_KEYS_IN_STAC_JSON = Set.of("sci:doi", "assets.sci:doi", "summaries.sci:doi", "properties.sci:doi", "item_assets.sci:doi");
+    final private static Set<String> DOI_KEYS_IN_STAC_JSON = Set.of("sci:doi", "assets.sci:doi", "summaries.sci:doi",
+            "properties.sci:doi", "item_assets.sci:doi");
     public static String readDOI(JSONObject json) {
-        Optional<String> doi = DOI_KEYS_IN_STAC_JSON.stream().filter(key -> json.has(key)).map(key -> json.getString(key)).findFirst();
+        Optional<String> doi = DOI_KEYS_IN_STAC_JSON.stream().filter(key -> json.has(key)).map(key -> json.getString(key))
+                .findFirst();
         return doi.isPresent() ? doi.get() : null;
     }
 
@@ -61,13 +62,13 @@ public class STACUtils {
      */
     public static boolean containsLinkTo(JSONObject data, String rel) {
         return data.getJSONArray("links").toList().stream()
-                .anyMatch(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel));
+                .anyMatch(link -> ((JSONObject) link).getString("rel").equalsIgnoreCase(rel));
     }
 
     public static Optional<String> getLinkTo(JSONObject data, String rel) {
         return data.getJSONArray("links").toList().stream()
-                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase(rel))
-                .map(link -> ((JSONObject)link).getString("href")).findFirst();
+                .filter(link -> ((JSONObject) link).getString("rel").equalsIgnoreCase(rel))
+                .map(link -> ((JSONObject) link).getString("href")).findFirst();
     }
 
     public static JSONObject requestMetadata(String collectionUrl, String type) {
@@ -87,7 +88,7 @@ public class STACUtils {
             return null;
         }
         JSONArray links = collection.getJSONArray("links");
-        for (int i = 0; i < links.length(); i++) {
+        for(int i = 0; i < links.length(); i++) {
             JSONObject link = links.getJSONObject(i);
             if (!link.has("rel") || !link.getString("rel").equals("license")) {
                 continue;
@@ -121,11 +122,12 @@ public class STACUtils {
     public static String getCatalogUrl(String collectionUrl, String collectionId, JSONObject collectionData) {
         // The URL of the catalog is the root
         if (!collectionData.has("links")) {
-            throw new KlabResourceAccessException("STAC collection is missing links. It is not fully complaiant and cannot be accessed by the adapter.");
+            throw new KlabResourceAccessException(
+                    "STAC collection is missing links. It is not fully complaiant and cannot be accessed by the adapter.");
         }
         JSONArray links = collectionData.getJSONArray("links");
         Optional<JSONObject> rootLink = links.toList().stream()
-                .filter(link -> ((JSONObject)link).getString("rel").equalsIgnoreCase("root")).findFirst();
+                .filter(link -> ((JSONObject) link).getString("rel").equalsIgnoreCase("root")).findFirst();
         if (rootLink.isEmpty()) {
             throw new KlabResourceAccessException("STAC collection is missing a relationship to the root catalog");
         }

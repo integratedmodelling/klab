@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.node;
 import java.util.Arrays;
 
 import javax.annotation.PreDestroy;
-import javax.inject.Singleton;
 
 import org.apache.catalina.startup.Tomcat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@Singleton
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.node.security",
 		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers",

@@ -8,19 +8,26 @@
  {
 
  	final text 'collection'
- 		"The URL pointing to the STAC collection file that contains the resource dataset."
+ 		"[REQUIRED] The URL pointing to the STAC collection file that contains the resource dataset."
  		
  	optional text 'asset'
- 		"The asset that is going to be retrieved from the items. Left it blank when the information is stored in the feature."
+ 		"The asset that is going to be retrieved from the items. Should be left blank when the information is stored in the feature."
  
  	optional number 'band'
  		"Relevant only for raster resources.
- 		 The band for a multi-band raster. Default is 0."
+ 		 The band for a multi-band raster. Default it will pick up the first one."
  		default 0
  		
- 	optional text 'cog'
- 		"Relevant only for Resources served as Cloud Optimized GeoTiff, with Public Access"
+ 	optional text 'jsonSelector'
+ 		"JSON selector"
  		default ""
+ 		
+ 	optional text 'jsonValue'
+ 		"JSON value"
+ 		default ""
+ 		
+ 	optional text 'cog'
+ 		"Relevant only for Resources served as Cloud Optimised GeoTiff, with Public Access"
  
  	optional enum 'bandmixer'
  		"Relevant only for raster resources.\n

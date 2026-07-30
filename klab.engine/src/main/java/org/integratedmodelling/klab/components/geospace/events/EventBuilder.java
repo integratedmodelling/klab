@@ -21,7 +21,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
  *    find the earliest start among them. Then reconstruct based on that time instead of the time at the call.
  *    
  * 2. For each layer:
- * 2.1   use JAI vectorizer and tag each shape in a layer with a progressive ID and rasterize the ID over a new layer.
+ * 2.1   use ImageN vectorizer and tag each shape in a layer with a progressive ID and rasterize the ID over a new layer.
  * 2.2   if there is a previous layer, connect the shapes that overlap. Shapes that don't (or end of observations) causes
  *       event storage.
  *       

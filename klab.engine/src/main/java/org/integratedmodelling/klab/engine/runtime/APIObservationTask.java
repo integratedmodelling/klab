@@ -204,7 +204,9 @@ public class APIObservationTask extends Thread {
          * make every observation
          */
         for (IObservable observable : observables) {
-
+            if (observable == null) {
+                continue;
+            }
             IObservation observation = null;
             ITask<IObservation> observationTask = ((ISubject) context).observe(observable);
             observationTask.addScenarios(scenarios);

@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.components.geospace.extents;
 
 import javax.measure.Unit;
 
-import org.geotools.geometry.DirectPosition2D;
+import org.geotools.geometry.Position2D;
 import org.geotools.referencing.CRS;
 import org.geotools.referencing.CRS.AxisOrder;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
@@ -11,10 +11,10 @@ import org.integratedmodelling.klab.components.geospace.utils.UTM;
 import org.integratedmodelling.klab.components.geospace.utils.WGS84;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.opengis.geometry.DirectPosition;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
+import org.geotools.api.geometry.Position;
+import org.geotools.api.referencing.FactoryException;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
 
 public class Projection implements IProjection {
 
@@ -235,7 +235,7 @@ public class Projection implements IProjection {
 		if (!this.equals(other)) {
 			try {
 				MathTransform transform = CRS.findMathTransform(((Projection) other).crs, this.crs);
-				DirectPosition position = transform.transform(new DirectPosition2D(ret[0], ret[1]), null);
+				Position position = transform.transform(new Position2D(ret[0], ret[1]), null);
 				ret = new double[] { position.getCoordinate()[0], position.getCoordinate()[1] };
 			} catch (Exception e) {
 				throw new KlabInternalErrorException(e);

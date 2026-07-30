@@ -14,6 +14,7 @@ import java.util.function.Function;
 
 import org.geotools.geometry.jts.Geometries;
 import org.geotools.process.vector.VectorToRasterProcess;
+import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -88,8 +89,6 @@ public class Rasterizer<T> {
     // this is used only for the getCoordinates() operation
     private BufferedImage coordinateRaster = null;
     private Graphics2D coordinateGraphics;
-    private VectorToRasterProcess gtp;
-    private GeometryFactory geoFactory = new GeometryFactory();
 
     /**
      * 
@@ -309,10 +308,13 @@ public class Rasterizer<T> {
             coordGridX = new int[coords.length];
             coordGridY = new int[coords.length];
         }
+        double yRes = extent.getCellHeight();
+        double xRes = extent.getCellWidth();
+        double west = extent.getWest();
+        double south = extent.getSouth();
         for (int n = 0; n < coords.length; n++) {
-            coordGridX[n] = (int) (((coords[n].x - extent.getWest()) / extent.getCellWidth()));
-            coordGridY[n] = this.raster.getHeight()
-                    - (int) (((coords[n].y - extent.getSouth()) / extent.getCellHeight()));
+			coordGridX[n] = (int) (((coords[n].x - west) / xRes));
+			coordGridY[n] = this.raster.getHeight() - (int) (((coords[n].y - south) / yRes));
         }
 
         if (geometry.getClass().equals(Polygon.class)) {
@@ -322,7 +324,12 @@ public class Rasterizer<T> {
         } else if (geometry.getClass().equals(LineString.class)) {
             graphics.drawPolyline(coordGridX, coordGridY, coords.length);
         } else if (geometry.getClass().equals(Point.class)) {
-            graphics.drawLine(coordGridX[0], coordGridY[0], coordGridX[0], coordGridY[0]);
+        	double cellWest = extent.snapX(coords[0].x, Direction.LEFT);
+        	double centerX = cellWest + xRes/2.0;
+        	double cellSouth = extent.snapY(coords[0].y, Direction.BOTTOM);
+        	double centerY = cellSouth + yRes/2.0;
+        	long[] gc = extent.getGridCoordinatesAt(centerX, centerY);
+            graphics.drawLine((int)gc[0], (int)gc[1], (int)gc[0], (int)gc[1]);
         }
     }
 
