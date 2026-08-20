@@ -224,7 +224,6 @@ public class VectorEncoder implements IResourceEncoder {
         }
 
         CoordinateReferenceSystem crs = fc.getSchema().getCoordinateReferenceSystem();
-        System.out.println(crs);
         crs = GeotoolsUtils.INSTANCE.checkCrs(crs);
         Projection originalProjection = Projection.create(crs);
         IEnvelope envelopeInOriginalProjection = requestScale.getSpace().getEnvelope().transform(originalProjection, true);

@@ -503,7 +503,7 @@ public class STACEncoder implements IResourceEncoder {
                 return;   
             }
             
-            List<HMStacItem> items = searchItemsWithRetry(collection);
+            List<HMStacItem> items = searchItemsWithRetry(collection, scope.getMonitor());
             if (items.isEmpty()) {
                 manager.close();
                 throw new KlabIllegalStateException("No STAC items found for this context, check the Spatial/ Temporal bounds of items and the Context");
@@ -751,7 +751,7 @@ public class STACEncoder implements IResourceEncoder {
     }
     
     
-    private List<HMStacItem> searchItemsWithRetry(HMStacCollection collection) throws IOException {
+    private List<HMStacItem> searchItemsWithRetry(HMStacCollection collection, IMonitor monitor) throws IOException {
         int maxRetries = 5;
         long backoffMillis = 10000; // start at 10s
 
@@ -762,7 +762,7 @@ public class STACEncoder implements IResourceEncoder {
                 boolean isRateLimited = isRateLimitError(e);
                 if (!isRateLimited || attempt == maxRetries) {
                     throw e instanceof IOException ? (IOException) e : new IOException(e);
-                }
+                } 
 
                 try {
                     Thread.sleep(backoffMillis);
@@ -772,6 +772,7 @@ public class STACEncoder implements IResourceEncoder {
                 }
 
                 backoffMillis *= 2; // exponential: 10s, 20s, 40s, 80s, 160s
+                monitor.debug("Search Request throttled; Retrying Search after: " + backoffMillis + " Miliseconds");
             }
         }
         throw new IOException("Unreachable");
