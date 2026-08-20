@@ -45,6 +45,9 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.api.feature.type.AttributeDescriptor;
 import org.geotools.api.feature.type.GeometryDescriptor;
 import org.locationtech.jts.geom.util.GeometryFixer;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.precision.GeometryPrecisionReducer;
+import org.locationtech.jts.geom.Geometry;
 
 
 public class STACFeatureExtension {
@@ -98,39 +101,39 @@ public class STACFeatureExtension {
 		    while (featureIterator.hasNext()) {
 		        JSONObject feature = (JSONObject) featureIterator.next();
 		        SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
-		        featureList.add(feat);
+		        var transformer = new HMCrsTransformer(HMCrsRegistry.INSTANCE.getCrs(
+	        			String.valueOf(asset.getEpsg()), true), targetCRS);
+	        	transformer.setAcceptLenientDatumShift(true);
+	        	
+	        	if (type4326 == null) {
+	        		SimpleFeatureType type = feat.getFeatureType();
+	        	
+	        		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+	        		builder.setName(type.getTypeName());
+	        		builder.setCRS(targetCRS);
+
+	        		for (var ad : type.getAttributeDescriptors()) {
+	        		    if (ad instanceof GeometryDescriptor) {
+	        		    	builder.add(
+	        		                ad.getLocalName(),
+	        		                Geometry.class,
+	        		                targetCRS
+	        		            );
+	        		    } else {
+	        		    	 builder.add(
+	        		    	            ad.getLocalName(),
+	        		    	            ad.getType().getBinding()
+	        		    	        );
+	        		    }
+	        		}
+	        		type4326 = builder.buildFeatureType();
+	        	}
+	        	
 		        if (!asset.getEpsg().equals(4326)) {
 		        	SimpleFeatureType type = feat.getFeatureType();
-		        	if (type4326 == null) {
-		        		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-		        		builder.setName(type.getTypeName());
-		        		builder.setCRS(targetCRS);
-
-		        		for (var ad : type.getAttributeDescriptors()) {
-		        		    if (ad instanceof GeometryDescriptor) {
-		        		        builder.add(
-		        		            ad.getLocalName(),
-		        		            ad.getType().getBinding(),
-		        		            targetCRS
-		        		        );
-		        		    } else {
-		        		    	 builder.add(
-		        		    	            ad.getLocalName(),
-		        		    	            ad.getType().getBinding()
-		        		    	        );
-		        		    }
-		        		}
-		        		
-		        		type4326 = builder.buildFeatureType();
-		        	}
-		        
 		        	Geometry vectorGeom = (Geometry) feat.getDefaultGeometry();
-		        	MathTransform transform = CRS.findMathTransform(HMCrsRegistry.INSTANCE.getCrs(
-		        			String.valueOf(asset.getEpsg()), true), targetCRS, true);
-		        	Geometry geom4326 = JTS.transform(vectorGeom, transform);
-		        	geom4326 = GeometryFixer.fix(geom4326);
-		        	geom4326 = geom4326.buffer(0);
-		      
+		        	Geometry geom4326 = transformer.transform(vectorGeom);
+		        	
 		        	SimpleFeatureBuilder fb =
 			                new SimpleFeatureBuilder(type4326);
 		        	for (var ad : type.getAttributeDescriptors()) {
@@ -154,9 +157,9 @@ public class STACFeatureExtension {
 		    throw new Exception("No features found");
 		}
 
-		MemoryDataStore dataStore = new MemoryDataStore(featureList.get(0).getType());
+		MemoryDataStore dataStore = new MemoryDataStore(type4326);
 		dataStore.addFeatures(featureList);
-		return  dataStore.getFeatureSource(featureList.get(0).getType().getTypeName());
+		return  dataStore.getFeatureSource(type4326.getTypeName());
 	}
 	
 	

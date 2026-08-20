@@ -379,8 +379,6 @@ public class STACEncoder implements IResourceEncoder {
             GridCoverage2D coverage = null;
 
             try {
-                // TODO see if we can access to the same readRasterBandOnRegion without using a
-                // collection
                 LogProgressMonitor lpm = new LogProgressMonitor();
                 try (HMStacManager manager = new HMStacManager(catalogUrl, lpm)) {
                     HMStacCollection collection = null;
