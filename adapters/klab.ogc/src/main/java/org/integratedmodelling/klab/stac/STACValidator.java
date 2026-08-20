@@ -4,11 +4,12 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-
+import org.geotools.api.feature.type.AttributeDescriptor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -23,11 +24,17 @@ import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.CodelistReference;
 import org.integratedmodelling.klab.rest.MappingReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
+import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
+import org.locationtech.jts.geom.Lineal;
+import org.locationtech.jts.geom.Polygonal;
+import org.locationtech.jts.geom.Puntal;
 
 import kong.unirest.json.JSONObject;
 
@@ -62,35 +69,64 @@ public class STACValidator implements IResourceValidator {
         // The default URL of the resource is the collection endpoint. May be overwritten.
         builder.withMetadata(IMetadata.DC_URL, collectionUrl);
 
-        JSONObject assetNode;
+        JSONObject assetNode = null;
 
-        if (userData.contains("asset")) {
-        	if(userData.contains("cog")) {
-        		throw new KlabIllegalArgumentException("STAC asset and cog URL both shouldn't be provided while importing");
-        	}
-            String requestedAssetId = userData.get("asset", String.class);
-            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, requestedAssetId);
+	        if (userData.contains("asset")) {
+	        	if(userData.contains("cog")) {
+	        		throw new KlabIllegalArgumentException("STAC asset and cog URL both shouldn't be provided while importing");
+	        	}
+	            String requestedAssetId = userData.get("asset", String.class);
+	            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, requestedAssetId);
+	        }
+	        
+	        if (userData.contains("jsonSelector")) {
+	            if (!userData.contains("jsonValue")) {
+	                throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue must be provided");
+	            }
+	            
+	            if(userData.contains("cog")) {
+	            	throw new KlabIllegalArgumentException("jsonSelector and jsonValue shouldn't be provided along with cog URL while importing");
+	            }
+	
+	            Predicate<JSONObject> predicate = STACPathExpression.STACAssetPredicate
+	                    .fromKongJsonObject(userData.get("jsonSelector", String.class), userData.get("jsonValue", String.class));
+	
+	            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, predicate);
+	
+	        }
+	        
+	        if (assetNode == null || assetNode.getJSONObject(assetNode.keys().next()).get("href").toString().endsWith("json")) {
+	        	// Importing Vector from STAC
+	        	if (assetNode == null) { // Import all the features from STAC 
+	        		monitor.info("Importing Vectors from STAC Item Geometries from Item Metadata");
+	        		readMetadata(collectionData, builder);
+	        	} else {
+	        		// The Asset is a Vector in itself, targeting the Asset like WFS
+	        		monitor.info("Targetting Vector Assets from STAC Items");
+	        		Map<String, Class<?>> attributeTypes = new HashMap<>();
+	        		try {
+	        			var source = STACFeatureExtension.getFeatures(assetNode.getJSONObject(assetNode.keys().next()));
+		        		
+		        		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
+		        		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
 
-        } else if (userData.contains("jsonSelector")) {
-            if (!userData.contains("jsonValue")) {
-                throw new KlabIllegalArgumentException("Both jsonSelector and jsonValue must be provided");
-            }
-            
-            if(userData.contains("cog")) {
-            	throw new KlabIllegalArgumentException("jsonSelector and jsonValue shouldn't be provided along with cog URL while importing");
-            }
-
-            Predicate<JSONObject> predicate = STACPathExpression.STACAssetPredicate
-                    .fromKongJsonObject(userData.get("jsonSelector", String.class), userData.get("jsonValue", String.class));
-
-            assetNode = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, predicate);
-
-        } else {
-            // Just import Features
-        	monitor.info("import STAC Collection for Features");
-        	readMetadata(collectionData, builder);
-        	return builder;
-        }
+		        			if (ad.getLocalName().equals(geomName)) {
+		        				// set shape dimensionality from geometry type: 0 = point, 1 = line, 2 = polygon
+		        				continue;
+		        			} else {
+		        				// store attribute ID and type
+		        				attributeTypes.put(ad.getName().toString(), ad.getType().getBinding());
+		        				builder.withAttribute(ad.getName().toString(), Utils.getArtifactType(ad.getType().getBinding()), false,
+		        						true);
+		        			}
+		        		}
+	        		} catch (Exception e) {
+	        			throw new  KlabInternalErrorException("Unable to import Vector Resource from STAC");
+	        		}
+	        	}
+	        	return builder;
+	        }
+        
 
         String assetId = assetNode.keys().next();
         JSONObject asset = assetNode.getJSONObject(assetId);
@@ -150,7 +186,8 @@ public class STACValidator implements IResourceValidator {
             builder.withType(type);
         }
     }
-
+    
+    
     private Type readRasterDataType(JSONObject asset) {
     	
     	if (asset.has("type")) {
