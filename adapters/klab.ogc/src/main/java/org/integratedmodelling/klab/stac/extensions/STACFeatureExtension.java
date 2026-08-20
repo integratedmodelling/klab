@@ -99,54 +99,54 @@ public class STACFeatureExtension {
 		        JSONObject feature = (JSONObject) featureIterator.next();
 		        SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
 		        featureList.add(feat);
-//		        if (!asset.getEpsg().equals(4326)) {
-//		        	SimpleFeatureType type = feat.getFeatureType();
-//		        	if (type4326 == null) {
-//		        		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
-//		        		builder.setName(type.getTypeName());
-//		        		builder.setCRS(targetCRS);
-//
-//		        		for (var ad : type.getAttributeDescriptors()) {
-//		        		    if (ad instanceof GeometryDescriptor) {
-//		        		        builder.add(
-//		        		            ad.getLocalName(),
-//		        		            ad.getType().getBinding(),
-//		        		            targetCRS
-//		        		        );
-//		        		    } else {
-//		        		    	 builder.add(
-//		        		    	            ad.getLocalName(),
-//		        		    	            ad.getType().getBinding()
-//		        		    	        );
-//		        		    }
-//		        		}
-//		        		
-//		        		type4326 = builder.buildFeatureType();
-//		        	}
-//		        
-//		        	Geometry vectorGeom = (Geometry) feat.getDefaultGeometry();
-//		        	MathTransform transform = CRS.findMathTransform(HMCrsRegistry.INSTANCE.getCrs(
-//		        			String.valueOf(asset.getEpsg()), true), targetCRS, true);
-//		        	Geometry geom4326 = JTS.transform(vectorGeom, transform);
-//		        	geom4326 = GeometryFixer.fix(geom4326);
-//		        	geom4326 = geom4326.buffer(0);
-//		      
-//		        	SimpleFeatureBuilder fb =
-//			                new SimpleFeatureBuilder(type4326);
-//		        	for (var ad : type.getAttributeDescriptors()) {
-//			            String name = ad.getLocalName();
-//			            if (ad instanceof GeometryDescriptor) {
-//			                fb.set(name, geom4326);
-//			            } else {
-//			                fb.set(name, feat.getAttribute(name));
-//			            }
-//		        	}
-//		        	SimpleFeature updatedFeature = fb.buildFeature(feat.getID());
-//		        	updatedFeature.setDefaultGeometry(geom4326);
-//			        featureList.add(updatedFeature);
-//		        } else {
-//		        	featureList.add(feat);
-//		        }
+		        if (!asset.getEpsg().equals(4326)) {
+		        	SimpleFeatureType type = feat.getFeatureType();
+		        	if (type4326 == null) {
+		        		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+		        		builder.setName(type.getTypeName());
+		        		builder.setCRS(targetCRS);
+
+		        		for (var ad : type.getAttributeDescriptors()) {
+		        		    if (ad instanceof GeometryDescriptor) {
+		        		        builder.add(
+		        		            ad.getLocalName(),
+		        		            ad.getType().getBinding(),
+		        		            targetCRS
+		        		        );
+		        		    } else {
+		        		    	 builder.add(
+		        		    	            ad.getLocalName(),
+		        		    	            ad.getType().getBinding()
+		        		    	        );
+		        		    }
+		        		}
+		        		
+		        		type4326 = builder.buildFeatureType();
+		        	}
+		        
+		        	Geometry vectorGeom = (Geometry) feat.getDefaultGeometry();
+		        	MathTransform transform = CRS.findMathTransform(HMCrsRegistry.INSTANCE.getCrs(
+		        			String.valueOf(asset.getEpsg()), true), targetCRS, true);
+		        	Geometry geom4326 = JTS.transform(vectorGeom, transform);
+		        	geom4326 = GeometryFixer.fix(geom4326);
+		        	geom4326 = geom4326.buffer(0);
+		      
+		        	SimpleFeatureBuilder fb =
+			                new SimpleFeatureBuilder(type4326);
+		        	for (var ad : type.getAttributeDescriptors()) {
+			            String name = ad.getLocalName();
+			            if (ad instanceof GeometryDescriptor) {
+			                fb.set(name, geom4326);
+			            } else {
+			                fb.set(name, feat.getAttribute(name));
+			            }
+		        	}
+		        	SimpleFeature updatedFeature = fb.buildFeature(feat.getID());
+		        	updatedFeature.setDefaultGeometry(geom4326);
+			        featureList.add(updatedFeature);
+		        } else {
+		        	featureList.add(feat);
+		        }
 		    }
 		}
 		
