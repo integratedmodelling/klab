@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.stac.extensions;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,10 +11,18 @@ import java.util.List;
 import org.geotools.api.data.FeatureSource;
 import org.geotools.data.geojson.GeoJSONReader;
 import org.geotools.data.memory.MemoryDataStore;
+import org.geotools.geojson.feature.FeatureJSON;
+import org.geotools.geometry.jts.JTS;
+import org.geotools.referencing.CRS;
 import org.integratedmodelling.klab.stac.STACUtils;
+import org.locationtech.jts.geom.Geometry;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
+import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
+import org.geotools.api.referencing.operation.MathTransform;
 import org.hortonmachine.gears.io.stac.HMStacItem;
+import org.hortonmachine.gears.utils.crs.HMCrsRegistry;
+import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
@@ -26,15 +36,139 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.integratedmodelling.klab.stac.STACUtils;
 import java.time.format.DateTimeFormatter;
 import java.time.*;
+import org.hortonmachine.gears.io.stac.HMStacAsset;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.geotools.feature.simple.SimpleFeatureBuilder;
+import org.geotools.api.feature.type.AttributeDescriptor;
+import org.geotools.api.feature.type.GeometryDescriptor;
+import org.locationtech.jts.geom.util.GeometryFixer;
+import org.locationtech.jts.geom.PrecisionModel;
+import org.locationtech.jts.precision.GeometryPrecisionReducer;
+import org.locationtech.jts.geom.Geometry;
+
 
 public class STACFeatureExtension {
+	
+	
+	public static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatures(JSONObject assetNode) throws Exception {
+		List<SimpleFeature> featureList = new ArrayList<>();
+		
+		String href =assetNode.get("href").toString();
+	    HttpResponse<JsonNode> response = Unirest
+	            .get(href)
+	            .asJson();
+
+	    JSONObject body = response.getBody().getObject();
+	    JSONArray features = body.getJSONArray("features");
+	    Iterator<Object> featureIterator = features.iterator();
+
+	    while (featureIterator.hasNext()) {
+	        JSONObject feature = (JSONObject) featureIterator.next();
+	        SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
+	        featureList.add(feat);
+	    }
+		
+
+		if (featureList.isEmpty()) {
+		    throw new Exception("No features found");
+		}
+
+		SimpleFeatureType type = featureList.get(0).getFeatureType();
+		MemoryDataStore dataStore = new MemoryDataStore(type);
+		dataStore.addFeatures(featureList);
+		return dataStore.getFeatureSource(type.getTypeName());
+	}
+	
+	public static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatures(List<HMStacAsset> assets) throws Exception {
+		List<SimpleFeature> featureList = new ArrayList<>();
+		CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+		SimpleFeatureType type4326 = null;
+    	
+		for (HMStacAsset asset : assets) {
+			String href = asset.getAssetNode().get("href").asText();
+		    HttpResponse<JsonNode> response = Unirest
+		            .get(href)
+		            .asJson();
+
+		    JSONObject body = response.getBody().getObject();
+		    JSONArray features = body.getJSONArray("features");
+		    Iterator<Object> featureIterator = features.iterator();
+		    
+
+		    while (featureIterator.hasNext()) {
+		        JSONObject feature = (JSONObject) featureIterator.next();
+		        SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
+		        var transformer = new HMCrsTransformer(HMCrsRegistry.INSTANCE.getCrs(
+	        			String.valueOf(asset.getEpsg()), true), targetCRS);
+	        	transformer.setAcceptLenientDatumShift(true);
+	        	
+	        	if (type4326 == null) {
+	        		SimpleFeatureType type = feat.getFeatureType();
+	        	
+	        		SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
+	        		builder.setName(type.getTypeName());
+	        		builder.setCRS(targetCRS);
+
+	        		for (var ad : type.getAttributeDescriptors()) {
+	        		    if (ad instanceof GeometryDescriptor) {
+	        		    	builder.add(
+	        		                ad.getLocalName(),
+	        		                Geometry.class,
+	        		                targetCRS
+	        		            );
+	        		    } else {
+	        		    	 builder.add(
+	        		    	            ad.getLocalName(),
+	        		    	            ad.getType().getBinding()
+	        		    	        );
+	        		    }
+	        		}
+	        		type4326 = builder.buildFeatureType();
+	        	}
+	        	
+		        if (!asset.getEpsg().equals(4326)) {
+		        	SimpleFeatureType type = feat.getFeatureType();
+		        	Geometry vectorGeom = (Geometry) feat.getDefaultGeometry();
+		        	Geometry geom4326 = transformer.transform(vectorGeom);
+		        	
+		        	SimpleFeatureBuilder fb =
+			                new SimpleFeatureBuilder(type4326);
+		        	for (var ad : type.getAttributeDescriptors()) {
+			            String name = ad.getLocalName();
+			            if (ad instanceof GeometryDescriptor) {
+			                fb.set(name, geom4326);
+			            } else {
+			                fb.set(name, feat.getAttribute(name));
+			            }
+		        	}
+		        	SimpleFeature updatedFeature = fb.buildFeature(feat.getID());
+		        	updatedFeature.setDefaultGeometry(geom4326);
+			        featureList.add(updatedFeature);
+		        } else {
+		        	featureList.add(feat);
+		        }
+		    }
+		}
+		
+		if (featureList.isEmpty()) {
+		    throw new Exception("No features found");
+		}
+
+		MemoryDataStore dataStore = new MemoryDataStore(type4326);
+		dataStore.addFeatures(featureList);
+		return  dataStore.getFeatureSource(type4326.getTypeName());
+	}
+	
+	
 	public static FeatureSource<SimpleFeatureType, SimpleFeature> getFeatures(JSONObject catalogData, String collectionId, List<Double> bbox, ITimeInstant start, ITimeInstant end) throws Exception {
 		
 		String searchEndpoint = STACUtils.getLinkTo(catalogData, "search")
 		        .orElseThrow(() -> new Exception("Search Link not found for the Catalog"));
 		
 		List<SimpleFeature> featureList = new ArrayList<>();
-
 		JSONArray bboxArray = new JSONArray();
 		for (Double v : bbox) {
 		    bboxArray.put(v);
@@ -111,7 +245,7 @@ public class STACFeatureExtension {
 		}
 		
         SimpleFeatureType type = featureList.get(0).getType();
-        MemoryDataStore dataStore = new org.geotools.data.memory.MemoryDataStore(type);
+        MemoryDataStore dataStore = new MemoryDataStore(type);
         dataStore.addFeatures(featureList);
         return dataStore.getFeatureSource(type.getTypeName());
     }
