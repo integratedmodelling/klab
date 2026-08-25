@@ -331,9 +331,9 @@ public class STACEncoder implements IResourceEncoder {
                                 return true;
                             }
                         }
-                    }  // meaning eo:bands is not present like Microsoft Planetary, in this
-                             // case this would be like the asset key i.e. Id
-                    return asset.getId().equals(assetId);
+                    }
+                             
+                    return asset.getId().equals(assetId); // case this would be like the asset key i.e. Id
                 }
             };
         }
