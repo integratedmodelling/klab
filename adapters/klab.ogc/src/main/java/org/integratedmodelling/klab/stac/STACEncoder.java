@@ -40,6 +40,7 @@ import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -78,6 +79,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
+import org.integratedmodelling.klab.stac.extensions.WEEDModelSTACExtension;
+
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
@@ -328,11 +331,9 @@ public class STACEncoder implements IResourceEncoder {
                                 return true;
                             }
                         }
-                    } else { // meaning eo:bands is not present like Microsoft Planetary, in this
-                             // case this would be like the asset key i.e. Id
-                        return asset.getId().equals(assetId);
                     }
-                    return false;
+                             
+                    return asset.getId().equals(assetId); // case this would be like the asset key i.e. Id
                 }
             };
         }
@@ -576,7 +577,6 @@ public class STACEncoder implements IResourceEncoder {
                         + "The transformation process could affect the data.");
             }
             
-            
             // Specific Implementation for the Slow Requests flow in WEED 
             if (collection.getId().contains("EU_modelV2-1-MECE") 
             		&& resource.getUrn().contains("im.resources-main")) { 
@@ -588,8 +588,19 @@ public class STACEncoder implements IResourceEncoder {
             		);
             	
             	if (!unionMLStacInference.contains(poly)) {
-            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
             		
+            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
+            		List<String >modelIds = null;
+            		try {
+						var modelIDs = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), targetSemantics);
+						if (modelIDs == null || modelIDs.size() == 0) {
+							throw new Exception("No ONNX Models were found over the specified context");
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						throw new KlabIllegalStateException("Error occured while getting ONNX Model info over the specified context");
+					}
             		OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
             		List<Process> processes = new ArrayList<>();
             		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter.json";
@@ -598,31 +609,35 @@ public class STACEncoder implements IResourceEncoder {
             		Process process = JsonUtils.load(new URL(processNamespace),
 							Process.class);
 					process.encodeSelf(processNamespace);
+
+            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
 					processes.add(process);
 					
-					JSONObject arguments = new JSONObject()
-							.put("bbox", new JSONObject()
-								.put("crs", 4326)
-								.put("west", bbox.get(0))
-								.put("south", bbox.get(3))
-								.put("east", bbox.get(1))
-								.put("north", bbox.get(2))) 
-						.put("digitalId", "AM1729")  // Forms the STAC coordinate later
-						.put("scenarioId", "DT_SLOW_FLOW") // Forms the STAC coordinate later 
-						.put("year", ctxTime.getEnd().getYear())
-						.put("onnx_model", "EUNIS2021plus_panEU_v201_2024_OneZone") // Hardcoding for now only for Europe, until the "BEST" model is decided!
-						.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.3vh554o6h6c"); 
+					for (var modelId:modelIds) { // triggering multiple UDPs parallely
+						JSONObject arguments = new JSONObject()
+								.put("bbox", new JSONObject() // convert this to a geojson
+									.put("crs", 4326)
+									.put("west", bbox.get(0))
+									.put("south", bbox.get(3))
+									.put("east", bbox.get(1))
+									.put("north", bbox.get(2))) 
+							.put("digitalId", "AM1729")  // Forms the STAC coordinate later
+							.put("scenarioId", "DT_SLOW_FLOW") // Forms the STAC coordinate later 
+							.put("year", ctxTime.getEnd().getYear())
+							.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
+							.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+							.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.510zsaubjxr"); 
 						
-					
-            		OpenEOFuture job = service.submit(processID, arguments,
-    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
-            		
-            		if (job.isCancelled()) {
-						scope.getMonitor().warn("job canceled");
-					} else if (job.getError() != null) {
-						scope.getMonitor().error(job.getError());
-					} else {
-						scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
+						OpenEOFuture job = service.submit(processID, arguments,
+	    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+						
+						if (job.isCancelled()) {
+							scope.getMonitor().warn("job canceled");
+						} else if (job.getError() != null) {
+							scope.getMonitor().error(job.getError());
+						} else {
+							scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
+						}
 					}
             	}
             } 
