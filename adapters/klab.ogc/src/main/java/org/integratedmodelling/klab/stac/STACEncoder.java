@@ -617,8 +617,8 @@ public class STACEncoder implements IResourceEncoder {
             		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
             		List<String >modelIds = null;
             		try {
-						var modelIDs = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), targetSemantics);
-						if (modelIDs == null || modelIDs.size() == 0) {
+						modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), targetSemantics);
+						if (modelIds == null || modelIds.size() == 0) {
 							throw new Exception("No ONNX Models were found over the specified context");
 						}
 					} catch (Exception e) {
@@ -675,24 +675,57 @@ public class STACEncoder implements IResourceEncoder {
                     space.getProjection().getCoordinateReferenceSystem());
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
-
-            HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
-                    MergeMode.SUBSTITUTE, lpm); 
-            if (outRaster == null) {
-                scope.getMonitor().error("Unable to build the output from the STAC Resource");
-                throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
-            }
-            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
-            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
-            	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
-            	transformer.setAcceptLenientDatumShift(true);
-            	outRaster = transformer.transform(outRaster);
-            }
-           
             
-			HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(regionTransformed)
-					.setCrs(targetCRS).setNoValue(outRaster.getNovalue()).build();
-			paddedRaster.mapRaster(null, outRaster, null);
+            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+            
+            HMRaster paddedRaster = null;
+            
+            if (collection.getTitle().toLowerCase().contains("ecdc")) {
+            	scope.getMonitor().info("Falling back on fast cog flow for ecdc assets");
+            	List<String> cogHrefs = items.stream()
+            	        .flatMap(item -> item.getAssets().stream()
+            	                .filter(pred)
+            	                .findFirst()
+            	                .map(asset -> asset.getAssetNode().get("href").asText())
+            	                .stream())
+            	        .toList();
+            	
+            	for (var cogHref: cogHrefs) {
+            		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
+            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
+    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
+    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
+    	            	transformer.setAcceptLenientDatumShift(true);
+    	            	raster = transformer.transform(raster);
+    	            }
+    	            
+    	            if (paddedRaster == null) {
+    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
+    	                		.setName("padded").setRegion(regionTransformed)
+    	    					.setCrs(targetCRS).build();
+    	            }
+    	            paddedRaster.mapRaster(null, raster, null); 
+            	}
+            } else {
+            	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
+                        MergeMode.SUBSTITUTE, lpm); 
+                if (outRaster == null) {
+                    scope.getMonitor().error("Unable to build the output from the STAC Resource");
+                    throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
+                }
+                 paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
+                		.setName("padded").setRegion(regionTransformed)
+    					.setCrs(targetCRS).build();
+                if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
+                	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+                	transformer.setAcceptLenientDatumShift(true);
+                	outRaster = transformer.transform(outRaster);
+                }
+               
+    			paddedRaster.mapRaster(null, outRaster, null);
+            }
+
+            
 			coverage = paddedRaster.buildCoverage();
 			
 			if (bandIndex != null) { // Which means theat it's a Multi Band COG
