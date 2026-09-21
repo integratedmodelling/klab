@@ -31,10 +31,6 @@ public class WfsResourceGeocodingService extends ResourceGeocodingService {
 	        cy + delta,
 	        envelope.getProjection()
 	    );
-	    System.out.println("original = " + envelope);
-	    System.out.println("center = " + cx + ", " + cy);
-	    System.out.println("lookup = " + lookup);
-	    System.out.println("lookup shape = " + lookup.asShape());
 	    return Scale.create(lookup.asShape());
 	}
 }
