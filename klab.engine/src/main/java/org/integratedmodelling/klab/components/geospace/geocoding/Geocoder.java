@@ -81,6 +81,9 @@ public enum Geocoder {
     public static final String DEFAULT_GEOCODING_STRATEGY = "Map boundaries";
     public static final String WATERSHED_GEOCODING_STRATEGY = "River basin";
     public static final String ADMIN_GEOCODING_STRATEGY = "Administrative region";
+    public static final String COUNTRY_GEOCODING_STRATEGY = "Country region";
+    public static final String COUNTRY_GEOCODING_STRATEGY_JUSTUS = "Country region Justus";
+    public static final String COUNTRY_GEOCODING_STRATEGY_RUBEN = "Country region Ruben";
     public static final String EEZ_GEOCODING_STRATEGY = "Exclusive Economic Zone";
     public static final String RANDOM_GEOCODING_STRATEGY = "I'm feeling stupid";
 
@@ -90,6 +93,11 @@ public enum Geocoder {
         services.put(DEFAULT_GEOCODING_STRATEGY, new OSMNamesGeocodingService(0.75));
         services.put(ADMIN_GEOCODING_STRATEGY,
                 new ResourceGeocodingService("im.geo:gadm.un:boundaries.split:administrative", 0.5));
+        services.put(COUNTRY_GEOCODING_STRATEGY_JUSTUS,
+        		//new WfsResourceGeocodingService("local:alessio.bulckaen:im.data.global:im-data-global-geography_administrative_level_0_un", 0.5));
+        		new WfsResourceGeocodingService("local:justus.muhando:im.data.global:im-data-global-geography_administrative_level_0_un_v1", 0.5));
+        services.put(COUNTRY_GEOCODING_STRATEGY_RUBEN,
+        		new WfsResourceGeocodingService("local:rubencc:im.data.global:im-data-global-geography_administrative_units_un_gadm_level0_can_rus_1", 0.5));
         services.put(WATERSHED_GEOCODING_STRATEGY, new ResourceGeocodingService("im.geo:fao:hydrological:watersheds.named", 0.5));
         services.put(EEZ_GEOCODING_STRATEGY, new ResourceGeocodingService("im.data:emodnet:administrative:eez.boundaries", 0.5));
         // services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));

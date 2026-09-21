@@ -22,13 +22,21 @@ public class ResourceGeocodingService extends GeocodingService {
         this.urn = urn;
     }
 
+    protected String getUrn() {
+        return urn;
+    }
+    
+    protected IScale getLookupScale(IEnvelope envelope) {
+        return Scale.create(envelope.asShape());
+    }
+    
     @Override
     public IShape getAnnotatedRegion(IEnvelope envelope, IMonitor monitor) {
 
         // Logging.INSTANCE.info("Attempting to geocode " + envelope + " from resource " + urn);
 
-        IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(), IArtifact.Type.OBJECT, "result",
-                Scale.create(envelope.asShape()), monitor);
+        IKlabData data = Resources.INSTANCE.getResourceData(getUrn(), new VisitingDataBuilder(), IArtifact.Type.OBJECT, "result",
+        		getLookupScale(envelope), monitor);
 
         if (data.getArtifact() != null) {
             IGeometry geometry = data.getArtifact().getGeometry();
@@ -39,18 +47,21 @@ public class ResourceGeocodingService extends GeocodingService {
                 if (ret != null) {
                     ret.getMetadata().put(IMetadata.DC_DESCRIPTION, ((IObjectArtifact) data.getArtifact()).getName());
                     return ret;
-                } else {
+                } 
+                // else {
                     // Logging.INSTANCE.warn("Could not geocode " + envelope + ": null shape from
                     // resource with geometry " + geometry);
-                }
-            } else {
+                //}
+            } 
+            // else {
                 // Logging.INSTANCE.warn("Could not geocode " + envelope + ": null geometry from
                 // resource");
-            }
-        } else {
+            // }
+        } 
+    	  //else {
             // Logging.INSTANCE.warn("Could not geocode " + envelope + ": null response from
             // getResourceData");
-        }
+        // }
 
         return null;
     }
