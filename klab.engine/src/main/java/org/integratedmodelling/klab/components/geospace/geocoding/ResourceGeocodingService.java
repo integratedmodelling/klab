@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.geospace.geocoding;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -57,11 +58,9 @@ public class ResourceGeocodingService extends GeocodingService {
                 // Logging.INSTANCE.warn("Could not geocode " + envelope + ": null geometry from
                 // resource");
             // }
-        } 
-    	  //else {
-            // Logging.INSTANCE.warn("Could not geocode " + envelope + ": null response from
-            // getResourceData");
-        // }
+        } else {
+            Logging.INSTANCE.warn("Could not geocode " + envelope + ": no results");
+        }
 
         return null;
     }
