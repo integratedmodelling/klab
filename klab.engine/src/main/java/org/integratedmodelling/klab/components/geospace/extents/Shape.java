@@ -83,6 +83,8 @@ import org.locationtech.jts.io.WKBWriter;
 import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.operation.overlay.snap.SnapIfNeededOverlayOp;
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
+import org.locationtech.jts.operation.overlayng.OverlayNGRobust;
+import org.locationtech.jts.operation.overlayng.OverlayNG;
 
 /**
  * TODO setup for using as locator.
@@ -335,7 +337,8 @@ public class Shape extends AbstractSpatialAbstractExtent implements IShape {
 		Geometry intersection = null;
         try {
             
-            intersection = fixedShape.intersection(fixedOther);
+            //intersection = fixedShape.intersection(fixedOther);
+        	intersection = OverlayNGRobust.overlay(fixedShape, fixedOther, OverlayNG.INTERSECTION);
         } catch (Exception e) {
             GeotoolsUtils.INSTANCE.dumpFailingOperationGeometries("intersection", shapeGeometry, ((Shape) other).shapeGeometry);
             e.printStackTrace();

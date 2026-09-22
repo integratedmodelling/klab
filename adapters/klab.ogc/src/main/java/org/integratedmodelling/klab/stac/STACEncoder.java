@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
 
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -77,6 +79,8 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
+import org.integratedmodelling.klab.stac.extensions.WEEDModelSTACExtension;
+
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
@@ -221,42 +225,6 @@ public class STACEncoder implements IResourceEncoder {
             IContextualizationScope scope) {
 
         String COGURL = null;
-        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
-        IEnvelope envelope = space.getEnvelope();
-        List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
-
-        // Only for Backward Compatiability
-        // A new COG Adapter would be added
-        if (resource.getParameters().get("cog") != null) {
-            COGURL = resource.getParameters().get("cog", String.class);
-            scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
-            GridCoverage2D coverage = COGAssetExtension.getCOGWindowCoverage(bbox, COGURL);
-
-            String rcrs = geometry.getDimension(IGeometry.Dimension.Type.SPACE).getParameters()
-                    .get(org.integratedmodelling.klab.common.Geometry.PARAMETER_SPACE_PROJECTION, String.class);
-
-            Projection crs = Projection.create(rcrs);
-            org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(bbox.get(0), bbox.get(1),
-                    bbox.get(2), bbox.get(3));
-
-            HMRaster raster = HMRaster.fromGridCoverage(coverage);
-            HMRaster outRaster = new HMRasterWritableBuilder()
-                    .setRegion(RegionMap.fromEnvelopeAndGrid(requestedExtend, (int) space.shape()[0], (int) space.shape()[1]))
-                    .setCrs(crs.getCoordinateReferenceSystem()).setNoValue(raster.getNovalue()).build();
-
-            GridCoverage2D adjCoverage = null;
-            try {
-                outRaster.mapRaster(null, raster, null);
-                adjCoverage = outRaster.buildCoverage();
-            } catch (Exception e) {
-                throw new KlabResourceAccessException("Cannot build COG Output " + e.getMessage());
-            }
-
-            encoder = new RasterEncoder();
-            ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, adjCoverage, geometry, builder, scope);
-            return;
-        }
-
         String collectionUrl = resource.getParameters().get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = collectionData.getString("id");
@@ -266,16 +234,57 @@ public class STACEncoder implements IResourceEncoder {
         String assetId = resource.getParameters().get("asset", String.class);
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
         final boolean allowTransform = true;
-        Time ctxTime = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
-        Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
+        
+        Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
+        IEnvelope envelope = space.getEnvelope();
+        List<Double> bbox = List.of(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
+        IGrid grid = space.getGrid();
+        
+        LogProgressMonitor lpm = new LogProgressMonitor();
+        HMStacManager manager = new HMStacManager(catalogUrl, lpm);
+        HMStacCollection collection = null;
 
-        Time effectiveTime = ctxTime;
-        if (resourceTime != null && resourceTime.getStart() != null && resourceTime.getEnd() != null
-                && resourceTime.getCoveredExtent() > 0) {
-
-            effectiveTime = validateTemporalDimension(ctxTime, resourceTime);
+        // Only for Backward Compatiability
+        // A new COG Adapter would be added
+        if (resource.getParameters().get("cog") != null) {
+        	try {
+	            COGURL = resource.getParameters().get("cog", String.class);
+	            scope.getMonitor().info("Getting requested extent from the COG Asset from url" + COGURL);
+	            GridCoverage2D coverage = COGAssetExtension.getCOGWindowCoverage(bbox, COGURL);
+	
+	            String rcrs = geometry.getDimension(IGeometry.Dimension.Type.SPACE).getParameters()
+	                    .get(org.integratedmodelling.klab.common.Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+	
+	            Projection crs = Projection.create(rcrs);
+	            org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(bbox.get(0), bbox.get(1),
+	                    bbox.get(2), bbox.get(3));
+	
+	            HMRaster raster = HMRaster.fromGridCoverage(coverage);
+	            
+	            
+	            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
+	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
+	            	transformer.setAcceptLenientDatumShift(true);
+	            	raster = transformer.transform(raster);
+	            }
+	            
+	            
+				HMRaster paddedRaster = new HMRasterWritableBuilder()
+						.setName("padded")
+						.setRegion(RegionMap.fromEnvelopeAndGrid(requestedExtend, (int) space.shape()[0], (int) space.shape()[1]))
+						.setCrs(targetCRS)
+						.setNoValue(raster.getNovalue()).build();
+				paddedRaster.mapRaster(null, raster, null);
+				coverage = paddedRaster.buildCoverage();
+                encoder = new RasterEncoder();
+                ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
+                return;
+            } catch (Exception e) {
+                throw new KlabResourceAccessException("Cannot build COG Output " + e.getMessage());
+            }
         }
-
+        
         // This is part of a WIP that will be removed in the future
         if (catalogUrl.contains("iiasa.blob")) {
             FeatureSource<SimpleFeatureType, SimpleFeature> source;
@@ -288,7 +297,7 @@ public class STACEncoder implements IResourceEncoder {
             ((VectorEncoder) encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
             return;
         }
-
+        
         /*
         Select the Predicate based on the assetId, JSONSelector Query, and the JSONValue
          */
@@ -309,11 +318,9 @@ public class STACEncoder implements IResourceEncoder {
                                 return true;
                             }
                         }
-                    } else { // meaning eo:bands is not present like Microsoft Planetary, in this
-                             // case this would be like the asset key i.e. Id
-                        return asset.getId().equals(assetId);
                     }
-                    return false;
+                             
+                    return asset.getId().equals(assetId); // case this would be like the asset key i.e. Id
                 }
             };
         }
@@ -331,6 +338,53 @@ public class STACEncoder implements IResourceEncoder {
             }
 
         }
+        
+     // Set a context from features in a STAC
+        if (grid == null) { // While getting features for setting context (i.e. context is not yet set), otherwise this can't be true
+        	try {
+                manager.open();
+                collection = manager.getCollectionByURL(collectionUrl);
+
+                if (collection == null) {
+                    scope.getMonitor()
+                            .error("Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+                    manager.close();
+                    throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl); // Fail fast                                                                                          
+                }
+                
+                scope.getMonitor().info("Getting all the features before applying the filter");
+                collection.setBboxFilter(new double[] {
+                		bbox.get(0),
+                		bbox.get(2),
+                		bbox.get(1),
+                		bbox.get(3)
+                });
+                
+                List<HMStacItem> items = collection.searchItems();
+                var assets = items.stream()
+                	    .flatMap(item -> item.getAssets().stream())
+                	    .filter(assetPredicate)
+                	    .toList();
+                scope.getMonitor().debug("Found " + assets.size() + " Assets to get the requested geometry");
+                var source = STACFeatureExtension.getFeatures(assets);
+                encoder = new VectorEncoder();
+                ((VectorEncoder) encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+                manager.close();
+                return;
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
+        }
+
+        Time ctxTime = (Time) geometry.getDimensions().stream().filter(d -> d instanceof Time).findFirst().orElseThrow();
+        Time resourceTime = (Time) Scale.create(resource.getGeometry()).getDimension(Type.TIME);
+
+        Time effectiveTime = ctxTime;
+        if (resourceTime != null && resourceTime.getStart() != null && resourceTime.getEnd() != null
+                && resourceTime.getCoveredExtent() > 0) {
+
+            effectiveTime = validateTemporalDimension(ctxTime, resourceTime);
+        }
 
         // These are the static STAC catalogue
         if (!hasSearchOption) {
@@ -345,14 +399,6 @@ public class STACEncoder implements IResourceEncoder {
             }
             var time2 = effectiveTime;
             // TODO merge with similar code from below
-            IGrid grid = space.getGrid();
-            RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
-                    space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(), (int) grid.getYCells());
-
-            ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
-                    space.getProjection().getCoordinateReferenceSystem());
-            RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
-                    (int) grid.getYCells());
             // end //TODO
             List<HMStacItem> items = features.stream().map(f -> {
                 try {
@@ -368,43 +414,37 @@ public class STACEncoder implements IResourceEncoder {
             GridCoverage2D coverage = null;
 
             try {
-                // TODO see if we can access to the same readRasterBandOnRegion without using a
-                // collection
-                LogProgressMonitor lpm = new LogProgressMonitor();
-                try (HMStacManager manager = new HMStacManager(catalogUrl, lpm)) {
-                    HMStacCollection collection = null;
-                    try {
-                        manager.open();
-                        collection = manager.getCollectionById(collectionId);
-                    } catch (Exception e1) {
-                        throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
-                    }
-
-                    if (collection == null) {
-                        scope.getMonitor().error(
-                                "Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
-                    }
-                    Predicate<HMStacAsset> predicate;
-                    try {
-                        predicate = getAssetPredicateFromJSONSelector(resource);
-                    } catch (KlabIllegalArgumentException e) {
-                        manager.close();
-                        throw e;  
-                    }
-                    HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, predicate, items, true,
-                            MergeMode.SUBSTITUTE, lpm);
-                    CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
-                    if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
-                    	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
-                    	transformer.setAcceptLenientDatumShift(true);
-                    	outRaster = transformer.transform(outRaster);
-                    }
-                    
-                    coverage = outRaster.buildCoverage();
+                manager.open();
+                collection = manager.getCollectionByURL(collectionUrl);
+                if (collection == null) {
+                    scope.getMonitor().error(
+                            "Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
+                    throw new KlabIllegalArgumentException("Collection Details can't be fetched from the specified Collecion URL " 
+                            + resource.getParameters().get("collection", String.class));
                 }
+               
+                Predicate<HMStacAsset> predicate = getAssetPredicateFromJSONSelector(resource);
+                RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
+                        space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(), (int) grid.getYCells());
+
+                ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
+                        space.getProjection().getCoordinateReferenceSystem());
+                RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
+                        (int) grid.getYCells());
+                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, predicate, items, true,
+                        MergeMode.SUBSTITUTE, lpm);
+                CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+                if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
+                	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+                	transformer.setAcceptLenientDatumShift(true);
+                	outRaster = transformer.transform(outRaster);
+                }
+                
+                coverage = outRaster.buildCoverage();
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                     coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
                 }
+                
             } catch (Exception e) {
                 throw new KlabResourceAccessException(
                         "Cannot build output for static collection " + collectionId + ". Reason: " + e.getLocalizedMessage());
@@ -415,12 +455,9 @@ public class STACEncoder implements IResourceEncoder {
             return;
         }
 
-        LogProgressMonitor lpm = new LogProgressMonitor();
-        HMStacManager manager = new HMStacManager(catalogUrl, lpm);
-        HMStacCollection collection = null;
         try {
             manager.open();
-            collection = manager.getCollectionById(collectionId);
+            collection = manager.getCollectionByURL(collectionUrl);
 
             if (collection == null) {
                 scope.getMonitor()
@@ -436,8 +473,6 @@ public class STACEncoder implements IResourceEncoder {
             HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
             Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
             Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
-            //collection.setGeometryFilter(poly);
-            // collection.setTimestampFilter(new Date(start.getMilliseconds()), new
             // Date(end.getMilliseconds())); --> Filter later :)
 
             GridCoverage2D coverage = null;
@@ -448,28 +483,51 @@ public class STACEncoder implements IResourceEncoder {
             		bbox.get(1),
             		bbox.get(3)
             });
-
-            // Allow transform ensures the process to finish, but I would not bet on the resulting
-            // data
-            if (assetPredicate == null) {
+            
+            if (assetPredicate == null || 
+            		resource.getType() != org.integratedmodelling.klab.api.provenance.IArtifact.Type.NUMBER) {
+            	// If it was raster, then it necessarily should have been number, object means certainly that it's a vector
                 // NO JSONSelector and JSONValue found, NO assetID was passed as well
                 scope.getMonitor().debug("Query STAC " + collectionUrl + "to get the features");
                 // Only get the features from STAC Collection, no need to interact with Rasters
                 FeatureSource<SimpleFeatureType, SimpleFeature> source;
-                try {
-                    source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, effectiveTime.getStart(),
-                            effectiveTime.getEnd());
-                } catch (Exception e) {
+                if (assetPredicate == null) {
+                	try {
+                        source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, effectiveTime.getStart(),
+                                effectiveTime.getEnd());
+                    } catch (Exception e) {
+                        manager.close();
+                        throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
+                    }
+                    encoder = new VectorEncoder();
+                    ((VectorEncoder) encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
                     manager.close();
-                    throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
+                } else {            	
+                	List<HMStacItem> items = collection.searchItems();
+                    if (items.isEmpty()) {
+                        manager.close();
+                        throw new KlabIllegalStateException("No STAC items found for this context, check the Spatial/ Temporal bounds of items and the Context");
+                    }
+          
+                    var assets = items.stream()
+                    	    .flatMap(item -> item.getAssets().stream())
+                    	    .filter(assetPredicate)
+                    	    .toList();
+                    scope.getMonitor().debug("Found " + assets.size() + " Assets to get the requested geometry");
+                    try {
+                        source = STACFeatureExtension.getFeatures(assets);
+                        encoder = new VectorEncoder();
+                        ((VectorEncoder) encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+                    } catch (Exception e) {
+                        manager.close();
+                        throw new KlabResourceAccessException("Cannot extract features from STAC Collection - " + e.getMessage());
+                    }
+                    manager.close();
                 }
-                encoder = new VectorEncoder();
-                ((VectorEncoder) encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
-                manager.close();
-                return;
+                return;   
             }
             
-            List<HMStacItem> items = collection.searchItems();
+            List<HMStacItem> items = searchItemsWithRetry(collection, scope.getMonitor());
             if (items.isEmpty()) {
                 manager.close();
                 throw new KlabIllegalStateException("No STAC items found for this context, check the Spatial/ Temporal bounds of items and the Context");
@@ -479,16 +537,6 @@ public class STACEncoder implements IResourceEncoder {
                 sortByDate(items, scope.getMonitor());
             }
 
-            IGrid grid = space.getGrid();
-
-            RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
-                    space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(), (int) grid.getYCells());
-
-            ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
-                    space.getProjection().getCoordinateReferenceSystem());
-            RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
-                    (int) grid.getYCells());
-
             if (resource.getParameters().contains("s3EndpointUrl")) {
                 String s3EndpointURL = resource.getParameters().get("s3EndpointUrl", String.class);
                 Client s3Client = buildS3Client(s3EndpointURL);
@@ -497,16 +545,48 @@ public class STACEncoder implements IResourceEncoder {
             var time = effectiveTime;
             // Filter here based on time, since in some STAC collections they don't yet support
             // temporal filtering :( like ECDC
-            items = items.stream()
-                    .filter(item -> isWithinRange(item, time.getStart().getMilliseconds(), time.getEnd().getMilliseconds()))
-                    .collect(Collectors.toList()); 
+            
+            var pred2 = assetPredicate;
+            
+            List<HMStacItem> itemsWithinTime = items.stream()
+                    .filter(item -> isWithinRange(
+                            item,
+                            time.getStart().getMilliseconds(),
+                            time.getEnd().getMilliseconds()))
+                    .filter(item -> item.getAssets().stream()
+                            .anyMatch(pred2))
+                    .collect(Collectors.toList());
+            
+            if (itemsWithinTime.isEmpty()) {
+            	scope.getMonitor().debug("Couldn't find items satisfying temporal and asset based constraints"
+            			+ " within the specified time range, Applying Temporal Mediation");
+            	
+            	Map<String, List<HMStacItem>> grouped = items.stream()
+                        .filter(item -> item.getAssets().stream()
+                                .anyMatch(pred2))
+                        .collect(Collectors.groupingBy(
+                                item -> geometryKey(item.getGeometry())
+                        ));
+
+                items = grouped.values().stream()
+                        .map(group -> group.stream()
+                                .min(Comparator.comparingLong(
+                                        groupItem -> checkDuration(
+                                                groupItem,
+                                                time.getEnd().getMilliseconds())))
+                                .orElseThrow())
+                        .collect(Collectors.toList());
+            	 
+            } else {
+            	items = itemsWithinTime;
+            }
 
             if (items.size() == 0) {
                 manager.close();
                 throw new KlabIllegalStateException(
-                        "No STAC items found covering the entire time duration of the context requested");
+                        "No STAC items were satifying constraints and Couldn't apply Temporal Mediation");
             } else {
-                scope.getMonitor().debug("Found " + items.size() + " STAC items satisfying the temporal constraint.");
+                scope.getMonitor().debug("Found " + items.size() + " STAC items for generating the observation.");
             }
 
             // Once the support for customized predicate is added, we can apply for features as well
@@ -522,7 +602,6 @@ public class STACEncoder implements IResourceEncoder {
                         + "The transformation process could affect the data.");
             }
             
-            
             // Specific Implementation for the Slow Requests flow in WEED 
             if (collection.getId().contains("EU_modelV2-1-MECE") 
             		&& resource.getUrn().contains("im.resources-main")) { 
@@ -534,8 +613,19 @@ public class STACEncoder implements IResourceEncoder {
             		);
             	
             	if (!unionMLStacInference.contains(poly)) {
-            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
             		
+            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
+            		List<String >modelIds = null;
+            		try {
+						modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), targetSemantics);
+						if (modelIds == null || modelIds.size() == 0) {
+							throw new Exception("No ONNX Models were found over the specified context");
+						}
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+						throw new KlabIllegalStateException("Error occured while getting ONNX Model info over the specified context");
+					}
             		OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
             		List<Process> processes = new ArrayList<>();
             		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter.json";
@@ -544,52 +634,98 @@ public class STACEncoder implements IResourceEncoder {
             		Process process = JsonUtils.load(new URL(processNamespace),
 							Process.class);
 					process.encodeSelf(processNamespace);
+
+            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
 					processes.add(process);
 					
-					JSONObject arguments = new JSONObject()
-							.put("bbox", new JSONObject()
-								.put("crs", 4326)
-								.put("west", bbox.get(0))
-								.put("south", bbox.get(3))
-								.put("east", bbox.get(1))
-								.put("north", bbox.get(2))) 
-						.put("digitalId", "AM1729")  // Forms the STAC coordinate later
-						.put("scenarioId", "DT_SLOW_FLOW") // Forms the STAC coordinate later 
-						.put("year", ctxTime.getEnd().getYear())
-						.put("onnx_model", "EUNIS2021plus_panEU_v201_2024_OneZone") // Hardcoding for now only for Europe, until the "BEST" model is decided!
-						.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.3vh554o6h6c"); 
+					for (var modelId:modelIds) { // triggering multiple UDPs parallely
+						JSONObject arguments = new JSONObject()
+								.put("bbox", new JSONObject() // convert this to a geojson
+									.put("crs", 4326)
+									.put("west", bbox.get(0))
+									.put("south", bbox.get(3))
+									.put("east", bbox.get(1))
+									.put("north", bbox.get(2))) 
+							.put("digitalId", "AM1729")  // Forms the STAC coordinate later
+							.put("scenarioId", "DT_SLOW_FLOW") // Forms the STAC coordinate later 
+							.put("year", ctxTime.getEnd().getYear())
+							.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
+							.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+							.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.510zsaubjxr"); 
 						
-					
-            		OpenEOFuture job = service.submit(processID, arguments,
-    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
-            		
-            		if (job.isCancelled()) {
-						scope.getMonitor().warn("job canceled");
-					} else if (job.getError() != null) {
-						scope.getMonitor().error(job.getError());
-					} else {
-						scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
+						OpenEOFuture job = service.submit(processID, arguments,
+	    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+						
+						if (job.isCancelled()) {
+							scope.getMonitor().warn("job canceled");
+						} else if (job.getError() != null) {
+							scope.getMonitor().error(job.getError());
+						} else {
+							scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
+						}
 					}
             	}
             } 
-
-            HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
-                    MergeMode.SUBSTITUTE, lpm); 
-            if (outRaster == null) {
-                scope.getMonitor().error("Unable to build the output from the STAC Resource");
-                throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
-            }
+            
+            
+            RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
+                    space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(), (int) grid.getYCells());
+            
+            ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
+                    space.getProjection().getCoordinateReferenceSystem());
+            RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
+                    (int) grid.getYCells());
+            
             CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
-            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
-            	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
-            	transformer.setAcceptLenientDatumShift(true);
-            	outRaster = transformer.transform(outRaster);
+            
+            HMRaster paddedRaster = null;
+            
+            if (collection.getTitle().toLowerCase().contains("ecdc")) {
+            	scope.getMonitor().info("Falling back on fast cog flow for ecdc assets");
+            	List<String> cogHrefs = items.stream()
+            	        .flatMap(item -> item.getAssets().stream()
+            	                .filter(pred)
+            	                .findFirst()
+            	                .map(asset -> asset.getAssetNode().get("href").asText())
+            	                .stream())
+            	        .toList();
+            	
+            	for (var cogHref: cogHrefs) {
+            		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
+            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
+    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
+    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
+    	            	transformer.setAcceptLenientDatumShift(true);
+    	            	raster = transformer.transform(raster);
+    	            }
+    	            
+    	            if (paddedRaster == null) {
+    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
+    	                		.setName("padded").setRegion(regionTransformed)
+    	    					.setCrs(targetCRS).build();
+    	            }
+    	            paddedRaster.mapRaster(null, raster, null); 
+            	}
+            } else {
+            	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
+                        MergeMode.SUBSTITUTE, lpm); 
+                if (outRaster == null) {
+                    scope.getMonitor().error("Unable to build the output from the STAC Resource");
+                    throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
+                }
+                 paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
+                		.setName("padded").setRegion(regionTransformed)
+    					.setCrs(targetCRS).build();
+                if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
+                	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+                	transformer.setAcceptLenientDatumShift(true);
+                	outRaster = transformer.transform(outRaster);
+                }
+               
+    			paddedRaster.mapRaster(null, outRaster, null);
             }
+
             
-            
-			HMRaster paddedRaster = new HMRasterWritableBuilder().setName("padded").setRegion(region)
-					.setCrs(targetCRS).setNoValue(outRaster.getNovalue()).build();
-			paddedRaster.mapRaster(null, outRaster, null);
 			coverage = paddedRaster.buildCoverage();
 			
 			if (bandIndex != null) { // Which means theat it's a Multi Band COG
@@ -603,6 +739,12 @@ public class STACEncoder implements IResourceEncoder {
             e.printStackTrace();
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
         }
+    }
+    
+    private static String geometryKey(Geometry geom) {
+        Geometry normalized = geom.copy();
+        normalized.normalize(); 
+        return normalized.toText();
     }
 
     private Predicate<HMStacAsset> getAssetPredicateFromJSONSelector(IResource resource) {
@@ -647,7 +789,32 @@ public class STACEncoder implements IResourceEncoder {
             return false;
         }
     }
-
+    
+    private long checkDuration(HMStacItem item, long endMillis) {
+    	
+    	DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        if (item.getEndTimestamp() == null) { // assume like it's the correct data
+        	return 0;
+        }
+        
+        try {
+            long itemEnd = LocalDateTime.parse(item.getEndTimestamp(), formatter).atZone(ZoneOffset.UTC).toInstant()
+                    .toEpochMilli();
+            long itemStart = LocalDateTime.parse(item.getEndTimestamp(), formatter).atZone(ZoneOffset.UTC).toInstant()
+                    .toEpochMilli();
+            
+            if (itemStart > endMillis) { // Deprioritize future items since it doesn't make a lot of sense
+            	return Long.MAX_VALUE;
+            }
+            
+            return Math.abs(itemEnd - endMillis);
+        } catch(Exception e) {
+        	e.printStackTrace();
+        	return Long.MAX_VALUE; // return an arbitrary large number
+        }
+    }
+    
+    
     private List<SimpleFeature> getFeaturesFromStaticCollection(String collectionUrl, JSONObject collectionData,
             String collectionId) {
         List<JSONObject> links = collectionData.getJSONArray("links").toList().stream()
@@ -661,6 +828,44 @@ public class STACEncoder implements IResourceEncoder {
                 throw new KlabValidationException("Item at " + i + " cannot be parsed.");
             }
         }).toList();
+    }
+    
+    
+    private List<HMStacItem> searchItemsWithRetry(HMStacCollection collection, IMonitor monitor) throws IOException {
+        int maxRetries = 5;
+        long backoffMillis = 10000; // start at 10s
+
+        for (int attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                return collection.searchItems();
+            } catch (Exception e) {
+                boolean isRateLimited = isRateLimitError(e);
+                if (!isRateLimited || attempt == maxRetries) {
+                    throw e instanceof IOException ? (IOException) e : new IOException(e);
+                } 
+
+                try {
+                    Thread.sleep(backoffMillis);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("Interrupted while backing off after 429", ie);
+                }
+
+                backoffMillis *= 2; // exponential: 10s, 20s, 40s, 80s, 160s
+                monitor.debug("Search Request throttled; Retrying Search after: " + backoffMillis + " Miliseconds");
+            }
+        }
+        throw new IOException("Unreachable");
+    }
+
+    private boolean isRateLimitError(Throwable e) {
+        while (e != null) {
+            if (e.getMessage() != null && e.getMessage().contains("429")) {
+                return true;
+            }
+            e = e.getCause();
+        }
+        return false;
     }
 
     @Override
