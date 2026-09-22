@@ -39,7 +39,6 @@ public class COGAssetExtension {
         qbbox.add(bbox.get(3));
         
         for (Double coord : qbbox) {
-            System.out.println(coord);
             bboxArr.put(coord);
         }
 
@@ -64,6 +63,10 @@ public class COGAssetExtension {
                             return coverageFile;
                         });
         	        
+             		if (cogRequestResponse.getStatus() == 204) {
+             			System.out.println("No Real Spatial Intersection found with the actual asset");
+             			return null;
+             		}
         	        if (cogRequestResponse.getStatus() != 200) {
         	            throw new KlabResourceAccessException("Error retrieving COG region: " + cogRequestResponse.getStatusText());
         	        }
