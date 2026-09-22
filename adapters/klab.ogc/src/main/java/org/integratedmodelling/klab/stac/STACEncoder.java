@@ -528,12 +528,8 @@ public class STACEncoder implements IResourceEncoder {
             }
             
             List<HMStacItem> items = searchItemsWithRetry(collection, scope.getMonitor());
-            if (items.isEmpty()) {
-                manager.close();
-                throw new KlabIllegalStateException("No STAC items found for this context, check the Spatial/ Temporal bounds of items and the Context");
-            }
-
-            if (mergeMode == HMRaster.MergeMode.SUBSTITUTE) {
+            
+            if (mergeMode == HMRaster.MergeMode.SUBSTITUTE && !items.isEmpty()) {
                 sortByDate(items, scope.getMonitor());
             }
 
@@ -581,14 +577,6 @@ public class STACEncoder implements IResourceEncoder {
             	items = itemsWithinTime;
             }
 
-            if (items.size() == 0) {
-                manager.close();
-                throw new KlabIllegalStateException(
-                        "No STAC items were satifying constraints and Couldn't apply Temporal Mediation");
-            } else {
-                scope.getMonitor().debug("Found " + items.size() + " STAC items for generating the observation.");
-            }
-
             // Once the support for customized predicate is added, we can apply for features as well
 
             var pred = assetPredicate;
@@ -603,8 +591,8 @@ public class STACEncoder implements IResourceEncoder {
             }
             
             // Specific Implementation for the Slow Requests flow in WEED 
-            if (collection.getId().contains("EU_modelV2-1-MECE") 
-            		&& resource.getUrn().contains("im.resources-main")) { 
+            if (collection.getId().contains("IUCNGET-V317-extent")) { 
+            		//&& resource.getUrn().contains("im.resources-main")) { 
             	Geometry unionMLStacInference = UnaryUnionOp.union(
             		    items.stream()
             		         .map(item -> item.getGeometry())
@@ -612,7 +600,9 @@ public class STACEncoder implements IResourceEncoder {
             		         .collect(Collectors.toList())
             		);
             	
-            	if (!unionMLStacInference.contains(poly)) {
+            	if (unionMLStacInference == null || !unionMLStacInference.contains(poly)) {
+            		
+            		// If its null this means there is no inference whatsoever
             		
             		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
             		List<String >modelIds = null;
@@ -646,12 +636,12 @@ public class STACEncoder implements IResourceEncoder {
 									.put("south", bbox.get(3))
 									.put("east", bbox.get(1))
 									.put("north", bbox.get(2))) 
-							.put("digitalId", "AM1729")  // Forms the STAC coordinate later
+							.put("digitalId", "BC3")  // Forms the STAC coordinate later
 							.put("scenarioId", "DT_SLOW_FLOW") // Forms the STAC coordinate later 
 							.put("year", ctxTime.getEnd().getYear())
 							.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
 							.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
-							.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.510zsaubjxr"); 
+							.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
 						
 						OpenEOFuture job = service.submit(processID, arguments,
 	    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
@@ -666,6 +656,15 @@ public class STACEncoder implements IResourceEncoder {
 					}
             	}
             } 
+            
+            
+            if (items.size() == 0) {
+                manager.close();
+                throw new KlabIllegalStateException(
+                        "No STAC items were satifying constraints and Couldn't apply Temporal Mediation");
+            } else {
+                scope.getMonitor().debug("Found " + items.size() + " STAC items for generating the observation.");
+            }
             
             
             RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
@@ -692,19 +691,22 @@ public class STACEncoder implements IResourceEncoder {
             	
             	for (var cogHref: cogHrefs) {
             		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
-            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
-    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
-    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
-    	            	transformer.setAcceptLenientDatumShift(true);
-    	            	raster = transformer.transform(raster);
-    	            }
+            		if (cogCoverage != null) {
+	            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
+	    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
+	    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
+	    	            	transformer.setAcceptLenientDatumShift(true);
+	    	            	raster = transformer.transform(raster);
+	    	            }
+            		
     	            
-    	            if (paddedRaster == null) {
-    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
-    	                		.setName("padded").setRegion(regionTransformed)
-    	    					.setCrs(targetCRS).build();
-    	            }
-    	            paddedRaster.mapRaster(null, raster, null); 
+	    	            if (paddedRaster == null) {
+	    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
+	    	                		.setName("padded").setRegion(regionTransformed)
+	    	    					.setCrs(targetCRS).build();
+	    	            }
+	    	            paddedRaster.mapRaster(null, raster, null); 
+            		}
             	}
             } else {
             	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
