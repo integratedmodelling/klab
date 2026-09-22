@@ -267,7 +267,6 @@ public class VectorEncoder implements IResourceEncoder {
 
             SimpleFeature feature = it.next();
             Geometry shape = (Geometry) feature.getDefaultGeometry();
-
             if (shape.isEmpty()) {
                 continue;
             }
