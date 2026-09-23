@@ -591,7 +591,8 @@ public class STACEncoder implements IResourceEncoder {
             }
             
             // Specific Implementation for the Slow Requests flow in WEED 
-            if (collection.getId().contains("IUCNGET-V317-extent")) { 
+            if (collection.getId().contains("IUCNGET-V317-extent")
+            		|| collection.getId().contains("EUNISplus-V311-extent")) { 
             		//&& resource.getUrn().contains("im.resources-main")) { 
             	Geometry unionMLStacInference = UnaryUnionOp.union(
             		    items.stream()
@@ -607,7 +608,7 @@ public class STACEncoder implements IResourceEncoder {
             		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
             		List<String >modelIds = null;
             		try {
-						modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), targetSemantics);
+						modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), collection.getId().toLowerCase());
 						if (modelIds == null || modelIds.size() == 0) {
 							throw new Exception("No ONNX Models were found over the specified context");
 						}
@@ -628,6 +629,18 @@ public class STACEncoder implements IResourceEncoder {
             		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
 					processes.add(process);
 					
+					String scenarioId = null;
+					String digitalId = null;
+					
+					 if (collection.getId().contains("IUCNGET-V317-extent")) {
+						 scenarioId = "V317";
+						 digitalId = "IUCNGET";
+								 
+					 } else { // BY default assume IUCN (since it's global)
+						 scenarioId = "V311";
+						 digitalId = "EUNIS2021plus";
+					 }
+					
 					for (var modelId:modelIds) { // triggering multiple UDPs parallely
 						JSONObject arguments = new JSONObject()
 								.put("bbox", new JSONObject() // convert this to a geojson
@@ -636,9 +649,9 @@ public class STACEncoder implements IResourceEncoder {
 									.put("south", bbox.get(3))
 									.put("east", bbox.get(1))
 									.put("north", bbox.get(2))) 
-							.put("digitalId", "BC3")  // Forms the STAC coordinate later
-							.put("scenarioId", "DT_SLOW_FLOW") // Forms the STAC coordinate later 
-							.put("year", ctxTime.getEnd().getYear())
+							.put("digitalId", digitalId)  // Forms the STAC coordinate later
+							.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
+							.put("year", ctxTime.getStart().getYear())
 							.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
 							.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
 							.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
