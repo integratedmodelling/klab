@@ -22,7 +22,7 @@ public class WEEDModelSTACExtension {
 	
 	String MODEL_STAC_API = "https://catalogue.weed.apex.esa.int/collections/model-STAC";
 	
-	public static List<String> GetONNXModelIDs(List<Double> bbox, IMonitor monitor, IObservable targetSemantics) {
+	public static List<String> GetONNXModelIDs(List<Double> bbox, IMonitor monitor, String classification) {
 		
 		
 		monitor.debug("Making a Search Query to the Model STAC");
@@ -56,15 +56,13 @@ public class WEEDModelSTACExtension {
 		    while (featureIterator.hasNext()) {
 		    	JSONObject feature = (JSONObject) featureIterator.next();
 	            SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
-	            if (targetSemantics.toString().toLowerCase().contains("eunis")) {
+	            if (classification.contains("eunis")) {
 	            	if (feat.getAttribute("topology") != null && 
 	            			feat.getAttribute("topology").toString().toLowerCase().startsWith("eunis")) { // it should've been "typology" instead of "topology"
 	            		pairs.add(Map.entry(feat.getID(), ((Number) feat.getAttribute("model_version")).floatValue()));
 	            		highestModelVersion = Math.max(highestModelVersion, ((Number) feat.getAttribute("model_version")).floatValue());
 	            	}
-	            }
-	            
-	            if (targetSemantics.toString().toLowerCase().contains("iucn")) {
+	            } else { // by default assume iucn since it's global
 	            	if (feat.getAttribute("topology") != null && 
 	            			feat.getAttribute("topology").toString().toLowerCase().startsWith("iucn")) { // it should've been "typology" instead of "topology"
 	            		pairs.add(Map.entry(feat.getID(), ((Number) feat.getAttribute("model_version")).floatValue()));
