@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.invoke.VarHandle;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -94,6 +95,11 @@ import com.github.davidmoten.aws.lw.client.Credentials;
 
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+
+import org.geotools.geojson.geom.GeometryJSON;
+import org.locationtech.jts.io.WKTReader;
+
+import java.io.StringWriter;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -527,6 +533,7 @@ public class STACEncoder implements IResourceEncoder {
                 return;   
             }
             
+            
             List<HMStacItem> items = searchItemsWithRetry(collection, scope.getMonitor());
             
             if (mergeMode == HMRaster.MergeMode.SUBSTITUTE && !items.isEmpty()) {
@@ -592,7 +599,7 @@ public class STACEncoder implements IResourceEncoder {
             
             // Specific Implementation for the Slow Requests flow in WEED 
             if (collection.getId().contains("IUCNGET-V317-extent")
-            		|| collection.getId().contains("EUNISplus-V311-extent")) { 
+            		|| collection.getId().contains("EUNIS2021plus-V311-extent")) { 
             		//&& resource.getUrn().contains("im.resources-main")) { 
             	Geometry unionMLStacInference = UnaryUnionOp.union(
             		    items.stream()
@@ -601,7 +608,12 @@ public class STACEncoder implements IResourceEncoder {
             		         .collect(Collectors.toList())
             		);
             	
-            	if (unionMLStacInference == null || !unionMLStacInference.contains(poly)) {
+            	String wktContext = space.getShape().toString();
+				wktContext = wktContext.replaceFirst("^EPSG:\\d+\\s+", "");
+
+				Geometry klabContextGeom = new WKTReader().read(wktContext);
+            	
+            	if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
             		
             		// If its null this means there is no inference whatsoever
             		
@@ -636,19 +648,20 @@ public class STACEncoder implements IResourceEncoder {
 						 scenarioId = "V317";
 						 digitalId = "IUCNGET";
 								 
-					 } else { // BY default assume IUCN (since it's global)
+					 } else {
 						 scenarioId = "V311";
 						 digitalId = "EUNIS2021plus";
 					 }
 					
+					 StringWriter out = new StringWriter();
+					 new GeometryJSON(15).write(klabContextGeom, out);       // 15 = max decimal places
+					 JSONObject ctxgeojson = new JSONObject(out.toString());
+					 
+					 
+					 
 					for (var modelId:modelIds) { // triggering multiple UDPs parallely
 						JSONObject arguments = new JSONObject()
-								.put("bbox", new JSONObject() // convert this to a geojson
-									.put("crs", 4326)
-									.put("west", bbox.get(0))
-									.put("south", bbox.get(3))
-									.put("east", bbox.get(1))
-									.put("north", bbox.get(2))) 
+							.put("bbox", ctxgeojson) 
 							.put("digitalId", digitalId)  // Forms the STAC coordinate later
 							.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
 							.put("year", ctxTime.getStart().getYear())
