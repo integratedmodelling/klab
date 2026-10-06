@@ -599,7 +599,9 @@ public class STACEncoder implements IResourceEncoder {
             
             // Specific Implementation for the Slow Requests flow in WEED 
             if (collection.getId().contains("IUCNGET-V317-extent")
-            		|| collection.getId().contains("EUNIS2021plus-V311-extent")) { 
+            		|| collection.getId().contains("EUNIS2021plus-V311-extent")
+            		|| collection.getId().contains("EUNIS2021plus-RB-extent") // Update this to the actual RB STAC for EUNIS
+            		|| collection.getId().contains("IUCNGET-RB-extent")) { // Update this to the actual RB IUCN STAC { 
             		//&& resource.getUrn().contains("im.resources-main")) { 
             	Geometry unionMLStacInference = UnaryUnionOp.union(
             		    items.stream()
@@ -612,26 +614,13 @@ public class STACEncoder implements IResourceEncoder {
 				wktContext = wktContext.replaceFirst("^EPSG:\\d+\\s+", "");
 
 				Geometry klabContextGeom = new WKTReader().read(wktContext);
-            	
-            	if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
-            		
-            		// If its null this means there is no inference whatsoever
-            		
-            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
-            		List<String >modelIds = null;
-            		try {
-						modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), collection.getId().toLowerCase());
-						if (modelIds == null || modelIds.size() == 0) {
-							throw new Exception("No ONNX Models were found over the specified context");
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						throw new KlabIllegalStateException("Error occured while getting ONNX Model info over the specified context");
-					}
-            		OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
+				
+				if (collection.getId().toLowerCase().contains("rb") || collection.getId().toLowerCase().contains("rule")) { 
+					// Rule Based Logic
+					
+					OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
             		List<Process> processes = new ArrayList<>();
-            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter.json";
+            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter_RB.json";
             		String processID = "udp_starter";
             		
             		Process process = JsonUtils.load(new URL(processNamespace),
@@ -644,12 +633,12 @@ public class STACEncoder implements IResourceEncoder {
 					String scenarioId = null;
 					String digitalId = null;
 					
-					 if (collection.getId().contains("IUCNGET-V317-extent")) {
+					 if (collection.getId().contains("IUCNGET-V317-extent")) { // Change this once RB STAC is ready
 						 scenarioId = "V317";
 						 digitalId = "IUCNGET";
 								 
 					 } else {
-						 scenarioId = "V311";
+						 scenarioId = "V311"; // Change this once RB STAC is ready
 						 digitalId = "EUNIS2021plus";
 					 }
 					
@@ -658,29 +647,105 @@ public class STACEncoder implements IResourceEncoder {
 					 JSONObject ctxgeojson = new JSONObject(out.toString());
 					 
 					 
-					 
-					for (var modelId:modelIds) { // triggering multiple UDPs parallely
-						JSONObject arguments = new JSONObject()
-							.put("bbox", ctxgeojson) 
-							.put("digitalId", digitalId)  // Forms the STAC coordinate later
-							.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
-							.put("year", ctxTime.getStart().getYear())
-							.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
-							.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
-							.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
-						
-						OpenEOFuture job = service.submit(processID, arguments,
-	    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
-						
-						if (job.isCancelled()) {
-							scope.getMonitor().warn("job canceled");
-						} else if (job.getError() != null) {
-							scope.getMonitor().error(job.getError());
-						} else {
-							scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
-						}
+					JSONObject arguments = new JSONObject()
+						.put("bbox", ctxgeojson) 
+						.put("digitalId", digitalId)  // Forms the STAC coordinate later
+						.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
+						.put("year", ctxTime.getStart().getYear())
+						.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+						.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
+					
+					OpenEOFuture job = service.submit(processID, arguments,
+    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+					
+					if (job.isCancelled()) {
+						scope.getMonitor().warn("job canceled");
+					} else if (job.getError() != null) {
+						scope.getMonitor().error(job.getError());
+					} else {
+						scope.getMonitor().info("Inference Request has been submitted to the RB Workflows");
 					}
-            	}
+					
+					
+				} else {
+					// Machine Learning Logic
+					if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
+	            		
+	            		// If its null this means there is no inference whatsoever
+	            		
+	            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
+	            		List<String >modelIds = null;
+	            		try {
+							modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), collection.getId().toLowerCase());
+							if (modelIds == null || modelIds.size() == 0) {
+								throw new Exception("No ONNX Models were found over the specified context");
+							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new KlabIllegalStateException("Error occured while getting ONNX Model info over the specified context");
+						}
+	            		OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
+	            		List<Process> processes = new ArrayList<>();
+	            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter.json";
+	            		String processID = "udp_starter";
+	            		
+	            		Process process = JsonUtils.load(new URL(processNamespace),
+								Process.class);
+						process.encodeSelf(processNamespace);
+
+	            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
+						processes.add(process);
+						
+						String scenarioId = null;
+						String digitalId = null;
+						
+						 if (collection.getId().contains("IUCNGET-V317-extent")) {
+							 scenarioId = "V317";
+							 digitalId = "IUCNGET";
+									 
+						 } else {
+							 scenarioId = "V311";
+							 digitalId = "EUNIS2021plus";
+						 }
+						
+						 StringWriter out = new StringWriter();
+						 new GeometryJSON(15).write(klabContextGeom, out);       // 15 = max decimal places
+						 JSONObject ctxgeojson = new JSONObject(out.toString());
+						 
+						 
+						 
+						for (var modelId:modelIds) { // triggering multiple UDPs parallely
+							JSONObject arguments = new JSONObject()
+								.put("bbox", ctxgeojson) 
+								.put("digitalId", digitalId)  // Forms the STAC coordinate later
+								.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
+								.put("year", ctxTime.getStart().getYear())
+								.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
+								.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+								.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
+							
+							OpenEOFuture job = service.submit(processID, arguments,
+		    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+							
+							if (job.isCancelled()) {
+								scope.getMonitor().warn("job canceled");
+							} else if (job.getError() != null) {
+								scope.getMonitor().error(job.getError());
+							} else {
+								scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
+							}
+						}
+	            	}
+				}
+            	
+            	
+            	
+             manager.close();
+             scope.getMonitor().warn("Inferences over the Spatial and Temporal Context has been triggered and will be notified");
+             return;
+             
+                 
             } 
             
             
