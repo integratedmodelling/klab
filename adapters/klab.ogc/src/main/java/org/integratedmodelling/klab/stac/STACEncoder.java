@@ -770,55 +770,52 @@ public class STACEncoder implements IResourceEncoder {
             
             HMRaster paddedRaster = null;
             
-            if (collection.getTitle().toLowerCase().contains("ecdc")) {
-            	scope.getMonitor().info("Falling back on fast cog flow for ecdc assets");
-            	List<String> cogHrefs = items.stream()
-            	        .flatMap(item -> item.getAssets().stream()
-            	                .filter(pred)
-            	                .findFirst()
-            	                .map(asset -> asset.getAssetNode().get("href").asText())
-            	                .stream())
-            	        .toList();
-            	
-            	for (var cogHref: cogHrefs) {
-            		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
-            		if (cogCoverage != null) {
-	            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
-	    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
-	    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
-	    	            	transformer.setAcceptLenientDatumShift(true);
-	    	            	raster = transformer.transform(raster);
-	    	            }
-            		
-    	            
-	    	            if (paddedRaster == null) {
-	    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
-	    	                		.setName("padded").setRegion(regionTransformed)
-	    	    					.setCrs(targetCRS).build();
-	    	            }
-	    	            paddedRaster.mapRaster(null, raster, null); 
-            		}
-            	}
-            } else {
-            	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
-                        MergeMode.SUBSTITUTE, lpm); 
-                if (outRaster == null) {
-                    scope.getMonitor().error("Unable to build the output from the STAC Resource");
-                    throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
-                }
-                 paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
-                		.setName("padded").setRegion(regionTransformed)
-    					.setCrs(targetCRS).build();
-                if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
-                	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
-                	transformer.setAcceptLenientDatumShift(true);
-                	outRaster = transformer.transform(outRaster);
-                }
-               
-    			paddedRaster.mapRaster(null, outRaster, null);
+//            if (collection.getTitle().toLowerCase().contains("ecdc")) {
+//            	scope.getMonitor().info("Falling back on fast cog flow for ecdc assets");
+//            	List<String> cogHrefs = items.stream()
+//            	        .flatMap(item -> item.getAssets().stream()
+//            	                .filter(pred)
+//            	                .findFirst()
+//            	                .map(asset -> asset.getAssetNode().get("href").asText())
+//            	                .stream())
+//            	        .toList();
+//            	
+//            	for (var cogHref: cogHrefs) {
+//            		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
+//            		if (cogCoverage != null) {
+//	            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
+//	    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
+//	    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
+//	    	            	transformer.setAcceptLenientDatumShift(true);
+//	    	            	raster = transformer.transform(raster);
+//	    	            }
+//            		
+//    	            
+//	    	            if (paddedRaster == null) {
+//	    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
+//	    	                		.setName("padded").setRegion(regionTransformed)
+//	    	    					.setCrs(targetCRS).build();
+//	    	            }
+//	    	            paddedRaster.mapRaster(null, raster, null); 
+//            		}
+//            	}
+//            } else {
+        	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
+                    MergeMode.SUBSTITUTE, lpm); 
+            if (outRaster == null) {
+                scope.getMonitor().error("Unable to build the output from the STAC Resource");
+                throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
             }
-
-            
+             paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
+            		.setName("padded").setRegion(regionTransformed)
+					.setCrs(targetCRS).build();
+            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
+            	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+            	transformer.setAcceptLenientDatumShift(true);
+            	outRaster = transformer.transform(outRaster);
+            }
+           
+			paddedRaster.mapRaster(null, outRaster, null);
 			coverage = paddedRaster.buildCoverage();
 			
 			if (bandIndex != null) { // Which means theat it's a Multi Band COG
