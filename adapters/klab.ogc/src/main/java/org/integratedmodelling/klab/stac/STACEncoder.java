@@ -24,7 +24,6 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -40,7 +39,6 @@ import org.hortonmachine.gears.utils.crs.HMCrsRegistry;
 import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
 
 import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
@@ -83,7 +81,6 @@ import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.stac.extensions.WEEDModelSTACExtension;
 
 import org.integratedmodelling.klab.utils.JsonUtils;
-import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
@@ -169,27 +166,41 @@ public class STACEncoder implements IResourceEncoder {
         return contextTime;
     }
 
-    private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics, IMonitor monitor) {
+    private HMRaster.MergeMode chooseMergeMode(Map<String, String> urnParameters, IObservable targetSemantics, IMonitor monitor) {
+    	
+    	if (urnParameters.containsKey("aggregation")) {
+    		monitor.info("Fetching Merge Mode from URN Paramter");
+    		
+    		switch (urnParameters.get("aggregation").toString().toLowerCase()) {
+	    		case "sum":
+	    			return HMRaster.MergeMode.SUM;
+	    		case "avg":
+	    			return HMRaster.MergeMode.AVG;
+	    		case "substitute":
+	    			return HMRaster.MergeMode.SUBSTITUTE;
+	    		case "most_popular_value":
+	    			return HMRaster.MergeMode.MOST_POPULAR_VALUE;
+	    		default:
+	    			monitor.info("Couldn't find suitable Mergemode from the URN Parameter, using Senatics to Infer");
+    		}
+    	}
+    	
         if (targetSemantics == null) {
             monitor.debug("Using average as merge mode");
             return HMRaster.MergeMode.AVG;
         }
-        switch(targetSemantics.getArtifactType()) {
-        case CONCEPT:
-        case BOOLEAN:
-            monitor.debug("Using substitute as merge mode");
-            return HMRaster.MergeMode.SUBSTITUTE;
-        case NUMBER:
-            if (Observables.INSTANCE.isExtensive(targetSemantics)) {
-                monitor.debug("Using sum as merge mode");
-                return HMRaster.MergeMode.SUM;
-            }
-            monitor.debug("Using substitute as merge mode");
-            return HMRaster.MergeMode.SUBSTITUTE;
-        default:
-            monitor.debug("Defaulting to average as merge mode");
-            return HMRaster.MergeMode.AVG;
+        
+        switch (targetSemantics.getDescriptionType().toString()) {
+        
+        	case "QUANTIFICATION":
+        		monitor.info("Using Substitute as Merge Mode for QUANTIFICATION based on Semantics");
+        		return HMRaster.MergeMode.SUBSTITUTE;
+        		
+        	default:
+        		monitor.info("Using Most Popular Value for CHARACTERIZATION and CATEGIORIZATION based on Semantics");
+        		return HMRaster.MergeMode.MOST_POPULAR_VALUE;
         }
+        
     }
 
     /*
@@ -476,7 +487,7 @@ public class STACEncoder implements IResourceEncoder {
             IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                     ? ((Observation) scope.getTargetArtifact()).getObservable()
                     : null;
-            HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
+            HMRaster.MergeMode mergeMode = chooseMergeMode(urnParameters, targetSemantics, scope.getMonitor());
             Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
             Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
             // Date(end.getMilliseconds())); --> Filter later :)
@@ -599,7 +610,9 @@ public class STACEncoder implements IResourceEncoder {
             
             // Specific Implementation for the Slow Requests flow in WEED 
             if (collection.getId().contains("IUCNGET-V317-extent")
-            		|| collection.getId().contains("EUNIS2021plus-V311-extent")) { 
+            		|| collection.getId().contains("EUNIS2021plus-V311-extent")
+            		|| collection.getId().contains("EUNIS2021plus-RB-extent") // Update this to the actual RB STAC for EUNIS
+            		|| collection.getId().contains("IUCNGET-RB-extent")) { // Update this to the actual RB IUCN STAC { 
             		//&& resource.getUrn().contains("im.resources-main")) { 
             	Geometry unionMLStacInference = UnaryUnionOp.union(
             		    items.stream()
@@ -612,26 +625,13 @@ public class STACEncoder implements IResourceEncoder {
 				wktContext = wktContext.replaceFirst("^EPSG:\\d+\\s+", "");
 
 				Geometry klabContextGeom = new WKTReader().read(wktContext);
-            	
-            	if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
-            		
-            		// If its null this means there is no inference whatsoever
-            		
-            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
-            		List<String >modelIds = null;
-            		try {
-						modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), collection.getId().toLowerCase());
-						if (modelIds == null || modelIds.size() == 0) {
-							throw new Exception("No ONNX Models were found over the specified context");
-						}
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-						throw new KlabIllegalStateException("Error occured while getting ONNX Model info over the specified context");
-					}
-            		OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
+				
+				if (collection.getId().toLowerCase().contains("rb") || collection.getId().toLowerCase().contains("rule")) { 
+					// Rule Based Logic
+					
+					OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
             		List<Process> processes = new ArrayList<>();
-            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter.json";
+            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter_RB.json";
             		String processID = "udp_starter";
             		
             		Process process = JsonUtils.load(new URL(processNamespace),
@@ -644,12 +644,12 @@ public class STACEncoder implements IResourceEncoder {
 					String scenarioId = null;
 					String digitalId = null;
 					
-					 if (collection.getId().contains("IUCNGET-V317-extent")) {
+					 if (collection.getId().contains("IUCNGET-V317-extent")) { // Change this once RB STAC is ready
 						 scenarioId = "V317";
 						 digitalId = "IUCNGET";
 								 
 					 } else {
-						 scenarioId = "V311";
+						 scenarioId = "V311"; // Change this once RB STAC is ready
 						 digitalId = "EUNIS2021plus";
 					 }
 					
@@ -658,29 +658,103 @@ public class STACEncoder implements IResourceEncoder {
 					 JSONObject ctxgeojson = new JSONObject(out.toString());
 					 
 					 
-					 
-					for (var modelId:modelIds) { // triggering multiple UDPs parallely
-						JSONObject arguments = new JSONObject()
-							.put("bbox", ctxgeojson) 
-							.put("digitalId", digitalId)  // Forms the STAC coordinate later
-							.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
-							.put("year", ctxTime.getStart().getYear())
-							.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
-							.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
-							.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
-						
-						OpenEOFuture job = service.submit(processID, arguments,
-	    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
-						
-						if (job.isCancelled()) {
-							scope.getMonitor().warn("job canceled");
-						} else if (job.getError() != null) {
-							scope.getMonitor().error(job.getError());
-						} else {
-							scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
-						}
+					JSONObject arguments = new JSONObject()
+						.put("bbox", ctxgeojson) 
+						.put("digitalId", digitalId)  // Forms the STAC coordinate later
+						.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
+						.put("year", ctxTime.getStart().getYear())
+						.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+						.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
+					
+					OpenEOFuture job = service.submit(processID, arguments,
+    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+					
+					if (job.isCancelled()) {
+						scope.getMonitor().warn("job canceled");
+					} else if (job.getError() != null) {
+						scope.getMonitor().error(job.getError());
+					} else {
+						scope.getMonitor().info("Inference Request has been submitted to the RB Workflows");
 					}
-            	}
+					
+					
+				} else {
+					// Machine Learning Logic
+					if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
+	            		
+	            		// If its null this means there is no inference whatsoever
+	            		
+	            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
+	            		List<String >modelIds = null;
+	            		try {
+							modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), collection.getId().toLowerCase());
+							if (modelIds == null || modelIds.size() == 0) {
+								throw new Exception("No ONNX Models were found over the specified context");
+							}
+						} catch (Exception e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							throw new KlabIllegalStateException("Error occured while getting ONNX Model info over the specified context");
+						}
+	            		OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
+	            		List<Process> processes = new ArrayList<>();
+	            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter.json";
+	            		String processID = "udp_starter";
+	            		
+	            		Process process = JsonUtils.load(new URL(processNamespace),
+								Process.class);
+						process.encodeSelf(processNamespace);
+
+	            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
+						processes.add(process);
+						
+						String scenarioId = null;
+						String digitalId = null;
+						
+						 if (collection.getId().contains("IUCNGET-V317-extent")) {
+							 scenarioId = "V317";
+							 digitalId = "IUCNGET";
+									 
+						 } else {
+							 scenarioId = "V311";
+							 digitalId = "EUNIS2021plus";
+						 }
+						
+						 StringWriter out = new StringWriter();
+						 new GeometryJSON(15).write(klabContextGeom, out);       // 15 = max decimal places
+						 JSONObject ctxgeojson = new JSONObject(out.toString());
+						 
+						 
+						 
+						for (var modelId:modelIds) { // triggering multiple UDPs parallely
+							JSONObject arguments = new JSONObject()
+								.put("bbox", ctxgeojson) 
+								.put("digitalId", digitalId)  // Forms the STAC coordinate later
+								.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
+								.put("year", ctxTime.getStart().getYear())
+								.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
+								.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+								.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
+							
+							OpenEOFuture job = service.submit(processID, arguments,
+		    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+							
+							if (job.isCancelled()) {
+								scope.getMonitor().warn("job canceled");
+							} else if (job.getError() != null) {
+								scope.getMonitor().error(job.getError());
+							} else {
+								scope.getMonitor().info("Inference Request has been submitted to the ML Workflows");
+							}
+						}
+	            	}
+				}
+            	
+             manager.close();
+             scope.getMonitor().warn("Inferences over the Spatial and Temporal Context has been triggered and will be notified");
+             return;
+             
+                 
             } 
             
             
@@ -705,55 +779,52 @@ public class STACEncoder implements IResourceEncoder {
             
             HMRaster paddedRaster = null;
             
-            if (collection.getTitle().toLowerCase().contains("ecdc")) {
-            	scope.getMonitor().info("Falling back on fast cog flow for ecdc assets");
-            	List<String> cogHrefs = items.stream()
-            	        .flatMap(item -> item.getAssets().stream()
-            	                .filter(pred)
-            	                .findFirst()
-            	                .map(asset -> asset.getAssetNode().get("href").asText())
-            	                .stream())
-            	        .toList();
-            	
-            	for (var cogHref: cogHrefs) {
-            		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
-            		if (cogCoverage != null) {
-	            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
-	    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
-	    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
-	    	            	transformer.setAcceptLenientDatumShift(true);
-	    	            	raster = transformer.transform(raster);
-	    	            }
-            		
-    	            
-	    	            if (paddedRaster == null) {
-	    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
-	    	                		.setName("padded").setRegion(regionTransformed)
-	    	    					.setCrs(targetCRS).build();
-	    	            }
-	    	            paddedRaster.mapRaster(null, raster, null); 
-            		}
-            	}
-            } else {
-            	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
-                        MergeMode.SUBSTITUTE, lpm); 
-                if (outRaster == null) {
-                    scope.getMonitor().error("Unable to build the output from the STAC Resource");
-                    throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
-                }
-                 paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
-                		.setName("padded").setRegion(regionTransformed)
-    					.setCrs(targetCRS).build();
-                if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
-                	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
-                	transformer.setAcceptLenientDatumShift(true);
-                	outRaster = transformer.transform(outRaster);
-                }
-               
-    			paddedRaster.mapRaster(null, outRaster, null);
+//            if (collection.getTitle().toLowerCase().contains("ecdc")) {
+//            	scope.getMonitor().info("Falling back on fast cog flow for ecdc assets");
+//            	List<String> cogHrefs = items.stream()
+//            	        .flatMap(item -> item.getAssets().stream()
+//            	                .filter(pred)
+//            	                .findFirst()
+//            	                .map(asset -> asset.getAssetNode().get("href").asText())
+//            	                .stream())
+//            	        .toList();
+//            	
+//            	for (var cogHref: cogHrefs) {
+//            		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
+//            		if (cogCoverage != null) {
+//	            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
+//	    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
+//	    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
+//	    	            	transformer.setAcceptLenientDatumShift(true);
+//	    	            	raster = transformer.transform(raster);
+//	    	            }
+//            		
+//    	            
+//	    	            if (paddedRaster == null) {
+//	    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
+//	    	                		.setName("padded").setRegion(regionTransformed)
+//	    	    					.setCrs(targetCRS).build();
+//	    	            }
+//	    	            paddedRaster.mapRaster(null, raster, null); 
+//            		}
+//            	}
+//            } else {
+        	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
+                    mergeMode, lpm); 
+            if (outRaster == null) {
+                scope.getMonitor().error("Unable to build the output from the STAC Resource");
+                throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
             }
-
-            
+             paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
+            		.setName("padded").setRegion(regionTransformed)
+					.setCrs(targetCRS).build();
+            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
+            	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+            	transformer.setAcceptLenientDatumShift(true);
+            	outRaster = transformer.transform(outRaster);
+            }
+           
+			paddedRaster.mapRaster(null, outRaster, mergeMode);
 			coverage = paddedRaster.buildCoverage();
 			
 			if (bandIndex != null) { // Which means theat it's a Multi Band COG
