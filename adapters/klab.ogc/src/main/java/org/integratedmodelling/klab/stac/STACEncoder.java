@@ -24,7 +24,6 @@ import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -40,7 +39,6 @@ import org.hortonmachine.gears.utils.crs.HMCrsRegistry;
 import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
 
 import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
@@ -83,7 +81,6 @@ import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.stac.extensions.WEEDModelSTACExtension;
 
 import org.integratedmodelling.klab.utils.JsonUtils;
-import org.integratedmodelling.klab.utils.s3.S3URLUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.Polygon;
@@ -169,27 +166,41 @@ public class STACEncoder implements IResourceEncoder {
         return contextTime;
     }
 
-    private HMRaster.MergeMode chooseMergeMode(IObservable targetSemantics, IMonitor monitor) {
+    private HMRaster.MergeMode chooseMergeMode(Map<String, String> urnParameters, IObservable targetSemantics, IMonitor monitor) {
+    	
+    	if (urnParameters.containsKey("aggregation")) {
+    		monitor.info("Fetching Merge Mode from URN Paramter");
+    		
+    		switch (urnParameters.get("aggregation").toString().toLowerCase()) {
+	    		case "sum":
+	    			return HMRaster.MergeMode.SUM;
+	    		case "avg":
+	    			return HMRaster.MergeMode.AVG;
+	    		case "substitute":
+	    			return HMRaster.MergeMode.SUBSTITUTE;
+	    		case "most_popular_value":
+	    			return HMRaster.MergeMode.MOST_POPULAR_VALUE;
+	    		default:
+	    			monitor.info("Couldn't find suitable Mergemode from the URN Parameter, using Senatics to Infer");
+    		}
+    	}
+    	
         if (targetSemantics == null) {
             monitor.debug("Using average as merge mode");
             return HMRaster.MergeMode.AVG;
         }
-        switch(targetSemantics.getArtifactType()) {
-        case CONCEPT:
-        case BOOLEAN:
-            monitor.debug("Using substitute as merge mode");
-            return HMRaster.MergeMode.SUBSTITUTE;
-        case NUMBER:
-            if (Observables.INSTANCE.isExtensive(targetSemantics)) {
-                monitor.debug("Using sum as merge mode");
-                return HMRaster.MergeMode.SUM;
-            }
-            monitor.debug("Using substitute as merge mode");
-            return HMRaster.MergeMode.SUBSTITUTE;
-        default:
-            monitor.debug("Defaulting to average as merge mode");
-            return HMRaster.MergeMode.AVG;
+        
+        switch (targetSemantics.getDescriptionType().toString()) {
+        
+        	case "QUANTIFICATION":
+        		monitor.info("Using Substitute as Merge Mode for QUANTIFICATION based on Semantics");
+        		return HMRaster.MergeMode.SUBSTITUTE;
+        		
+        	default:
+        		monitor.info("Using Most Popular Value for CHARACTERIZATION and CATEGIORIZATION based on Semantics");
+        		return HMRaster.MergeMode.MOST_POPULAR_VALUE;
         }
+        
     }
 
     /*
@@ -476,7 +487,7 @@ public class STACEncoder implements IResourceEncoder {
             IObservable targetSemantics = scope.getTargetArtifact() instanceof Observation
                     ? ((Observation) scope.getTargetArtifact()).getObservable()
                     : null;
-            HMRaster.MergeMode mergeMode = chooseMergeMode(targetSemantics, scope.getMonitor());
+            HMRaster.MergeMode mergeMode = chooseMergeMode(urnParameters, targetSemantics, scope.getMonitor());
             Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
             Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
             // Date(end.getMilliseconds())); --> Filter later :)
@@ -739,8 +750,6 @@ public class STACEncoder implements IResourceEncoder {
 	            	}
 				}
             	
-            	
-            	
              manager.close();
              scope.getMonitor().warn("Inferences over the Spatial and Temporal Context has been triggered and will be notified");
              return;
@@ -801,7 +810,7 @@ public class STACEncoder implements IResourceEncoder {
 //            	}
 //            } else {
         	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
-                    MergeMode.SUBSTITUTE, lpm); 
+                    mergeMode, lpm); 
             if (outRaster == null) {
                 scope.getMonitor().error("Unable to build the output from the STAC Resource");
                 throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
@@ -815,7 +824,7 @@ public class STACEncoder implements IResourceEncoder {
             	outRaster = transformer.transform(outRaster);
             }
            
-			paddedRaster.mapRaster(null, outRaster, null);
+			paddedRaster.mapRaster(null, outRaster, mergeMode);
 			coverage = paddedRaster.buildCoverage();
 			
 			if (bandIndex != null) { // Which means theat it's a Multi Band COG
