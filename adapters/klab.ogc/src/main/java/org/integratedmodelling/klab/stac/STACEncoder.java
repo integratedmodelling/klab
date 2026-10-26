@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.stac;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.lang.invoke.VarHandle;
+import java.io.StringWriter;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -23,7 +23,9 @@ import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
+import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
@@ -34,10 +36,8 @@ import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
 import org.hortonmachine.gears.libs.monitor.LogProgressMonitor;
 import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.crs.CrsUtilities;
-import org.hortonmachine.gears.utils.geometry.GeometryUtilities;
 import org.hortonmachine.gears.utils.crs.HMCrsRegistry;
 import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
-
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -79,24 +79,17 @@ import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
 import org.integratedmodelling.klab.stac.extensions.STACIIASAExtension;
 import org.integratedmodelling.klab.stac.extensions.WEEDModelSTACExtension;
-
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
-import org.locationtech.jts.geom.Polygon;
+import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
 
-import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-
-import org.geotools.geojson.geom.GeometryJSON;
-import org.locationtech.jts.io.WKTReader;
-
-import java.io.StringWriter;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -489,16 +482,22 @@ public class STACEncoder implements IResourceEncoder {
                     : null;
             HMRaster.MergeMode mergeMode = chooseMergeMode(urnParameters, targetSemantics, scope.getMonitor());
             Envelope env = new Envelope(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY());
-            Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
+            String code = envelope.getProjection().getCode();
+            CoordinateReferenceSystem fromCrs = HMCrsRegistry.INSTANCE.getCrs(code);
+            HMCrsTransformer crsTransformer = new HMCrsTransformer(fromCrs, DefaultGeographicCRS.WGS84);
+            Envelope envLL = crsTransformer.transform(env);
+            List<Double> bboxLL = List.of(envLL.getMinX(), envLL.getMaxX(), envLL.getMinY(), envLL.getMaxY());
+            
+            //            Polygon poly = GeometryUtilities.createPolygonFromEnvelope(env);
             // Date(end.getMilliseconds())); --> Filter later :)
 
             GridCoverage2D coverage = null;
             
             collection.setBboxFilter(new double[] {
-            		bbox.get(0),
-            		bbox.get(2),
-            		bbox.get(1),
-            		bbox.get(3)
+            		bboxLL.get(0),
+            		bboxLL.get(2),
+            		bboxLL.get(1),
+            		bboxLL.get(3)
             });
             
             if (assetPredicate == null || 
@@ -775,7 +774,12 @@ public class STACEncoder implements IResourceEncoder {
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
             
-            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+            DefaultGeographicCRS wgs84CRS = DefaultGeographicCRS.WGS84;
+			var regionEnvelopeLL = regionEnvelope.transform(wgs84CRS, true);
+            var regionTransformedLL = RegionMap.fromEnvelopeAndGrid(regionEnvelopeLL, (int) grid.getXCells(),
+                    (int) grid.getYCells());
+            
+//            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
             
             HMRaster paddedRaster = null;
             
@@ -809,17 +813,17 @@ public class STACEncoder implements IResourceEncoder {
 //            		}
 //            	}
 //            } else {
-        	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, assetPredicate, items, allowTransform,
+        	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformedLL, assetPredicate, items, allowTransform,
                     mergeMode, lpm); 
             if (outRaster == null) {
                 scope.getMonitor().error("Unable to build the output from the STAC Resource");
                 throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
             }
-             paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
-            		.setName("padded").setRegion(regionTransformed)
-					.setCrs(targetCRS).build();
-            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
-            	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
+            paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
+            		.setName("padded").setRegion(regionTransformedLL)
+					.setCrs(wgs84CRS).build();
+            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),wgs84CRS)) {
+            	var transformer = new HMCrsTransformer(outRaster.getCrs(), wgs84CRS);
             	transformer.setAcceptLenientDatumShift(true);
             	outRaster = transformer.transform(outRaster);
             }
