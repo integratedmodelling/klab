@@ -608,10 +608,9 @@ public class STACEncoder implements IResourceEncoder {
             }
             
             // Specific Implementation for the Slow Requests flow in WEED 
-            if (collection.getId().contains("IUCNGET-V317-extent")
-            		|| collection.getId().contains("EUNIS2021plus-V311-extent")
-            		|| collection.getId().contains("EUNIS2021plus-RB-extent") // Update this to the actual RB STAC for EUNIS
-            		|| collection.getId().contains("IUCNGET-RB-extent")) { // Update this to the actual RB IUCN STAC { 
+            if (collection.getId().contains("IUCNGET")
+            		|| collection.getId().contains("EUNIS2021plus") // Update this to the actual RB STAC for EUNIS
+            		|| collection.getId().contains("RuleBased")) { // Update this to the actual RB IUCN STAC { 
             		//&& resource.getUrn().contains("im.resources-main")) { 
             	Geometry unionMLStacInference = UnaryUnionOp.union(
             		    items.stream()
@@ -625,58 +624,54 @@ public class STACEncoder implements IResourceEncoder {
 
 				Geometry klabContextGeom = new WKTReader().read(wktContext);
 				
-				if (collection.getId().toLowerCase().contains("rb") || collection.getId().toLowerCase().contains("rule")) { 
+				if (collection.getId().toLowerCase().contains("rule")) { 
 					// Rule Based Logic
 					
-					OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
-            		List<Process> processes = new ArrayList<>();
-            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter_RB.json";
-            		String processID = "udp_starter";
-            		
-            		Process process = JsonUtils.load(new URL(processNamespace),
-							Process.class);
-					process.encodeSelf(processNamespace);
+					if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
+						OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
+	            		List<Process> processes = new ArrayList<>();
+	            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter_RB.json";
+	            		String processID = "udp_starter";
+	            		
+	            		Process process = JsonUtils.load(new URL(processNamespace),
+								Process.class);
+						process.encodeSelf(processNamespace);
 
-            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
-					processes.add(process);
-					
-					String scenarioId = null;
-					String digitalId = null;
-					
-					 if (collection.getId().contains("IUCNGET-V317-extent")) { // Change this once RB STAC is ready
-						 scenarioId = "V317";
-						 digitalId = "IUCNGET";
-								 
-					 } else {
-						 scenarioId = "V311"; // Change this once RB STAC is ready
-						 digitalId = "EUNIS2021plus";
-					 }
-					
-					 StringWriter out = new StringWriter();
-					 new GeometryJSON(15).write(klabContextGeom, out);       // 15 = max decimal places
-					 JSONObject ctxgeojson = new JSONObject(out.toString());
-					 
-					 
-					JSONObject arguments = new JSONObject()
-						.put("bbox", ctxgeojson) 
-						.put("digitalId", digitalId)  // Forms the STAC coordinate later
-						.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
-						.put("year", ctxTime.getStart().getYear())
-						.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
-						.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
-					
-					OpenEOFuture job = service.submit(processID, arguments,
-    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
-					
-					if (job.isCancelled()) {
-						scope.getMonitor().warn("job canceled");
-					} else if (job.getError() != null) {
-						scope.getMonitor().error(job.getError());
-					} else {
-						scope.getMonitor().info("Inference Request has been submitted to the RB Workflows");
+	            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
+						processes.add(process);
+						
+						 // IUCN exists only for RB
+						 String scenarioId = "V500";
+						 String digitalId = "RuleBased";
+						 
+						 StringWriter out = new StringWriter();
+						 new GeometryJSON(15).write(klabContextGeom, out);       // 15 = max decimal places
+						 JSONObject ctxgeojson = new JSONObject(out.toString());
+						 var modelIds = WEEDModelSTACExtension.GetRBModelIDs(bboxLL, scope.getMonitor());
+						 
+						 for (var modelId:modelIds) {
+							 
+							 JSONObject arguments = new JSONObject()
+								.put("bbox", ctxgeojson) 
+								.put("digitalId", digitalId)  // Forms the STAC coordinate later
+								.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
+								.put("year", ctxTime.getStart().getYear())
+								.put("modelId", modelId)
+								.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+								.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
+						
+							OpenEOFuture job = service.submit(processID, arguments,
+		    						scope.getMonitor(), processes.toArray(new Process[processes.size()]));
+							
+							if (job.isCancelled()) {
+								scope.getMonitor().warn("job canceled");
+							} else if (job.getError() != null) {
+								scope.getMonitor().error(job.getError());
+							} else {
+								scope.getMonitor().info("Inference Request has been submitted to the RB Workflows");
+							}
+						 }
 					}
-					
-					
 				} else {
 					// Machine Learning Logic
 					if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
@@ -710,12 +705,12 @@ public class STACEncoder implements IResourceEncoder {
 						String scenarioId = null;
 						String digitalId = null;
 						
-						 if (collection.getId().contains("IUCNGET-V317-extent")) {
-							 scenarioId = "V317";
+						 if (collection.getId().contains("IUCNGET-V330")) {
+							 scenarioId = "V330";
 							 digitalId = "IUCNGET";
 									 
 						 } else {
-							 scenarioId = "V311";
+							 scenarioId = "V320";
 							 digitalId = "EUNIS2021plus";
 						 }
 						
@@ -779,40 +774,7 @@ public class STACEncoder implements IResourceEncoder {
             var regionTransformedLL = RegionMap.fromEnvelopeAndGrid(regionEnvelopeLL, (int) grid.getXCells(),
                     (int) grid.getYCells());
             
-//            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
-            
             HMRaster paddedRaster = null;
-            
-//            if (collection.getTitle().toLowerCase().contains("ecdc")) {
-//            	scope.getMonitor().info("Falling back on fast cog flow for ecdc assets");
-//            	List<String> cogHrefs = items.stream()
-//            	        .flatMap(item -> item.getAssets().stream()
-//            	                .filter(pred)
-//            	                .findFirst()
-//            	                .map(asset -> asset.getAssetNode().get("href").asText())
-//            	                .stream())
-//            	        .toList();
-//            	
-//            	for (var cogHref: cogHrefs) {
-//            		var cogCoverage = COGAssetExtension.getCOGWindowCoverage(bbox, cogHref);
-//            		if (cogCoverage != null) {
-//	            		HMRaster raster = HMRaster.fromGridCoverage(cogCoverage);
-//	    	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
-//	    	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
-//	    	            	transformer.setAcceptLenientDatumShift(true);
-//	    	            	raster = transformer.transform(raster);
-//	    	            }
-//            		
-//    	            
-//	    	            if (paddedRaster == null) {
-//	    	            	paddedRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue())
-//	    	                		.setName("padded").setRegion(regionTransformed)
-//	    	    					.setCrs(targetCRS).build();
-//	    	            }
-//	    	            paddedRaster.mapRaster(null, raster, null); 
-//            		}
-//            	}
-//            } else {
         	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformedLL, assetPredicate, items, allowTransform,
                     mergeMode, lpm); 
             if (outRaster == null) {
