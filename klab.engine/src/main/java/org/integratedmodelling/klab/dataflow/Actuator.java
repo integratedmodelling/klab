@@ -717,6 +717,26 @@ public class Actuator implements IActuator {
                         lastUpdates.put(candidate, candidate.getLastUpdate());
                 }
             }
+         // Track the quality explicitly described by a "change in ..." model.
+            if (artifact instanceof IProcess
+                    && observable.getType().is(
+                            org.integratedmodelling.kim.api.IKimConcept.Type.CHANGE)) {
+
+                IConcept affectedType =
+                        Observables.INSTANCE.getDescribedType(observable.getType());
+
+                IState affectedState = scope.getArtifact(affectedType, IState.class);
+
+                if (affectedState != null) {
+                    lastUpdates.put(affectedState, affectedState.getLastUpdate());
+                    scope.getMonitor().info(
+                            "Tracking changed state: " + affectedState.getId()
+                            + ", lastUpdate=" + affectedState.getLastUpdate());
+                } else {
+                    scope.getMonitor().warn(
+                            "Cannot locate state affected by change: " + affectedType);
+                }
+            } 
 
             ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
             DataflowState state = new DataflowState();
@@ -963,11 +983,19 @@ public class Actuator implements IActuator {
              */
 
             if (!scope.getMonitor().isInterrupted()) {
-                for (IObservation candidate : lastUpdates.keySet()) {
-                    if (candidate.getLastUpdate() > lastUpdates.get(candidate)) {
-                        changed.add(candidate);
-                    }
-                }
+            	for (IObservation candidate : lastUpdates.keySet()) {
+            	    long before = lastUpdates.get(candidate);
+            	    long after = candidate.getLastUpdate();
+
+            	    scope.getMonitor().info(
+            	            "Change detection: " + candidate.getId()
+            	            + ", before=" + before
+            	            + ", after=" + after);
+
+            	    if (after > before) {
+            	        changed.add(candidate);
+            	    }
+            	}
             }
 
             /**
