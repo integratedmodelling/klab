@@ -681,7 +681,7 @@ public class STACEncoder implements IResourceEncoder {
 	            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
 	            		List<String >modelIds = null;
 	            		try {
-							modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bbox, scope.getMonitor(), collection.getId().toLowerCase());
+							modelIds = WEEDModelSTACExtension.GetONNXModelIDs(bboxLL, scope.getMonitor(), collection.getId().toLowerCase());
 							if (modelIds == null || modelIds.size() == 0) {
 								throw new Exception("No ONNX Models were found over the specified context");
 							}
