@@ -641,7 +641,7 @@ public class STACEncoder implements IResourceEncoder {
 						processes.add(process);
 						
 						 // IUCN exists only for RB
-						 String scenarioId = "V500";
+						 String scenarioId = "V501";
 						 String digitalId = "RuleBased";
 						 
 						 StringWriter out = new StringWriter();
@@ -705,13 +705,13 @@ public class STACEncoder implements IResourceEncoder {
 						String scenarioId = null;
 						String digitalId = null;
 						
-						 if (collection.getId().contains("IUCNGET-V330")) {
+						 if (collection.getId().contains("IUCNGET")) {
 							 scenarioId = "V330";
-							 digitalId = "IUCNGET";
+							 digitalId = "MachineLearning-IUCNGET";
 									 
 						 } else {
 							 scenarioId = "V320";
-							 digitalId = "EUNIS2021plus";
+							 digitalId = "MachineLearning-EUNIS2021plus";
 						 }
 						
 						 StringWriter out = new StringWriter();
