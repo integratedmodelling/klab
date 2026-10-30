@@ -25,6 +25,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
@@ -90,6 +91,8 @@ import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
 
 import kong.unirest.json.JSONObject;
+import org.geotools.api.referencing.operation.MathTransform;
+import org.geotools.geometry.jts.JTS;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -607,17 +610,20 @@ public class STACEncoder implements IResourceEncoder {
                         + "The transformation process could affect the data.");
             }
             
+            boolean slowReqtriggered = false;
+            
             // Specific Implementation for the Slow Requests flow in WEED 
             if (collection.getId().contains("IUCNGET")
             		|| collection.getId().contains("EUNIS2021plus") // Update this to the actual RB STAC for EUNIS
             		|| collection.getId().contains("RuleBased")) { // Update this to the actual RB IUCN STAC { 
             		//&& resource.getUrn().contains("im.resources-main")) { 
-            	Geometry unionMLStacInference = UnaryUnionOp.union(
-            		    items.stream()
-            		         .map(item -> item.getGeometry())
-            		         .filter(g -> g != null && !g.isEmpty())
-            		         .collect(Collectors.toList())
-            		);
+            	
+            	CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326", true);
+            	Geometry unionStacInference = UnaryUnionOp.union(
+            	        items.stream()
+            	        	.map(item -> toWgs84(item, targetCRS))
+            	             .filter(Objects::nonNull)
+            	             .collect(Collectors.toList()));
             	
             	String wktContext = space.getShape().toString();
 				wktContext = wktContext.replaceFirst("^EPSG:\\d+\\s+", "");
@@ -627,7 +633,9 @@ public class STACEncoder implements IResourceEncoder {
 				if (collection.getId().toLowerCase().contains("rule")) { 
 					// Rule Based Logic
 					
-					if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
+					if (unionStacInference == null || !unionStacInference.contains(klabContextGeom)) {
+						
+						slowReqtriggered = true;
 						OpenEO service = OpenEOAdapter.getClient("openeo_weed.dataspace.copernicus.eu");
 	            		List<Process> processes = new ArrayList<>();
 	            		String processNamespace = "https://raw.githubusercontent.com/ESA-WEED-project/OpenEO-UDP-UDF-catalogue/refs/heads/main/UDP/json/udp_starter_RB.json";
@@ -637,11 +645,11 @@ public class STACEncoder implements IResourceEncoder {
 								Process.class);
 						process.encodeSelf(processNamespace);
 
-	            		scope.getMonitor().warn("The requested extend for ML inferences is not completely contained in STAC, Starting ML Inference Request");
+	            		scope.getMonitor().warn("The requested extend for Rule Based inferences is not completely contained in STAC, Starting Rule Based Inference Request");
 						processes.add(process);
 						
 						 // IUCN exists only for RB
-						 String scenarioId = "V501";
+						 String scenarioId = "V502";
 						 String digitalId = "RuleBased";
 						 
 						 StringWriter out = new StringWriter();
@@ -674,10 +682,11 @@ public class STACEncoder implements IResourceEncoder {
 					}
 				} else {
 					// Machine Learning Logic
-					if (unionMLStacInference == null || !unionMLStacInference.contains(klabContextGeom)) {
+					if (unionStacInference == null || !unionStacInference.contains(klabContextGeom)) {
 	            		
 	            		// If its null this means there is no inference whatsoever
 	            		
+						slowReqtriggered = true;
 	            		scope.getMonitor().info("Fetching Model IDs to pass to the Slow Request UDP");
 	            		List<String >modelIds = null;
 	            		try {
@@ -742,18 +751,17 @@ public class STACEncoder implements IResourceEncoder {
 							}
 						}
 	            	}
-				}
-            	
-             manager.close();
-             scope.getMonitor().warn("Inferences over the Spatial and Temporal Context has been triggered and will be notified");
-             return;
-             
-                 
+				}                
             } 
             
             
             if (items.size() == 0) {
-                manager.close();
+            	manager.close();
+            	
+            	if (slowReqtriggered) {
+                    scope.getMonitor().warn("Inferences over the Spatial and Temporal Context has been triggered and will be notified");
+                    return;
+            	}
                 throw new KlabIllegalStateException(
                         "No STAC items were satifying constraints and Couldn't apply Temporal Mediation");
             } else {
@@ -931,6 +939,16 @@ public class STACEncoder implements IResourceEncoder {
             e = e.getCause();
         }
         return false;
+    }
+    
+    private Geometry toWgs84(HMStacItem item, CoordinateReferenceSystem targetCRS) {
+        try {
+            CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + item.getEpsg(), true);
+            MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
+            return JTS.transform(item.getGeometry(), transform);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     @Override
