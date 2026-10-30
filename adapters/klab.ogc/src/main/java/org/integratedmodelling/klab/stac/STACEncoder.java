@@ -91,8 +91,6 @@ import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
 
 import kong.unirest.json.JSONObject;
-import org.geotools.api.referencing.operation.MathTransform;
-import org.geotools.geometry.jts.JTS;
 
 public class STACEncoder implements IResourceEncoder {
 
@@ -246,6 +244,7 @@ public class STACEncoder implements IResourceEncoder {
         Integer bandIndex = resource.getParameters().get("band", Integer.class);
         String assetId = resource.getParameters().get("asset", String.class);
         boolean hasSearchOption = STACUtils.containsLinkTo(catalogData, "search");
+        DefaultGeographicCRS wgs84CRS = DefaultGeographicCRS.WGS84;
         final boolean allowTransform = true;
         
         Space space = (Space) geometry.getDimensions().stream().filter(d -> d instanceof Space).findFirst().orElseThrow();
@@ -617,11 +616,10 @@ public class STACEncoder implements IResourceEncoder {
             		|| collection.getId().contains("EUNIS2021plus") // Update this to the actual RB STAC for EUNIS
             		|| collection.getId().contains("RuleBased")) { // Update this to the actual RB IUCN STAC { 
             		//&& resource.getUrn().contains("im.resources-main")) { 
-            	
-            	CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326", true);
+            
             	Geometry unionStacInference = UnaryUnionOp.union(
             	        items.stream()
-            	        	.map(item -> toWgs84(item, targetCRS))
+            	        	.map(item -> toWgs84(item, wgs84CRS))
             	             .filter(Objects::nonNull)
             	             .collect(Collectors.toList()));
             	
@@ -777,7 +775,6 @@ public class STACEncoder implements IResourceEncoder {
             RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
                     (int) grid.getYCells());
             
-            DefaultGeographicCRS wgs84CRS = DefaultGeographicCRS.WGS84;
 			var regionEnvelopeLL = regionEnvelope.transform(wgs84CRS, true);
             var regionTransformedLL = RegionMap.fromEnvelopeAndGrid(regionEnvelopeLL, (int) grid.getXCells(),
                     (int) grid.getYCells());
@@ -943,9 +940,11 @@ public class STACEncoder implements IResourceEncoder {
     
     private Geometry toWgs84(HMStacItem item, CoordinateReferenceSystem targetCRS) {
         try {
-            CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:" + item.getEpsg(), true);
-            MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
-            return JTS.transform(item.getGeometry(), transform);
+        	
+        	CoordinateReferenceSystem sourceCRS = HMCrsRegistry.INSTANCE.getCrs("EPSG:" + item.getEpsg(), true);
+            var transformer = new HMCrsTransformer(sourceCRS, targetCRS);
+        	transformer.setAcceptLenientDatumShift(true);
+        	return transformer.transform(item.getGeometry());
         } catch (Exception e) {
             return null;
         }
