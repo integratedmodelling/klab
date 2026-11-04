@@ -10,3 +10,8 @@ target
 **/*.keep
 **/application.yml
 **/bootstrap.yml
+
+# Local Codex setup
+/AGENTS.md
+/.codex/environments/environment.toml
+/scripts/codex-mvn.sh
