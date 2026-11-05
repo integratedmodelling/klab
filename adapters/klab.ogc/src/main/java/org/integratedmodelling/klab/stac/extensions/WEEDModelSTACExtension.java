@@ -20,8 +20,6 @@ import kong.unirest.json.JSONObject;
 
 public class WEEDModelSTACExtension {
 	
-	String MODEL_STAC_API = "https://catalogue.weed.apex.esa.int/collections/model-STAC";
-	
 	public static List<String> GetONNXModelIDs(List<Double> bbox, IMonitor monitor, String classification) {
 		
 		
@@ -79,6 +77,50 @@ public class WEEDModelSTACExtension {
 		    return pairs.stream()
 		    	    .map(Map.Entry::getKey)
 		    	    .toList();
+			
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	
+	public static List<String> GetRBModelIDs(List<Double> bbox, IMonitor monitor) {
+		
+		
+		monitor.debug("Making a Search Query to the RB Model STAC");
+		try {
+	       
+			JSONObject searchPayload = new JSONObject()
+				.put("limit", 1000)
+				.put("bbox", new ArrayList<>(List.of(
+					    bbox.get(0),
+					    bbox.get(2),
+					    bbox.get(1),
+					    bbox.get(3)
+					)))
+						
+				.put("collections", new JSONArray().put("RBmodel-STAC"));
+
+		    HttpResponse<JsonNode> response = Unirest
+		            .post("https://catalogue.weed.apex.esa.int/search")
+		            .header("Content-Type", "application/json")
+		            .body(searchPayload)
+		            .asJson();
+
+		    JSONObject body = response.getBody().getObject();
+		    JSONArray features = body.getJSONArray("features");
+
+		    List<String> featureIds = new ArrayList<>();
+
+		    for (int i = 0; i < features.length(); i++) {
+		        JSONObject feature = features.getJSONObject(i);
+		        String id = feature.getString("id");
+		        featureIds.add(id);
+		    }
+
+		    return featureIds;
 			
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

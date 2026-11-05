@@ -736,17 +736,17 @@ public class LandcoverChange {
 		if (suitabilityCalculator != null) {
 
 			IParameters<String> params = Parameters.create();
-//			for (Attribute input : suitabilityCalculator.getResource().getInputs()) {
-//				IArtifact artifact = scope.getArtifact(input.getName());
-//				if (artifact == null) {
-//					throw new KlabValidationException(
-//							"required predictor " + input.getName() + " is not available in context");
-//				}
-//				if (!(artifact instanceof IState)) {
-//					throw new KlabValidationException("required predictor " + input.getName() + " is not a state");
-//				}
-//				params.put(input.getName(), ((IState) artifact).get(locator));
-//			}
+			for (Attribute input : suitabilityCalculator.getResource().getInputs()) {
+				IArtifact artifact = scope.getArtifact(input.getName());
+				if (artifact == null) {
+					throw new KlabValidationException(
+							"required predictor " + input.getName() + " is not available in context");
+				}
+				if (!(artifact instanceof IState)) {
+					throw new KlabValidationException("required predictor " + input.getName() + " is not a state");
+				}
+				params.put(input.getName(), ((IState) artifact).get(locator));
+			} 
 
 			/*
 			 * we want a distribution
