@@ -128,8 +128,9 @@ class STACPathExpressionTest {
         return OBJECT_MAPPER.readTree(json);
     }
 
-    private static JsonNode assetNode(String assetId) throws Exception {
-        return stacItemNode().get("assets").get(assetId);
+    private static tools.jackson.databind.JsonNode assetNode(String assetId) throws Exception {
+        return new tools.jackson.databind.ObjectMapper().readTree(
+                stacItemNode().get("assets").get(assetId).toString());
     }
 
     private static HMStacAsset bio12Asset() throws Exception {

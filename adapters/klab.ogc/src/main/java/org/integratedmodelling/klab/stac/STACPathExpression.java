@@ -301,7 +301,19 @@ public final class STACPathExpression {
         }
 
         public static Predicate<HMStacAsset> fromHMStacAsset(String jsonPath, String expectedValue) {
-            return fromJsonPath(jsonPath, expectedValue, asset -> asset == null ? null : asset.getAssetNode());
+            return fromJsonPath(jsonPath, expectedValue, asset -> asset == null ? null : toApplicationNode(asset.getAssetNode()));
+        }
+
+        // HortonMachine uses Jackson 3; keep application predicates on Jackson 2.
+        private static JsonNode toApplicationNode(tools.jackson.databind.JsonNode node) {
+            if (node == null) {
+                return null;
+            }
+            try {
+                return OBJECT_MAPPER.readTree(node.toString());
+            } catch (JsonProcessingException e) {
+                throw new IllegalArgumentException("Cannot convert HortonMachine asset JSON", e);
+            }
         }
 
         public static Predicate<JsonNode> fromJsonNode(String jsonPath, String expectedValue) {
