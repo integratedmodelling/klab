@@ -339,12 +339,6 @@
             </exclusions>
         </dependency>
 
-        <dependency>
-            <groupId>org.locationtech.jts</groupId>
-            <artifactId>jts-core</artifactId>
-            <version>${jts.version}</version>		
-        </dependency>
-
 		<!-- all of a sudden, WCS parsing stops working unless this is added. -->
 		<dependency>
 			<groupId>xml-apis</groupId>
@@ -825,7 +819,7 @@
 		<dependency>
 			<groupId>com.kjetland</groupId>
 			<artifactId>mbknor-jackson-jsonschema_2.12</artifactId>
-			<version>1.0.36</version>
+			<version>1.0.39</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.scala-lang</groupId>

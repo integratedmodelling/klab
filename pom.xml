@@ -111,10 +111,8 @@
 		<java.version>17</java.version>
 		<!-- Careful here: geotools must be right for hortonmachine to work; JTS
 			should be the same one that geotools and HM needs. -->
-		<geotools.version>34.4</geotools.version>
-        <hortonmachine.version>0.11.5-SNAPSHOT</hortonmachine.version>
-		<jts.version>1.20.0</jts.version>
-		<h2gis.version>1.5.0</h2gis.version>
+		<geotools.version>35.2</geotools.version>
+        <hortonmachine.version>0.12.1-SNAPSHOT</hortonmachine.version>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
 		<tycho-version>4.0.9</tycho-version>
@@ -131,13 +129,15 @@
 		<spring-security.version>5.5.1</spring-security.version>
 		<spring-cloud.version>2020.0.3</spring-cloud.version>
 		<junit-version>5.6.3</junit-version>
-		<jackson-version>2.17.2</jackson-version>
+		<!-- GeoTools uses Jackson 3; application and Spring code use Jackson 2. -->
+		<jackson-version>3.2.3</jackson-version>
+		<fasterxml-jackson-version>2.22.2</fasterxml-jackson-version>
 		<jsonld-java-version>0.13.4</jsonld-java-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring
 			issues -->
 
 		<!-- <scala.version>2.13.1</scala.version> -->
-		<joda-time-version>2.3</joda-time-version>
+		<joda-time-version>2.9.4</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
 		<junit5.version>5.10.1</junit5.version>
@@ -297,31 +297,36 @@
   		</repository>
 	</repositories>
 	<dependencyManagement>
-    <dependencies>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml</artifactId>
-            <version>${poi.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency>
-        
-        <dependency>
-	      <groupId>com.fasterxml.jackson</groupId>
-	      <artifactId>jackson-bom</artifactId>
-	      <version>${jackson-version}</version>
-	      <type>pom</type>
-	      <scope>import</scope>
-	    </dependency>
-        
+	    <dependencies>
+	        <dependency>
+	            <groupId>org.apache.poi</groupId>
+	            <artifactId>poi</artifactId>
+	            <version>${poi.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>org.apache.poi</groupId>
+	            <artifactId>poi-ooxml</artifactId>
+	            <version>${poi.version}</version>
+	        </dependency>
+	        <dependency>
+	            <groupId>commons-io</groupId>
+	            <artifactId>commons-io</artifactId>
+	            <version>${commons-io.version}</version>
+	        </dependency>
+	        <dependency>
+		      <groupId>tools.jackson</groupId>
+		      <artifactId>jackson-bom</artifactId>
+		      <version>${jackson-version}</version>
+		      <type>pom</type>
+		      <scope>import</scope>
+		    </dependency>
+		    <dependency>
+		      <groupId>com.fasterxml.jackson</groupId>
+		      <artifactId>jackson-bom</artifactId>
+		      <version>${fasterxml-jackson-version}</version>
+		      <type>pom</type>
+		      <scope>import</scope>
+		    </dependency>
     </dependencies>
 </dependencyManagement>
 </project>

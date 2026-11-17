@@ -86,7 +86,6 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
 
@@ -323,8 +322,7 @@ public class STACEncoder implements IResourceEncoder {
                                                          // predicates
                     var bands = asset.getAssetNode().get("eo:bands");
                     if (bands != null && bands.isArray()) {
-                        var bandsArray = (ArrayNode) bands;
-                        for(var bandNode : bandsArray) {
+                        for(var bandNode : bands) {
                             String bandName = bandNode.get("name").asText();
                             if (bandName.equals(assetId)) { // under eo:band it's one of the band
                                 return true;
