@@ -18,7 +18,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.geotools.api.data.FeatureSource;
-import org.geotools.api.feature.simple.SimpleFeature;
+import org.geotools.api.feature.simple.SimpleFeature; 
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
@@ -509,7 +509,10 @@ public class STACEncoder implements IResourceEncoder {
                 FeatureSource<SimpleFeatureType, SimpleFeature> source;
                 if (assetPredicate == null) {
                 	try {
-                        source = STACFeatureExtension.getFeatures(catalogData, collectionId, bbox, effectiveTime.getStart(),
+                        source = STACFeatureExtension.getFeatures(catalogData, collectionId, List.of(bboxLL.get(0),
+                        		bboxLL.get(2),
+                        		bboxLL.get(1),
+                        		bboxLL.get(3)), effectiveTime.getStart(),
                                 effectiveTime.getEnd());
                     } catch (Exception e) {
                         manager.close();
