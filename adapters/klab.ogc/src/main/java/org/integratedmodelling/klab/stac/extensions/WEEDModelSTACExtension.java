@@ -35,7 +35,7 @@ public class WEEDModelSTACExtension {
 					    bbox.get(3)
 					)))
 						
-				.put("collections", new JSONArray().put("model-STAC"));
+				.put("collections", new JSONArray().put("model-STAC")); 
 
 		    HttpResponse<JsonNode> response = Unirest
 		            .post("https://catalogue.weed.apex.esa.int/search")
@@ -54,6 +54,9 @@ public class WEEDModelSTACExtension {
 		    while (featureIterator.hasNext()) {
 		    	JSONObject feature = (JSONObject) featureIterator.next();
 	            SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
+	            if (feat.getAttribute("modelID").toString().toLowerCase().contains("national")) { // don't select national models for now
+	            	continue;
+	            }
 	            if (classification.contains("eunis")) {
 	            	if (feat.getAttribute("topology") != null && 
 	            			feat.getAttribute("topology").toString().toLowerCase().startsWith("eunis")) { // it should've been "typology" instead of "topology"
