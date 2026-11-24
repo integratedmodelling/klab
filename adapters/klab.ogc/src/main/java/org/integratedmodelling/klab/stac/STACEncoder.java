@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.geotools.api.data.FeatureSource;
 import org.geotools.api.feature.simple.SimpleFeature; 
@@ -85,6 +87,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
+import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
 import com.github.davidmoten.aws.lw.client.Client;
 import com.github.davidmoten.aws.lw.client.Credentials;
@@ -254,6 +257,13 @@ public class STACEncoder implements IResourceEncoder {
         LogProgressMonitor lpm = new LogProgressMonitor();
         HMStacManager manager = new HMStacManager(catalogUrl, lpm);
         HMStacCollection collection = null;
+        CoordinateReferenceSystem targetCRS = null;
+        
+        try {
+        	targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+        } catch (Exception e) {
+        	throw new KlabInternalErrorException("Unable to fetch CRS: 4326");
+        }
 
         // Only for Backward Compatiability
         // A new COG Adapter would be added
@@ -271,15 +281,12 @@ public class STACEncoder implements IResourceEncoder {
 	                    bbox.get(2), bbox.get(3));
 	
 	            HMRaster raster = HMRaster.fromGridCoverage(coverage);
-	            
-	            
-	            CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
+	     
 	            if (!HMCrsRegistry.crsEquals(raster.getCrs(),targetCRS)) {
 	            	var transformer = new HMCrsTransformer(raster.getCrs(), targetCRS);
 	            	transformer.setAcceptLenientDatumShift(true);
 	            	raster = transformer.transform(raster);
 	            }
-	            
 	            
 				HMRaster paddedRaster = new HMRasterWritableBuilder()
 						.setName("padded")
@@ -443,7 +450,6 @@ public class STACEncoder implements IResourceEncoder {
                         (int) grid.getYCells());
                 HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, predicate, items, true,
                         MergeMode.SUBSTITUTE, lpm);
-                CoordinateReferenceSystem targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
                 if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
                 	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
                 	transformer.setAcceptLenientDatumShift(true);
@@ -620,14 +626,29 @@ public class STACEncoder implements IResourceEncoder {
             
             	Geometry unionStacInference = UnaryUnionOp.union(
             	        items.stream()
-            	        	.map(item -> toWgs84(item, wgs84CRS))
+            	        	.map(item -> toCRS(item, wgs84CRS))
             	             .filter(Objects::nonNull)
             	             .collect(Collectors.toList()));
             	
             	String wktContext = space.getShape().toString();
-				wktContext = wktContext.replaceFirst("^EPSG:\\d+\\s+", "");
+            	
+            	Pattern pattern = Pattern.compile("^EPSG:(\\d+)\\s+");
+            	Matcher matcher = pattern.matcher(wktContext);
 
-				Geometry klabContextGeom = new WKTReader().read(wktContext);
+            	String klabContextEpsg = null;
+
+            	if (matcher.find()) {
+            		klabContextEpsg = matcher.group(1);
+            	    wktContext = wktContext.substring(matcher.end());
+            	}
+            	Geometry klabContextGeom = new WKTReader().read(wktContext);
+            	
+            	if (!klabContextEpsg.equals("4326")) {
+            		scope.getMonitor().info("Reprojecting the Set context in kLAB to 4326");
+            		CoordinateReferenceSystem sourceCRS = HMCrsRegistry.INSTANCE.getCrs("EPSG:" + klabContextEpsg, true);
+            		klabContextGeom = toCRS(klabContextGeom, sourceCRS, targetCRS);
+            	}
+            	
 				
 				if (collection.getId().toLowerCase().contains("rule")) { 
 					// Rule Based Logic
@@ -652,7 +673,8 @@ public class STACEncoder implements IResourceEncoder {
 						 String digitalId = "RuleBased";
 						 
 						 StringWriter out = new StringWriter();
-						 new GeometryJSON(15).write(klabContextGeom, out);       // 15 = max decimal places
+						 klabContextGeom = TopologyPreservingSimplifier.simplify(klabContextGeom, 0.0001);
+						 new GeometryJSON(6).write(klabContextGeom, out);       // 6 max decimal places
 						 JSONObject ctxgeojson = new JSONObject(out.toString());
 						 var modelIds = WEEDModelSTACExtension.GetRBModelIDs(bboxLL, scope.getMonitor());
 						 
@@ -723,7 +745,8 @@ public class STACEncoder implements IResourceEncoder {
 						 }
 						
 						 StringWriter out = new StringWriter();
-						 new GeometryJSON(15).write(klabContextGeom, out);       // 15 = max decimal places
+						 klabContextGeom = TopologyPreservingSimplifier.simplify(klabContextGeom, 0.0001);
+						 new GeometryJSON(6).write(klabContextGeom, out);       // 6 max decimal places
 						 JSONObject ctxgeojson = new JSONObject(out.toString());
 						 
 						 
@@ -939,9 +962,8 @@ public class STACEncoder implements IResourceEncoder {
         return false;
     }
     
-    private Geometry toWgs84(HMStacItem item, CoordinateReferenceSystem targetCRS) {
+    private Geometry toCRS(HMStacItem item, CoordinateReferenceSystem targetCRS) {
         try {
-        	
         	CoordinateReferenceSystem sourceCRS = HMCrsRegistry.INSTANCE.getCrs("EPSG:" + item.getEpsg(), true);
             var transformer = new HMCrsTransformer(sourceCRS, targetCRS);
         	transformer.setAcceptLenientDatumShift(true);
@@ -950,7 +972,16 @@ public class STACEncoder implements IResourceEncoder {
             return null;
         }
     }
-
+    
+    private Geometry toCRS(Geometry geom, CoordinateReferenceSystem sourceCRS, CoordinateReferenceSystem targetCRS) {
+        try {
+            var transformer = new HMCrsTransformer(sourceCRS, targetCRS);
+        	transformer.setAcceptLenientDatumShift(true);
+        	return transformer.transform(geom);
+        } catch (Exception e) {
+            return null;
+        }
+    }
     @Override
     public void listDetail(IResource resource, OutputStream stream, boolean verbose, IMonitor monitor) {
         // TODO Auto-generated method stub
