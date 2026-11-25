@@ -111,18 +111,6 @@
 			<artifactId>gt-stac-store</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
-		
-		<dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio-jvm</artifactId>
-            <version>3.16.4</version>
-        </dependency>
-        <dependency>
-            <groupId>com.squareup.okio</groupId>
-            <artifactId>okio</artifactId>
-            <version>3.16.4</version>
-        </dependency>
-        
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.engine</artifactId>
