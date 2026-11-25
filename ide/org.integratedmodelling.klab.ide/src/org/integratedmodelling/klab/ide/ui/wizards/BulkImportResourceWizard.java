@@ -67,8 +67,7 @@ public class BulkImportResourceWizard extends Wizard {
 		if (url.trim().isEmpty()) {
 			return false;
 		}
-		url = url.trim();
-		if (!url.startsWith("http") && !hasUriScheme(url)) {
+		if (!url.startsWith("http")) {
 			File file = new File(url);
 			try {
 				url = file.isDirectory() ? file.toURI().toURL().toString() : null;
@@ -77,19 +76,13 @@ public class BulkImportResourceWizard extends Wizard {
 			}
 		}
 
-		/*
-		 * java.net.URL rejects schemes without a registered handler (e.g. s3://), so
-		 * the URL is optional: the raw location is always sent to the engine.
-		 */
 		URL u = null;
-		if (url != null) {
-			try {
-				u = new URL(url);
-			} catch (MalformedURLException e) {
-			}
+		try {
+			u = new URL(url);
+		} catch (MalformedURLException e) {
 		}
 
-		if (validate(u, url) && validateRegexp(regex)) {
+		if (validate(u) && validateRegexp(regex)) {
 
 			String adapterId = adapter;
 			if (adapterId != null && adapter.contains(" ")) {
@@ -99,7 +92,6 @@ public class BulkImportResourceWizard extends Wizard {
 			ResourceImportRequest request = new ResourceImportRequest();
 			request.setAdapter(adapterId);
 			request.setImportUrl(u);
-			request.setImportLocation(url);
 			request.setBulkImport(true);
 			request.setProjectName(targetProject.getName());
 			request.setRegex(regex);
@@ -124,21 +116,12 @@ public class BulkImportResourceWizard extends Wizard {
         return true;
 	}
 
-	private boolean validate(URL u, String location) {
-		if (u == null && (location == null || !hasUriScheme(location))) {
+	private boolean validate(URL u) {
+		if (u == null) {
 			page.setErrorMessage("invalid import URL or file: please check input");
 			return false;
 		}
 		return true;
-	}
-
-	/**
-	 * True if the location looks like scheme://something (e.g. s3://bucket/path).
-	 * Requires a scheme of at least two characters so that Windows paths like
-	 * C:\ are not mistaken for URIs.
-	 */
-	private static boolean hasUriScheme(String location) {
-		return location.matches("^[a-zA-Z][a-zA-Z0-9+.-]+://.+");
 	}
 
 	public IKimProject getProject() {

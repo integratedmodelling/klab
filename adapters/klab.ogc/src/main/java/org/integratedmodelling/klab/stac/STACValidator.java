@@ -32,6 +32,9 @@ import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.s3.S3URLUtils;
+import org.locationtech.jts.geom.Lineal;
+import org.locationtech.jts.geom.Polygonal;
+import org.locationtech.jts.geom.Puntal;
 
 import kong.unirest.json.JSONObject;
 
@@ -48,11 +51,6 @@ public class STACValidator implements IResourceValidator {
             throw new IllegalArgumentException("STAC specifications are invalid or incomplete");
         }
         String collectionUrl = userData.get("collection", String.class);
-        if (S3URLUtils.isS3Endpoint(collectionUrl)) {
-            // s3:// collections (static catalogs on buckets) are used through their https url
-            collectionUrl = STACAccess.toHttpUrl(collectionUrl);
-            userData.put("collection", collectionUrl);
-        }
         String collectionId = userData.get("collectionId", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         if (collectionId == null) {
@@ -133,9 +131,7 @@ public class STACValidator implements IResourceValidator {
         String assetId = assetNode.keys().next();
         JSONObject asset = assetNode.getJSONObject(assetId);
         String href = asset.getString("href");
-        // legacy credentials of known S3 compatible services, only if no authentication of the user
-        // (URL_AUTH_KEYS) applies to the asset
-        if (S3URLUtils.isS3Endpoint(href) && !STACAccess.get().isAuthenticated(href)) {
+        if (S3URLUtils.isS3Endpoint(href)) {
         	if (href.contains("waw3")) {
         		userData.put("s3EndpointUrl", "https://s3.waw3-1.cloudferro.com");
         	} else if (href.contains("waw4")) {

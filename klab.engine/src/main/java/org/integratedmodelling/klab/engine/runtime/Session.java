@@ -963,14 +963,7 @@ public class Session extends GroovyObjectSupport
                     @Override
                     public void run() {
                         if (request.isBulkImport()) {
-                            String location = request.getImportLocation() != null
-                                    ? request.getImportLocation()
-                                    : (request.getImportUrl() != null ? request.getImportUrl().toString() : null);
-                            if (location == null) {
-                                monitor.error("cannot import resources: no import location specified");
-                                return;
-                            }
-                            for(IResource resource : Resources.INSTANCE.importResources(location, project,
+                            for(IResource resource : Resources.INSTANCE.importResources(request.getImportUrl(), project,
                                     request.getAdapter(), request.getRegex())) {
                                 monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceImported,
                                         ((Resource) resource).getReference());
