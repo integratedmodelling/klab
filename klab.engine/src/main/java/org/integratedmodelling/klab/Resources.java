@@ -881,16 +881,6 @@ public enum Resources implements IResourceService {
 	 */
 	public Collection<IResource> importResources(URL source, IProject project, @Nullable String adapterType,
 			String regex) {
-		return importResources(source.toString(), project, adapterType, regex);
-	}
-
-	/**
-	 * Same as {@link #importResources(URL, IProject, String, String)} but taking
-	 * the source as a string, so that locations not representable as
-	 * java.net.URL (e.g. s3://bucket/path) can be imported.
-	 */
-	public Collection<IResource> importResources(String source, IProject project, @Nullable String adapterType,
-			String regex) {
 
 		List<IResourceAdapter> importers = new ArrayList<>();
 		IParameters<String> parameters = new Parameters<String>();
@@ -903,7 +893,7 @@ public enum Resources implements IResourceService {
 		for (ResourceAdapterData adapter : resourceAdapters.values()) {
 			if ((adapterType == null || adapter.adapter.getName().equals(adapterType))
 					&& adapter.adapter.getImporter() != null
-					&& adapter.adapter.getImporter().canHandle(source, parameters)) {
+					&& adapter.adapter.getImporter().canHandle(source.toString(), parameters)) {
 				importers.add(adapter.adapter);
 			}
 		}
@@ -914,7 +904,7 @@ public enum Resources implements IResourceService {
 
 			IResourceImporter importer = adapter.getImporter();
 
-			for (Builder builder : importer.importResources(source, project, parameters,
+			for (Builder builder : importer.importResources(source.toString(), project, parameters,
 					Klab.INSTANCE.getRootMonitor())) {
 
 				/*
