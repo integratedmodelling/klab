@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
 
@@ -144,9 +143,7 @@ public class STACCollectionParser {
             if (itemHref.isEmpty()) {
                 throw new KlabResourceNotFoundException("Cannot find items at STAC collection \"" + collectionUrl + "\"");
             }
-            String itemUrl = itemHref.get().startsWith(".")
-                    ? collectionUrl.replace("collection.json", "") + itemHref.get().replace("./", "")
-                    : itemHref.get();
+            String itemUrl = STACUtils.resolveHref(collectionUrl, itemHref.get());
             JSONObject itemData = STACUtils.requestMetadata(itemUrl, "feature");
             JSONObject assetInfo = findAsset(itemData.optJSONObject("assets"), assetId, predicate);
             if (assetInfo != null) {
@@ -159,8 +156,7 @@ public class STACCollectionParser {
                 .put("bbox", new JSONArray().put(-180.0).put(-90.0).put(180.0).put(90.0))
                 .put("collections", new JSONArray().put(collectionId));
 
-        HttpResponse<JsonNode> response = Unirest.post(searchEndpoint.get()).header("Content-Type", "application/json")
-                .body(searchPayload).asJson();
+        HttpResponse<JsonNode> response = STACAccess.postJson(searchEndpoint.get(), searchPayload);
 
         if (!response.isSuccess()) {
             throw new KlabResourceAccessException("Unable to import collection, Search failed"); 
