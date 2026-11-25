@@ -14,7 +14,9 @@ import org.geotools.data.memory.MemoryDataStore;
 import org.geotools.geojson.feature.FeatureJSON;
 import org.geotools.geometry.jts.JTS;
 import org.geotools.referencing.CRS;
+import org.integratedmodelling.klab.stac.STACAccess;
 import org.integratedmodelling.klab.stac.STACUtils;
+import org.hortonmachine.gears.io.stac.auth.HMStacAccess;
 import org.locationtech.jts.geom.Geometry;
 import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
@@ -26,29 +28,14 @@ import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
 
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
-import kong.unirest.Unirest;
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
-import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
-import org.integratedmodelling.klab.stac.STACUtils;
-import java.time.format.DateTimeFormatter;
 import java.time.*;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
-import org.geotools.api.feature.type.AttributeDescriptor;
 import org.geotools.api.feature.type.GeometryDescriptor;
-import org.locationtech.jts.geom.util.GeometryFixer;
-import org.locationtech.jts.geom.PrecisionModel;
-import org.locationtech.jts.precision.GeometryPrecisionReducer;
-import org.locationtech.jts.geom.Geometry;
-
 
 public class STACFeatureExtension {
 	
@@ -57,11 +44,8 @@ public class STACFeatureExtension {
 		List<SimpleFeature> featureList = new ArrayList<>();
 		
 		String href =assetNode.get("href").toString();
-	    HttpResponse<JsonNode> response = Unirest
-	            .get(href)
-	            .asJson();
-
-	    JSONObject body = response.getBody().getObject();
+		// with the authentication of the user if needed
+	    JSONObject body = STACAccess.getJson(href);
 	    JSONArray features = body.getJSONArray("features");
 	    Iterator<Object> featureIterator = features.iterator();
 
@@ -88,12 +72,12 @@ public class STACFeatureExtension {
 		SimpleFeatureType type4326 = null;
     	
 		for (HMStacAsset asset : assets) {
-			String href = asset.getAssetNode().get("href").asText();
-		    HttpResponse<JsonNode> response = Unirest
-		            .get(href)
-		            .asJson();
-
-		    JSONObject body = response.getBody().getObject();
+			String href = asset.getAssetNode().get("href").asString();
+			// through the access of the asset (authentication, s3), else the one of the user
+			HMStacAccess access = asset.getAccess() != null ? asset.getAccess() : STACAccess.get();
+		    JSONObject body = new JSONObject(STACAccess.readString(access, href));
+		    // GeoJSON is in WGS84 if the asset doesn't declare otherwise
+		    Integer assetEpsg = asset.getEpsg() != null ? asset.getEpsg() : 4326;
 		    JSONArray features = body.getJSONArray("features");
 		    Iterator<Object> featureIterator = features.iterator();
 		    
@@ -102,7 +86,7 @@ public class STACFeatureExtension {
 		        JSONObject feature = (JSONObject) featureIterator.next();
 		        SimpleFeature feat = GeoJSONReader.parseFeature(feature.toString());
 		        var transformer = new HMCrsTransformer(HMCrsRegistry.INSTANCE.getCrs(
-	        			String.valueOf(asset.getEpsg()), true), targetCRS);
+	        			String.valueOf(assetEpsg), true), targetCRS);
 	        	transformer.setAcceptLenientDatumShift(true);
 	        	
 	        	if (type4326 == null) {
@@ -129,27 +113,28 @@ public class STACFeatureExtension {
 	        		type4326 = builder.buildFeatureType();
 	        	}
 	        	
-		        if (!asset.getEpsg().equals(4326)) {
-		        	SimpleFeatureType type = feat.getFeatureType();
-		        	Geometry vectorGeom = (Geometry) feat.getDefaultGeometry();
-		        	Geometry geom4326 = transformer.transform(vectorGeom);
-		        	
-		        	SimpleFeatureBuilder fb =
-			                new SimpleFeatureBuilder(type4326);
-		        	for (var ad : type.getAttributeDescriptors()) {
-			            String name = ad.getLocalName();
-			            if (ad instanceof GeometryDescriptor) {
-			                fb.set(name, geom4326);
-			            } else {
-			                fb.set(name, feat.getAttribute(name));
-			            }
-		        	}
-		        	SimpleFeature updatedFeature = fb.buildFeature(feat.getID());
-		        	updatedFeature.setDefaultGeometry(geom4326);
-			        featureList.add(updatedFeature);
-		        } else {
-		        	featureList.add(feat);
+		        // all the features with the common type, so that the store returns them all, the geometries
+		        // transformed to 4326 if needed
+		        SimpleFeatureType type = feat.getFeatureType();
+		        Geometry vectorGeom = (Geometry) feat.getDefaultGeometry();
+		        Geometry geom4326 = assetEpsg.equals(4326) || vectorGeom == null ? vectorGeom : transformer.transform(vectorGeom);
+
+		        SimpleFeatureBuilder fb = new SimpleFeatureBuilder(type4326);
+		        for (var ad : type.getAttributeDescriptors()) {
+		            String name = ad.getLocalName();
+		            if (type4326.getDescriptor(name) == null) {
+		                // attributes missing in the first feature of the type are not kept
+		                continue;
+		            }
+		            if (ad instanceof GeometryDescriptor) {
+		                fb.set(name, geom4326);
+		            } else {
+		                fb.set(name, feat.getAttribute(name));
+		            }
 		        }
+		        SimpleFeature updatedFeature = fb.buildFeature(feat.getID());
+		        updatedFeature.setDefaultGeometry(geom4326);
+		        featureList.add(updatedFeature);
 		    }
 		}
 		
@@ -182,11 +167,7 @@ public class STACFeatureExtension {
 
 		while (searchEndpoint != null) {
 
-		    HttpResponse<JsonNode> response = Unirest
-		            .post(searchEndpoint)
-		            .header("Content-Type", "application/json")
-		            .body(searchPayload)
-		            .asJson();
+		    HttpResponse<JsonNode> response = STACAccess.postJson(searchEndpoint, searchPayload);
 
 		    JSONObject body = response.getBody().getObject();
 		    JSONArray features = body.getJSONArray("features");
