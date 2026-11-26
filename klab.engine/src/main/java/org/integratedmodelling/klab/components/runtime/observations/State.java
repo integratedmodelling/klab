@@ -148,9 +148,8 @@ public class State extends Observation implements IState, IKeyHolder {
 		
         public double getCurrentSum(IDirectObservation context) {
             if (storage instanceof AbstractAdaptiveStorage) {
-                AbstractAdaptiveStorage< ? >.Slice slice = ((AbstractAdaptiveStorage< ? >) storage).getSlice(context.getScale());
-                dumpStatistics();
-                return slice == null ? Double.NaN : slice.getRawStatistics().getSum();
+                // The proxy's locator carries the time of the current expression evaluation.
+                return ((AbstractAdaptiveStorage<?>) storage).sumAt(locator);
             }
             throw new KlabUnimplementedException("Groovy support for non-conventional states");
         }

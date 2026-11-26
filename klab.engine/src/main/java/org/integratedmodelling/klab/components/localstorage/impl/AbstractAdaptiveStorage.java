@@ -71,7 +71,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     // if one value only, just store it here and forget about everything.
     private boolean isScalar = false;
-    private Object scalarValue = null;
+    private volatile Object scalarValue = null;
 
     // these get set/unset before writing by the inspectors and debuggers. Must be honored at
     // each put() if there.
@@ -99,6 +99,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         long timeend;
         int index;
         SummaryStatistics statistics = new SummaryStatistics();
+        private Double cachedSum;
         long nodata = 0;
 
         @Override
@@ -135,18 +136,21 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
         // happen.
         public void setAt(long sliceOffset, T value) {
 
-            if (isEmpty()) {
-                newSlice();
-            }
-            if (value instanceof Number) {
-                if (Double.isNaN(((Number) value).doubleValue())) {
-                    nodata++;
-                } else {
-                    statistics.addValue(((Number) value).doubleValue());
+            synchronized (AbstractAdaptiveStorage.this) {
+                if (isEmpty()) {
+                    newSlice();
                 }
-            }
+                if (value instanceof Number) {
+                    if (Double.isNaN(((Number) value).doubleValue())) {
+                        nodata++;
+                    } else {
+                        statistics.addValue(((Number) value).doubleValue());
+                    }
+                }
 
-            setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
+                cachedSum = null;
+                setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
+            }
         }
 
         public boolean isEmpty() {
@@ -621,6 +625,34 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
             ret.add(locator);
         }
         return ret;
+    }
+
+    /**
+     * Sum the numeric cells in the time slice selected by the locator.
+     * Missing cells are skipped, and a missing slice returns NaN.
+     */
+    public synchronized double sumAt(ILocator locator) {
+        if (isScalar) {
+            Object value = scalarValue;
+            return value instanceof Number ? ((Number) value).doubleValue() : Double.NaN;
+        }
+
+        Slice slice = getSlice(locator);
+        if (slice == null || slice.isEmpty()) {
+            return Double.NaN;
+        }
+
+        if (slice.cachedSum == null) {
+            double sum = 0;
+            for (long offset = 0; offset < sliceSize; offset++) {
+                Object value = slice.getAt(offset);
+                if (value instanceof Number && Observations.INSTANCE.isData(value)) {
+                    sum += ((Number) value).doubleValue();
+                }
+            }
+            slice.cachedSum = sum;
+        }
+        return slice.cachedSum;
     }
 
     public Slice getSlice(ILocator locator) {

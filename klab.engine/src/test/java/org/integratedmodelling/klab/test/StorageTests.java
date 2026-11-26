@@ -3,11 +3,20 @@
  */
 package org.integratedmodelling.klab.test;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 import java.util.Random;
 
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Offset;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.storage.FileMappedStorage;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.test.storage.MemoryBackedAdaptiveStorage;
 import org.junit.Test;
 
@@ -19,6 +28,30 @@ import org.junit.Test;
  *
  */
 public class StorageTests {
+
+	@Test
+	public void sumIncludesCarriedForwardCellsAndReflectsOverwrites() throws IOException {
+		Time time = Time.create(ITime.Type.GRID, ITime.Resolution.Type.YEAR, 1.0,
+				TimeInstant.create(2020), TimeInstant.create(2022), null);
+		Geometry grid = Geometry.create("S2(3,1){bbox=[0 3 0 1],proj=EPSG:4326}");
+		Scale scale = Scale.create(time, Space.create(grid.getDimensions().get(0), null));
+		try (MemoryBackedAdaptiveStorage<Double> storage = new MemoryBackedAdaptiveStorage<>(scale, Double.class)) {
+			IScale firstStep = scale.at(time.getExtent(1));
+			storage.put(1.0, firstStep.at(0));
+			storage.put(1.0, firstStep.at(1));
+			assertEquals(2.0, storage.sumAt(firstStep), 0.0);
+
+			IScale secondStep = scale.at(time.getExtent(2));
+			storage.put(1.0, secondStep.at(0));
+			storage.put(null, secondStep.at(1));
+			storage.put(3.0, secondStep.at(2));
+			assertEquals(4.0, storage.sumAt(secondStep), 0.0);
+
+			storage.put(5.0, secondStep.at(2));
+			assertEquals(6.0, storage.sumAt(secondStep), 0.0);
+			assertEquals(2.0, storage.sumAt(firstStep), 0.0);
+		}
+	}
 
 	@Test
 	public void readwrite() {
