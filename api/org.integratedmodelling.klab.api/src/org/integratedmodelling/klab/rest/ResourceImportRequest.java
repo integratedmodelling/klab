@@ -5,6 +5,12 @@ import java.net.URL;
 public class ResourceImportRequest {
 
 	private URL importUrl;
+	/**
+	 * Raw import location as a string. Used for locations that cannot be
+	 * represented as a java.net.URL (e.g. s3://bucket/path). When set, it takes
+	 * precedence over {@link #importUrl} for bulk imports.
+	 */
+	private String importLocation;
 	private String targetResourceUrn;
 	private String adapter;
 	private String projectName;
@@ -25,6 +31,14 @@ public class ResourceImportRequest {
 
 	public void setImportUrl(URL importUrl) {
 		this.importUrl = importUrl;
+	}
+
+	public String getImportLocation() {
+		return importLocation;
+	}
+
+	public void setImportLocation(String importLocation) {
+		this.importLocation = importLocation;
 	}
 
 	public String getAdapter() {

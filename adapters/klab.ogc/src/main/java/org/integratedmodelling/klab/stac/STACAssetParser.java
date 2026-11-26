@@ -2,30 +2,55 @@ package org.integratedmodelling.klab.stac;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+
+import org.hortonmachine.gears.io.stac.HMStacAsset;
+import org.hortonmachine.gears.io.stac.assets.IHMStacAssetHandler;
+import org.hortonmachine.gears.io.stac.assets.IHMStacAssetRasterHandler;
+import org.hortonmachine.gears.io.stac.assets.handlers.GeojsonHandler;
 
 import kong.unirest.json.JSONArray;
 import kong.unirest.json.JSONObject;
+import tools.jackson.databind.json.JsonMapper;
 
 public class STACAssetParser {
-    // https://github.com/radiantearth/stac-spec/blob/master/best-practices.md#common-media-types-in-stac
-    final private static Set<String> SUPPORTED_MEDIA_TYPE = Set.of("image/tiff;application=geotiff", "image/vnd.stac.geotiff",
-            "image/tiff;application=geotiff;profile=cloud-optimized", "image/vnd.stac.geotiff;profile=cloud-optimized",
-            "image/vnd.stac.geotiff;cloud-optimized=true", "application/geo+json");
 
-    final private static Set<String> SUPPORTED_MEDIA_EXTENSION = Set.of(".tif", ".tiff");
+    private static final JsonMapper JSON = JsonMapper.builder().build();
 
-    /** 
-     * Check if the MIME value is supported.
+    /**
+     * Check if an asset can be read by k.LAB, see {@link #isSupported(HMStacAsset)}.
+     *
      * @param asset as JSON
-     * @return true if the media type is supported.
+     * @return true if the asset is supported.
      */
     public static boolean isSupportedMediaType(JSONObject asset) {
-        if (!asset.has("type")) {
-            String href = asset.getString("href");
-            return SUPPORTED_MEDIA_EXTENSION.stream().anyMatch(ex -> href.toLowerCase().endsWith(ex));
+        return isSupported(toHMStacAsset("asset", asset));
+    }
+
+    /**
+     * Check if an asset can be read by k.LAB: the HortonMachine handler of the asset is a raster one (GeoTIFF,
+     * ASCII grid), read by HMStacCollection.readRasterBandOnRegion, or the GeoJSON one, read by
+     * STACFeatureExtension. The assets of the other handlers (shapefile, geopackage, netcdf, csv, styles) or
+     * without handler (metadata, previews...) are not supported.
+     *
+     * @param asset the asset.
+     * @return true if the asset is supported.
+     */
+    public static boolean isSupported(HMStacAsset asset) {
+        IHMStacAssetHandler handler = asset == null ? null : asset.getHandler();
+        return handler instanceof IHMStacAssetRasterHandler || handler instanceof GeojsonHandler;
+    }
+
+    /**
+     * @param id the asset id.
+     * @param asset the asset as JSON.
+     * @return the HortonMachine asset, with its handler, null if the JSON cannot be read.
+     */
+    public static HMStacAsset toHMStacAsset(String id, JSONObject asset) {
+        try {
+            return new HMStacAsset(id, JSON.readTree(asset.toString()));
+        } catch (Exception e) {
+            return null;
         }
-        return SUPPORTED_MEDIA_TYPE.contains(asset.getString("type").replace(" ", "").toLowerCase());
     }
 
     /**
