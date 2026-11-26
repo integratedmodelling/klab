@@ -15,19 +15,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.geotools.api.data.FeatureSource;
-import org.geotools.api.feature.simple.SimpleFeature; 
+import org.geotools.api.feature.simple.SimpleFeature;
 import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.referencing.CRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
@@ -262,6 +261,7 @@ public class STACEncoder implements IResourceEncoder {
         try {
         	targetCRS = HMCrsRegistry.INSTANCE.getCrs("4326");
         } catch (Exception e) {
+        	closeManagerWithEx(manager);
         	throw new KlabInternalErrorException("Unable to fetch CRS: 4326");
         }
 
@@ -835,6 +835,15 @@ public class STACEncoder implements IResourceEncoder {
         }
     }
     
+    private void closeManagerWithEx(HMStacManager manager) {
+        if (manager != null)
+            try {
+                manager.close();
+            } catch (Exception e1) {
+                throw new KlabResourceAccessException("Unable to close manager: " + e1.getMessage());
+            }
+    }
+
     private static String geometryKey(Geometry geom) {
         Geometry normalized = geom.copy();
         normalized.normalize(); 
