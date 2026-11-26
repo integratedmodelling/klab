@@ -25,6 +25,7 @@ import org.geotools.api.feature.simple.SimpleFeatureType;
 import org.geotools.api.referencing.crs.CoordinateReferenceSystem;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.processing.Operations;
+import org.geotools.data.memory.MemoryDataStore;
 import org.geotools.geojson.geom.GeometryJSON;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
@@ -32,6 +33,7 @@ import org.hortonmachine.gears.io.stac.HMStacAsset;
 import org.hortonmachine.gears.io.stac.HMStacCollection;
 import org.hortonmachine.gears.io.stac.HMStacItem;
 import org.hortonmachine.gears.io.stac.HMStacManager;
+import org.hortonmachine.gears.io.stac.auth.HMStacAccess;
 import org.hortonmachine.gears.libs.modules.HMRaster;
 import org.hortonmachine.gears.libs.modules.HMRaster.HMRasterWritableBuilder;
 import org.hortonmachine.gears.libs.modules.HMRaster.MergeMode;
@@ -75,7 +77,6 @@ import org.integratedmodelling.klab.openeo.OpenEO;
 import org.integratedmodelling.klab.openeo.OpenEO.OpenEOFuture;
 import org.integratedmodelling.klab.openeo.OpenEO.Process;
 import org.integratedmodelling.klab.raster.files.RasterEncoder;
-import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.stac.extensions.COGAssetExtension;
 import org.integratedmodelling.klab.stac.extensions.STACFeatureExtension;
@@ -88,8 +89,6 @@ import org.locationtech.jts.io.WKTReader;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.locationtech.jts.simplify.TopologyPreservingSimplifier;
 
-import com.github.davidmoten.aws.lw.client.Client;
-import com.github.davidmoten.aws.lw.client.Credentials;
 
 import kong.unirest.json.JSONObject;
 
@@ -102,7 +101,7 @@ public class STACEncoder implements IResourceEncoder {
 
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
-        String collectionUrl = resource.getParameters().get("collection", String.class);
+        String collectionUrl = STACUtils.getCollectionUrl(resource.getParameters());
         if (collectionUrl == null) {
             monitor.error("Resource is lacking a proper schema. Try to reimport the STAC collection.");
             return false;
@@ -210,22 +209,6 @@ public class STACEncoder implements IResourceEncoder {
                 + items.get(items.size() - 1).getTimestamp() + "]");
     }
 
-    private Client buildS3Client(String endpointURL) throws IOException {
-        ExternalAuthenticationCredentials awsCredentials = Authentication.INSTANCE.getCredentials(endpointURL);
-        Credentials credentials = null;
-        String defaultS3Region = "us-east-1";
-        try {
-            credentials = Credentials.of(awsCredentials.getCredentials().get(0), awsCredentials.getCredentials().get(1));
-        } catch (Exception e) {
-            throw new KlabIOException("Error defining S3 credenetials. " + e.getMessage());
-        }
-        return  Client.s3()
-                .region(defaultS3Region)
-                .credentials(credentials)
-                .baseUrlFactory((service, region) -> endpointURL)
-                .build();
-    }
-
     private boolean isDateWithinRange(Time rangeTime, Date date) {
         Date start = new Date(rangeTime.getStart().getMilliseconds());
         Date end = new Date(rangeTime.getEnd().getMilliseconds());
@@ -237,7 +220,8 @@ public class STACEncoder implements IResourceEncoder {
             IContextualizationScope scope) {
 
         String COGURL = null;
-        String collectionUrl = resource.getParameters().get("collection", String.class);
+        // also the resources imported with the old schema (catalogUrl + collectionId)
+        String collectionUrl = STACUtils.getCollectionUrl(resource.getParameters());
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = collectionData.getString("id");
         String catalogUrl = STACUtils.getCatalogUrl(collectionUrl, collectionId, collectionData);
@@ -254,7 +238,10 @@ public class STACEncoder implements IResourceEncoder {
         IGrid grid = space.getGrid();
         
         LogProgressMonitor lpm = new LogProgressMonitor();
+        // the authentications of the user (URL_AUTH_KEYS) for catalog, items and assets, s3 included
+        HMStacAccess access = STACAccess.forResource(resource.getParameters());
         HMStacManager manager = new HMStacManager(catalogUrl, lpm);
+        manager.setAccess(access);
         HMStacCollection collection = null;
         CoordinateReferenceSystem targetCRS = null;
         
@@ -276,7 +263,6 @@ public class STACEncoder implements IResourceEncoder {
 	            String rcrs = geometry.getDimension(IGeometry.Dimension.Type.SPACE).getParameters()
 	                    .get(org.integratedmodelling.klab.common.Geometry.PARAMETER_SPACE_PROJECTION, String.class);
 	
-	            Projection crs = Projection.create(rcrs);
 	            org.locationtech.jts.geom.Envelope requestedExtend = new org.locationtech.jts.geom.Envelope(bbox.get(0), bbox.get(1),
 	                    bbox.get(2), bbox.get(3));
 	
@@ -299,6 +285,7 @@ public class STACEncoder implements IResourceEncoder {
                 ((RasterEncoder) encoder).encodeFromCoverage(resource, urnParameters, coverage, geometry, builder, scope);
                 return;
             } catch (Exception e) {
+            	closeManagerWithEx(manager);
                 throw new KlabResourceAccessException("Cannot build COG Output " + e.getMessage());
             }
         }
@@ -309,10 +296,12 @@ public class STACEncoder implements IResourceEncoder {
             try {
                 source = STACIIASAExtension.getFeatures(collectionData, bbox);
             } catch (IOException e) {
+            	closeManagerWithEx(manager);
                 throw new KlabResourceAccessException("Cannot extract features from IIASA catalog - " + e.getMessage());
             }
             encoder = new VectorEncoder();
             ((VectorEncoder) encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+            closeManagerWithEx(manager);
             return;
         }
         
@@ -330,7 +319,7 @@ public class STACEncoder implements IResourceEncoder {
                     var bands = asset.getAssetNode().get("eo:bands");
                     if (bands != null && bands.isArray()) {
                         for(var bandNode : bands) {
-                            String bandName = bandNode.get("name").asText();
+                            String bandName = bandNode.get("name").asString();
                             if (bandName.equals(assetId)) { // under eo:band it's one of the band
                                 return true;
                             }
@@ -351,6 +340,7 @@ public class STACEncoder implements IResourceEncoder {
             		assetPredicate = getAssetPredicateFromJSONSelector(resource);
             	}
             } catch (Exception e) {
+            	closeManagerWithEx(manager);
                 throw new KlabResourceAccessException("Couldn't form a predicate with the JSON Expressions");
             }
 
@@ -405,58 +395,99 @@ public class STACEncoder implements IResourceEncoder {
 
         // These are the static STAC catalogue
         if (!hasSearchOption) {
-            List<SimpleFeature> features = getFeaturesFromStaticCollection(collectionUrl, collectionData, collectionId);
-            features = features.stream().filter(f -> {
-                Geometry fGeometry = (Geometry) f.getDefaultGeometry();
-                return fGeometry.intersects(space.getShape().getJTSGeometry());
-            }).toList();
-            CoordinateReferenceSystem crs = features.get(0).getFeatureType().getCoordinateReferenceSystem();
-            if (crs == null) {
-                crs = CrsUtilities.getCrsFromSrid(4326); // We go to the standard
-            }
-            var time2 = effectiveTime;
-            // TODO merge with similar code from below
-            // end //TODO
-            List<HMStacItem> items = features.stream().map(f -> {
-                try {
-                    return HMStacItem.fromSimpleFeature(f);
-                } catch (Exception e) {
-                    scope.getMonitor().warn("Cannot parse feature " + f.getID() + ". Ignored.");
-                    return null;
-                }
-            }).filter(Objects::nonNull)
-                    .filter(item -> isWithinRange(item, time2.getStart().getMilliseconds(), time2.getEnd().getMilliseconds()))
-                    .toList();
+            // the item geometries are lon/lat (WGS84) by the STAC spec, the context may be in another projection
+            final Geometry contextLatLon = toLatLon(space);
+            Envelope contextEnvelopeLL = contextLatLon.getEnvelopeInternal();
 
-            GridCoverage2D coverage = null;
-
+            // the items are found by the HortonMachine static search: following the links of the catalog,
+            // filtered on the context, with the asset hrefs resolved and the authentications of the user
+            List<HMStacItem> allItems;
             try {
                 manager.open();
                 collection = manager.getCollectionByURL(collectionUrl);
                 if (collection == null) {
-                    scope.getMonitor().error(
-                            "Collection " + resource.getParameters().get("collection", String.class) + " cannot be found.");
-                    throw new KlabIllegalArgumentException("Collection Details can't be fetched from the specified Collecion URL " 
-                            + resource.getParameters().get("collection", String.class));
+                    throw new KlabResourceAccessException("Cannot access to STAC collection " + collectionUrl);
                 }
-               
-                Predicate<HMStacAsset> predicate = getAssetPredicateFromJSONSelector(resource);
+                collection.setBboxFilter(new double[]{contextEnvelopeLL.getMinX(), contextEnvelopeLL.getMinY(),
+                        contextEnvelopeLL.getMaxX(), contextEnvelopeLL.getMaxY()});
+                allItems = collection.searchItems();
+            } catch (KlabResourceAccessException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new KlabResourceAccessException(
+                        "Cannot read the items of STAC collection " + collectionId + ": " + e.getMessage());
+            }
+            // refined filter on the geometry, that is supposed to be geojson in 4326
+            allItems = allItems.stream().filter(item -> {
+                Object itemGeometry = item.getFeature() == null ? null : item.getFeature().getDefaultGeometry();
+                return !(itemGeometry instanceof Geometry) || ((Geometry) itemGeometry).intersects(contextLatLon);
+            }).toList();
+            if (allItems.isEmpty()) {
+                throw new KlabResourceAccessException(
+                        "No items of STAC collection " + collectionId + " intersect the context " + contextEnvelopeLL);
+            }
+
+            var time2 = effectiveTime;
+            // the same temporal selection as for the searchable catalogs
+            List<HMStacItem> items = selectItemsInTime(allItems, assetPredicate, time2.getStart().getMilliseconds(),
+                    time2.getEnd().getMilliseconds(), scope.getMonitor());
+            if (items.isEmpty()) {
+                throw new KlabResourceAccessException("None of the " + allItems.size() + " items of STAC collection "
+                        + collectionId + " intersecting the context has the requested asset for the time range "
+                        + time2.getStart() + " - " + time2.getEnd());
+            }
+
+            if (resource.getType() == IArtifact.Type.OBJECT) {
+                // vectors (only the vector imports keep the OBJECT type): the features of the vector assets,
+                // or the items themselves if no asset is selected
+                try {
+                    FeatureSource<SimpleFeatureType, SimpleFeature> source;
+                    if (assetPredicate != null) {
+                        var assets = items.stream().flatMap(item -> item.getAssets().stream()).filter(assetPredicate).toList();
+                        if (assets.isEmpty()) {
+                            throw new KlabIllegalStateException("No STAC assets found for this context");
+                        }
+                        scope.getMonitor().debug("Found " + assets.size() + " assets for the requested geometry");
+                        source = STACFeatureExtension.getFeatures(assets);
+                    } else {
+                        List<SimpleFeature> features = items.stream().map(HMStacItem::getFeature).toList();
+                        SimpleFeatureType featureType = features.get(0).getFeatureType();
+                        MemoryDataStore dataStore = new MemoryDataStore(featureType);
+                        dataStore.addFeatures(features);
+                        source = dataStore.getFeatureSource(featureType.getTypeName());
+                    }
+                    encoder = new VectorEncoder();
+                    ((VectorEncoder) encoder).encodeFromFeatures(source, resource, urnParameters, geometry, builder, scope);
+                    return;
+                } catch (KlabIllegalStateException e) {
+                    throw e;
+                } catch (Exception e) {
+                    throw new KlabResourceAccessException(
+                            "Cannot extract features from static collection " + collectionId + ": " + e.getMessage());
+                }
+            }
+
+            GridCoverage2D coverage = null;
+
+            try {
+                // the collection has been opened to search the items
+                // the predicate of the asset id and/or the json selector, as for the searchable catalogs
+                if (assetPredicate == null) {
+                    throw new KlabIllegalArgumentException("Either asset or both jsonSelector and jsonValue must be provided");
+                }
+                Predicate<HMStacAsset> predicate = assetPredicate;
                 RegionMap region = RegionMap.fromBoundsAndGrid(space.getEnvelope().getMinX(), space.getEnvelope().getMaxX(),
                         space.getEnvelope().getMinY(), space.getEnvelope().getMaxY(), (int) grid.getXCells(), (int) grid.getYCells());
 
                 ReferencedEnvelope regionEnvelope = new ReferencedEnvelope(region.toEnvelope(),
                         space.getProjection().getCoordinateReferenceSystem());
-                RegionMap regionTransformed = RegionMap.fromEnvelopeAndGrid(regionEnvelope, (int) grid.getXCells(),
+                // readRasterBandOnRegion takes the region in lat/lon (WGS84), as in the searchable catalogs
+                ReferencedEnvelope regionEnvelopeLL = regionEnvelope.transform(wgs84CRS, true);
+                RegionMap regionTransformedLL = RegionMap.fromEnvelopeAndGrid(regionEnvelopeLL, (int) grid.getXCells(),
                         (int) grid.getYCells());
-                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformed, predicate, items, true,
+                HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformedLL, predicate, items, true,
                         MergeMode.SUBSTITUTE, lpm);
-                if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),targetCRS)) {
-                	var transformer = new HMCrsTransformer(outRaster.getCrs(), targetCRS);
-                	transformer.setAcceptLenientDatumShift(true);
-                	outRaster = transformer.transform(outRaster);
-                }
-                
-                coverage = outRaster.buildCoverage();
+                coverage = toContextCoverage(outRaster, space, grid, MergeMode.SUBSTITUTE);
                 if (bandIndex != null) { // Which means theat it's a Multi Band COG
                     coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
                 }
@@ -508,8 +539,8 @@ public class STACEncoder implements IResourceEncoder {
             
             if (assetPredicate == null || 
             		resource.getType() != org.integratedmodelling.klab.api.provenance.IArtifact.Type.NUMBER) {
-            	// If it was raster, then it necessarily should have been number, object means certainly that it's a vector
-                // NO JSONSelector and JSONValue found, NO assetID was passed as well
+            	// If it was raster, then it necessarily should have been number, 
+                // let's assume object means vector
                 scope.getMonitor().debug("Query STAC " + collectionUrl + "to get the features");
                 // Only get the features from STAC Collection, no need to interact with Rasters
                 FeatureSource<SimpleFeatureType, SimpleFeature> source;
@@ -559,11 +590,7 @@ public class STACEncoder implements IResourceEncoder {
                 sortByDate(items, scope.getMonitor());
             }
 
-            if (resource.getParameters().contains("s3EndpointUrl")) {
-                String s3EndpointURL = resource.getParameters().get("s3EndpointUrl", String.class);
-                Client s3Client = buildS3Client(s3EndpointURL);
-                collection.setS3Client(s3Client);
-            }
+            // the s3 assets are read through the access of the manager (also the legacy s3EndpointUrl credentials)
             var time = effectiveTime;
             // Filter here based on time, since in some STAC collections they don't yet support
             // temporal filtering :( like ECDC
@@ -803,24 +830,13 @@ public class STACEncoder implements IResourceEncoder {
             var regionTransformedLL = RegionMap.fromEnvelopeAndGrid(regionEnvelopeLL, (int) grid.getXCells(),
                     (int) grid.getYCells());
             
-            HMRaster paddedRaster = null;
         	HMRaster outRaster = collection.readRasterBandOnRegion(regionTransformedLL, assetPredicate, items, allowTransform,
                     mergeMode, lpm); 
             if (outRaster == null) {
                 scope.getMonitor().error("Unable to build the output from the STAC Resource");
                 throw new KlabIllegalStateException("Unable to build the output from the STAC Resource");
             }
-            paddedRaster = new HMRasterWritableBuilder().setNoValue(outRaster.getNovalue())
-            		.setName("padded").setRegion(regionTransformedLL)
-					.setCrs(wgs84CRS).build();
-            if (!HMCrsRegistry.crsEquals(outRaster.getCrs(),wgs84CRS)) {
-            	var transformer = new HMCrsTransformer(outRaster.getCrs(), wgs84CRS);
-            	transformer.setAcceptLenientDatumShift(true);
-            	outRaster = transformer.transform(outRaster);
-            }
-           
-			paddedRaster.mapRaster(null, outRaster, mergeMode);
-			coverage = paddedRaster.buildCoverage();
+            coverage = toContextCoverage(outRaster, space, grid, mergeMode);
 			
 			if (bandIndex != null) { // Which means theat it's a Multi Band COG
                 coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{bandIndex});
@@ -834,16 +850,16 @@ public class STACEncoder implements IResourceEncoder {
             throw new KlabInternalErrorException("Cannot build STAC raster output. Reason " + e.getMessage());
         }
     }
-    
-    private void closeManagerWithEx(HMStacManager manager) {
-        if (manager != null)
-            try {
-                manager.close();
-            } catch (Exception e1) {
-                throw new KlabResourceAccessException("Unable to close manager: " + e1.getMessage());
-            }
-    }
 
+	private void closeManagerWithEx(HMStacManager manager) {
+		if(manager!=null)
+			try {
+				manager.close();
+			} catch (Exception e1) {
+				throw new KlabResourceAccessException("Unable to close manager: " + e1.getMessage());
+			}
+	}
+    
     private static String geometryKey(Geometry geom) {
         Geometry normalized = geom.copy();
         normalized.normalize(); 
@@ -918,22 +934,63 @@ public class STACEncoder implements IResourceEncoder {
     }
     
     
-    private List<SimpleFeature> getFeaturesFromStaticCollection(String collectionUrl, JSONObject collectionData,
-            String collectionId) {
-        List<JSONObject> links = collectionData.getJSONArray("links").toList().stream()
-                .filter(link -> ((JSONObject) link).getString("rel").equalsIgnoreCase("item")).toList();
-        List<String> urlOfLinks = links.stream()
-                .map(link -> STACUtils.getUrlOfItem(collectionUrl, collectionId, link.getString("href"))).toList();
-        return urlOfLinks.stream().map(i -> {
-            try {
-                return STACUtils.getItemAsFeature(i);
-            } catch (Exception e) {
-                throw new KlabValidationException("Item at " + i + " cannot be parsed.");
-            }
-        }).toList();
+    /**
+     * Select the items for a time range, as done for the searchable catalogs: the items whose time covers the
+     * range, else the item closest to the end of the range.
+     *
+     * @param assetPredicate if not null, only the items with a matching asset are selected.
+     */
+    private List<HMStacItem> selectItemsInTime(List<HMStacItem> items, Predicate<HMStacAsset> assetPredicate,
+            long startMillis, long endMillis, IMonitor monitor) {
+        Predicate<HMStacItem> hasAsset = item -> assetPredicate == null
+                || item.getAssets().stream().anyMatch(assetPredicate);
+        List<HMStacItem> itemsWithinTime = items.stream().filter(item -> isWithinRange(item, startMillis, endMillis))
+                .filter(hasAsset).collect(Collectors.toList());
+        if (!itemsWithinTime.isEmpty()) {
+            return itemsWithinTime;
+        }
+        monitor.debug("Couldn't find items satisfying temporal and asset based constraints"
+                + " within the specified time range, Applying Temporal Mediation");
+        Map<String, List<HMStacItem>> grouped = items.stream().filter(hasAsset)
+                .filter(item -> item.getGeometry() != null)
+                .collect(Collectors.groupingBy(item -> geometryKey(item.getGeometry())));
+        return grouped.values().stream()
+                .map(group -> group.stream().min(Comparator.comparingLong(item -> checkDuration(item, endMillis)))
+                        .orElseThrow())
+                .collect(Collectors.toList());
     }
-    
-    
+
+    /**
+     * Map a raster read by HortonMachine on the grid of the context, in the crs of the context. The coverage is
+     * then copied cell by cell by {@link RasterEncoder#encodeFromCoverage}, which doesn't resample.
+     *
+     * <p>The values are mapped by coordinates, transforming the cell centres if the crs differ; no reprojection
+     * at all if the data are in the crs of the context (HM internals).</p>
+     */
+    private static GridCoverage2D toContextCoverage(HMRaster raster, Space space, IGrid grid, MergeMode mergeMode)
+            throws Exception {
+        CoordinateReferenceSystem contextCrs = space.getProjection().getCoordinateReferenceSystem();
+        IEnvelope envelope = space.getEnvelope();
+        RegionMap contextRegion = RegionMap.fromBoundsAndGrid(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(),
+                envelope.getMaxY(), (int) grid.getXCells(), (int) grid.getYCells());
+        HMRaster contextRaster = new HMRasterWritableBuilder().setNoValue(raster.getNovalue()).setName("context")
+                .setRegion(contextRegion).setCrs(contextCrs).build();
+        contextRaster.mapRaster(null, raster, mergeMode);
+        return contextRaster.buildCoverage();
+    }
+
+    /**
+     * @return the shape of the context in lat/lon (WGS84), the reference system of the STAC item geometries.
+     */
+    private static Geometry toLatLon(Space space) {
+        try {
+            return space.getShape().transform(Projection.getLatLon()).getJTSGeometry();
+        } catch (Exception e) {
+            throw new KlabResourceAccessException(
+                    "Cannot transform the context to lat/lon to find the STAC items: " + e.getMessage());
+        }
+    }
+
     private List<HMStacItem> searchItemsWithRetry(HMStacCollection collection, IMonitor monitor) throws IOException {
         int maxRetries = 5;
         long backoffMillis = 10000; // start at 10s

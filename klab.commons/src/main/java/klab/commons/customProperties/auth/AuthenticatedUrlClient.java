@@ -33,7 +33,8 @@ public class AuthenticatedUrlClient {
     private static AuthStrategy getStrategy(AuthType auth) {
         if (auth instanceof BasicAuth) return BASIC_STRATEGY;
         if (auth instanceof BearerAuth) return BEARER_STRATEGY;
-        return null;
+        throw new UnsupportedOperationException(
+                "Authentication of type '" + auth.getType() + "' is not supported for this service");
     }
 
     /**
