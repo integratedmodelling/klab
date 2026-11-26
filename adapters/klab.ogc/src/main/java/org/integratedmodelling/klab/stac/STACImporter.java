@@ -188,7 +188,7 @@ public class STACImporter implements IResourceImporter {
             regex = null;
         }
 
-        Map<String, JSONObject> assets;
+        Map<String, HMStacAsset> assets;
         if (manager != null && hmCollection != null) {
             assets = readAssets(collectionData, manager, hmCollection);
         } else {
@@ -204,20 +204,16 @@ public class STACImporter implements IResourceImporter {
             return;
         }
 
-        for (Map.Entry<String, JSONObject> entry : assets.entrySet()) {
+        for (Map.Entry<String, HMStacAsset> entry : assets.entrySet()) {
             String assetId = entry.getKey();
             if (regex != null && !assetId.matches(regex)) {
                 Logging.INSTANCE.info("Asset " + assetId + " doesn't match REGEX, skipped");
                 continue;
             }
-            boolean supported;
-            try {
-                supported = STACAssetParser.isSupportedMediaType(entry.getValue());
-            } catch (Exception e) {
-                supported = false;
-            }
-            if (!supported) {
-                Logging.INSTANCE.info("Asset " + assetId + " doesn't have a supported media type, skipped");
+            // supported if HortonMachine has a handler for it that k.LAB can read (raster or geojson)
+            if (!STACAssetParser.isSupported(entry.getValue())) {
+                monitor.info("STAC asset " + assetId + " of collection " + collectionId + " (type "
+                        + entry.getValue().getType() + ") is not supported, skipped");
                 continue;
             }
 
@@ -242,17 +238,18 @@ public class STACImporter implements IResourceImporter {
      * @return the assets of the collection by key: those of the collection itself for static catalogs that have
      *         them, else those of its first item.
      */
-    private static Map<String, JSONObject> readAssets(JSONObject collectionData, HMStacManager manager,
+    private static Map<String, HMStacAsset> readAssets(JSONObject collectionData, HMStacManager manager,
             HMStacCollection collection) throws Exception {
-        Map<String, JSONObject> ret = new LinkedHashMap<>();
+        Map<String, HMStacAsset> ret = new LinkedHashMap<>();
         if (!manager.isItemSearchAvailable()) {
             // static catalogs can have their assets on the collection
             JSONObject collectionAssets = collectionData.optJSONObject("assets");
             if (collectionAssets != null && collectionAssets.length() > 0) {
                 for (String key : collectionAssets.keySet()) {
                     JSONObject asset = collectionAssets.optJSONObject(key);
-                    if (asset != null) {
-                        ret.put(key, asset);
+                    HMStacAsset hmAsset = asset == null ? null : STACAssetParser.toHMStacAsset(key, asset);
+                    if (hmAsset != null) {
+                        ret.put(key, hmAsset);
                     }
                 }
                 return ret;
@@ -262,7 +259,7 @@ public class STACImporter implements IResourceImporter {
         List<HMStacItem> items = collection.searchItems(1);
         if (!items.isEmpty()) {
             for (HMStacAsset asset : items.get(0).getAllAssets()) {
-                ret.put(asset.getId(), new JSONObject(asset.getAssetNode().toString()));
+                ret.put(asset.getId(), asset);
             }
         }
         return ret;

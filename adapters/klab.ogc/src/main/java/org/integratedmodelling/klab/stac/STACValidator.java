@@ -123,7 +123,7 @@ public class STACValidator implements IResourceValidator {
 		        			}
 		        		}
 	        		} catch (Exception e) {
-	        			throw new  KlabInternalErrorException("Unable to import Vector Resource from STAC");
+	        			throw new KlabInternalErrorException("Unable to import Vector Resource from STAC: " + e.getMessage());
 	        		}
 	        	}
 	        	return builder;

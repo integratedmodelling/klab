@@ -62,6 +62,24 @@ public class STACCollectionParser {
         return gBuilder.build().withProjection(Projection.DEFAULT_PROJECTION_CODE);
     }
 
+    /**
+     * Resolve the hrefs of the assets found against the document holding them: in static catalogs they are
+     * often relative (e.g. <code>./boundaries.geojson</code>), and the asset is read from its href.
+     *
+     * @param assetInfo the assets found, assetId -> asset json.
+     * @param documentUrl the address of the item or collection holding them.
+     * @return the same object, with absolute hrefs.
+     */
+    private static JSONObject resolveAssetHrefs(JSONObject assetInfo, String documentUrl) {
+        for (String key : assetInfo.keySet()) {
+            JSONObject asset = assetInfo.optJSONObject(key);
+            if (asset != null && asset.has("href")) {
+                asset.put("href", STACUtils.resolveHref(documentUrl, asset.getString("href")));
+            }
+        }
+        return assetInfo;
+    }
+
     private static JSONObject findAsset(JSONObject assets, String assetId, Predicate<JSONObject> predicate) {
         if (assets == null) {
             return null;
@@ -135,7 +153,7 @@ public class STACCollectionParser {
             if (collection.has("assets")) {
                 JSONObject assetInfo = findAsset(collection.optJSONObject("assets"), assetId, predicate);
                 if (assetInfo != null) {
-                    return assetInfo;
+                    return resolveAssetHrefs(assetInfo, collectionUrl);
                 }
             }
             // Try to get the assets from a link that has type `item`
@@ -147,7 +165,7 @@ public class STACCollectionParser {
             JSONObject itemData = STACUtils.requestMetadata(itemUrl, "feature");
             JSONObject assetInfo = findAsset(itemData.optJSONObject("assets"), assetId, predicate);
             if (assetInfo != null) {
-                return assetInfo;
+                return resolveAssetHrefs(assetInfo, itemUrl);
             }
             throw new KlabResourceNotFoundException("Cannot find assets at STAC collection \"" + collectionUrl + "\"");
         }
