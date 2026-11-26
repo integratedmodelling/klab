@@ -11,15 +11,6 @@ import klab.commons.customProperties.auth.AuthType;
 
 
 public enum CustomPropertyKey {
-    /**
-     * The authentication of the services by url.
-     */
-    URL_AUTH_KEYS("URL_AUTH_KEYS", new TypeReference<Map<String, AuthType>>() {}),
-    /**
-     * Legacy name of {@link #URL_AUTH_KEYS}.
-     * 
-     * @deprecated Use {@link #URL_AUTH_KEYS} instead. Misleading name.
-     */
     GEOSERVER_KEYS("GEOSERVER_KEYS", new TypeReference<Map<String, AuthType>>() {}),
     S3_KEYS("S3_KEYS", new TypeReference<Map<String, AuthType>>() {}),
     AZURE_KEYS("AZURE_KEYS", new TypeReference<Map<String, AuthType>>() {});

@@ -955,16 +955,6 @@
 						<groupId>org.jetbrains.kotlin</groupId>
 						<artifactId>kotlin-stdlib</artifactId>
 					</exclusion>
-					<!-- okhttp 4 and okio 3.6 clash with okhttp-jvm 5 and okio-jvm 3.16 of hm-gears (COG range reader):
-					     different artifact ids, same classes. MinIO has been tested to work with okhttp 5 of hm-gears. -->
-					<exclusion>
-						<groupId>com.squareup.okhttp3</groupId>
-						<artifactId>okhttp</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>com.squareup.okio</groupId>
-						<artifactId>okio</artifactId>
-					</exclusion>
 				</exclusions>
 			</dependency>
 			<dependency>

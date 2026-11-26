@@ -7,17 +7,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.hortonmachine.gears.io.stac.HMStacAsset;
-import org.hortonmachine.gears.io.stac.HMStacCollection;
-import org.hortonmachine.gears.io.stac.HMStacItem;
-import org.hortonmachine.gears.io.stac.HMStacManager;
-import org.hortonmachine.gears.libs.monitor.DummyProgressMonitor;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -55,15 +48,6 @@ public class STACImporter implements IResourceImporter {
 
     private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor)
             throws Exception {
-        importCollection(ret, parameters, project, monitor, null, null);
-    }
-
-    /**
-     * @param manager the open manager of the catalog of the collection, if known, else null.
-     * @param hmCollection the collection as found by the manager, if known, else null.
-     */
-    private void importCollection(List<Builder> ret, IParameters<String> parameters, IProject project, IMonitor monitor,
-            HMStacManager manager, HMStacCollection hmCollection) throws Exception {
         String collectionUrl = parameters.get("collection", String.class);
         JSONObject collectionData = STACUtils.requestMetadata(collectionUrl, "collection");
         String collectionId = STACCollectionParser.readCollectionId(collectionData);
@@ -78,13 +62,6 @@ public class STACImporter implements IResourceImporter {
             } else {
                 monitor.warn("STAC collection " + collectionId + " is invalid and cannot be imported");
             }
-            return;
-        }
-
-        if (isBulkImport && !hasAssetSelector(parameters)) {
-            // bulk import: one resource per asset of the collection
-            importAssets(ret, parameters, collectionUrl, collectionData, collectionId, manager, hmCollection, project,
-                    monitor);
             return;
         }
 
@@ -111,6 +88,12 @@ public class STACImporter implements IResourceImporter {
                 if (!STACAssetParser.isSupportedMediaType(assetData)) {
                     throw new Exception("Unsupported media type for the asset");
                 }
+                String href = assetData.getString("href");
+                if (S3URLUtils.isS3Endpoint(href)) {
+                    String[] bucketAndObject = href.split("://")[1].split("/", 2);
+                    String s3Region = "unknown"; // TODO resolve the region
+                    parameters.put("awsRegion", s3Region);
+                }
             }
             resourceUrn = collectionId + "-" + assetId;
         } 
@@ -122,9 +105,13 @@ public class STACImporter implements IResourceImporter {
         //	assetData = STACCollectionParser.readAssetInformationFromCollection(collectionUrl, collectionData, null, STACPathExpression.STACAssetPredicate.fromKongJsonObject(selector, val));
         //}
         
-        // the s3 assets are read with the authentications of the user (see STACAccess), the region and
-        // endpoint come from them or from the storage extension of the items
-
+        String href = assetData.getString("href");
+        if (S3URLUtils.isS3Endpoint(href)) {
+            String[] bucketAndObject = href.split("://")[1].split("/", 2);
+            String s3Region = "unknown"; // TODO resolve the region
+            parameters.put("awsRegion", s3Region);
+        }
+    
         Builder builder = buildResource(parameters, project, monitor, resourceUrn);
         if (builder != null) {
             ret.add(builder);
@@ -159,6 +146,12 @@ public class STACImporter implements IResourceImporter {
            
             parameters.put("asset", assetId);
             String resourceUrn = collectionId + "-" + assetId;
+            String href = assetData.getString("href");
+            if (S3URLUtils.isS3Endpoint(href)) {
+                String[] bucketAndObject = href.split("://")[1].split("/", 2);
+                String s3Region = "unknown"; // TODO resolve the region
+                parameters.put("awsRegion", s3Region);
+            }
         
             Builder builder = buildResource(parameters, project, monitor, resourceUrn);
             if (builder != null) {
@@ -282,86 +275,22 @@ public class STACImporter implements IResourceImporter {
     public Collection<Builder> importResources(String collectionUrl, IProject project, IParameters<String> userData,
             IMonitor monitor) {
         List<Builder> ret = new ArrayList<>();
-        String location = collectionUrl;
         try {
-            monitor.info("Beginning STAC import from " + location);
+            monitor.info("Beginning STAC collection import from " + collectionUrl);
 
-            // s3:// addresses (static catalogs on buckets) are used through their https url
-            String httpUrl = S3URLUtils.isS3Endpoint(location) ? STACAccess.toHttpUrl(location) : location;
+            Parameters<String> parameters = new Parameters<>();
+            parameters.putAll(userData);
+            parameters.put("collection", collectionUrl);
+            parameters.put("bulkImport", true);
 
-            if (isCollectionDocument(httpUrl)) {
-                importCollection(ret, bulkParameters(userData, httpUrl), project, monitor);
-                monitor.info("STAC: imported collection " + httpUrl);
-            } else {
-                // a catalog (API landing page, static catalog or bucket folder holding a catalog.json):
-                // the collections are found by the HortonMachine STAC client
-                importCatalog(ret, location, userData, project, monitor);
-            }
+            importCollection(ret, parameters, project, monitor);
         } catch (Exception e) {
-            monitor.error("STAC import failed: " + e.getMessage());
+            monitor.error("STAC collection import failed: " + e.getMessage());
             throw new KlabIOException(e);
         }
 
+        monitor.info("STAC: imported collection " + collectionUrl);
         return ret;
-    }
-
-    /**
-     * Import the assets of all the collections of a catalog, see
-     * {@link #importAssets(List, IParameters, String, JSONObject, String, HMStacManager, HMStacCollection, IProject, IMonitor)}.
-     * The collections that fail are reported and skipped.
-     */
-    private void importCatalog(List<Builder> ret, String catalogUrl, IParameters<String> userData, IProject project,
-            IMonitor monitor) throws Exception {
-        try (HMStacManager manager = new HMStacManager(catalogUrl, new DummyProgressMonitor())) {
-            manager.setAccess(STACAccess.get());
-            manager.open();
-            List<HMStacCollection> collections = manager.getCollections();
-            if (collections.isEmpty()) {
-                throw new KlabIOException("No STAC collections found at " + catalogUrl);
-            }
-            monitor.info("STAC: found " + collections.size() + " collections in " + catalogUrl);
-            int before = ret.size();
-            for (HMStacCollection collection : collections) {
-                String url = collection.getUrl();
-                if (url == null) {
-                    monitor.warn("STAC collection " + collection.getId()
-                            + " skipped: the address of its document is not known");
-                    continue;
-                }
-                try {
-                    importCollection(ret, bulkParameters(userData, url), project, monitor, manager, collection);
-                } catch (Exception e) {
-                    monitor.warn("STAC collection " + collection.getId() + " at " + url + " skipped: "
-                            + e.getMessage());
-                }
-            }
-            monitor.info("STAC: imported " + (ret.size() - before) + " resources from " + collections.size()
-                    + " collections of " + catalogUrl);
-        }
-    }
-
-    private static Parameters<String> bulkParameters(IParameters<String> userData, String collectionUrl) {
-        Parameters<String> parameters = new Parameters<>();
-        if (userData != null) {
-            parameters.putAll(userData);
-        }
-        parameters.put("collection", collectionUrl);
-        parameters.put("bulkImport", true);
-        return parameters;
-    }
-
-    /**
-     * @return true if the address is the json document of a single STAC collection. Anything else (catalogs,
-     *         bucket listings, unreachable addresses) is left to the catalog discovery, which reports its own
-     *         errors.
-     */
-    private static boolean isCollectionDocument(String httpUrl) {
-        try {
-            JSONObject data = STACAccess.getJson(httpUrl);
-            return data.has("type") && "collection".equalsIgnoreCase(data.getString("type"));
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     @Override
@@ -372,10 +301,6 @@ public class STACImporter implements IResourceImporter {
 
     @Override
     public boolean canHandle(String importLocation, IParameters<String> userData) {
-        if (importLocation != null && S3URLUtils.isS3Endpoint(importLocation)) {
-            // static catalogs on buckets
-            return true;
-        }
         URL url = null;
         try {
             url = new URL(importLocation);

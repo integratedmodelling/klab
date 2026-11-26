@@ -2,12 +2,10 @@ package klab.commons.customProperties.utils;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.integratedmodelling.klab.rest.CustomPropertyRest;
 import org.integratedmodelling.klab.rest.Group;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import klab.commons.customProperties.CustomPropertyKey;
@@ -22,10 +20,9 @@ import klab.commons.utils.JsonUtils;
 
 public class CustomPropertyUtils {
     
-    private static final Logger LOGGER = Logger.getLogger(CustomPropertyUtils.class.getName());
+//    private static final Logger logger = LoggerFactory.getLogger(CustomPropertyUtils.class);
 
-    private final static ObjectMapper objectMapper = new ObjectMapper()
-            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    private final static ObjectMapper objectMapper = new ObjectMapper();
 
     /**
      * Creates a new instance of {@link CustomPropertyUtils}.
@@ -62,15 +59,14 @@ public class CustomPropertyUtils {
                         Object valueObject = propertyKey.deserialize(customPropertyRest.getValue(), objectMapper);
                         customPropertyRest.setValueObject(valueObject);
                     } catch (Exception e) {
-                        // a wrong property must not prevent the authentication: it is ignored
-                        // (the value is not logged, as it can contain secrets)
-                        LOGGER.warning("Custom property '" + entry.getKey() + "' of group '" + g.getId()
-                                + "' cannot be read and is ignored");
+//                        logger.error("Error deserializing value for key '{}': {}", entry.getKey(), e.getMessage());
+                        throw new RuntimeException("Error deserializing value for key: " + entry.getKey(), e);
                     }
                 } else if (JsonUtils.isValidJson(customPropertyRest.getValue())) {
                     try {
                         customPropertyRest.setValueObject(objectMapper.readTree(customPropertyRest.getValue()));
                     } catch (Exception e) {
+//                        logger.error("Error parsing value as JsonNode for key '{}': {}", entry.getKey(), e.getMessage());
                         throw new RuntimeException("Error parsing value as JsonNode", e);
                     }
                 }
