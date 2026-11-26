@@ -191,7 +191,7 @@ public class STACEncoder implements IResourceEncoder {
         		return HMRaster.MergeMode.SUBSTITUTE;
         		
         	default:
-        		monitor.info("Using Most Popular Value for CHARACTERIZATION and CATEGIORIZATION based on Semantics");
+        		monitor.info("Using Most Popular Value for CHARACTERIZATION and CATEGORIZATION based on Semantics");
         		return HMRaster.MergeMode.MOST_POPULAR_VALUE;
         }
         
