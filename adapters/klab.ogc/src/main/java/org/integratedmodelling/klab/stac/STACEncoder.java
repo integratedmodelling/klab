@@ -42,8 +42,6 @@ import org.hortonmachine.gears.utils.RegionMap;
 import org.hortonmachine.gears.utils.crs.CrsUtilities;
 import org.hortonmachine.gears.utils.crs.HMCrsRegistry;
 import org.hortonmachine.gears.utils.crs.HMCrsTransformer;
-import org.integratedmodelling.klab.Authentication;
-import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -705,6 +703,7 @@ public class STACEncoder implements IResourceEncoder {
 						 JSONObject ctxgeojson = new JSONObject(out.toString());
 						 var modelIds = WEEDModelSTACExtension.GetRBModelIDs(bboxLL, scope.getMonitor());
 						 
+						 String username = getInferenceUsername(scope);
 						 for (var modelId:modelIds) {
 							 
 							 JSONObject arguments = new JSONObject()
@@ -713,7 +712,7 @@ public class STACEncoder implements IResourceEncoder {
 								.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
 								.put("year", ctxTime.getStart().getYear())
 								.put("modelId", modelId)
-								.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+								.put("userId", username)
 								.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
 						
 							OpenEOFuture job = service.submit(processID, arguments,
@@ -778,6 +777,7 @@ public class STACEncoder implements IResourceEncoder {
 						 
 						 
 						 
+						String username = getInferenceUsername(scope);
 						for (var modelId:modelIds) { // triggering multiple UDPs parallely
 							JSONObject arguments = new JSONObject()
 								.put("bbox", ctxgeojson) 
@@ -785,7 +785,7 @@ public class STACEncoder implements IResourceEncoder {
 								.put("scenarioId", scenarioId) // Forms the STAC coordinate later 
 								.put("year", ctxTime.getStart().getYear())
 								.put("onnx_model", modelId) // Hardcoding for now only for Europe, until the "BEST" model is decided!
-								.put("userId", Authentication.INSTANCE.getAuthenticatedIdentity(IUserIdentity.class).getUsername())
+								.put("userId", username)
 								.put("dt_url", "https://services.integratedmodelling.org/runtime/main/api/v1/dt/ESA_INSTITUTIONAL.hzo55ie1vj"); 
 							
 							OpenEOFuture job = service.submit(processID, arguments,
@@ -989,6 +989,16 @@ public class STACEncoder implements IResourceEncoder {
             throw new KlabResourceAccessException(
                     "Cannot transform the context to lat/lon to find the STAC items: " + e.getMessage());
         }
+    }
+
+    static String getInferenceUsername(IContextualizationScope scope) {
+        var session = scope.getSession();
+        var user = session == null ? null : session.getUser();
+        if (user == null) {
+            throw new KlabIllegalStateException(
+                    "An authenticated session is required to submit an OpenEO inference request");
+        }
+        return user.getUsername();
     }
 
     private List<HMStacItem> searchItemsWithRetry(HMStacCollection collection, IMonitor monitor) throws IOException {
